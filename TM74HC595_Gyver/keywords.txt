@@ -1,0 +1,21 @@
+#######################################
+# Syntax Coloring Map For TM74HC595-display
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+TM74HC595Display	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+clear	KEYWORD2
+set	KEYWORD2
+digit2	KEYWORD2
+digit4	KEYWORD2
+send	KEYWORD2
+float_dot	KEYWORD2
+int_dot	KEYWORD2
