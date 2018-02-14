@@ -1,4 +1,4 @@
-#define PIN 5				// кнопка подключена сюда и к GND
+#define PIN 3				// кнопка подключена сюда (PIN --- КНОПКА --- GND)
 
 #include "GyverButton.h"
 GButton butt1(PIN);

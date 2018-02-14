@@ -75,6 +75,7 @@ void GButton::tick() {
     btn_flag = false;
     hold_flag = false;
     isRelease_f = true;
+	btn_timer = millis();
   }
   if (btn_flag && btn_state && (millis() - btn_timer > _timeout) && !hold_flag) {
     hold_flag = true;
