@@ -21,5 +21,6 @@ isHolded	KEYWORD2
 isHold		KEYWORD2
 hasClicks	KEYWORD2
 getClicks	KEYWORD2
+isSingle	KEYWORD2
 isDouble	KEYWORD2
 isTriple	KEYWORD2

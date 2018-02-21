@@ -39,6 +39,12 @@ boolean GButton::isHold() {
 		return true;
 	} else return false;
 }
+boolean GButton::isSingle() {
+	if (counter_flag && last_counter == 1) {
+		counter_flag = false;
+		return true;
+	} else return false;
+}
 boolean GButton::isDouble() {
 	if (counter_flag && last_counter == 2) {
 		counter_flag = false;

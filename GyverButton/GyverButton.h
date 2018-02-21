@@ -16,6 +16,7 @@ class GButton
 	boolean isHold();
 	boolean hasClicks();
 	uint8_t getClicks();
+	boolean isSingle();
 	boolean isDouble();
 	boolean isTriple();
 	

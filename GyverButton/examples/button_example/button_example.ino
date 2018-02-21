@@ -13,6 +13,7 @@ void setup() {
 void loop() {
   butt1.tick();  // обязательная функция отработки. Должна постоянно опрашиваться
   
+  if (butt1.isSingle()) Serial.println("Single");       // проверка на один клик
   if (butt1.isDouble()) Serial.println("Double");       // проверка на двойной клик
   if (butt1.isTriple()) Serial.println("Triple");       // проверка на тройной клик
 
