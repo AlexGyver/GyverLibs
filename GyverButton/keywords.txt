@@ -14,13 +14,17 @@ setTimeout		KEYWORD1
 # Methods and Functions (KEYWORD2)
 #######################################
 
-tick		KEYWORD2
-isPress		KEYWORD2
-isRelease	KEYWORD2
-isHolded	KEYWORD2
-isHold		KEYWORD2
-hasClicks	KEYWORD2
-getClicks	KEYWORD2
-isSingle	KEYWORD2
-isDouble	KEYWORD2
-isTriple	KEYWORD2
+tick			KEYWORD2
+isPress			KEYWORD2
+isRelease		KEYWORD2
+isHolded		KEYWORD2
+isHold			KEYWORD2
+hasClicks		KEYWORD2
+getClicks		KEYWORD2
+isSingle		KEYWORD2
+isDouble		KEYWORD2
+isTriple		KEYWORD2
+isIncr			KEYWORD2
+setIncrStep		KEYWORD2
+setIncrTimeout	KEYWORD2
+getIncr			KEYWORD2
