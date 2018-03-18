@@ -70,9 +70,9 @@
 #define _t 0x78
 #define _u 0x1c
 #define _y 0x6e
-#define _- 0x40
-#define __ 0x08
-#define _= 0x48
+#define _dash 0x40
+#define _under 0x08
+#define _equal 0x48
 #define _empty 0x00
 
 #define _0 0x3f
