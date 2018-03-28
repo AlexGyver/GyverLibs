@@ -1,0 +1,23 @@
+#######################################
+# Syntax Coloring Map For GyverHacks
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+GTimer		KEYWORD1
+GFilterRA	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+setInterval		KEYWORD2
+isReady			KEYWORD2
+reset			KEYWORD2
+
+setCoef			KEYWORD2
+setStep			KEYWORD2
+filteredTime	KEYWORD2
+filtered		KEYWORD2

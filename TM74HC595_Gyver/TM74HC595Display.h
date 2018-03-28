@@ -2,6 +2,9 @@
   TM74HC595Display.h - Library for use 4LED display with 2 TM74HC595.
   Created by Kostarev V., February 23, 2016.
   Updated by AlexGyver 06.02.2017 (added float_dot and int_dot functions)
+  
+  Подробное описание здесь http://alexgyver.ru/tm74hc595_display/
+  Текущая версия: 1.1 от 29.03.2018
 */
 #ifndef TM74HC595Display_h
 #define TM74HC595Display_h
