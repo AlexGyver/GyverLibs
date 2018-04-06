@@ -18,42 +18,36 @@ void Encoder::invert() {
 }
 
 void Encoder::setCounters(int norm, int hold) {
-	_norm = norm;
-	_hold = hold;
+	normCount = norm;
+	holdCount = hold;
 }
 void Encoder::setCounterNorm(int norm) {
-	_norm = norm;
+	normCount = norm;
 }
 void Encoder::setCounterHold(int hold) {
-	_hold = hold;
+	holdCount = hold;
 }
 
 void Encoder::setSteps(int norm_step, int hold_step) {
-	_norm_step = norm_step;
-	_hold_step = hold_step;
+	normCount_step = norm_step;
+	holdCount_step = hold_step;
 }
 void Encoder::setStepNorm(int norm_step) {
-	_norm_step = norm_step;
+	normCount_step = norm_step;
 }
 void Encoder::setStepHold(int hold_step) {
-	_hold_step = hold_step;
+	holdCount_step = hold_step;
 }
 
 void Encoder::setLimitsNorm(int normMin, int normMax) {
-	_normMin = normMin;
-	_normMax = normMax;
+	normCountMin = normMin;
+	normCountMax = normMax;
 }
 void Encoder::setLimitsHold(int holdMin, int holdMax) {
-	_holdMin = holdMin;
-	_holdMax = holdMax;
+	holdCountMin = holdMin;
+	holdCountMax = holdMax;
 }
 
-int Encoder::getNorm() {
-	return _norm;
-}
-int Encoder::getHold() {
-	return _hold;
-}
 boolean Encoder::isTurn() {
 	if (isTurn_f) {
 		isTurn_f = false;
@@ -147,27 +141,27 @@ void Encoder::tick() {
   if (DT_now != DT_last) {            // если предыдущее и текущее положение CLK разные, значит был поворот
     if (digitalRead(_DT) != DT_now) {  // если состояние DT отличается от CLK, значит крутим по часовой стрелке
       if (SW_state) {           // если кнопка энкодера нажата
-        _hold += _hold_step;
+        holdCount += holdCount_step;
 		isRightH_f = true;
 		isLeftH_f = false;
       } else {                  // если кнопка энкодера не нажата
-        _norm += _norm_step;
+        normCount += normCount_step;
         isRight_f = true;
 		isLeft_f = false;
       }
     } else {                          // если совпадают, значит против часовой
       if (SW_state) {           // если кнопка энкодера нажата
-        _hold -= _hold_step;
+        holdCount -= holdCount_step;
 		isLeftH_f = true;
 		isRightH_f = false;
       } else {                  // если кнопка энкодера не нажата
-        _norm -= _norm_step;
+        normCount -= normCount_step;
         isLeft_f = true;
 		isRight_f = false;
       }
     }
-	_norm = constrain(_norm, _normMin, _normMax);
-	_hold = constrain(_hold, _holdMin, _holdMax);
+	normCount = constrain(normCount, normCountMin, normCountMax);
+	holdCount = constrain(holdCount, holdCountMin, holdCountMax);
     turn_flag = true;                    // флаг что был поворот ручки энкодера
 	isTurn_f = true;
   }

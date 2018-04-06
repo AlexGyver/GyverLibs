@@ -6,7 +6,7 @@ GButton::GButton(uint8_t BUTT) {
   _debounce = 80;
   _timeout = 500;
   _incr_timeout = 800;
-  _incr_step = 1;
+  step = 1;
   pinMode (_BUTT, INPUT_PULLUP);
 }
 
@@ -17,7 +17,7 @@ void GButton::setTimeout(uint16_t timeout) {
 	_timeout = timeout;
 }
 void GButton::setIncrStep(int16_t incr_step) {
-	_incr_step = incr_step;
+	step = incr_step;
 }
 void GButton::setIncrTimeout(uint16_t incr_timeout) {
 	_incr_timeout = incr_timeout;
@@ -81,7 +81,7 @@ int16_t GButton::getIncr(int16_t incr_value) {
 	if (isHold_f && (millis() - incr_timer > _incr_timeout)) {
 		incr_timer = millis();
 		incr_flag = true;
-		return (incr_value + _incr_step);	
+		return (incr_value + step);	
 	} else return incr_value;
 }
 

@@ -41,6 +41,8 @@ class GButton
 	void setIncrTimeout(uint16_t incr_timeout);
 	int16_t getIncr(int16_t incr_value);
 	
+	int16_t step;
+	
   private:
     uint8_t _BUTT;
 	uint8_t _debounce;
@@ -48,8 +50,7 @@ class GButton
 	uint8_t btn_counter, last_counter;
 	boolean btn_state, btn_flag, hold_flag, counter_flag;
 	uint32_t btn_timer, incr_timer;	
-	boolean isHold_f, isHolded_f, isRelease_f, isPress_f, incr_flag;
-	int16_t _incr_step;
+	boolean isHold_f, isHolded_f, isRelease_f, isPress_f, incr_flag;	
 	uint16_t _incr_timeout;
 };
  

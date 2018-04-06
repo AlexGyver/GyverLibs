@@ -21,15 +21,15 @@ setLimitsHold	KEYWORD1
 # Methods and Functions (KEYWORD2)
 #######################################
 
-tick	KEYWORD2
-getNorm	KEYWORD2
-getHold	KEYWORD2
-isTurn	KEYWORD2
-isRight	KEYWORD2
-isLeft	KEYWORD2
+tick		KEYWORD2
+normCount	KEYWORD2
+holdCount	KEYWORD2
+isTurn		KEYWORD2
+isRight		KEYWORD2
+isLeft		KEYWORD2
 isRightH	KEYWORD2
-isLeftH	KEYWORD2
-isPress	KEYWORD2
+isLeftH		KEYWORD2
+isPress		KEYWORD2
 isRelease	KEYWORD2
 isHolded	KEYWORD2
-isHold	KEYWORD2
+isHold		KEYWORD2

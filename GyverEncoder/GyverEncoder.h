@@ -33,9 +33,6 @@ class Encoder
 	void invert();	
 	void tick();
 	
-	int getNorm();
-	int getHold();
-	
 	boolean isTurn();	
 	
 	boolean isRight();
@@ -48,16 +45,17 @@ class Encoder
     boolean isHolded();
 	boolean isHold();
 	
+	int normCount, holdCount;
+	
   private:
     byte _CLK, _DT, _SW;
 	
     boolean DT_now, DT_last, SW_state, hold_flag, butt_flag, turn_flag;
 	boolean isRight_f, isLeft_f, isRightH_f, isLeftH_f, isTurn_f;
-	boolean isPress_f, isRelease_f, isHolded_f, isHold_f;
+	boolean isPress_f, isRelease_f, isHolded_f, isHold_f;	
 	
-	int _norm, _hold;
-	int _normMin, _normMax, _holdMin, _holdMax;
-	uint8_t _norm_step, _hold_step;
+	int normCountMin, normCountMax, holdCountMin, holdCountMax;
+	uint8_t normCount_step, holdCount_step;
 	
 	unsigned long debounce_timer;
 };

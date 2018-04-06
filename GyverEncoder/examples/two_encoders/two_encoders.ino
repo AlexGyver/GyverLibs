@@ -23,6 +23,6 @@ void loop() {
   enc1.tick();
   enc2.tick();
   
-  if (enc1.isTurn()) Serial.println(enc1.getNorm());  // получить счётчик обычный
-  if (enc2.isTurn()) Serial.println(enc2.getNorm());  // получить счётчик обычный  
+  if (enc1.isTurn()) Serial.println(enc1.normCount);  // получить счётчик обычный
+  if (enc2.isTurn()) Serial.println(enc2.normCount);  // получить счётчик обычный  
 }

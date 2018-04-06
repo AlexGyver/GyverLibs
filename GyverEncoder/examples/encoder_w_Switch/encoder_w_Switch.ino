@@ -29,9 +29,9 @@ void loop() {
   enc1.tick();
   
   if (enc1.isTurn()) {             // если был совершён поворот
-    Serial.print(enc1.getNorm());  // получить счётчик обычный
+    Serial.print(enc1.normCount);  // получить счётчик обычный
     Serial.print(" ");
-    Serial.println(enc1.getHold()); // получить счётчик при нажатой кнопке
+    Serial.println(enc1.holdCount); // получить счётчик при нажатой кнопке
   }
   if (enc1.isRight()) Serial.println("Right");         // если был поворот
   if (enc1.isLeft()) Serial.println("Left");

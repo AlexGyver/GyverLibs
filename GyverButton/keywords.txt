@@ -28,3 +28,4 @@ isIncr			KEYWORD2
 setIncrStep		KEYWORD2
 setIncrTimeout	KEYWORD2
 getIncr			KEYWORD2
+step			KEYWORD2
