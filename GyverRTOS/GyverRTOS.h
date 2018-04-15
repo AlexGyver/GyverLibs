@@ -1,6 +1,7 @@
 #ifndef GyverRTOS_h
 #define GyverRTOS_h
 #include <Arduino.h>
+#include "LowPower.h"
 
 /*
 	GyverRTOS - система реального времени для Arduino
@@ -11,7 +12,7 @@
     пробуждении на время сна (SLEEP_PERIOD) В ХОЛОСТОМ РЕЖИМЕ
     - Выполнение функций занимает время, поэтому ЕСЛИ ВЫПОЛНЯЕТСЯ ЗАДАЧА,
     время выполнения тоже автоматически суммируется в mainTimer
-    - Мы создаём несколько функций с разным периодом выполнения (задачи)
+    - МЫ создаём несколько функций с разным периодом выполнения (задачи)
     - Настраиваем период пробуждения системы (минимально 15 мс)
     Далее всё автоматически:
     - Рассчитывается время до выполнения самой "ближней" задачи
@@ -36,6 +37,7 @@ class GRTOS
 	void attachList(task newList);
 	void tick(uint32_t* buf);
 	void wake(uint32_t* buf, uint32_t* mainTimer);
+	void tickAndSleep(uint32_t* buf, uint32_t* mainTimer, period_t SLEEP_PERIOD);
 	boolean ready;
 	
   private:
@@ -75,6 +77,25 @@ void GRTOS::setPeriod(uint8_t period) {
 		case 9: _period = 8000;
 		break;
 	}
+}
+
+void GRTOS::tickAndSleep(uint32_t* buf, uint32_t* mainTimer, period_t SLEEP_PERIOD) {
+	if (ready) {
+		_loopTime = millis();
+		*buf = 4294967295;
+		_taskList();
+		_timer = *buf;		
+	}
+	LowPower.powerDown(SLEEP_PERIOD, ADC_OFF, BOD_OFF);
+	uint32_t step;
+	if (ready) {
+		step = (_period + (long)millis() - _loopTime);
+		ready = false;
+	}
+	else step = _period;
+	*mainTimer += step;
+	_timer -= step;
+	if (_timer < 0) ready = true;
 }
 
 void GRTOS::tick(uint32_t* buf) {

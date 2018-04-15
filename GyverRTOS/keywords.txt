@@ -17,6 +17,7 @@ setPeriod		KEYWORD2
 attachList		KEYWORD2
 tick			KEYWORD2
 wake			KEYWORD2
+tickAndSleep	KEYWORD2
 
 tick			KEYWORD2
 attachTask		KEYWORD2
