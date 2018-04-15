@@ -1,0 +1,24 @@
+#######################################
+# Syntax Coloring Map For GyverRTOS
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+GRTOS			KEYWORD1
+Gtask			KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+setPeriod		KEYWORD2
+attachList		KEYWORD2
+tick			KEYWORD2
+wake			KEYWORD2
+
+tick			KEYWORD2
+attachTask		KEYWORD2
+setTaskPeriod	KEYWORD2
+resetTimer		KEYWORD2
