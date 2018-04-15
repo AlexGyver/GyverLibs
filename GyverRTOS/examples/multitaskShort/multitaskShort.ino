@@ -1,6 +1,9 @@
 #include "GyverRTOS.h"
 #include "LowPower.h"
 
+// для более точной настройки режимов энергосбережения ковырять тут:
+// GyverRTOS.h, строка 89
+
 #define SLEEP_PERIOD SLEEP_15MS
 /*
   SLEEP_15MS - 15 ms sleep
