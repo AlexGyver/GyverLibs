@@ -23,4 +23,5 @@ filteredTime	KEYWORD2
 filtered		KEYWORD2
 
 parsingStream	KEYWORD2
+sendPacket		KEYWORD2
 dataReady		KEYWORD2

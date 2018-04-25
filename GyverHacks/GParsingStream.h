@@ -28,6 +28,16 @@ void parsingStream(int *incData) {
   }
 }
 
+void sendPacket(int *intData, uint8_t size) {
+	byte n = size / sizeof(intData[0]);
+	Serial.print('$');
+	for (byte i = 0; i < n; i++) {  // выводим элементы массива
+      Serial.print(intData[i]);
+	  if (i < (n - 1)) Serial.print(" ");
+    }
+	Serial.println(';');
+}
+
 boolean dataReady() {
 	if (_recievedFlag) {
 		_recievedFlag = false;
