@@ -21,3 +21,6 @@ setCoef			KEYWORD2
 setStep			KEYWORD2
 filteredTime	KEYWORD2
 filtered		KEYWORD2
+
+parsingStream	KEYWORD2
+dataReady		KEYWORD2
