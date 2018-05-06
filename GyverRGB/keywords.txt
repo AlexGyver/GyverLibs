@@ -1,0 +1,18 @@
+#######################################
+# Syntax Coloring Map For GyverRGB
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+GRGB		KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+init		KEYWORD2
+setRGB		KEYWORD2
+setHSV		KEYWORD2
+setHSV_fast	KEYWORD2
