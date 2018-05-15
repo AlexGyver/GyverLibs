@@ -16,3 +16,4 @@ init		KEYWORD2
 setRGB		KEYWORD2
 setHSV		KEYWORD2
 setHSV_fast	KEYWORD2
+reverse		KEYWORD2

@@ -17,54 +17,37 @@ void GRGB::init() {
 	analogWrite(_b, 0);
 }
 
-void GRGB::setRGB(uint8_t R, uint8_t G, uint8_t B) {
-	analogWrite(_r, R);
-	analogWrite(_g, G);
-	analogWrite(_b, B);
+void GRGB::reverse(boolean rev) {
+	_reverse_flag = rev;
 }
 
-void GRGB::setHSV_fast(uint8_t h, uint8_t s, uint8_t v) {
-	uint8_t r, g, b;
-    uint8_t region, remainder, p, q, t;
+void GRGB::setRGB(uint8_t R, uint8_t G, uint8_t B) {
+	if (_reverse_flag) {
+		analogWrite(_r, 255-R);
+		analogWrite(_g, 255-G);
+		analogWrite(_b, 255-B);
+	} else {
+		analogWrite(_r, R);
+		analogWrite(_g, G);
+		analogWrite(_b, B);
+	}	
+}
 
-    if (s == 0)
-    {
-        r = v;
-        g = v;
-        b = v;
-		setRGB(r * 255, g * 255, b * 255);
-        return;
-    }
-
-    region = h / 43;
-    remainder = (h - (region * 43)) * 6; 
-
-    p = (v * (255 - s)) >> 8;
-    q = (v * (255 - ((s * remainder) >> 8))) >> 8;
-    t = (v * (255 - ((s * (255 - remainder)) >> 8))) >> 8;
-
-    switch (region)
-    {
-        case 0:
-            r = v; g = t; b = p;
-            break;
-        case 1:
-            r = q; g = v; b = p;
-            break;
-        case 2:
-            r = p; g = v; b = t;
-            break;
-        case 3:
-            r = p; g = q; b = v;
-            break;
-        case 4:
-            r = t; g = p; b = v;
-            break;
-        default:
-            r = v; g = p; b = q;
-            break;
-    }
-	
+void GRGB::setHSV_fast(uint8_t hue, uint8_t sat, uint8_t val) {
+	byte h = ((24 * hue / 17) / 60) % 6;
+	byte vmin = (long)val - val * sat / 255;
+	byte a = (long)val * sat / 255 * (hue * 24 / 17 % 60) / 60;
+	byte vinc = vmin + a;
+	byte vdec = val - a;
+	byte r, g, b;
+	switch (h) {
+		case 0: r = val; g = vinc; b = vmin; break;
+		case 1: r = vdec; g = val; b = vmin; break;
+		case 2: r = vmin; g = val; b = vinc; break;
+		case 3: r = vmin; g = vdec; b = val; break;
+		case 4: r = vinc; g = vmin; b = val; break;
+		case 5: r = val; g = vmin; b = vdec; break;
+	}	
 	setRGB(r, g, b);
 }
 

@@ -14,11 +14,13 @@ class GRGB
   public:
 	GRGB(uint8_t r, uint8_t g, uint8_t b);
 	void init();
+	void reverse(boolean rev);
 	void setRGB(uint8_t R, uint8_t G, uint8_t B);
 	void setHSV(uint8_t h, uint8_t s, uint8_t v);
 	void setHSV_fast(uint8_t h, uint8_t s, uint8_t v);
   private:
 	uint8_t _r, _g, _b;
+	boolean _reverse_flag;
 };
  
 #endif

@@ -8,8 +8,6 @@ Encoder enc1(CLK, DT, SW);
 void setup() {
   Serial.begin(9600);
   
-  // val1 - переменная изменения при повороте
-  // val2 - переменная изменения при нажатии повороте
   // общая функция setCounters(int norm, int hold);
   enc1.setCounterNorm(0);
   enc1.setCounterHold(50);
