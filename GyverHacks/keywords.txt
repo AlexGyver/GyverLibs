@@ -25,3 +25,5 @@ filtered		KEYWORD2
 parsingStream	KEYWORD2
 sendPacket		KEYWORD2
 dataReady		KEYWORD2
+
+setPWMPrescaler	KEYWORD2
