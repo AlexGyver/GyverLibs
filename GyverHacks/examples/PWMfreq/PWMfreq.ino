@@ -26,10 +26,16 @@
    0x05         128         244
    0x06         256         122
    0x07         1024        30
+   
+   - Pins 3 and 11 are paired on timer0  8bit (Default prescale=64, Freq=977Hz)
+   - Pins 9 and 10 are paired on timer1 16bit (Default prescale=64, Freq=490Hz)
+   - Pins 6 and 13 are paired on timer4 10bit (default prescale=64, Freq=490Hz)
+   - Pins 5 is exclusivly     on timer3 16bit (Default prescale=64, Freq=490Hz)
 */
 
 void setup() {
-  setPWMPrescaler(3, 1024);
+  setPWMPrescaler(3, 1024);		// установить множитель (пин, множитель)
+  analogWrite(3, 200);			// запустить ШИМ
 }
 
 void loop() {
