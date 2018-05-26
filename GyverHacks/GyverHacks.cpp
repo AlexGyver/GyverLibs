@@ -46,6 +46,61 @@ float GFilterRA::filtered(int16_t value) {
 	return _lastValue;
 }
 
+int getVCC() {
+  //reads internal 1V1 reference against VCC
+  #if defined(__AVR_ATtiny84__) || defined(__AVR_ATtiny44__)
+    ADMUX = _BV(MUX5) | _BV(MUX0); // For ATtiny84
+  #elif defined(__AVR_ATtiny85__) || defined(__AVR_ATtiny45__)
+    ADMUX = _BV(MUX3) | _BV(MUX2); // For ATtiny85/45
+  #elif defined(__AVR_ATmega1284P__)
+    ADMUX = _BV(REFS0) | _BV(MUX4) | _BV(MUX3) | _BV(MUX2) | _BV(MUX1);  // For ATmega1284
+  #else
+    ADMUX = _BV(REFS0) | _BV(MUX3) | _BV(MUX2) | _BV(MUX1);  // For ATmega328
+  #endif
+  delay(2); // Wait for Vref to settle
+  ADCSRA |= _BV(ADSC); // Convert
+  while (bit_is_set(ADCSRA, ADSC));
+  uint8_t low = ADCL;
+  unsigned int val = (ADCH << 8) | low;
+  //discard previous result
+  ADCSRA |= _BV(ADSC); // Convert
+  while (bit_is_set(ADCSRA, ADSC));
+  low = ADCL;
+  val = (ADCH << 8) | low;
+  
+  return ((long)1024 * 1100) / val;  
+}
+
+int getVoltage(uint8_t pin) {
+	return (long)(getVCC() * (float)analogRead(pin) / 1024);
+}
+
+float getTemp() {
+  /* from the data sheet
+    Temperature / °C -45°C +25°C +85°C
+    Voltage     / mV 242 mV 314 mV 380 mV
+  */
+  unsigned int wADC;
+  double t;
+  // The internal temperature has to be used
+  // with the internal reference of 1.1V.
+  // Channel 8 can not be selected with
+  // the analogRead function yet.
+  // Set the internal reference and mux.
+  ADMUX = (_BV(REFS1) | _BV(REFS0) | _BV(MUX3));
+  ADCSRA |= _BV(ADEN);  // enable the ADC
+  delay(10);            // wait for voltages to become stable.
+  ADCSRA |= _BV(ADSC);  // Start the ADC
+  // Detect end-of-conversion
+  while (bit_is_set(ADCSRA, ADSC));
+  // Reading register "ADCW" takes care of how to read ADCL and ADCH.
+  wADC = ADCW;
+  // The offset of 324.31 could be wrong. It is just an indication.
+  t = (wADC - 324.31 ) / 1.22;
+  // The returned temperature is in degrees Celsius.
+  return (t);
+}
+
 void setPWMPrescaler(uint8_t pin, uint16_t prescale) {
   byte mode;
   if (pin == 5 || pin == 6 || pin == 9 || pin == 10) {

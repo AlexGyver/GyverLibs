@@ -27,3 +27,6 @@ sendPacket		KEYWORD2
 dataReady		KEYWORD2
 
 setPWMPrescaler	KEYWORD2
+getVCC			KEYWORD2
+getVoltage		KEYWORD2
+getTemp			KEYWORD2
