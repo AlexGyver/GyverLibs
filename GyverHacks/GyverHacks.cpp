@@ -46,6 +46,8 @@ float GFilterRA::filtered(int16_t value) {
 	return _lastValue;
 }
 
+int vcc_const = 1100;
+
 int getVCC() {
   //reads internal 1V1 reference against VCC
   #if defined(__AVR_ATtiny84__) || defined(__AVR_ATtiny44__)
@@ -68,7 +70,11 @@ int getVCC() {
   low = ADCL;
   val = (ADCH << 8) | low;
   
-  return ((long)1024 * 1100) / val;  
+  return ((long)1024 * vcc_const) / val;  
+}
+
+void setConstant(uint16_t voltage) {
+	vcc_const = (long)1100 * voltage / getVCC();
 }
 
 int getVoltage(uint8_t pin) {
@@ -131,4 +137,20 @@ void setPWMPrescaler(uint8_t pin, uint16_t prescale) {
   } else if (pin == 3 || pin == 11) {
     TCCR2B = TCCR2B & 0b11111000 | mode;
   }
+}
+
+int medianFilter(int a, int b, int c) {
+	int middle;
+  if ((a <= b) && (a <= c)) {
+    middle = (b <= c) ? b : c;
+  }
+  else {
+    if ((b <= a) && (b <= c)) {
+      middle = (a <= c) ? a : c;
+    }
+    else {
+      middle = (a <= b) ? a : b;
+    }
+  }
+  return middle;
 }
