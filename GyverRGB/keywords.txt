@@ -12,7 +12,6 @@ GRGB		KEYWORD1
 # Methods and Functions (KEYWORD2)
 #######################################
 
-init		KEYWORD2
 setColor	KEYWORD2
 setRGB		KEYWORD2
 setHSV		KEYWORD2

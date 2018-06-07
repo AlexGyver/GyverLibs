@@ -21,7 +21,6 @@
 GRGB diode(6, 5, 3);  // куда подключены цвета (R, G, B)
 
 void setup() {
-  diode.init();
   diode.reverse(1);   // 1 - инвертировать выход (для LED драйверов)
 }
 

@@ -20,7 +20,7 @@
 GRGB diode(6, 5, 3);  // куда подключены цвета (R, G, B)
 
 void setup() {
-  diode.init();
+  
 }
 
 void loop() {

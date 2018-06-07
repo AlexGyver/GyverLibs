@@ -13,7 +13,6 @@ class GRGB
 {
   public:
 	GRGB(uint8_t r, uint8_t g, uint8_t b);
-	void init();
 	void reverse(boolean rev);
 	void setColor(uint32_t color);
 	void setRGB(uint8_t R, uint8_t G, uint8_t B);

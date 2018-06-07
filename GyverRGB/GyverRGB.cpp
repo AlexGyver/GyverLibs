@@ -5,9 +5,7 @@ GRGB::GRGB(uint8_t r, uint8_t g, uint8_t b) {
 	_r = r;
 	_g = g;
 	_b = b;
-}
-
-void GRGB::init() {
+	
 	pinMode(_r, OUTPUT);
 	pinMode(_g, OUTPUT);
 	pinMode(_b, OUTPUT);

@@ -46,6 +46,23 @@ float GFilterRA::filtered(int16_t value) {
 	return _lastValue;
 }
 
+int medianFilter(int a, int b, int c) {
+	int middle;
+  if ((a <= b) && (a <= c)) {
+    middle = (b <= c) ? b : c;
+  }
+  else {
+    if ((b <= a) && (b <= c)) {
+      middle = (a <= c) ? a : c;
+    }
+    else {
+      middle = (a <= b) ? a : b;
+    }
+  }
+  return middle;
+}
+
+#if defined(__AVR_ATmega328__) || defined(__AVR_ATmega328P__) || defined(__AVR_ATmega168__) || defined(__AVR_ATmega88__)
 int vcc_const = 1100;
 
 int getVCC() {
@@ -138,19 +155,4 @@ void setPWMPrescaler(uint8_t pin, uint16_t prescale) {
     TCCR2B = TCCR2B & 0b11111000 | mode;
   }
 }
-
-int medianFilter(int a, int b, int c) {
-	int middle;
-  if ((a <= b) && (a <= c)) {
-    middle = (b <= c) ? b : c;
-  }
-  else {
-    if ((b <= a) && (b <= c)) {
-      middle = (a <= c) ? a : c;
-    }
-    else {
-      middle = (a <= b) ? a : b;
-    }
-  }
-  return middle;
-}
+#endif
