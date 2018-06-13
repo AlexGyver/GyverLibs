@@ -6,7 +6,7 @@
 #include "TM74HC595Display.h"
 #include <Arduino.h>
 
-unsigned char _LED_0F[39];
+unsigned char _LED_0F[20];
    
 TM74HC595Display::TM74HC595Display(int SCLK, int RCLK, int DIO)
 {
@@ -39,26 +39,6 @@ TM74HC595Display::TM74HC595Display(int SCLK, int RCLK, int DIO)
   _LED_0F[17] = 0b01111000; //.7
   _LED_0F[18] = 0b00000000; //.8
   _LED_0F[19] = 0b00010000; //.9
-
-  _LED_0F[20] = 0x88; //A
-  _LED_0F[21] = 0x83; //b
-  _LED_0F[22] = 0xC6; //C
-  _LED_0F[23] = 0xA1; //d
-  _LED_0F[24] = 0x86; //E
-  _LED_0F[25] = 0x8E; //F
-  _LED_0F[26] = 0xC2; //G
-  _LED_0F[27] = 0x89; //H
-  _LED_0F[28] = 0xF9; //I
-  _LED_0F[29] = 0xF1; //J
-  _LED_0F[30] = 0xC3; //L
-  _LED_0F[31] = 0xA9; //n
-  _LED_0F[32] = 0xC0; //O
-  _LED_0F[33] = 0x8C; //P
-  _LED_0F[34] = 0x98; //q
-  _LED_0F[35] = 0x92; //S
-  _LED_0F[36] = 0xC1; //U
-  _LED_0F[37] = 0x91; //Y
-  _LED_0F[38] = 0xFE; //hight -
   
 	clear();
 }
