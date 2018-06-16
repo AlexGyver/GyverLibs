@@ -16,6 +16,7 @@ setStepNorm		KEYWORD1
 setStepHold		KEYWORD1
 setLimitsNorm	KEYWORD1
 setLimitsHold	KEYWORD1
+setType			KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)

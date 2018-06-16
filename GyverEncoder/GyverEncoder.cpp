@@ -16,7 +16,9 @@ void Encoder::invert() {
 	_CLK = _DT;
 	_DT = lol;
 }
-
+void Encoder::setType(boolean type) {
+	_type = type;
+}
 void Encoder::setCounters(int norm, int hold) {
 	normCount = norm;
 	holdCount = hold;
@@ -139,6 +141,8 @@ void Encoder::tick() {
   }
 
   if (DT_now != DT_last) {            // если предыдущее и текущее положение CLK разные, значит был поворот
+	if (_type) _new_step = !_new_step;
+	if (_new_step) {
     if (digitalRead(_DT) != DT_now) {  // если состояние DT отличается от CLK, значит крутим по часовой стрелке
       if (SW_state) {           // если кнопка энкодера нажата
         holdCount += holdCount_step;
@@ -160,6 +164,7 @@ void Encoder::tick() {
 		isRight_f = false;
       }
     }
+	}
 	normCount = constrain(normCount, normCountMin, normCountMax);
 	holdCount = constrain(holdCount, holdCountMin, holdCountMax);
     turn_flag = true;                    // флаг что был поворот ручки энкодера

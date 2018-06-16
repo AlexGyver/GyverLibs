@@ -32,6 +32,7 @@ class Encoder
 	
 	void invert();	
 	void tick();
+	void setType(boolean type);
 	
 	boolean isTurn();	
 	
@@ -52,7 +53,8 @@ class Encoder
 	
     boolean DT_now, DT_last, SW_state, hold_flag, butt_flag, turn_flag;
 	boolean isRight_f, isLeft_f, isRightH_f, isLeftH_f, isTurn_f;
-	boolean isPress_f, isRelease_f, isHolded_f, isHold_f;	
+	boolean isPress_f, isRelease_f, isHolded_f, isHold_f;
+	boolean _type, _new_step = true;
 	
 	int normCountMin, normCountMax, holdCountMin, holdCountMax;
 	uint8_t normCount_step, holdCount_step;
