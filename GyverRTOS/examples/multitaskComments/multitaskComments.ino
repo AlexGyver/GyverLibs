@@ -41,7 +41,7 @@ uint32_t buf, mainTimer;        // ВАЖНЫЕ переменные!!! (не т
 void setup() {
   Serial.begin(115200);
 
-  // подключаются фунцкии, ставится период их работы в миллисекундах
+  // подключаются функции, ставится период их работы в миллисекундах
   task1.attachTask(action1, 5000);
   task2.attachTask(action2, 3000);
   task3.attachTask(action3, 1000);
