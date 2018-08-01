@@ -1,21 +1,11 @@
+// два энкодера
+
 #include "GyverEncoder.h"
 Encoder enc1(4, 3, 2);
 Encoder enc2(7, 6, 5);
 
 void setup() {
   Serial.begin(9600);
-  
-  // установка начальной точки для поворота
-  enc1.setCounterNorm(0);
-  enc2.setCounterNorm(50);
-
-  // установка шага при повороте
-  enc1.setStepNorm(1);
-  enc2.setStepNorm(5);
-
-  // устанвока пределов
-  enc1.setLimitsNorm(0, 10);
-  enc2.setLimitsNorm(0, 100);
 }
 
 void loop() {
@@ -23,6 +13,8 @@ void loop() {
   enc1.tick();
   enc2.tick();
   
-  if (enc1.isTurn()) Serial.println(enc1.normCount);  // получить счётчик обычный
-  if (enc2.isTurn()) Serial.println(enc2.normCount);  // получить счётчик обычный  
+  if (enc1.isLeft()) Serial.println("enc 1 left");
+  if (enc1.isRight()) Serial.println("enc 1 right");
+  if (enc2.isLeft()) Serial.println("enc 2 left");
+  if (enc2.isRight()) Serial.println("enc 2 right");
 }

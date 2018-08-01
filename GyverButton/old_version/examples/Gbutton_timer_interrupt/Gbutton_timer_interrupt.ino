@@ -37,9 +37,6 @@ void timerIsr() {   // прерывание таймера
 }
 
 void loop() {
-  butt1.tick();  // обязательная функция отработки. Должна постоянно опрашиваться
-
-  if (butt1.isClick()) Serial.println("Click");         // проверка на один клик
   if (butt1.isSingle()) Serial.println("Single");       // проверка на один клик
   if (butt1.isDouble()) Serial.println("Double");       // проверка на двойной клик
   if (butt1.isTriple()) Serial.println("Triple");       // проверка на тройной клик
@@ -52,8 +49,8 @@ void loop() {
   if (butt1.isHolded()) Serial.println("Holded");       // проверка на удержание
   //if (butt1.isHold()) Serial.println("Hold");         // возвращает состояние кнопки
 
-  if (butt1.isStep()) {                                 // если кнопка была удержана (это для инкремента)
-    value++;                                            // увеличивать/уменьшать переменную value с шагом и интервалом
-    Serial.println(value);                              // для примера выведем в порт
+  if (butt1.isIncr()) {                                 // если кнопка была удержана (это для инкремента)
+    value = butt1.getIncr(value);                       // увеличивать/уменьшать переменную value с шагом и интервалом
+    Serial.println(value);      // для примера выведем в порт
   }
 }

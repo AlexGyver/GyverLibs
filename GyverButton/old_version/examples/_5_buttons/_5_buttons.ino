@@ -26,9 +26,9 @@ void loop() {
   butt4.tick();
   butt5.tick();
 
-  if (butt1.isClick()) Serial.println("Button 1");
-  if (butt2.isClick()) Serial.println("Button 2");
-  if (butt3.isClick()) Serial.println("Button 3");
-  if (butt4.isClick()) Serial.println("Button 4");
-  if (butt5.isClick()) Serial.println("Button 5");
+  if (butt1.isSingle()) Serial.println("Button 1");
+  if (butt2.isSingle()) Serial.println("Button 2");
+  if (butt3.isSingle()) Serial.println("Button 3");
+  if (butt4.isSingle()) Serial.println("Button 4");
+  if (butt5.isSingle()) Serial.println("Button 5");
 }

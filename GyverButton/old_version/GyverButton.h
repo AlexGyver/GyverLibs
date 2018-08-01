@@ -3,7 +3,7 @@
 #include <Arduino.h>
 
 /*
-Текущая версия: 2.0 от 01.08.2018
+Текущая версия: 1.1 от 29.03.2018
 GyverButton - библиотека для полной отработки нажатия кнопки. Возможности:
 Опрос кнопки с программным антидребезгом контактов
 Отработка нажатия, удерживания отпускания кнопки
@@ -22,14 +22,12 @@ class GButton
     GButton(uint8_t BUTT);	
 	void setDebounce(uint8_t debounce);
 	void setTimeout(uint16_t timeout);	
-	void setStepTimeout(uint16_t step_timeout);
 	void tick();
 	
 	boolean isPress();
 	boolean isRelease();
     boolean isHolded();
 	boolean isHold();
-	boolean isClick();
 	
 	boolean hasClicks();
 	uint8_t getClicks();
@@ -38,7 +36,12 @@ class GButton
 	boolean isDouble();
 	boolean isTriple();
 	
-	boolean isStep();
+	boolean isIncr();
+	void setIncrStep(int16_t incr_step);
+	void setIncrTimeout(uint16_t incr_timeout);
+	int16_t getIncr(int16_t incr_value);
+	
+	int16_t step;
 	
   private:
     uint8_t _BUTT;
@@ -46,9 +49,9 @@ class GButton
 	uint16_t _timeout;
 	uint8_t btn_counter, last_counter;
 	boolean btn_state, btn_flag, hold_flag, counter_flag;
-	uint32_t btn_timer, step_timer;	
-	boolean isHold_f, isHolded_f, isRelease_f, isPress_f, step_flag, oneClick_f, isOne_f;	
-	uint16_t _step_timeout;
+	uint32_t btn_timer, incr_timer;	
+	boolean isHold_f, isHolded_f, isRelease_f, isPress_f, incr_flag;	
+	uint16_t _incr_timeout;
 };
  
 #endif
