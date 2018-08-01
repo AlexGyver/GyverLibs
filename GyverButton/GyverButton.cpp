@@ -43,8 +43,8 @@ boolean GButton::isHolded() {
 		return true;
 	} else return false;
 }
-boolean GButton::isHold() {
-	if (isHold_f) return true;
+boolean GButton::state() {
+	if (_state) return true;
 	else return false;
 }
 boolean GButton::isSingle() {
@@ -76,17 +76,21 @@ uint8_t GButton::getClicks() {
 }
 
 boolean GButton::isStep() {
-	if (step_flag && (millis() - step_timer > _step_timeout)) {
-		step_timer = millis();
+	if (step_flag && (millis() - btn_timer > _step_timeout)) {
+		btn_timer = millis();
 		return true;
 	}
+	else return false;
+}
+boolean GButton::isHold() {
+	if (step_flag) return true;
 	else return false;
 }
 
 void GButton::tick() {	
 	btn_state = !digitalRead(_BUTT);
-	if (btn_state) isHold_f = true;
-	else isHold_f = false;
+	if (btn_state) _state = true;
+	else _state = false;
 	
   if (btn_state && !btn_flag && (millis() - btn_timer > _debounce)) {
     btn_flag = true;
@@ -111,7 +115,8 @@ void GButton::tick() {
     btn_counter = 0;
     isHolded_f = true;
 	step_flag = true;
-	step_timer = millis();
+	oneClick_f = false;
+	btn_timer = millis();
   }
   
   if ((millis() - btn_timer > _timeout) && (btn_counter != 0)) {    

@@ -27,9 +27,10 @@ class GButton
 	
 	boolean isPress();
 	boolean isRelease();
+	boolean isClick();
     boolean isHolded();
 	boolean isHold();
-	boolean isClick();
+	boolean state();
 	
 	boolean hasClicks();
 	uint8_t getClicks();
@@ -46,8 +47,8 @@ class GButton
 	uint16_t _timeout;
 	uint8_t btn_counter, last_counter;
 	boolean btn_state, btn_flag, hold_flag, counter_flag;
-	uint32_t btn_timer, step_timer;	
-	boolean isHold_f, isHolded_f, isRelease_f, isPress_f, step_flag, oneClick_f, isOne_f;	
+	uint32_t btn_timer;	
+	boolean _state, isHolded_f, isRelease_f, isPress_f, step_flag, oneClick_f, isOne_f;	
 	uint16_t _step_timeout;
 };
  

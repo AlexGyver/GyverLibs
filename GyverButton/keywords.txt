@@ -21,6 +21,7 @@ isRelease		KEYWORD2
 isClick			KEYWORD2
 isHolded		KEYWORD2
 isHold			KEYWORD2
+state			KEYWORD2
 hasClicks		KEYWORD2
 getClicks		KEYWORD2
 isSingle		KEYWORD2
