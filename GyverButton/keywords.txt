@@ -10,6 +10,7 @@ GyverButton		KEYWORD1
 GButton			KEYWORD1
 setDebounce		KEYWORD1
 setTimeout		KEYWORD1
+setStepTimeout	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
@@ -28,4 +29,3 @@ isSingle		KEYWORD2
 isDouble		KEYWORD2
 isTriple		KEYWORD2
 isStep			KEYWORD2
-setStepTimeout	KEYWORD2
