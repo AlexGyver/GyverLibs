@@ -2,27 +2,41 @@
 #define GyverHacks_h
 #include <Arduino.h>
 
+#define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+
 /*
 Текущая версия: 1.2 от 20.05.2018
-GyverHacks - библиотека с некоторыми удобными хаками:
-	GTimer - компактная альтернатива конструкции таймера с millis()
-		Настройка периода вызова
-		Сброс
-	GFilterRA - компактная альтернатива фильтра бегущее среднее (Running Average)
-		Настройка коэффициента фильтрации
-		Настройка шага дискретизации (период фильтрафии) - встроенный таймер!
-	medianFilter(a, b, c) - получить среднее из трёх (медианный фильтр)
-	setPWMPrescaler(pin, prescaler) - настройка частоты ШИМ для атмеги328
-	getVCC() - получить напряжение питания в милливольтах (мВ)
-	getVoltage(pin) - получить напряжение на аналоговом пине с учётом реального питания (мВ)
-	setConstant(voltage) - авто калибровка константы. В функцию подать напряжение питания в мВ (смотри пример)
-	getTemp - получить примерную температуру ядра
+	GyverHacks - библиотека с некоторыми удобными хаками:
+		GTimer - компактная альтернатива конструкции таймера с millis()
+			Класс GTimer (period) - установка периода в миллисекундах
+			setInterval(period) - изменение периода вызова
+			isReady() - возвращает true, когда таймер сработал. Возвращает false до следующего срабатывания
+			reset() - сброс
+		GFilterRA - компактная альтернатива фильтра бегущее среднее (Running Average)
+			Класс GFilterRA
+			setCoef(coef) - настройка коэффициента фильтрации (0.00 - 1.00)
+			setStep (step) - настройка шага дискретизации (период фильтрации) - встроенный таймер! миллисекунды
+			filtered(value) - возвращает фильтрованное значение
+			filteredTime(value) - возвращает фильтрованное с опорой на встроенный таймер
+		GParsingStream - парсинг данных из Serial
+			parsingStream((int*)&intData) - автоматическая расфасовка пакетов вида $110 25 600 920; в массив intData
+			dataReady() - функция-флаг принятия нового пакета данных
+			sendPacket((int*)&intData, sizeof(intData)) - функция отправки в порт пакета вида $110 25 600 920; из массива
+		Меняем частоту ШИМ
+			setPWM10bit(mode) - настройка ШИМ для 9 и 10 пинов (timer 1) на 10 бит (analogWrite 0 - 1023). mode:
+				0: частота 15,26 Гц
+				1: частота 61,04 Гц
+				2: частота 244,14 Гц
+				3: частота 1 953,13 Гц
+				4: частота 15 625 Гц
+			setPWMPrescaler(pin, prescaler) - установка частоты ШИМ для разных пинов (смотри пример!)
+		Дополнительно - несколько клёвых удобных функций
+			medianFilter(a, b, c) - получить среднее из трёх (медианный фильтр)
+			getVCC() - получить напряжение питания в милливольтах, т.е. опорное напряжение. Например с банки лития
+			getVoltage(pin) - получить напряжение на аналоговом пине с учётом реального напряжения питания
+			setConstant(voltage) - авто калибровка константы (слегка различается в разных партиях микроконтроллеров). В функцию подать напряжение питания в мВ (смотри пример!!)
+			getTemp() - получить примерную температуру ядра процессора
 */
-
-int getVCC();
-void setConstant(uint16_t voltage);
-int getVoltage(uint8_t pin);
-float getTemp();
 
 class GTimer
 {
@@ -53,7 +67,13 @@ class GFilterRA
 	uint16_t _filterInterval;
 };
 
+int getVCC();
+void setConstant(uint16_t voltage);
+int getVoltage(uint8_t pin);
+float getTemp();
 void setPWMPrescaler(uint8_t pin, uint16_t prescale);
+void setPWM10bit(uint8_t mode);
+void fastAnalogWrite(uint8_t pin, uint8_t duty);
 
 /*
    НАСТРОЙКА ЧАСТОТЫ ШИМ (частоты приведены для 16 МГц кварца)
@@ -87,6 +107,72 @@ void setPWMPrescaler(uint8_t pin, uint16_t prescale);
    - Pins 9 and 10 are paired on timer1 16bit (Default prescale=64, Freq=490Hz)
    - Pins 6 and 13 are paired on timer4 10bit (default prescale=64, Freq=490Hz)
    - Pins 5 is exclusivly     on timer3 16bit (Default prescale=64, Freq=490Hz)
+*/
+
+/*
+ИЛИ
+Для того, чтобы задать нужный режим ШИМ на выводах 9 и 10 (Timer 1), 
+необходимо разместить две соответствующие строки в функцию setup()
+
+8 бит, 62 500 Гц 
+TCCR1A = TCCR1A & 0xe0 | 1;
+TCCR1B = TCCR1B & 0xe0 | 0x09; 
+
+8 бит, 7 812,5 Гц 
+TCCR1A = TCCR1A & 0xe0 | 1;
+TCCR1B = TCCR1B & 0xe0 | 0x0a;
+
+8 бит, 976,56 Гц 
+TCCR1A = TCCR1A & 0xe0 | 1;
+TCCR1B = TCCR1B & 0xe0 | 0x0b; 
+
+8 бит, 244,14 Гц 
+TCCR1A = TCCR1A & 0xe0 | 1;
+TCCR1B = TCCR1B & 0xe0 | 0x0c; 
+
+8 бит, 61,04 Гц 
+TCCR1A = TCCR1A & 0xe0 | 1;
+TCCR1B = TCCR1B & 0xe0 | 0x0d; 
+
+9 бит, 31 250 Гц 
+TCCR1A = TCCR1A & 0xe0 | 2;
+TCCR1B = TCCR1B & 0xe0 | 0x09; 
+
+9 бит, 3 906,25 Гц 
+TCCR1A = TCCR1A & 0xe0 | 2;
+TCCR1B = TCCR1B & 0xe0 | 0x0a; 
+
+9 бит, 488,28 Гц 
+TCCR1A = TCCR1A & 0xe0 | 2;
+TCCR1B = TCCR1B & 0xe0 | 0x0b; 
+
+9 бит, 122,07 Гц 
+TCCR1A = TCCR1A & 0xe0 | 2;
+TCCR1B = TCCR1B & 0xe0 | 0x0c; 
+
+9 бит, 30,52 Гц 
+TCCR1A = TCCR1A & 0xe0 | 2;
+TCCR1B = TCCR1B & 0xe0 | 0x0d; 
+
+10 бит, 15 625 Гц 
+TCCR1A = TCCR1A & 0xe0 | 3;
+TCCR1B = TCCR1B & 0xe0 | 0x09; 
+
+10 бит, 1 953,13 Гц 
+TCCR1A = TCCR1A & 0xe0 | 3;
+TCCR1B = TCCR1B & 0xe0 | 0x0a; 
+
+10 бит, 244,14 Гц 
+TCCR1A = TCCR1A & 0xe0 | 3;
+TCCR1B = TCCR1B & 0xe0 | 0x0b; 
+
+10 бит, 61,04 Гц 
+TCCR1A = TCCR1A & 0xe0 | 3;
+TCCR1B = TCCR1B & 0xe0 | 0x0c; 
+
+10 бит, 15,26 Гц
+TCCR1A = TCCR1A & 0xe0 | 3;
+TCCR1B = TCCR1B & 0xe0 | 0x0d;
 */
 
 

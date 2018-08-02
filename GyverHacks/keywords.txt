@@ -33,3 +33,4 @@ getVoltage		KEYWORD2
 setConstant		KEYWORD2
 getTemp			KEYWORD2
 medianFilter	KEYWORD2
+fastAnalogWrite	KEYWORD2

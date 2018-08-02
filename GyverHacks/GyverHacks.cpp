@@ -124,6 +124,17 @@ float getTemp() {
   return (t);
 }
 
+void setPWM10bit(uint8_t mode) {
+	TCCR1A = TCCR1A & 0xe0 | 3;		// ставим 10 бит
+	switch (mode) {
+		case 0: TCCR1B = TCCR1B & 0xe0 | 0x0d; break;
+		case 1: TCCR1B = TCCR1B & 0xe0 | 0x0c; break;
+		case 2: TCCR1B = TCCR1B & 0xe0 | 0x0b; break;
+		case 3: TCCR1B = TCCR1B & 0xe0 | 0x0a; break;
+		case 4: TCCR1B = TCCR1B & 0xe0 | 0x09; break;
+	}
+}
+
 void setPWMPrescaler(uint8_t pin, uint16_t prescale) {
   byte mode;
   if (pin == 5 || pin == 6 || pin == 9 || pin == 10) {
@@ -154,5 +165,41 @@ void setPWMPrescaler(uint8_t pin, uint16_t prescale) {
   } else if (pin == 3 || pin == 11) {
     TCCR2B = TCCR2B & 0b11111000 | mode;
   }
+}
+
+void fastAnalogWrite(uint8_t pin, uint8_t duty) {
+	if (duty == 0) digitalWrite(pin, LOW);
+	else if (duty == 255) digitalWrite(pin, HIGH);
+	else 
+	{
+		switch (pin) {
+		case 5:
+		sbi(TCCR0A, COM0B1);
+		OCR0B = duty;
+		break;
+		case 6:
+		sbi(TCCR0A, COM0A1);
+		OCR0A = duty;
+		break;
+		case 10:
+		sbi(TCCR1A, COM1B1);
+		OCR1B = duty;
+		break;
+		case 9:
+		sbi(TCCR1A, COM1A1);
+		OCR1A = duty;
+		break;
+		case 3:
+		sbi(TCCR2A, COM2B1);
+		OCR2B = duty;
+		break;
+		case 11:
+		sbi(TCCR2A, COM2A1);
+		OCR2A = duty;
+		break;
+		default:
+		break;
+		}
+	}
 }
 #endif
