@@ -19,7 +19,7 @@ void GRGB::reverse(boolean rev) {
 	_reverse_flag = rev;
 }
 
-void GRGB::setColor(uint32_t color) {
+void GRGB::setHEX(uint32_t color) {
 	byte r = (color >> 16) & 0xff;
 	byte g = (color >> 8) & 0xff;
 	byte b = color & 0xff;

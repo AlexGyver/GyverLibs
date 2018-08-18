@@ -12,7 +12,7 @@ GRGB		KEYWORD1
 # Methods and Functions (KEYWORD2)
 #######################################
 
-setColor	KEYWORD2
+setHEX		KEYWORD2
 setRGB		KEYWORD2
 setHSV		KEYWORD2
 setHSV_fast	KEYWORD2
