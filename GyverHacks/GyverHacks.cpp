@@ -5,6 +5,7 @@ GTimer::GTimer() {}
 
 GTimer::GTimer(uint16_t interval) {
 	_interval = interval;
+	_timer = millis() + _interval;
 }
 
 void GTimer::setInterval(uint16_t interval) {
@@ -12,8 +13,8 @@ void GTimer::setInterval(uint16_t interval) {
 }
 
 boolean GTimer::isReady() {
-	if ((long)millis() - _timer >= _interval) {
-		_timer = millis();
+	if ((long)millis() > _timer) {
+		_timer = millis() + _interval;
 		return true;
 	} else {
 		return false;
@@ -21,7 +22,7 @@ boolean GTimer::isReady() {
 }
 
 void GTimer::reset() {
-	_timer = millis();
+	_timer = millis() + _interval;
 }
 
 GFilterRA::GFilterRA() {}
@@ -34,8 +35,8 @@ void GFilterRA::setStep(uint16_t interval) {
 }
 
 float GFilterRA::filteredTime(int16_t value) {
-	if (millis() - _filterTimer >= _filterInterval) {
-		_filterTimer = millis();
+	if (millis() > _filterTimer) {
+		_filterTimer = millis() + _filterInterval;
 		_lastValue = _lastValue * (1 - _coef) + value * _coef;
 	}
 	return _lastValue;
