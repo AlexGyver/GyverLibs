@@ -6,7 +6,7 @@ GButton::GButton(uint8_t BUTT) {
   _debounce = 80;
   _timeout = 500;
   _step_timeout = 400;
-  pinMode (_BUTT, INPUT_PULLUP);
+  pinMode(_BUTT, INPUT_PULLUP);
 }
 
 void GButton::setDebounce(uint8_t debounce) {
@@ -17,6 +17,11 @@ void GButton::setTimeout(uint16_t timeout) {
 }
 void GButton::setStepTimeout(uint16_t step_timeout) {
 	_step_timeout = step_timeout;
+}
+
+void GButton::inverse(boolean inv_state) {
+	_inv_state = inv_state;
+	if (inv_state) pinMode(_BUTT, INPUT);
 }
 
 boolean GButton::isPress() {
@@ -88,7 +93,7 @@ boolean GButton::isHold() {
 }
 
 void GButton::tick() {	
-	btn_state = !digitalRead(_BUTT);
+	btn_state = !digitalRead(_BUTT) ^ _inv_state;
 	if (btn_state) _state = true;
 	else _state = false;
 	

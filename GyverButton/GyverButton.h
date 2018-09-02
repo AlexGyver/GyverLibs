@@ -24,6 +24,7 @@ class GButton
 	void setTimeout(uint16_t timeout);	
 	void setStepTimeout(uint16_t step_timeout);
 	void tick();
+	void inverse(boolean inv_state);
 	
 	boolean isPress();
 	boolean isRelease();
@@ -50,6 +51,7 @@ class GButton
 	uint32_t btn_timer;	
 	boolean _state, isHolded_f, isRelease_f, isPress_f, step_flag, oneClick_f, isOne_f;	
 	uint16_t _step_timeout;
+	boolean _inv_state = false;
 };
  
 #endif

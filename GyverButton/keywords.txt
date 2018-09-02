@@ -29,3 +29,4 @@ isSingle		KEYWORD2
 isDouble		KEYWORD2
 isTriple		KEYWORD2
 isStep			KEYWORD2
+inverse			KEYWORD2
