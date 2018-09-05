@@ -1,0 +1,23 @@
+#######################################
+# Syntax Coloring Map For GyverFilters
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+GFilterRA	KEYWORD1
+GMedian3	KEYWORD1
+GMedian		KEYWORD1
+GABfilter	KEYWORD1
+GKalman		KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+setCoef			KEYWORD2
+setStep			KEYWORD2
+filteredTime	KEYWORD2
+filtered		KEYWORD2
+setParameters	KEYWORD2
