@@ -11,12 +11,13 @@
 void setup() {
   Serial.begin(9600);
 
-  Serial.println(getVCC());         // напряжение питания в милливольтах
-  setConstant(4610);                // пишем сюда реальное напряжение на 5V и GND в милливольтах
-  Serial.println(getVCC());         // напряжение питания в милливольтах с правильной константой
-  Serial.println(getVoltage(0));    // напряжение на аналоговом пине в мВ
-  Serial.println(getTemp());        // температура ядра
-
+  Serial.println(getVCC());         		// напряжение питания в милливольтах
+  float voltage_const = getConstant(4610);  // пишем сюда реальное напряжение на 5V и GND в милливольтах, получаем константу
+  Serial.println(voltage_const);
+  setConstant(voltage_const);
+  Serial.println(getVCC());         		// напряжение питания в милливольтах с правильной константой
+  Serial.println(getVoltage(0));    		// напряжение на аналоговом пине в мВ
+  Serial.println(getTemp());        		// температура ядра
 }
 
 void loop() {
