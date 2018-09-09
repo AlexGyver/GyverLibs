@@ -3,8 +3,9 @@
 #include <Arduino.h>
 
 /*
-Текущая версия: 2.0 от 01.08.2018
+Текущая версия: 2.2 от 10.09.2018
 GyverButton - библиотека для полной отработки нажатия кнопки. Возможности:
+Возможность опрашивать не кнопку, а напрямую давать величину
 Опрос кнопки с программным антидребезгом контактов
 Отработка нажатия, удерживания отпускания кнопки
 Отработка одиночного, двойного и тройного нажатия (вынесено отдельно)
@@ -19,12 +20,13 @@ GyverButton - библиотека для полной отработки наж
 class GButton
 {
   public:
-    GButton(uint8_t BUTT);	
-	void setDebounce(uint8_t debounce);
-	void setTimeout(uint16_t timeout);	
-	void setStepTimeout(uint16_t step_timeout);
+    GButton(uint8_t);	
+	void setDebounce(uint8_t);
+	void setTimeout(uint16_t);	
+	void setStepTimeout(uint16_t);
 	void tick();
-	void inverse(boolean inv_state);
+	void tick(boolean);
+	void inverse(boolean);
 	
 	boolean isPress();
 	boolean isRelease();
@@ -52,6 +54,7 @@ class GButton
 	boolean _state, isHolded_f, isRelease_f, isPress_f, step_flag, oneClick_f, isOne_f;	
 	uint16_t _step_timeout;
 	boolean _inv_state = false;
+	boolean _mode = false;
 };
  
 #endif

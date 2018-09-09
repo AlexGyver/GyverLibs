@@ -3,10 +3,10 @@
 */
 
 #define BTN1 3				// кнопка подключена сюда (PIN --- КНОПКА --- GND)
-#define BTN2 3        // кнопка подключена сюда (PIN --- КНОПКА --- GND)
-#define BTN3 3        // кнопка подключена сюда (PIN --- КНОПКА --- GND)
-#define BTN4 3        // кнопка подключена сюда (PIN --- КНОПКА --- GND)
-#define BTN5 3        // кнопка подключена сюда (PIN --- КНОПКА --- GND)
+#define BTN2 4        // кнопка подключена сюда (PIN --- КНОПКА --- GND)
+#define BTN3 5        // кнопка подключена сюда (PIN --- КНОПКА --- GND)
+#define BTN4 6        // кнопка подключена сюда (PIN --- КНОПКА --- GND)
+#define BTN5 7        // кнопка подключена сюда (PIN --- КНОПКА --- GND)
 
 #include "GyverButton.h"
 GButton butt1(BTN1);

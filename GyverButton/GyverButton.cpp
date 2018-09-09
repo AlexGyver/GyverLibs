@@ -91,11 +91,17 @@ boolean GButton::isHold() {
 	if (step_flag) return true;
 	else return false;
 }
-
+void GButton::tick(boolean state) {
+	_mode = true;
+	btn_state = state ^ _inv_state;
+	GButton::tick();
+	_mode = false;
+}
 void GButton::tick() {	
-	btn_state = !digitalRead(_BUTT) ^ _inv_state;
+	if (!_mode) btn_state = !digitalRead(_BUTT) ^ _inv_state;	
 	if (btn_state) _state = true;
 	else _state = false;
+	
 	
   if (btn_state && !btn_flag && (millis() - btn_timer > _debounce)) {
     btn_flag = true;
