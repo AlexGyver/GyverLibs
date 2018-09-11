@@ -6,15 +6,15 @@
 # Datatypes (KEYWORD1)
 #######################################
 
-Encoder			KEYWORD1
-init			KEYWORD1
-setType			KEYWORD1
+Encoder		KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
 
 tick		KEYWORD2
+setType		KEYWORD2
+invert		KEYWORD2
 isTurn		KEYWORD2
 isRight		KEYWORD2
 isLeft		KEYWORD2
@@ -25,3 +25,10 @@ isPress		KEYWORD2
 isRelease	KEYWORD2
 isHolded	KEYWORD2
 isHold		KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+TYPE1		LITERAL1
+TYPE2		LITERAL1

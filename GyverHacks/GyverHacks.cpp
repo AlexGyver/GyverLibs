@@ -93,7 +93,8 @@ float getTemp() {
   return (t);
 }
 
-void setPWM10bit(uint8_t mode) {
+void setPWM10bit(uint8_t freq) {
+	uint8_t mode = freq;
 	TCCR1A = TCCR1A & 0xe0 | 3;		// ставим 10 бит
 	switch (mode) {
 		case 0: TCCR1B = TCCR1B & 0xe0 | 0x0d; break;

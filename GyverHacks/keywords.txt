@@ -6,7 +6,7 @@
 # Datatypes (KEYWORD1)
 #######################################
 
-GTimer		KEYWORD1
+GTimer			KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
@@ -20,12 +20,22 @@ parsingStream	KEYWORD2
 sendPacket		KEYWORD2
 dataReady		KEYWORD2
 
-setPWMPrescaler	KEYWORD2
-
 getVCC			KEYWORD2
 getVoltage		KEYWORD2
 setConstant		KEYWORD2
 getConstant		KEYWORD2
 getTemp			KEYWORD2
-medianFilter	KEYWORD2
 fastAnalogWrite	KEYWORD2
+setPWM10bit		KEYWORD2
+setPWMPrescaler	KEYWORD2
+
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+HZ_15		LITERAL1
+HZ_61		LITERAL1
+HZ_244		LITERAL1
+KHZ_2		LITERAL1
+KHZ_16		LITERAL1

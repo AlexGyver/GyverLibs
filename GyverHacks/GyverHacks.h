@@ -1,11 +1,18 @@
 #ifndef GyverHacks_h
 #define GyverHacks_h
 #include <Arduino.h>
+#define LIBRARY_VERSION	1.5
 
 #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
 
+#define HZ_15 0
+#define HZ_61 1
+#define HZ_244 2
+#define KHZ_2 3
+#define KHZ_16 4
+
 /*
-Текущая версия: 1.4 от 05.09.2018
+Текущая версия: 1.5 от 12.09.2018
 	GyverHacks - библиотека с некоторыми удобными хаками:
 		GTimer - компактная альтернатива конструкции таймера с millis()
 			Класс GTimer (period) - установка периода в миллисекундах
@@ -17,12 +24,12 @@
 			dataReady() - функция-флаг принятия нового пакета данных
 			sendPacket((int*)&intData, sizeof(intData)) - функция отправки в порт пакета вида $110 25 600 920; из массива
 		Меняем частоту ШИМ
-			setPWM10bit(mode) - настройка ШИМ для 9 и 10 пинов (timer 1) на 10 бит (analogWrite 0 - 1023). mode:
-				0: частота 15,26 Гц
-				1: частота 61,04 Гц
-				2: частота 244,14 Гц
-				3: частота 1 953,13 Гц
-				4: частота 15 625 Гц
+			setPWM10bit(mode) - настройка частоты ШИМ для 9 и 10 пинов (timer 1) на 10 бит (analogWrite 0 - 1023). mode:
+				HZ_15: частота 15,26 Гц
+				HZ_61: частота 61,04 Гц
+				HZ_244: частота 244,14 Гц
+				KHZ_2: частота 1 953,13 Гц
+				KHZ_16: частота 15 625 Гц
 			setPWMPrescaler(pin, prescaler) - установка частоты ШИМ для разных пинов (смотри пример!)
 		Дополнительно - несколько клёвых удобных функций
 			getVCC() - получить напряжение питания в милливольтах, т.е. опорное напряжение. Например с банки лития
@@ -56,7 +63,7 @@ void fastAnalogWrite(uint8_t pin, uint8_t duty);
 
 /*
    НАСТРОЙКА ЧАСТОТЫ ШИМ (частоты приведены для 16 МГц кварца)
-   Ноги 5 и 6 (ВЛИЯЕТ НА millis() и delay() !!!)
+   Ноги 5 и 6, Timer 0 (ВЛИЯЕТ НА millis() и delay() !!!)
    Константа    Делитель    Частота(Гц)
    0x01         1           62500
    0x02         8           7812
@@ -64,7 +71,7 @@ void fastAnalogWrite(uint8_t pin, uint8_t duty);
    0x04         256         244
    0x05         1024        61
 
-   Ноги 9 и 10 (ВЛИЯЕТ НА РАБОТУ SERVO !!!)
+   Ноги 9 и 10, Timer 1 (ВЛИЯЕТ НА РАБОТУ SERVO !!!)
    Константа    Делитель    Частота(Гц)
    0x01         1           31250
    0x02         8           3906
@@ -72,7 +79,7 @@ void fastAnalogWrite(uint8_t pin, uint8_t duty);
    0x04         256         122
    0x05         1024        30
 
-   Ноги 3 и 11
+   Ноги 3 и 11, Timer 2
    Константа    Делитель    Частота(Гц)
    0x01         1           31250
    0x02         8           3906
@@ -81,11 +88,6 @@ void fastAnalogWrite(uint8_t pin, uint8_t duty);
    0x05         128         244
    0x06         256         122
    0x07         1024        30
-   
-   - Pins 3 and 11 are paired on timer0  8bit (Default prescale=64, Freq=977Hz)
-   - Pins 9 and 10 are paired on timer1 16bit (Default prescale=64, Freq=490Hz)
-   - Pins 6 and 13 are paired on timer4 10bit (default prescale=64, Freq=490Hz)
-   - Pins 5 is exclusivly     on timer3 16bit (Default prescale=64, Freq=490Hz)
 */
 
 /*

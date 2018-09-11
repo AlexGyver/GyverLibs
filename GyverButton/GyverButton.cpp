@@ -2,11 +2,17 @@
 #include <Arduino.h>
 
 GButton::GButton(uint8_t BUTT) {
-  _BUTT = BUTT;  
+  _PIN = BUTT;  
   _debounce = 80;
   _timeout = 500;
   _step_timeout = 400;
-  pinMode(_BUTT, INPUT_PULLUP);
+  _inv_state = NORM_OPEN;
+  GButton::setType(HIGH_PULL);
+}
+GButton::GButton(uint8_t PIN, boolean type, boolean dir) {
+	GButton::GButton(PIN);
+	GButton::setType(type);
+	_inv_state = dir;
 }
 
 void GButton::setDebounce(uint8_t debounce) {
@@ -18,10 +24,13 @@ void GButton::setTimeout(uint16_t timeout) {
 void GButton::setStepTimeout(uint16_t step_timeout) {
 	_step_timeout = step_timeout;
 }
-
-void GButton::inverse(boolean inv_state) {
-	_inv_state = inv_state;
-	if (inv_state) pinMode(_BUTT, INPUT);
+void GButton::setType(boolean type) {
+	_type = type;
+	if (type) pinMode(_PIN, INPUT);
+	else pinMode(_PIN, INPUT_PULLUP);
+}
+void GButton::setDirection(boolean dir) {
+	_inv_state = dir;
 }
 
 boolean GButton::isPress() {
@@ -49,8 +58,7 @@ boolean GButton::isHolded() {
 	} else return false;
 }
 boolean GButton::state() {
-	if (_state) return true;
-	else return false;
+	return btn_state;
 }
 boolean GButton::isSingle() {
 	if (counter_flag && last_counter == 1) {
@@ -98,10 +106,7 @@ void GButton::tick(boolean state) {
 	_mode = false;
 }
 void GButton::tick() {	
-	if (!_mode) btn_state = !digitalRead(_BUTT) ^ _inv_state;	
-	if (btn_state) _state = true;
-	else _state = false;
-	
+	if (!_mode) btn_state = !digitalRead(_PIN) ^ (_inv_state ^ _type);
 	
   if (btn_state && !btn_flag && (millis() - btn_timer > _debounce)) {
     btn_flag = true;

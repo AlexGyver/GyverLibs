@@ -1,11 +1,12 @@
 #ifndef GyverFilters_h
 #define GyverFilters_h
 #include <Arduino.h>
+#define LIBRARY_VERSION	1.2
 
 #define	MEDIAN_FILTER_SIZE	(8)		// размер медианного фильтра!
 
 /*
-Текущая версия: 1.1 от 05.09.2018
+Текущая версия: 1.2 от 12.09.2018
 	GyverFilters - библиотека с некоторыми удобными фильтрами:
 		GFilterRA - компактная альтернатива фильтра бегущее среднее (Running Average)
 			Класс GFilterRA
@@ -33,11 +34,11 @@ class GFilterRA
 {
   public:
 	GFilterRA();
-	GFilterRA(float coef, uint16_t interval);	
-	void setCoef(float coef);	    // чем меньше тем плавнее
-	void setStep(uint16_t interval);
-	float filteredTime(int16_t value);
-	float filtered(int16_t value);
+	GFilterRA(float, uint16_t);		// расширенная инициализация фильтра (коэффициент, шаг фильтрации)
+	void setCoef(float);	    	// настройка коэффициента фильтрации (0.00 - 1.00). Чем меньше, тем плавнее
+	void setStep(uint16_t);			// установка шага фильтрации (мс). Чем меньше, тем резче фильтр
+	float filteredTime(int16_t);	// возвращает фильтрованное с опорой на встроенный таймер	
+	float filtered(int16_t);		// возвращает фильтрованное значение
   private:
 	float _coef, _lastValue;
 	uint32_t _filterTimer;
@@ -48,7 +49,7 @@ class GMedian3
 {
 	public:
 		GMedian3();
-		uint16_t filtered(uint16_t value);
+		uint16_t filtered(uint16_t);	// возвращает фильтрованное значение
 	private:
 		uint16_t buffer[3];
 		byte counter;
@@ -58,16 +59,15 @@ class GMedian
 {
 	public:
 		GMedian();
-		uint16_t filtered(uint16_t value);
+		uint16_t filtered(uint16_t);	// возвращает фильтрованное значение
 };
 
 class GABfilter
 {
 	public:
-		GABfilter(float delta, float sigma_process, float sigma_noise);
-		void setParameters(float delta, float sigma_process, float sigma_noise);
-		float filtered(uint16_t value);
-		//float filtered(float value);
+		GABfilter(float, float, float);				// период дискретизации (измерений), process variation, noise variation
+		void setParameters(float, float, float);	// период дискретизации (измерений), process variation, noise variation
+		float filtered(float value);				// возвращает фильтрованное значение
 	private:
 		float dt;
 		float xk_1, vk_1, a, b;
@@ -78,9 +78,11 @@ class GABfilter
 class GKalman
 {
 	public:
-		GKalman(float mea_e, float est_e, float q);
-		float filtered(float value);
-		void setParameters(float mea_e, float est_e, float q);
+		GKalman(float, float, float);				// разброс измерения, разброс оценки, скорость изменения значений
+		GKalman(float, float);						// разброс измерения, скорость изменения значений (разброс измерения принимается равным разбросу оценки)
+		void setParameters(float, float, float);	// разброс измерения, разброс оценки, скорость изменения значений
+		void setParameters(float, float);			// разброс измерения, скорость изменения значений (разброс измерения принимается равным разбросу оценки)
+		float filtered(float);						// возвращает фильтрованное значение
   
 	private:
 		float _err_measure;

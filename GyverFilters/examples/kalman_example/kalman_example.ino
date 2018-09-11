@@ -11,6 +11,9 @@
 
 GKalman testFilter(40, 40, 0.5);
 
+// также может быть объявлен как (разброс измерения, скорость изменения значений)
+// GKalman testFilter(40, 0.5);
+
 void setup() {
   Serial.begin(9600);
 }

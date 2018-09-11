@@ -10,13 +10,19 @@ Encoder::Encoder(uint8_t CLK, uint8_t DT, uint8_t SW) {
   pinMode (_SW, INPUT_PULLUP);
   DT_last = digitalRead(_CLK);         // читаем начальное положение CLK
 }
+Encoder::Encoder(uint8_t CLK, uint8_t DT, uint8_t SW, boolean type) {
+	Encoder::Encoder(CLK, DT, SW);
+	_type = type;
+}
 
 void Encoder::invert() {
 	uint8_t lol = _CLK;
 	_CLK = _DT;
 	_DT = lol;
 }
-
+void Encoder::setType(boolean type) {
+	_type = type;
+}
 boolean Encoder::isTurn() {
 	if (isTurn_f) {
 		isTurn_f = false;

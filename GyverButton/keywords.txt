@@ -6,15 +6,17 @@
 # Datatypes (KEYWORD1)
 #######################################
 
-GyverButton		KEYWORD1
 GButton			KEYWORD1
-setDebounce		KEYWORD1
-setTimeout		KEYWORD1
-setStepTimeout	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
+
+setDebounce		KEYWORD2
+setTimeout		KEYWORD2
+setStepTimeout	KEYWORD2
+setType			KEYWORD2
+setDirection	KEYWORD2
 
 tick			KEYWORD2
 isPress			KEYWORD2
@@ -30,3 +32,12 @@ isDouble		KEYWORD2
 isTriple		KEYWORD2
 isStep			KEYWORD2
 inverse			KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+HIGH_PULL		LITERAL1
+LOW_PULL		LITERAL1
+NORM_OPEN		LITERAL1
+NORM_CLOSE		LITERAL1
