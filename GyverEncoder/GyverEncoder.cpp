@@ -14,7 +14,6 @@ Encoder::Encoder(uint8_t CLK, uint8_t DT, uint8_t SW, boolean type) {
 	Encoder::Encoder(CLK, DT, SW);
 	_type = type;
 }
-
 void Encoder::invert() {
 	uint8_t lol = _CLK;
 	_CLK = _DT;
@@ -23,55 +22,67 @@ void Encoder::invert() {
 void Encoder::setType(boolean type) {
 	_type = type;
 }
+void Encoder::setTickMode(boolean tickMode) {
+	_tickMode = tickMode;
+}
 boolean Encoder::isTurn() {
+	if (_tickMode) Encoder::tick();
 	if (isTurn_f) {
 		isTurn_f = false;
 		return true;
 	} else return false;
 }
 boolean Encoder::isRight() {
+	if (_tickMode) Encoder::tick();
 	if (isRight_f) {
 		isRight_f = false;
 		return true;
 	} else return false;
 }
 boolean Encoder::isLeft() {
+	if (_tickMode) Encoder::tick();
 	if (isLeft_f) {
 		isLeft_f = false;
 		return true;
 	} else return false;
 }
 boolean Encoder::isRightH() {
+	if (_tickMode) Encoder::tick();
 	if (isRightH_f) {
 		isRightH_f = false;
 		return true;
 	} else return false;
 }
 boolean Encoder::isLeftH() {
+	if (_tickMode) Encoder::tick();
 	if (isLeftH_f) {
 		isLeftH_f = false;
 		return true;
 	} else return false;
 }
 boolean Encoder::isPress() {
+	if (_tickMode) Encoder::tick();
 	if (isPress_f) {
 		isPress_f = false;
 		return true;
 	} else return false;
 }
 boolean Encoder::isRelease() {
+	if (_tickMode) Encoder::tick();
 	if (isRelease_f) {
 		isRelease_f = false;
 		return true;
 	} else return false;
 }
 boolean Encoder::isHolded() {
+	if (_tickMode) Encoder::tick();
 	if (isHolded_f) {
 		isHolded_f = false;
 		return true;
 	} else return false;
 }
 boolean Encoder::isHold() {
+	if (_tickMode) Encoder::tick();
 	if (isHold_f) {
 		isHold_f = false;
 		return true;

@@ -2,7 +2,7 @@
    Пример использования библиотеки GyverButton, 5 кнопок
 */
 
-#define BTN1 3			// кнопка подключена сюда (PIN --- КНОПКА --- GND)
+#define BTN1 3			    // кнопка подключена сюда (PIN --- КНОПКА --- GND)
 #define BTN2 4        	// кнопка подключена сюда (PIN --- КНОПКА --- GND)
 #define BTN3 5        	// кнопка подключена сюда (PIN --- КНОПКА --- GND)
 #define BTN4 6        	// кнопка подключена сюда (PIN --- КНОПКА --- GND)
@@ -17,15 +17,14 @@ GButton butt5(BTN5);
 
 void setup() {
   Serial.begin(9600);
+  butt1.setTickMode(AUTO);
+  butt2.setTickMode(AUTO);
+  butt3.setTickMode(AUTO);
+  butt4.setTickMode(AUTO);
+  butt5.setTickMode(AUTO);
 }
 
 void loop() {
-  butt1.tick();
-  butt2.tick();
-  butt3.tick();
-  butt4.tick();
-  butt5.tick();
-
   if (butt1.isClick()) Serial.println("Button 1");
   if (butt2.isClick()) Serial.println("Button 2");
   if (butt3.isClick()) Serial.println("Button 3");

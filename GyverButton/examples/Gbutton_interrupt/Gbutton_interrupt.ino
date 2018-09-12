@@ -9,7 +9,7 @@
    - Функция изменения значения переменной с заданным шагом и заданным интервалом по времени
 */
 
-#define PIN 2				// кнопка подключена сюда (PIN --- КНОПКА --- GND)
+#define PIN 3				// кнопка подключена сюда (PIN --- КНОПКА --- GND)
 
 #include "GyverButton.h"
 GButton butt1(PIN);
@@ -17,10 +17,10 @@ int value = 0;
 
 void setup() {
   Serial.begin(9600);
-  attachInterrupt(0, isr, CHANGE);
+  attachInterrupt(1, isr, CHANGE);
 
-  butt1.setDebounce(80);        // настройка антидребезга (по умолчанию 80 мс)
-  butt1.setTimeout(300);        // настройка таймаута на удержание (по умолчанию 500 мс)
+  butt1.setDebounce(80);      // настройка антидребезга (по умолчанию 80 мс)
+  butt1.setTimeout(300);      // настройка таймаута на удержание (по умолчанию 500 мс)
 }
 
 void isr() {
@@ -28,8 +28,6 @@ void isr() {
 }
 
 void loop() {
-  butt1.tick();  // обязательная функция отработки. Должна постоянно опрашиваться
-
   if (butt1.isClick()) Serial.println("Click");         // проверка на один клик
   if (butt1.isSingle()) Serial.println("Single");       // проверка на один клик
   if (butt1.isDouble()) Serial.println("Double");       // проверка на двойной клик

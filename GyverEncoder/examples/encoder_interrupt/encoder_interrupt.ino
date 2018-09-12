@@ -20,9 +20,6 @@ void isr() {
 }
 
 void loop() {
-  // обязательная функция отработки. Должна постоянно опрашиваться
-  enc1.tick();
-
   if (enc1.isRight()) Serial.println("Right");         // если был поворот
   if (enc1.isLeft()) Serial.println("Left");
 
