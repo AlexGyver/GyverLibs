@@ -15,6 +15,7 @@ GTimer			KEYWORD1
 setInterval		KEYWORD2
 isReady			KEYWORD2
 reset			KEYWORD2
+setMode			KEYWORD2
 
 parsingStream	KEYWORD2
 sendPacket		KEYWORD2
@@ -34,6 +35,8 @@ setPWMPrescaler	KEYWORD2
 # Constants (LITERAL1)
 #######################################
 
+AUTO		LITERAL1
+MANUAL		LITERAL1
 HZ_15		LITERAL1
 HZ_61		LITERAL1
 HZ_244		LITERAL1

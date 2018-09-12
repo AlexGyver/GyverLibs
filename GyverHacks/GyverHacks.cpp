@@ -6,16 +6,19 @@ GTimer::GTimer() {}
 
 GTimer::GTimer(uint16_t interval) {
 	_interval = interval;
-	_timer = millis() + _interval;
+	_timer = (long)millis() + _interval;
 }
 
 void GTimer::setInterval(uint16_t interval) {
 	_interval = interval;
+	GTimer::reset();
 }
-
+void GTimer::setMode(boolean mode) {
+	_mode = mode;
+}
 boolean GTimer::isReady() {
 	if ((long)millis() > _timer) {
-		_timer = millis() + _interval;
+		if (!_mode) _timer = millis() + _interval;
 		return true;
 	} else {
 		return false;

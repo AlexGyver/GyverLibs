@@ -28,6 +28,7 @@
 + **GTimer** - компактная альтернатива конструкции таймера с millis()
 	+ Класс **GTimer (period)** - установка периода
 	+ **setInterval(period)** - настройка периода вызова
+	+ **setMode(mode)** - установка типа работы: AUTO или MANUAL (MANUAL нужно вручную сбрасывать reset)
 	+ **reset()** - сброс
 + **GParsingStream** - парсинг данных из Serial
 	+ parsingStream((int*)&intData) - автоматическая расфасовка пакетов вида **$110 25 600 920;** в массив intData

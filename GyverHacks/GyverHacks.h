@@ -1,9 +1,12 @@
 #ifndef GyverHacks_h
 #define GyverHacks_h
 #include <Arduino.h>
-#define LIBRARY_VERSION	1.5
+#define LIBRARY_VERSION	1.6
 
 #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+
+#define AUTO 0
+#define MANUAL 1
 
 #define HZ_15 0
 #define HZ_61 1
@@ -12,11 +15,12 @@
 #define KHZ_16 4
 
 /*
-Текущая версия: 1.5 от 12.09.2018
+Текущая версия: 1.6 от 12.09.2018
 	GyverHacks - библиотека с некоторыми удобными хаками:
 		GTimer - компактная альтернатива конструкции таймера с millis()
 			Класс GTimer (period) - установка периода в миллисекундах
 			setInterval(period) - изменение периода вызова
+			setMode(mode) - установка типа работы: AUTO или MANUAL (MANUAL нужно вручную сбрасывать reset)
 			isReady() - возвращает true, когда таймер сработал. Возвращает false до следующего срабатывания
 			reset() - сброс
 		GParsingStream - парсинг данных из Serial
@@ -43,13 +47,15 @@ class GTimer
 {
   public:
 	GTimer();
-	GTimer(uint16_t interval);
-	void setInterval(uint16_t interval);
-	boolean isReady();
-	void reset();
+	GTimer(uint16_t);			// объявление таймера с указанием интервала
+	void setInterval(uint16_t);	// установка интервала
+	void setMode(boolean);		// установка типа работы: AUTO или MANUAL (MANUAL нужно вручную сбрасывать reset)
+	boolean isReady();			// возвращает true, когда пришло время. Сбрасывается в false сам (AUTO) или вручную (MANUAL)
+	void reset();				// ручной сброс таймера на установленный интервал
   private:
 	uint32_t _timer;
 	uint16_t _interval;
+	boolean _mode;
 };
 
 int getVCC();
