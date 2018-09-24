@@ -1,9 +1,9 @@
 #include "GyverTimer.h"
 
 // создать таймер, в скобках период в миллисекундах
-GTimer myTimer1(500);
-GTimer myTimer2(600);
-GTimer myTimer3(1000);
+GTimer_ms myTimer1(500);
+GTimer_ms myTimer2(600);
+GTimer_ms myTimer3(1000);
 
 void setup() {
   Serial.begin(9600);
