@@ -333,7 +333,7 @@ void setDirection(boolean direction);
 
 ---
 
-### GyverRGB v1.5
+### GyverRGB v1.6
 Библиотека для удобного управления RGB светодиодами и лентами для Arduino
 - Работа в пространстве RGB
 - Работа в пространстве HSV
