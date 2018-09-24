@@ -19,8 +19,7 @@ int left_min = 512 - DEADZONE;   	// расчёт границ мёртвой з
 int right_min = 512 + DEADZONE;  	// расчёт границ мёртвой зоны
 
 void setup() {
-  motor1.init();
-  motor1.reverse(true);
+  
 }
 
 void loop() {

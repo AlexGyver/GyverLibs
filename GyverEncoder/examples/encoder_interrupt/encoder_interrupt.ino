@@ -20,6 +20,7 @@ void isr() {
 }
 
 void loop() {
+  enc1.tick();  // отработка
   if (enc1.isRight()) Serial.println("Right");         // если был поворот
   if (enc1.isLeft()) Serial.println("Left");
 

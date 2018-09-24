@@ -1,4 +1,4 @@
-#include "GyverHacks.h"
+#include "GyverTimer.h"
 GTimer myTimer;               // создать таймер
 
 void setup() {

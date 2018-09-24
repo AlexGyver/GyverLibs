@@ -1,31 +1,18 @@
 #include "GyverMotor.h"
 #include <Arduino.h>
-#include <TimerOne.h>
 
 GMotor::GMotor(uint8_t dig_pin, uint8_t pwm_pin) {
 	_dig_pin = dig_pin;
 	_pwm_pin = pwm_pin;
-}
-
-void GMotor::init() {
-	pinMode(_dig_pin, OUTPUT);
-	pinMode(_pwm_pin, OUTPUT);
-	digitalWrite(_dig_pin, 0);
-	digitalWrite(_pwm_pin, 0);
-}
-
-void GMotor::init10bit(uint32_t freq) {
-	pinMode(_dig_pin, OUTPUT);
-	pinMode(_pwm_pin, OUTPUT);
-	digitalWrite(_dig_pin, 0);
-	digitalWrite(_pwm_pin, 0);
 	
-	uint32_t period = 1000000 / freq;
-	Timer1.initialize(period);
+	pinMode(_dig_pin, OUTPUT);
+	pinMode(_pwm_pin, OUTPUT);
+	digitalWrite(_dig_pin, 0);
+	digitalWrite(_pwm_pin, 0);
 }
 
-void GMotor::reverse(boolean reverse) {
-	_reverse = reverse;
+void GMotor::setDirection(boolean direction) {
+	_reverse = direction;
 }
 
 void GMotor::setSpeed(uint8_t duty) {
@@ -59,11 +46,11 @@ void GMotor::runBkw() {
 
 void GMotor::runFrw10bit() {
 	digitalWrite(_dig_pin, 0);
-	Timer1.pwm(_pwm_pin, _duty);
+	analogWrite(_pwm_pin, _duty);
 }
 void GMotor::runBkw10bit() {
 	digitalWrite(_dig_pin, 1);
-	Timer1.pwm(_pwm_pin, 1023 - _duty);
+	analogWrite(_pwm_pin, 1023 - _duty);
 }
 
 void GMotor::setMode(uint8_t mode) {
@@ -72,4 +59,50 @@ void GMotor::setMode(uint8_t mode) {
 		digitalWrite(_dig_pin, 0);
 		digitalWrite(_pwm_pin, 0);
 	}
+}
+
+void PWM10bit() {
+	// установка 9 и 10 пинов в режим 10 бит
+	TCCR1A = TCCR1A & 0xe0 | 3;
+}
+
+void PWMfrequency(uint8_t pin, uint16_t mode) {
+  byte prescale;
+  if (pin == 5 || pin == 6) {
+    switch (mode) {
+      case 1: prescale = 0b001; break;
+      case 2: prescale = 0b010; break;
+      case 3: prescale = 0b011; break;
+      case 4: prescale = 0b100; break;
+      case 5: prescale = 0b101; break;
+      default: return;
+    }
+  } else if (pin == 9 || pin == 10) {
+	  switch (mode) {
+      case 1: prescale = 0x09; break;
+      case 2: prescale = 0x0a; break;
+      case 3: prescale = 0x0b; break;
+      case 4: prescale = 0x0c; break;
+      case 5: prescale = 0x0d; break;
+      default: return;
+    }
+  } else if (pin == 3 || pin == 11) {
+    switch (mode) {
+      case 1: prescale = 0b001; break;
+      case 2: prescale = 0b010; break;
+      case 3: prescale = 0b011; break;
+      case 4: prescale = 0b100; break;
+      case 5: prescale = 0b101; break;
+      case 6: prescale = 0b110; break;
+      case 7: prescale = 0b111; break;
+      default: return;
+    }
+  }
+  if (pin == 5 || pin == 6) {
+    TCCR0B = TCCR0B & 0b11111000 | prescale;
+  } else if (pin == 9 || pin == 10) {
+    TCCR1B = TCCR1B & 0b11111000 | prescale;
+  } else if (pin == 3 || pin == 11) {
+    TCCR2B = TCCR2B & 0b11111000 | prescale;
+  }
 }

@@ -14,10 +14,13 @@ Encoder::Encoder(uint8_t CLK, uint8_t DT, uint8_t SW, boolean type) {
 	Encoder::Encoder(CLK, DT, SW);
 	_type = type;
 }
-void Encoder::invert() {
-	uint8_t lol = _CLK;
-	_CLK = _DT;
-	_DT = lol;
+void Encoder::setDirection(boolean direction) {
+	if (_direction != direction) {
+		_direction = direction;
+		uint8_t lol = _CLK;
+		_CLK = _DT;
+		_DT = lol;
+	}	
 }
 void Encoder::setType(boolean type) {
 	_type = type;

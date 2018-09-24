@@ -25,8 +25,8 @@ void setup() {
 }
 
 void loop() {
-  byte R = map(analogRead(0), 0, 1023, 0, 255);
-  byte G = map(analogRead(1), 0, 1023, 0, 255);
-  byte B = map(analogRead(2), 0, 1023, 0, 255);
+  byte R = analogRead(0) / 4;
+  byte G = analogRead(1) / 4;
+  byte B = analogRead(2) / 4;
   diode.setRGB(R, G, B);
 }

@@ -12,12 +12,16 @@ GMotor		KEYWORD1
 # Methods and Functions (KEYWORD2)
 #######################################
 
-init			KEYWORD2
-init10bit		KEYWORD2
 setSpeed		KEYWORD2
 setSpeed10bit	KEYWORD2
 setMode			KEYWORD2
+setDirection	KEYWORD2
+
+PWM10bit		KEYWORD2
+PWMfrequency	KEYWORD2
 
 FORWARD			LITERAL1
 BACKWARD		LITERAL1
 STOP			LITERAL1
+NORM			LITERAL1
+REVERSE			LITERAL1

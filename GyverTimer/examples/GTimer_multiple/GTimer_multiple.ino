@@ -1,4 +1,4 @@
-#include "GyverHacks.h"
+#include "GyverTimer.h"
 
 // создать таймер, в скобках период в миллисекундах
 GTimer myTimer1(500);

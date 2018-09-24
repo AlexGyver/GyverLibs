@@ -1,44 +1,30 @@
 #ifndef GyverFilters_h
 #define GyverFilters_h
 #include <Arduino.h>
-#define LIBRARY_VERSION	1.2
+#define LIBRARY_VERSION	1.3
 
 #define	MEDIAN_FILTER_SIZE	(8)		// размер медианного фильтра!
 
 /*
-Текущая версия: 1.2 от 12.09.2018
+	Текущая версия: 1.3 от 24.09.2018
 	GyverFilters - библиотека с некоторыми удобными фильтрами:
-		GFilterRA - компактная альтернатива фильтра бегущее среднее (Running Average)
-			Класс GFilterRA
-			setCoef(coef) - настройка коэффициента фильтрации (0.00 - 1.00)
-			setStep (step) - настройка шага дискретизации (период фильтрации) - встроенный таймер! миллисекунды
-			filtered(value) - возвращает фильтрованное значение
-			filteredTime(value) - возвращает фильтрованное с опорой на встроенный таймер			
-		GMedian3 - быстрый медианный фильтр 3-го порядка (отсекает выбросы)
-			Класс GMedian3
-			filtered(value) - выводит медиану из трёх последних обращений (там свой встроенный массив)
-		GMedian - медианный фильтр N-го порядка (отсекает выбросы). Порядок настраивается в GyverFilters.h - MEDIAN_FILTER_SIZE
-			Класс GMedian
-			filtered(value) - выводит медиану из N последних обращений (там свой встроенный массив)
-		GABfilter - альфа-бета фильтр (разновидность Калмана для одномерного случая)
-			Класс GABfilter(delta, sigma_process, sigma_noise) - период дискретизации (измерений), process variation, noise variation
-			setParameters(delta, sigma_process, sigma_noise) - перенастроить параметры
-			filtered(value) - возвращает фильтрованное значение
-		GKalman - упрощённый Калман для одномерного случая (на мой взгляд лучший из фильтров)
-			Класс GKalman(разброс измерения, разброс оценки, скорость изменения значений) - читайте пример
-			setParameters(разброс измерения, разброс оценки, скорость изменения значений) - перенастроить параметры
-			filtered(value) - возвращает фильтрованное значение			
+	- GFilterRA - компактная альтернатива фильтра экспоненциальное бегущее среднее (Running Average)			
+	- GMedian3 - быстрый медианный фильтр 3-го порядка (отсекает выбросы)
+	- GMedian - медианный фильтр N-го порядка. Порядок настраивается в GyverFilters.h - MEDIAN_FILTER_SIZE
+	- GABfilter - альфа-бета фильтр (разновидность Калмана для одномерного случая)
+	- GKalman - упрощённый Калман для одномерного случая (на мой взгляд лучший из фильтров)
 */
 
 class GFilterRA
 {
   public:
-	GFilterRA();
+	GFilterRA();					// инициализация фильтра
 	GFilterRA(float, uint16_t);		// расширенная инициализация фильтра (коэффициент, шаг фильтрации)
 	void setCoef(float);	    	// настройка коэффициента фильтрации (0.00 - 1.00). Чем меньше, тем плавнее
 	void setStep(uint16_t);			// установка шага фильтрации (мс). Чем меньше, тем резче фильтр
-	float filteredTime(int16_t);	// возвращает фильтрованное с опорой на встроенный таймер	
+	float filteredTime(int16_t);	// возвращает фильтрованное значение с опорой на встроенный таймер	
 	float filtered(int16_t);		// возвращает фильтрованное значение
+	
   private:
 	float _coef, _lastValue;
 	uint32_t _filterTimer;
@@ -50,6 +36,7 @@ class GMedian3
 	public:
 		GMedian3();
 		uint16_t filtered(uint16_t);	// возвращает фильтрованное значение
+		
 	private:
 		uint16_t buffer[3];
 		byte counter;
@@ -68,6 +55,7 @@ class GABfilter
 		GABfilter(float, float, float);				// период дискретизации (измерений), process variation, noise variation
 		void setParameters(float, float, float);	// период дискретизации (измерений), process variation, noise variation
 		float filtered(float value);				// возвращает фильтрованное значение
+		
 	private:
 		float dt;
 		float xk_1, vk_1, a, b;

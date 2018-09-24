@@ -6,39 +6,41 @@
 # Datatypes (KEYWORD1)
 #######################################
 
-GTimer			KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
 
-setInterval		KEYWORD2
-isReady			KEYWORD2
-reset			KEYWORD2
-setMode			KEYWORD2
+setPin			KEYWORD2
+readPin			KEYWORD2
+setPWM			KEYWORD2
+setADCrate		KEYWORD2
+
+anyPWMinit		KEYWORD2
+anyPWMset		KEYWORD2
+anyPWM			KEYWORD2
+
+set8bitPWM		KEYWORD2
+set10bitPWM		KEYWORD2
+setPWMprescaler	KEYWORD2
+
+getVCC			KEYWORD2
+getVoltage		KEYWORD2
+constantWizard	KEYWORD2
+restoreConstant	KEYWORD2
+lithiumPercent	KEYWORD2
+alkaline3Percent	KEYWORD2
+nickel3Percent	KEYWORD2
+nickel4Percent	KEYWORD2
+mVtoPercent		KEYWORD2
+
+getTemp			KEYWORD2
 
 parsingStream	KEYWORD2
 sendPacket		KEYWORD2
 dataReady		KEYWORD2
 
-getVCC			KEYWORD2
-getVoltage		KEYWORD2
-setConstant		KEYWORD2
-getConstant		KEYWORD2
-getTemp			KEYWORD2
-fastAnalogWrite	KEYWORD2
-setPWM10bit		KEYWORD2
-setPWMPrescaler	KEYWORD2
-
-
 #######################################
 # Constants (LITERAL1)
 #######################################
 
-AUTO		LITERAL1
-MANUAL		LITERAL1
-HZ_15		LITERAL1
-HZ_61		LITERAL1
-HZ_244		LITERAL1
-KHZ_2		LITERAL1
-KHZ_16		LITERAL1

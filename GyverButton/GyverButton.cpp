@@ -1,8 +1,8 @@
 #include "GyverButton.h"
 #include <Arduino.h>
 
-GButton::GButton(uint8_t BUTT) {
-  _PIN = BUTT;  
+GButton::GButton(uint8_t PIN) {
+  _PIN = PIN;  
   _debounce = 80;
   _timeout = 500;
   _step_timeout = 400;

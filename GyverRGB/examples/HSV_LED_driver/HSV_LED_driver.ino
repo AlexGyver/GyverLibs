@@ -4,27 +4,18 @@
    Потенциометр подключен к А0
    Драйвер подключен к ШИМ пинам!
    Для УНО и НАНО это 3, 5, 6, 9, 10, 11
-    _____
-   /     \
-  |       |
-  |       |
-  |_______|
-   | | | |
-   | | | |
-   | | | |
-     | | |
-       |
-   B G   R
 */
 
 #include "GyverRGB.h"
 GRGB diode(6, 5, 3);  // куда подключены цвета (R, G, B)
 
 void setup() {
-  diode.reverse(1);   // 1 - инвертировать выход (для LED драйверов)
+  diode.setDirection(REVERSE);  // NORMAL / REVERSE - направление ШИМ
+								// общий катод - NORMAL
+								// общий анод - REVERSE
 }
 
 void loop() {
-  byte H = map(analogRead(0), 0, 1023, 0, 255);
+  byte H = analogRead(0) / 4;
   diode.setHSV(H, 255, 255);
 }

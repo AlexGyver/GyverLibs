@@ -1,38 +1,26 @@
 #######################################
-# Syntax Coloring Map For GyverEncoder
+# Syntax Coloring Map For GyverTimer
 #######################################
 
 #######################################
 # Datatypes (KEYWORD1)
 #######################################
 
-Encoder		KEYWORD1
+GTimer			KEYWORD1
+GTimer_us		KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
 
-tick			KEYWORD2
-setType			KEYWORD2
-setDirection	KEYWORD2
-isTurn			KEYWORD2
-isRight			KEYWORD2
-isLeft			KEYWORD2
-isRightH		KEYWORD2
-isLeftH			KEYWORD2
-
-isPress			KEYWORD2
-isRelease		KEYWORD2
-isHolded		KEYWORD2
-isHold			KEYWORD2
+setInterval		KEYWORD2
+isReady			KEYWORD2
+reset			KEYWORD2
+setMode			KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
 #######################################
 
-TYPE1		LITERAL1
-TYPE2		LITERAL1
-MANUAL		LITERAL1
 AUTO		LITERAL1
-NORM		LITERAL1
-REVERSE		LITERAL1
+MANUAL		LITERAL1

@@ -4,17 +4,6 @@
    Потенциометры подключены к А0, А1 и А2
    Светодиод/мосфеты подключены к ШИМ пинам!
    Для УНО и НАНО это 3, 5, 6, 9, 10, 11
-    _____
-   /     \
-  |       |
-  |       |
-  |_______|
-   | | | |
-   | | | |
-   | | | |
-     | | |
-       |
-   B G   R
 */
 
 #include "GyverRGB.h"
@@ -25,8 +14,8 @@ void setup() {
 }
 
 void loop() {
-  byte H = map(analogRead(0), 0, 1023, 0, 255);
-  byte S = map(analogRead(1), 0, 1023, 0, 255);
-  byte V = map(analogRead(2), 0, 1023, 0, 255);
+  byte H = analogRead(0) / 4;
+  byte S = analogRead(1) / 4;
+  byte V = analogRead(2) / 4;
   diode.setHSV(H, S, V);
 }
