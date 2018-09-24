@@ -1,10 +1,10 @@
 #ifndef GyverTimer_h
 #define GyverTimer_h
 #include <Arduino.h>
-#define LIBRARY_VERSION	1.1
+#define LIBRARY_VERSION	1.2
 
 /*
-	Текущая версия: 1.1 от 23.09.2018
+	Текущая версия: 1.2 от 24.09.2018
 	GTimer - компактная альтернатива конструкции таймера с millis() / micros()
 	- Вся работа с таймером заменяется одной функцией
 	- Миллисекундный и микросекундный таймер
