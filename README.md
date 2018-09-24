@@ -107,3 +107,15 @@
 ### **TM1637_Gyver (текущая 1.1)** - библиотека для дисплея на сдвиговике TM1637
 + Подробное описание здесь http://alexgyver.ru/tm1637_display/
 + Пример использования в папке examples, показывает все возможности библиотеки
+
+## collapsible markdown?
+<details>
+<summary>CLICK ME</summary>
+<p>
+#### yes, even hidden code blocks!
+
+```C
+print("hello world!")
+```
+</p>
+</details>
