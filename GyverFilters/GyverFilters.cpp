@@ -19,12 +19,23 @@ void GFilterRA::setStep(uint16_t interval) {
 float GFilterRA::filteredTime(int16_t value) {
 	if (millis() > _filterTimer) {
 		_filterTimer = millis() + _filterInterval;
-		_lastValue = _lastValue * ((float)1 - _coef) + (float)value * _coef;
+		GFilterRA::filtered(value);
 	}
-	return _lastValue;
+}
+
+float GFilterRA::filteredTime(float value) {
+	if (millis() > _filterTimer) {
+		_filterTimer = millis() + _filterInterval;
+		GFilterRA::filtered(value);
+	}
 }
 
 float GFilterRA::filtered(int16_t value) {
+	_lastValue = _lastValue * ((float)1 - _coef) + (float)value * _coef;
+	return _lastValue;
+}
+
+float GFilterRA::filtered(float value) {
 	_lastValue = _lastValue * ((float)1 - _coef) + (float)value * _coef;
 	return _lastValue;
 }
