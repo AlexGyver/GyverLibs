@@ -71,6 +71,39 @@ boolean isStep();       // возвращает true по таймеру setStep
 - Отработка нажатия и удержания кнопки
 - Отработка "нажатого поворота"
 - Работа с двумя типами экнодеров
+#### Методы и функции библиотеки
+<details>
+<summary>РАЗВЕРНУТЬ</summary>
+<p>
+Смотри примеры в папке examples!
+
+```C
+Encoder(uint8_t, uint8_t, uint8_t);
+// CLK, DT, SW
+
+Encoder(uint8_t, uint8_t, uint8_t, boolean);
+// CLK, DT, SW, тип (TYPE1 / TYPE2): TYPE1 одношаговый, TYPE2 двухшаговый. Если ваш энкодер работает странно, смените тип
+		
+void tick();                             // опрос энкодера, нужно вызывать постоянно или в прерывании
+void setType(boolean type);              // TYPE1 / TYPE2 - тип энкодера TYPE1 одношаговый, TYPE2 двухшаговый. Если ваш энкодер работает странно, смените тип
+void setTickMode(boolean tickMode);      // MANUAL / AUTO - ручной или автоматический опрос энкодера функцией tick(). (по умолчанию ручной)
+void setDirection(boolean direction);    // NORM / REVERSE - направление вращения энкодера
+	
+boolean isTurn();                        // возвращает true при любом повороте, сама сбрасывается в false
+boolean isRight();                       // возвращает true при повороте направо, сама сбрасывается в false
+boolean isLeft();                        // возвращает true при повороте налево, сама сбрасывается в false
+boolean isRightH();                      // возвращает true при удержании кнопки и повороте направо, сама сбрасывается в false
+boolean isLeftH();                       // возвращает true при удержании кнопки и повороте налево, сама сбрасывается в false
+	
+boolean isPress();                       // возвращает true при нажатии кнопки, сама сбрасывается в false
+boolean isRelease();                     // возвращает true при отпускании кнопки, сама сбрасывается в false
+boolean isHolded();                      // возвращает true при удержании кнопки, сама сбрасывается в false
+boolean isHold();                        // возвращает true при удержании кнопки, НЕ СБРАСЫВАЕТСЯ
+```
+</p>
+</details>
+
+---
 
 ### GyverFilters v1.3
 Библиотека с некоторыми удобными фильтрами для Arduino:
