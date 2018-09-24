@@ -1,9 +1,9 @@
 #include "GyverRGB.h"
 #include <Arduino.h>
 
-volatile uint8_t pwm;
-volatile uint8_t pwms[20];
-volatile boolean anyPWMpins[20];
+volatile uint8_t pwmRGB;
+volatile uint8_t pwmsRGB[20];
+volatile boolean anyPWMpinsRGB[20];
 
 GRGB::GRGB(uint8_t rpin, uint8_t gpin, uint8_t bpin) {
 	GRGB::GRGB(rpin, gpin, bpin, false);	// по умолчанию pwmmode NORM_PWM
@@ -21,11 +21,11 @@ GRGB::GRGB(uint8_t rpin, uint8_t gpin, uint8_t bpin, boolean pwmmode) {
 		pinMode(_gpin, OUTPUT);
 		pinMode(_bpin, OUTPUT);
 	} else {
-		anyPWMinit(6);	// частота ~150 Гц
+		anyPWMinitRGB(6);	// частота ~150 Гц
 			
-		anyPWMpin(_rpin);
-		anyPWMpin(_gpin);
-		anyPWMpin(_bpin);
+		anyPWMpinRGB(_rpin);
+		anyPWMpinRGB(_gpin);
+		anyPWMpinRGB(_bpin);
 	}
 }
 
@@ -155,20 +155,20 @@ void GRGB::setRGB() {
 		}
 	} else {								// режим ANY_PWM
 		if (_reverse_flag) {				// обратная полярность ШИМ
-			anyPWM(_rpin, 255 - _r);
-			anyPWM(_gpin, 255 - _g);
-			anyPWM(_bpin, 255 - _b);
+			anyPWMRGB(_rpin, 255 - _r);
+			anyPWMRGB(_gpin, 255 - _g);
+			anyPWMRGB(_bpin, 255 - _b);
 		} else {							// прямая полярность ШИМ
-			anyPWM(_rpin, _r);
-			anyPWM(_gpin, _g);
-			anyPWM(_bpin, _b);
+			anyPWMRGB(_rpin, _r);
+			anyPWMRGB(_gpin, _g);
+			anyPWMRGB(_bpin, _b);
 		}
 	}
 }
 
 // ***************************** anyPWM *****************************
 
-void anyPWMinit(byte prescaler) // 1 - 7
+void anyPWMinitRGB(byte prescaler) // 1 - 7
 {
   cli();
   TCCR2A = 0;   //при совпадении уровень OC1A меняется на противоположный
@@ -179,39 +179,39 @@ void anyPWMinit(byte prescaler) // 1 - 7
   TCCR2B = prescaler;   // prescaler
 }
  
-void anyPWMpin(uint8_t pin) {	
-	anyPWMpins[pin] = 1;
+void anyPWMpinRGB(uint8_t pin) {	
+	anyPWMpinsRGB[pin] = 1;
 	pinMode(pin, OUTPUT);
 }
 
-void anyPWM(byte pin, byte duty)
+void anyPWMRGB(byte pin, byte duty)
 {
-	pwms[pin] = duty;
+	pwmsRGB[pin] = duty;
 }
 
 ISR(TIMER2_COMPA_vect)
 {
   TCNT2 = 0;
-  anyPWMpins[0] && pwms[0] > pwm ? PORTD |= B00000001 : PORTD &= B11111110;
-  anyPWMpins[1] && pwms[1] > pwm ? PORTD |= B00000010 : PORTD &= B11111101;
-  anyPWMpins[2] && pwms[2] > pwm ? PORTD |= B00000100 : PORTD &= B11111011;
-  anyPWMpins[3] && pwms[3] > pwm ? PORTD |= B00001000 : PORTD &= B11110111;
-  anyPWMpins[4] && pwms[4] > pwm ? PORTD |= B00010000 : PORTD &= B11101111;
-  anyPWMpins[5] && pwms[5] > pwm ? PORTD |= B00100000 : PORTD &= B11011111;
-  anyPWMpins[6] && pwms[6] > pwm ? PORTD |= B01000000 : PORTD &= B10111111;
-  anyPWMpins[7] && pwms[7] > pwm ? PORTD |= B10000000 : PORTD &= B01111111;
-  anyPWMpins[8] && pwms[8] > pwm ? PORTB |= B00000001 : PORTB &= B11111110;
-  anyPWMpins[9] && pwms[9] > pwm ? PORTB |= B00000010 : PORTB &= B11111101;
-  anyPWMpins[10] && pwms[10] > pwm ? PORTB |= B00000100 : PORTB &= B11111011;
-  anyPWMpins[11] && pwms[11] > pwm ? PORTB |= B00001000 : PORTB &= B11110111;
-  anyPWMpins[12] && pwms[12] > pwm ? PORTB |= B00010000 : PORTB &= B11101111;
-  anyPWMpins[13] && pwms[13] > pwm ? PORTB |= B00100000 : PORTB &= B11011111;
-  anyPWMpins[14] && pwms[14] > pwm ? PORTC |= B00000001 : PORTC &= B11111110;
-  anyPWMpins[15] && pwms[15] > pwm ? PORTC |= B00000010 : PORTC &= B11111101;
-  anyPWMpins[16] && pwms[16] > pwm ? PORTC |= B00000100 : PORTC &= B11111011;
-  anyPWMpins[17] && pwms[17] > pwm ? PORTC |= B00001000 : PORTC &= B11110111;
-  anyPWMpins[18] && pwms[18] > pwm ? PORTC |= B00010000 : PORTC &= B11101111;
-  anyPWMpins[19] && pwms[19] > pwm ? PORTC |= B00100000 : PORTC &= B11011111;
+  anyPWMpinsRGB[0] && pwmsRGB[0] > pwmRGB ? PORTD |= B00000001 : PORTD &= B11111110;
+  anyPWMpinsRGB[1] && pwmsRGB[1] > pwmRGB ? PORTD |= B00000010 : PORTD &= B11111101;
+  anyPWMpinsRGB[2] && pwmsRGB[2] > pwmRGB ? PORTD |= B00000100 : PORTD &= B11111011;
+  anyPWMpinsRGB[3] && pwmsRGB[3] > pwmRGB ? PORTD |= B00001000 : PORTD &= B11110111;
+  anyPWMpinsRGB[4] && pwmsRGB[4] > pwmRGB ? PORTD |= B00010000 : PORTD &= B11101111;
+  anyPWMpinsRGB[5] && pwmsRGB[5] > pwmRGB ? PORTD |= B00100000 : PORTD &= B11011111;
+  anyPWMpinsRGB[6] && pwmsRGB[6] > pwmRGB ? PORTD |= B01000000 : PORTD &= B10111111;
+  anyPWMpinsRGB[7] && pwmsRGB[7] > pwmRGB ? PORTD |= B10000000 : PORTD &= B01111111;
+  anyPWMpinsRGB[8] && pwmsRGB[8] > pwmRGB ? PORTB |= B00000001 : PORTB &= B11111110;
+  anyPWMpinsRGB[9] && pwmsRGB[9] > pwmRGB ? PORTB |= B00000010 : PORTB &= B11111101;
+  anyPWMpinsRGB[10] && pwmsRGB[10] > pwmRGB ? PORTB |= B00000100 : PORTB &= B11111011;
+  anyPWMpinsRGB[11] && pwmsRGB[11] > pwmRGB ? PORTB |= B00001000 : PORTB &= B11110111;
+  anyPWMpinsRGB[12] && pwmsRGB[12] > pwmRGB ? PORTB |= B00010000 : PORTB &= B11101111;
+  anyPWMpinsRGB[13] && pwmsRGB[13] > pwmRGB ? PORTB |= B00100000 : PORTB &= B11011111;
+  anyPWMpinsRGB[14] && pwmsRGB[14] > pwmRGB ? PORTC |= B00000001 : PORTC &= B11111110;
+  anyPWMpinsRGB[15] && pwmsRGB[15] > pwmRGB ? PORTC |= B00000010 : PORTC &= B11111101;
+  anyPWMpinsRGB[16] && pwmsRGB[16] > pwmRGB ? PORTC |= B00000100 : PORTC &= B11111011;
+  anyPWMpinsRGB[17] && pwmsRGB[17] > pwmRGB ? PORTC |= B00001000 : PORTC &= B11110111;
+  anyPWMpinsRGB[18] && pwmsRGB[18] > pwmRGB ? PORTC |= B00010000 : PORTC &= B11101111;
+  anyPWMpinsRGB[19] && pwmsRGB[19] > pwmRGB ? PORTC |= B00100000 : PORTC &= B11011111;
 
-  pwm++;
+  pwmRGB++;
 }

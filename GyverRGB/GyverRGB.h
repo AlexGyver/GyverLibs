@@ -1,10 +1,10 @@
 #ifndef GyverRGB_h
 #define GyverRGB_h
 #include <Arduino.h>
-#define LIBRARY_VERSION	1.5
+#define LIBRARY_VERSION	1.6
 
 /*
-	Версия 1.5 от 23.09.2018
+	Версия 1.6 от 24.09.2018
 	Библиотека для удобного управления RGB светодиодами и лентами
 	- Работа в пространстве RGB
 	- Работа в пространстве HSV
@@ -50,9 +50,9 @@ class GRGB
 	boolean _PWMmode;
 };
 
-void anyPWMinit(byte prescaler);									
-void anyPWMpin(uint8_t pin);
-void anyPWM(byte pin, byte duty);
+void anyPWMinitRGB(byte prescaler);									
+void anyPWMpinRGB(uint8_t pin);
+void anyPWMRGB(byte pin, byte duty);
 
 #define NORMAL 0
 #define REVERSE 1
