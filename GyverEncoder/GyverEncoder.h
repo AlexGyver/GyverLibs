@@ -1,10 +1,10 @@
 #ifndef GyverRC_h
 #define GyverRC_h
 #include <Arduino.h>
-#define LIBRARY_VERSION	2.4
+#define LIBRARY_VERSION	2.5
 
 /*
-	Текущая версия: 2.4 от 12.09.2018
+	Текущая версия: 2.5 от 25.09.2018
 	GyverEncoder - библиотека для отработки энкодера. Возможности:
 	- Отработка поворота с антидребезгом
 	- Отработка нажатия кнопки с антидребезгом
@@ -14,7 +14,7 @@
 */
 
 // настройка антидребезга энкодера, кнопки и таймаута удержания
-#define debounce_turn 25
+#define debounce_turn 15
 #define debounce_button 80
 #define hold_timer 800
 

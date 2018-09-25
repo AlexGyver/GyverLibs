@@ -149,9 +149,9 @@ void Encoder::tick() {
 		isRight_f = false;
       }
     }
-	}
-    turn_flag = true;                    // флаг что был поворот ручки энкодера
 	isTurn_f = true;
+	}
+    turn_flag = true;                    // флаг что был поворот ручки энкодера	
   }
   DT_last = DT_now;                   // обновить значение для энкодера
 }
