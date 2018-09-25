@@ -396,6 +396,62 @@ void fadeTo(uint8_t new_r, uint8_t new_g, uint8_t new_b, uint16_t fadeTime);
 
 ---
 
+### GyverTM1637 v1.0
+Бибилотека для 7 сегментного дисплея на чипе TM1637 с кучей приколюх
+- Вывод цифр массивом или прицельно
+- Вывод букв из списка доступных (листай ниже) массивом или прицельно
+- Отдельная функция вывода часов и минут (часы без нуля слева, минуты с нулём)
+- Вывод числа от -999 до 9999 с учётом знака
+- Готовая функция бегущей строки
+- Функции смены яркости и состояния двоеточия автоматически обновляют дисплей
+- Функция обновления значения с эффектом вертикальной прокрутки
+- Функция обновления значения с эффектом скручивания (лучше один раз увидеть)
+
+#### Методы и функции библиотеки
+<details>
+<summary>РАЗВЕРНУТЬ</summary>
+<p>
+Смотри примеры в папке examples!
+
+```C
+GyverTM1637(uint8_t clk, uint8_t dio);                                  // объявление и инициализация
+	
+void display(uint8_t DispData[]);                                       // выводит цифры массивом по ячейкам. От 0 до 9 (byte values[] = {3, 5, 9, 0}; )
+void display(uint8_t BitAddr, int8_t DispData);                         // выводит цифру DispData в указанную ячейку дисплея BitAddr
+void display(uint8_t bit0, uint8_t bit1, uint8_t bit2, uint8_t bit3);   // если лень создавать массив, выводит цифры в ячейки
+	
+void displayByte(uint8_t DispData[]);                                   // выводит байт вида 0xe6 и буквы-константы вида _a , _b .... массивом
+void displayByte(uint8_t BitAddr, int8_t DispData);                     // выводит байт вида 0xe6 и буквы-константы вида _a , _b .... в ячейку
+void displayByte(uint8_t bit0, uint8_t bit1, uint8_t bit2, uint8_t bit3);  // если лень создавать массив, выводит байты в ячейки
+	
+void displayClock(uint8_t hrs, uint8_t mins);                           // выводит часы и минуты
+	
+void displayInt(int value);                                             // выводит число от -999 до 9999 (да, со знаком минус)
+	
+void runningString(int8_t DispData[], byte amount, int delayMs);        // бегущая строка (array, sizeof(array), задержка в мс)
+	
+void clear(void);                                                       // очистить дисплей
+	
+void point(boolean PointFlag);                                          // вкл / выкл точку (POINT_ON / POINT_OFF)
+
+void brightness(uint8_t bright, uint8_t = 0x40, uint8_t = 0xc0);        // яркость 0 - 7	
+	
+void scroll(uint8_t BitAddr, int8_t DispData, int delayms);             // обновить значение прокруткой (адрес, ЦИФРА, задержка в мс)
+void scroll(int8_t DispData[], int delayms);                            // обновить значение прокруткой (массив ЦИФР, задержка в мс)
+void scrollByte(uint8_t BitAddr, int8_t DispData, int delayms);         // обновить значение прокруткой (адрес, БАЙТ, задержка в мс)
+void scrollByte(int8_t DispData[], int delayms);                        // обновить значение прокруткой (массив БАЙТ, задержка в мс)
+	
+void twist(uint8_t BitAddr, int8_t DispData, int delayms);              // обновить значение скручиванием (адрес, ЦИФРА, задержка в мс)
+void twist(int8_t DispData[], int delayms);                             // обновить значение скручиванием (массив ЦИФР, задержка в мс)
+void twistByte(uint8_t BitAddr, int8_t DispData, int delayms);          // обновить значение скручиванием (адрес, БАЙТ, задержка в мс)
+void twistByte(int8_t DispData[], int delayms);                         // обновить значение скручиванием (массив БАЙТ, задержка в мс)
+
+```
+</p>
+</details>
+
+---
+
 ### GyverRTOS v1.0
 Система реального времени для Arduino: максимальное энергосбережение и мультизадачность
 - Во время сна функция millis() не работает, вместо неё используется переменная mainTimer, которая автоматически увеличивается при каждом пробуждении на время сна (SLEEP_PERIOD) В ХОЛОСТОМ РЕЖИМЕ
