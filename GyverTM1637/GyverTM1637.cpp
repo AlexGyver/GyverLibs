@@ -188,8 +188,28 @@ void GyverTM1637::displayClock(uint8_t hrs, uint8_t mins) {
 	else disp_time[0] = (hrs / 10);
 	disp_time[1] = hrs % 10;
 	disp_time[2] = mins / 10;
-	disp_time[3] = mins % 10;	
+	disp_time[3] = mins % 10;
 	GyverTM1637::display(disp_time);
+}
+void GyverTM1637::displayClockScroll(uint8_t hrs, uint8_t mins, int delayms) {
+	if (hrs > 99 || mins > 99) return 0;
+	uint8_t disp_time[4];	
+	if ((hrs / 10) == 0) disp_time[0] = 10;
+	else disp_time[0] = (hrs / 10);
+	disp_time[1] = hrs % 10;
+	disp_time[2] = mins / 10;
+	disp_time[3] = mins % 10;
+	scroll(disp_time, delayms);
+}
+void GyverTM1637::displayClockTwist(uint8_t hrs, uint8_t mins, int delayms) {
+	if (hrs > 99 || mins > 99) return 0;
+	uint8_t disp_time[4];	
+	if ((hrs / 10) == 0) disp_time[0] = 10;
+	else disp_time[0] = (hrs / 10);
+	disp_time[1] = hrs % 10;
+	disp_time[2] = mins / 10;
+	disp_time[3] = mins % 10;
+	twist(disp_time, delayms);	
 }
 
 void GyverTM1637::displayInt(int value) {

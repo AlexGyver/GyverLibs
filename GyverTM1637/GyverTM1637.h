@@ -2,9 +2,9 @@
 #define GyverTM1637_h
 #include <inttypes.h>
 #include <Arduino.h>
-#define LIBRARY_VERSION	1.0
+#define LIBRARY_VERSION	1.1
 
-/*	Текущая версия: 1.0 от 25.09.2018
+/*	Текущая версия: 1.1 от 26.09.2018
 	GyverTM1637 - бибилотека для 7 сегментного дисплея на чипе TM1637 с кучей приколюх
 	- Вывод цифр массивом или прицельно
 	- Вывод букв из списка доступных (листай ниже) массивом или прицельно
@@ -34,6 +34,8 @@ class GyverTM1637
 	void displayByte(uint8_t bit0, uint8_t bit1, uint8_t bit2, uint8_t bit3);	// если лень создавать массив, выводит байты в ячейки
 	
     void displayClock(uint8_t hrs, uint8_t mins);							// выводит часы и минуты
+	void displayClockScroll(uint8_t hrs, uint8_t mins, int delayms);		// выводит часы и минуты с эффектом прокрутки
+	void displayClockTwist(uint8_t hrs, uint8_t mins, int delayms);		// выводит часы и минуты с эффектом скрутки
 	
 	void displayInt(int value);												// выводит число от -999 до 9999 (да, со знаком минус)
 	
