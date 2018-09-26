@@ -1,0 +1,31 @@
+{
+  "packages": [
+    {
+      "name": "GyverLibs",
+      "maintainer": "AlexGyver",
+      "websiteURL": "https://alexgyver.ru/",
+      "email": "alex@alexgyver.ru",
+      "help": {
+        "online": "https://github.com/AlexGyver/GyverLibs"
+      },
+      "platforms": [
+        {
+          "name": "GyverLibs",
+          "architecture": "avr",
+          "version": "1.0.0",
+          "category": "Library",
+          "help": {
+            "online": "https://github.com/AlexGyver/GyverLibs"
+          },
+          "url": "https://github.com/AlexGyver/GyverLibs/releases/download/GyverLibs/GyverLibs_v1.0.rar",
+          "archiveFileName": "GyverLibs_v1.0.rar",
+          "boards": [
+            {"name": "Arduino NANO/UNO/MINI"}
+          ],
+          "toolsDependencies": []
+        },        
+      ],
+      "tools": []
+    }
+  ]
+}
