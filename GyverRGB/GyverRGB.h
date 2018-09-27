@@ -46,8 +46,8 @@ class GRGB
 	void setRGB();
 	uint8_t _rpin, _gpin, _bpin;	// пины
 	uint8_t _r, _g, _b;				// цвета
-	boolean _reverse_flag;
-	boolean _PWMmode;
+	boolean _reverse_flag = false;
+	boolean _PWMmode = false;
 };
 
 void anyPWMinitRGB(byte prescaler);									

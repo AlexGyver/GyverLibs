@@ -65,9 +65,9 @@ class GButton
 	uint16_t _timeout;
 	uint16_t _step_timeout;
 	uint8_t btn_counter, last_counter;
-	boolean btn_state, btn_flag, hold_flag, counter_flag;
+	boolean btn_state = false, btn_flag = false, hold_flag = false, counter_flag = false;
 	uint32_t btn_timer;	
-	boolean isHolded_f, isRelease_f, isPress_f, step_flag, oneClick_f, isOne_f;	
+	boolean isHolded_f = false, isRelease_f = false, isPress_f = false, step_flag = false, oneClick_f = false, isOne_f = false;	
 	boolean _inv_state = false;
 	boolean _mode = false;
 	boolean _type = false;

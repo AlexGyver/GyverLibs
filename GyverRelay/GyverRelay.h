@@ -42,8 +42,8 @@ class GyverRelay
 	boolean compute(float);
 	uint32_t prevTime;
 	float prevInput;
-	boolean _direction;
-	boolean _relayState;
+	boolean _direction = false;
+	boolean _relayState = false;
 };
 
 #endif

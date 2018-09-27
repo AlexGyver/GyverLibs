@@ -106,7 +106,7 @@ uint8_t GButton::getClicks() {
 }
 boolean GButton::isStep() {
 	if (_tickMode) GButton::tick();
-	if (step_flag && (millis() - btn_timer > _step_timeout)) {
+	if (step_flag && (millis() - btn_timer >= _step_timeout)) {
 		btn_timer = millis();
 		return true;
 	}
@@ -121,7 +121,7 @@ void GButton::tick(boolean state) {
 void GButton::tick() {	
 	if (!_mode) btn_state = !digitalRead(_PIN) ^ (_inv_state ^ _type);
 	
-  if (btn_state && !btn_flag && (millis() - btn_timer > _debounce)) {
+  if (btn_state && !btn_flag && (millis() - btn_timer >= _debounce)) {
     btn_flag = true;
     btn_counter++;
     btn_timer = millis();
@@ -139,7 +139,7 @@ void GButton::tick() {
 		isOne_f = true;
 	}
   }
-  if (btn_flag && btn_state && (millis() - btn_timer > _timeout) && !hold_flag) {
+  if (btn_flag && btn_state && (millis() - btn_timer >= _timeout) && !hold_flag) {
     hold_flag = true;
     btn_counter = 0;
     isHolded_f = true;
@@ -148,7 +148,7 @@ void GButton::tick() {
 	btn_timer = millis();
   }
   
-  if ((millis() - btn_timer > _timeout) && (btn_counter != 0)) {    
+  if ((millis() - btn_timer >= _timeout) && (btn_counter != 0)) {    
     last_counter = btn_counter;
     btn_counter = 0;
 	counter_flag = true;

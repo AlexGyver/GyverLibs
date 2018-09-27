@@ -42,10 +42,10 @@ class Encoder
 	
   private:
     byte _CLK, _DT, _SW;	
-    boolean DT_now, DT_last, SW_state, hold_flag, butt_flag, turn_flag;
-	boolean isRight_f, isLeft_f, isRightH_f, isLeftH_f, isTurn_f;
-	boolean isPress_f, isRelease_f, isHolded_f, isHold_f;
-	boolean _type, _new_step = true, _tickMode = false, _direction = false;
+    boolean DT_now = false, DT_last = false, SW_state = false, hold_flag = false, butt_flag = false, turn_flag = false;
+	boolean isRight_f = false, isLeft_f = false, isRightH_f = false, isLeftH_f = false, isTurn_f = false;
+	boolean isPress_f = false, isRelease_f = false, isHolded_f = false, isHold_f = false;
+	boolean _type = false, _new_step = true, _tickMode = false, _direction = false;
 	unsigned long debounce_timer;
 };
 

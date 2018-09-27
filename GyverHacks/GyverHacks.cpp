@@ -75,7 +75,7 @@ void constantWizard() {
 	}
 	Serial.println(F("Send address"));	
 	unsigned long now = millis ();
-		while (millis () - now < 500) Serial.read ();  // read and discard any input
+	while (millis () - now < 500) Serial.read ();  // read and discard any input
 	while (!Serial.available());	// ждём ответа
 	int adr = Serial.parseInt(); 	// адрес ячейки
 	EEPROM.put(adr, vcc_const);

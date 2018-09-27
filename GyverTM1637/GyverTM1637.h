@@ -35,7 +35,7 @@ class GyverTM1637
 	
     void displayClock(uint8_t hrs, uint8_t mins);							// выводит часы и минуты
 	void displayClockScroll(uint8_t hrs, uint8_t mins, int delayms);		// выводит часы и минуты с эффектом прокрутки
-	void displayClockTwist(uint8_t hrs, uint8_t mins, int delayms);		// выводит часы и минуты с эффектом скрутки
+	void displayClockTwist(uint8_t hrs, uint8_t mins, int delayms);			// выводит часы и минуты с эффектом скрутки
 	
 	void displayInt(int value);												// выводит число от -999 до 9999 (да, со знаком минус)
 	
