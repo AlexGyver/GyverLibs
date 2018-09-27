@@ -16,7 +16,6 @@ void GyverRelay::setDirection(boolean direction) {
 
 int8_t sign(float value) {
 	if (value > 0) return 1;
-	else if (value == 0) return 0;
 	else if (value < 0) return -1;
 }
 

@@ -1,10 +1,10 @@
 #ifndef GyverButton_h
 #define GyverButton_h
 #include <Arduino.h>
-#define LIBRARY_VERSION	2.6
+#define LIBRARY_VERSION	2.7
 
 /*
-	Текущая версия: 2.6 от 23.09.2018
+	Текущая версия: 2.7 от 28.09.2018
 	GyverButton - библиотека для многофункциональной отработки нажатия кнопки. Возможности:
 	- Работа с нормально замкнутыми и нормально разомкнутыми кнопками
 	- Работа с подключением PULL_UP и PULL_DOWN
@@ -18,6 +18,23 @@
 	- Функция изменения значения переменной с заданным шагом и заданным интервалом по времени
 	- Возможность опрашивать не кнопку, а напрямую давать величину (все возможности библиотеки для матричных и резистивных клавиатур)
 */
+
+#pragma pack(push,1)
+typedef struct
+{	
+	bool btn_state: 1;
+	bool btn_flag: 1;
+	bool hold_flag: 1;
+	bool counter_flag: 1;
+	bool isHolded_f: 1;
+	bool isRelease_f: 1;
+	bool isPress_f: 1;
+	bool step_flag: 1;
+	bool oneClick_f: 1;
+	bool isOne_f: 1;
+
+} GyverButtonFlags;
+#pragma pack(pop)
 
 class GButton
 {
@@ -60,18 +77,19 @@ class GButton
 	boolean isStep();		// возвращает true по таймеру setStepTimeout, смотри пример
 	
   private:
+    GyverButtonFlags flags;
     uint8_t _PIN = 0;
 	uint16_t _debounce = 0;
 	uint16_t _timeout = 0;
 	uint16_t _step_timeout = 0;
-	uint8_t btn_counter = 0, last_counter = 0;
-	boolean btn_state = false, btn_flag = false, hold_flag = false, counter_flag = false;
-	uint32_t btn_timer = 0;	
-	boolean isHolded_f = false, isRelease_f = false, isPress_f = false, step_flag = false, oneClick_f = false, isOne_f = false;	
+	uint8_t btn_counter = 0, last_counter = 0;	
+	uint32_t btn_timer = 0;		
 	boolean _inv_state = false;
 	boolean _mode = false;
 	boolean _type = false;
 	boolean _tickMode = false;
+	//boolean btn_state = false, btn_flag = false, hold_flag = false, counter_flag = false;
+	//boolean flags.isHolded_f = false, isRelease_f = false, isPress_f = false, step_flag = false, oneClick_f = false, isOne_f = false;	
 };
 
 #define HIGH_PULL 0

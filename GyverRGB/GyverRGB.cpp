@@ -108,7 +108,7 @@ void GRGB::fadeTo(byte new_r, byte new_g, byte new_b, uint16_t fadeTime) {
 	int deltaB = new_b - _b;
 
 	// ищем наибольшее изменение по модулю
-	byte deltaMax = 0;
+	int deltaMax = 0;
 	if (abs(deltaR) > deltaMax) deltaMax = abs(deltaR);
 	if (abs(deltaG) > deltaMax) deltaMax = abs(deltaG);
 	if (abs(deltaB) > deltaMax) deltaMax = abs(deltaB);

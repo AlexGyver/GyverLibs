@@ -1,10 +1,10 @@
 #ifndef GyverRC_h
 #define GyverRC_h
 #include <Arduino.h>
-#define LIBRARY_VERSION	2.5
+#define LIBRARY_VERSION	2.6
 
 /*
-	Текущая версия: 2.5 от 25.09.2018
+	Текущая версия: 2.6 от 28.09.2018
 	GyverEncoder - библиотека для отработки энкодера. Возможности:
 	- Отработка поворота с антидребезгом
 	- Отработка нажатия кнопки с антидребезгом
@@ -17,6 +17,28 @@
 #define debounce_turn 15
 #define debounce_button 80
 #define hold_timer 800
+
+#pragma pack(push,1)
+typedef struct
+{	
+	bool DT_now: 1;
+	bool DT_last: 1;
+	bool SW_state: 1;
+	bool hold_flag: 1;
+	bool butt_flag: 1;
+	bool turn_flag: 1;
+	bool isRight_f: 1;
+	bool isLeft_f: 1;
+	bool isRightH_f: 1;
+	bool isLeftH_f: 1;
+	bool isTurn_f: 1;
+	bool isPress_f: 1;
+	bool isRelease_f: 1;
+	bool isHolded_f: 1;
+	bool isHold_f: 1;
+
+} GyverEncoderFlags;
+#pragma pack(pop)
 
 class Encoder
 {
@@ -41,12 +63,14 @@ class Encoder
 	boolean isHold();						// возвращает true при удержании кнопки, НЕ СБРАСЫВАЕТСЯ
 	
   private:
+	GyverEncoderFlags flags;
+	uint32_t debounce_timer = 0;
     byte _CLK = 0, _DT = 0, _SW = 0;	
-    boolean DT_now = false, DT_last = false, SW_state = false, hold_flag = false, butt_flag = false, turn_flag = false;
-	boolean isRight_f = false, isLeft_f = false, isRightH_f = false, isLeftH_f = false, isTurn_f = false;
-	boolean isPress_f = false, isRelease_f = false, isHolded_f = false, isHold_f = false;
+    //boolean DT_now = false, DT_last = false, SW_state = false, hold_flag = false, butt_flag = false, turn_flag = false;
+	//boolean isRight_f = false, isLeft_f = false, isRightH_f = false, isLeftH_f = false, isTurn_f = false;
+	//boolean isPress_f = false, isRelease_f = false, isHolded_f = false, isHold_f = false;
 	boolean _type = false, _new_step = true, _tickMode = false, _direction = false;
-	unsigned long debounce_timer = 0;
+	
 };
 
 #define TYPE1 0			// полушаговый энкодер

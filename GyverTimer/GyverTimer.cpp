@@ -5,7 +5,7 @@ GTimer_ms::GTimer_ms() {}
 
 GTimer_ms::GTimer_ms(uint32_t interval) {
 	_interval = interval;
-	_timer = (long)millis() + _interval;
+	_timer = millis();
 }
 
 void GTimer_ms::setInterval(uint32_t interval) {
@@ -16,8 +16,8 @@ void GTimer_ms::setMode(boolean mode) {
 	_mode = mode;
 }
 boolean GTimer_ms::isReady() {
-	if ((long)millis() >= _timer) {
-		if (!_mode) _timer = millis() + _interval;
+	if ((long)millis() - _timer >= _interval) {
+		if (!_mode) _timer = millis();
 		return true;
 	} else {
 		return false;
@@ -25,7 +25,7 @@ boolean GTimer_ms::isReady() {
 }
 
 void GTimer_ms::reset() {
-	_timer = millis() + _interval;
+	_timer = millis();
 }
 
 GTimer_us::GTimer_us() {}
