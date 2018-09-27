@@ -1,16 +1,16 @@
 #include "GyverButton.h"
 #include <Arduino.h>
 
-GButton::GButton(uint8_t PIN) {
-  _PIN = PIN;  
+GButton::GButton(uint8_t pin) {
+  _PIN = pin;  
   _debounce = 80;
   _timeout = 500;
   _step_timeout = 400;
   _inv_state = NORM_OPEN;
   GButton::setType(HIGH_PULL);
 }
-GButton::GButton(uint8_t PIN, boolean type, boolean dir) {
-	GButton::GButton(PIN);
+GButton::GButton(uint8_t pin, boolean type, boolean dir) {
+	GButton::GButton(pin);
 	GButton::setType(type);
 	_inv_state = dir;
 }

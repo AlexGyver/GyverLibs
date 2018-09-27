@@ -24,7 +24,7 @@ class GButton
   public:
     GButton(uint8_t pin);								// класс кнопки, принимает пин
 	
-	GButton(uint8_t PIN, boolean type, boolean dir);	// класс кнопки, принимает PIN пин, тип type (HIGH_PULL / LOW_PULL) и направление dir (NORM_OPEN / NORM_CLOSE)
+	GButton(uint8_t pin, boolean type, boolean dir);	// класс кнопки, принимает PIN пин, тип type (HIGH_PULL / LOW_PULL) и направление dir (NORM_OPEN / NORM_CLOSE)
 														// HIGH_PULL - кнопка подключена к GND, пин подтянут к VCC, pinMode - INPUT_PULLUP (по умолчанию)
 														// LOW_PULL - кнопка подключена к VCC, пин подтянут к GND, pinMode - INPUT
 														// NORM_OPEN - кнопка по умолчанию разомкнута
