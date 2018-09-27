@@ -25,8 +25,8 @@ class GTimer_ms
 	void reset();							// ручной сброс таймера на установленный интервал
 	
   private:
-	uint32_t _timer;
-	uint32_t _interval;
+	uint32_t _timer = 0;
+	uint32_t _interval = 0;
 	boolean _mode = 0;
 };
 
@@ -41,8 +41,8 @@ class GTimer_us
 	void reset();							// ручной сброс таймера на установленный интервал
 	
   private:
-	uint32_t _timer;
-	uint32_t _interval;
+	uint32_t _timer = 0;
+	uint32_t _interval = 0;
 	boolean _mode = 0;
 };
 

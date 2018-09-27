@@ -30,9 +30,9 @@ class GFilterRA
 	float filtered(float value);				// возвращает фильтрованное значение
 	
   private:
-	float _coef, _lastValue;
-	uint32_t _filterTimer;
-	uint16_t _filterInterval;
+	float _coef = 0.0, _lastValue = 0.0;
+	uint32_t _filterTimer = 0;
+	uint16_t _filterInterval = 0;
 };
 
 class GMedian3
@@ -43,7 +43,7 @@ class GMedian3
 		
 	private:
 		uint16_t buffer[3];
-		byte counter;
+		byte counter = 0;
 };
 
 class GMedian
@@ -89,12 +89,12 @@ class GKalman
 		float filtered(float value);		// возвращает фильтрованное значение
   
 	private:
-		float _err_measure;
-		float _err_estimate;
-		float _q;
-		float _current_estimate;
-		float _last_estimate;
-		float _kalman_gain;
+		float _err_measure = 0.0;
+		float _err_estimate = 0.0;
+		float _q = 0.0;
+		float _current_estimate = 0.0;
+		float _last_estimate = 0.0;
+		float _kalman_gain = 0.0;
 };
 
 #endif

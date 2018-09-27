@@ -60,13 +60,13 @@ class GButton
 	boolean isStep();		// возвращает true по таймеру setStepTimeout, смотри пример
 	
   private:
-    uint8_t _PIN;
-	uint16_t _debounce;
-	uint16_t _timeout;
-	uint16_t _step_timeout;
-	uint8_t btn_counter, last_counter;
+    uint8_t _PIN = 0;
+	uint16_t _debounce = 0;
+	uint16_t _timeout = 0;
+	uint16_t _step_timeout = 0;
+	uint8_t btn_counter = 0, last_counter = 0;
 	boolean btn_state = false, btn_flag = false, hold_flag = false, counter_flag = false;
-	uint32_t btn_timer;	
+	uint32_t btn_timer = 0;	
 	boolean isHolded_f = false, isRelease_f = false, isPress_f = false, step_flag = false, oneClick_f = false, isOne_f = false;	
 	boolean _inv_state = false;
 	boolean _mode = false;

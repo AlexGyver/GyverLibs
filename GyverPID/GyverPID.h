@@ -41,13 +41,13 @@ class GyverPID
 	float kd;
 		
   private:	
-	int16_t dt;
+	int16_t dt = 0;
 	boolean _mode = 0, _direction = 0, _prev_direction = 0;	
 	float _minOut = 0, _maxOut = 255;	
-	float dt_s;
-	float prevInput;
-	float integral;
-	uint32_t pidTimer;
+	float dt_s = 0.0;
+	float prevInput = 0.0;
+	float integral = 0.0;
+	uint32_t pidTimer = 0;
 };
 
 #endif

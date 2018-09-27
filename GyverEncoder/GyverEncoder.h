@@ -41,12 +41,12 @@ class Encoder
 	boolean isHold();						// возвращает true при удержании кнопки, НЕ СБРАСЫВАЕТСЯ
 	
   private:
-    byte _CLK, _DT, _SW;	
+    byte _CLK = 0, _DT = 0, _SW = 0;	
     boolean DT_now = false, DT_last = false, SW_state = false, hold_flag = false, butt_flag = false, turn_flag = false;
 	boolean isRight_f = false, isLeft_f = false, isRightH_f = false, isLeftH_f = false, isTurn_f = false;
 	boolean isPress_f = false, isRelease_f = false, isHolded_f = false, isHold_f = false;
 	boolean _type = false, _new_step = true, _tickMode = false, _direction = false;
-	unsigned long debounce_timer;
+	unsigned long debounce_timer = 0;
 };
 
 #define TYPE1 0			// полушаговый энкодер

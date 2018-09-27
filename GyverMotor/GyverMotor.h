@@ -42,8 +42,8 @@ class GMotor
 	void runBkw();
 	void runFrw10bit();
 	void runBkw10bit();
-	uint8_t _dig_pin, _pwm_pin, _mode, _reverse;
-	int16_t _duty;
+	uint8_t _dig_pin = 0, _pwm_pin = 0, _mode = 0, _reverse = 0;
+	int16_t _duty = 0;
 };
 
 #define NORM 	0

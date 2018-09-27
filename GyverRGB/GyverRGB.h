@@ -44,8 +44,8 @@ class GRGB
 	
   private:
 	void setRGB();
-	uint8_t _rpin, _gpin, _bpin;	// пины
-	uint8_t _r, _g, _b;				// цвета
+	uint8_t _rpin = 0, _gpin = 0, _bpin = 0;	// пины
+	uint8_t _r = 0, _g = 0, _b = 0;				// цвета
 	boolean _reverse_flag = false;
 	boolean _PWMmode = false;
 };
