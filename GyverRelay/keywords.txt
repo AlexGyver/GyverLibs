@@ -1,0 +1,32 @@
+#######################################
+# Syntax Coloring Map For GyverRelay
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+GyverRelay		KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+getResult		KEYWORD2
+getResultTimer	KEYWORD2
+setDirection	KEYWORD2
+
+setpoint		KEYWORD2
+input			KEYWORD2
+output			KEYWORD2
+hysteresis		KEYWORD2
+k				KEYWORD2
+rate			KEYWORD2
+sampleTime		KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+NORMAL			LITERAL1
+REVERSE			LITERAL1

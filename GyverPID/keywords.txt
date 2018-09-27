@@ -1,0 +1,37 @@
+#######################################
+# Syntax Coloring Map For GyverPID
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+GyverPID		KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+setpoint		KEYWORD2
+input			KEYWORD2
+output			KEYWORD2
+kp				KEYWORD2
+ki				KEYWORD2
+kd				KEYWORD2
+
+getResult		KEYWORD2
+getResultTimer	KEYWORD2
+
+setDirection	KEYWORD2
+setMode			KEYWORD2
+setLimits		KEYWORD2
+setDt			KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+NORMAL			LITERAL1
+REVERSE			LITERAL1
+ON_ERROR		LITERAL1
+ON_RATE			LITERAL1
