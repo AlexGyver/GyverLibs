@@ -61,12 +61,12 @@ float GyverPID::getResult() {
 float GyverPID::getResult(float new_setpoint, float new_input) {
 	setpoint = new_setpoint;
 	input = new_input;
-	GyverPID::getResult();
+	return GyverPID::getResult();
 }
 float GyverPID::getResultTimer() {
-	if ((long)millis() > pidTimer) {
-		pidTimer = (long)millis() + dt;
-		GyverPID::getResult();
+	if ((long)millis() - pidTimer >= dt) {
+		pidTimer = millis();
+		return GyverPID::getResult();
 	} else {
 		return output;
 	}
@@ -74,5 +74,5 @@ float GyverPID::getResultTimer() {
 float GyverPID::getResultTimer(float new_setpoint, float new_input) {
 	setpoint = new_setpoint;
 	input = new_input;
-	GyverPID::getResultTimer();
+	return GyverPID::getResultTimer();
 }
