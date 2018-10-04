@@ -455,9 +455,7 @@ void GyverTM1637::twistByte(int8_t DispData[], int delayms) {
 			step = 0b11000000;
 			step = ~(step | (1 << i) | (1 << i + 1));	// бегает дырка
 				for (byte k = 0; k < 4; k++) {	
-					if (changeByte[k])
-						stepArray[k] = step;
-					Serial.println(stepArray[k], BIN);
+					if (changeByte[k]) stepArray[k] = step;
 				}
 			displayByte(stepArray);
 			delay(delayms);
