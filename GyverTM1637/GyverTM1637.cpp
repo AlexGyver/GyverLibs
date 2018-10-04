@@ -273,9 +273,19 @@ void GyverTM1637::scroll(int8_t DispData[], int delayms) {
 	scrollByte(DispDataByte, delayms);
 }
 
+void GyverTM1637::scroll(uint8_t bit0, uint8_t bit1, uint8_t bit2, uint8_t bit3, int delayms) {
+	byte DispData[] = {TubeTab[bit0], TubeTab[bit1], TubeTab[bit2], TubeTab[bit3]};
+	GyverTM1637::scrollByte(DispData, delayms);
+}
+
 void GyverTM1637::scroll(uint8_t BitAddr, int8_t DispData, int delayms) {
 	byte DispDataByte = TubeTab[DispData];
 	scrollByte(BitAddr, DispDataByte, delayms);
+}
+
+void GyverTM1637::scrollByte(uint8_t bit0, uint8_t bit1, uint8_t bit2, uint8_t bit3, int delayms) {
+	byte DispData[] = {bit0, bit1, bit2, bit3};
+	GyverTM1637::scrollByte(DispData, delayms);
 }
 
 void GyverTM1637::scrollByte(int8_t DispData[], int delayms) {
@@ -408,6 +418,16 @@ void GyverTM1637::twist(int8_t DispData[], int delayms) {
 		newData[i] = TubeTab[DispData[i]];
 	}
 	twistByte(newData, delayms);
+}
+
+void GyverTM1637::twist(uint8_t bit0, uint8_t bit1, uint8_t bit2, uint8_t bit3, int delayms) {
+	byte DispData[] = {TubeTab[bit0], TubeTab[bit1], TubeTab[bit2], TubeTab[bit3]};
+	GyverTM1637::twistByte(DispData, delayms);
+}
+
+void GyverTM1637::twistByte(uint8_t bit0, uint8_t bit1, uint8_t bit2, uint8_t bit3, int delayms) {
+	byte DispData[] = {bit0, bit1, bit2, bit3};
+	GyverTM1637::twistByte(DispData, delayms);
 }
 
 void GyverTM1637::twistByte(int8_t DispData[], int delayms) {

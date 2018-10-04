@@ -446,13 +446,17 @@ void brightness(uint8_t bright, uint8_t = 0x40, uint8_t = 0xc0);        // яр�
 	
 void scroll(uint8_t BitAddr, int8_t DispData, int delayms);             // обновить значение прокруткой (адрес, ЦИФРА, задержка в мс)
 void scroll(int8_t DispData[], int delayms);                            // обновить значение прокруткой (массив ЦИФР, задержка в мс)
+void scroll(uint8_t bit0, uint8_t bit1, uint8_t bit2, uint8_t bit3, int delayms);   // прокрутка посимвольно
 void scrollByte(uint8_t BitAddr, int8_t DispData, int delayms);         // обновить значение прокруткой (адрес, БАЙТ, задержка в мс)
 void scrollByte(int8_t DispData[], int delayms);                        // обновить значение прокруткой (массив БАЙТ, задержка в мс)
+void scrollByte(uint8_t bit0, uint8_t bit1, uint8_t bit2, uint8_t bit3, int delayms);  // прокрутка посимвольно
 	
 void twist(uint8_t BitAddr, int8_t DispData, int delayms);              // обновить значение скручиванием (адрес, ЦИФРА, задержка в мс)
 void twist(int8_t DispData[], int delayms);                             // обновить значение скручиванием (массив ЦИФР, задержка в мс)
+void twist(uint8_t bit0, uint8_t bit1, uint8_t bit2, uint8_t bit3, int delayms);   // скрутка посимвольно
 void twistByte(uint8_t BitAddr, int8_t DispData, int delayms);          // обновить значение скручиванием (адрес, БАЙТ, задержка в мс)
 void twistByte(int8_t DispData[], int delayms);                         // обновить значение скручиванием (массив БАЙТ, задержка в мс)
+void twistByte(uint8_t bit0, uint8_t bit1, uint8_t bit2, uint8_t bit3, int delayms);  // скрутка посимвольно
 
 ```
 </p>
