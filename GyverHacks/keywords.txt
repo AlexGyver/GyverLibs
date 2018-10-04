@@ -28,6 +28,9 @@ getVCC			KEYWORD2
 getVoltage		KEYWORD2
 constantWizard	KEYWORD2
 restoreConstant	KEYWORD2
+setConst		KEYWORD2
+getConst		KEYWORD2
+
 lithiumPercent	KEYWORD2
 alkaline3Percent	KEYWORD2
 nickel3Percent	KEYWORD2

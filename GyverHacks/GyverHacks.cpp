@@ -88,6 +88,14 @@ void restoreConstant(int adr) {
 	EEPROM.get(adr, vcc_const);
 }
 
+void setConst(int new_const) {
+	vcc_const = new_const;
+}
+
+int getConst() {
+	return vcc_const;
+}
+
 // 5 шагов по 20%
 // Литий 1 шт 4200, 3950, 3850, 3750, 3700, 2800
 // Алкалин 3шт 4650, 4050, 3870, 3690, 3570, 3300
