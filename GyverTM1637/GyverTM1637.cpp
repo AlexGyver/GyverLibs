@@ -213,13 +213,12 @@ void GyverTM1637::displayClockTwist(uint8_t hrs, uint8_t mins, int delayms) {
 }
 
 void GyverTM1637::displayInt(int value) {
+	if (value > 9999 || value < -999) return;
 	boolean negative = false;
 	boolean neg_flag = false;
-	if (value < 0) negative = true;
-	value = abs(value);
-	
-	if (value > 9999 || value < -999) return 0;	
 	byte digits[4];
+	if (value < 0) negative = true;	
+	value = abs(value);	
 	digits[0] = (int)value / 1000;      	// количесто тысяч в числе
 	uint16_t b = (int)digits[0] * 1000; 	// вспомогательная переменная
 	digits[1] = ((int)value - b) / 100; 	// получем количество сотен
@@ -228,21 +227,23 @@ void GyverTM1637::displayInt(int value) {
 	b += digits[2] * 10;                	// сумма тысяч, сотен и десятков
 	digits[3] = value - b;              	// получаем количество единиц
 	
-	if (digits[2] == 0) {
-		if (negative && !neg_flag) digits[2] = 11;
-		else digits[2] = 10;
-		neg_flag = true;	
+	if (!negative) {
+		for (byte i = 0; i < 3; i++) {
+			if (digits[i] == 0) digits[i] = 10;
+			else break;
+		}
+	} else {
+		for (byte i = 0; i < 3; i++) {
+			if (digits[i] == 0) {
+				if (digits[i + 1] == 0){
+					digits[i] = 10;
+				} else {
+					digits[i] = 11;
+					break;
+				}
+			}			
+		}
 	}
-	if (digits[1] == 0) {
-		if (negative && !neg_flag) digits[1] = 11;
-		else digits[1] = 10;
-		neg_flag = true;		
-	}	
-	if (digits[0] == 0) {
-		if (negative && !neg_flag) digits[0] = 11;
-		else digits[0] = 10;
-		neg_flag = true;		
-	}	
 	GyverTM1637::display(digits);
 }
 
