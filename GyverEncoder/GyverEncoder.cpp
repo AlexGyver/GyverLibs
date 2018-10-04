@@ -77,6 +77,13 @@ boolean Encoder::isRelease() {
 		return true;
 	} else return false;
 }
+boolean Encoder::isClick() {
+	if (_tickMode) Encoder::tick();
+	if (flags.isRelease_f) {
+		flags.isRelease_f = false;
+		return true;
+	} else return false;
+}
 boolean Encoder::isHolded() {
 	if (_tickMode) Encoder::tick();
 	if (flags.isHolded_f) {

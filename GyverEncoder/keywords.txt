@@ -23,6 +23,7 @@ isLeftH			KEYWORD2
 
 isPress			KEYWORD2
 isRelease		KEYWORD2
+isClick			KEYWORD2
 isHolded		KEYWORD2
 isHold			KEYWORD2
 
