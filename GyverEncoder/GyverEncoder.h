@@ -1,10 +1,10 @@
-#ifndef GyverRC_h
-#define GyverRC_h
+#ifndef GyverEncoder_h
+#define GyverEncoder_h
 #include <Arduino.h>
-#define LIBRARY_VERSION	2.7
+#define LIBRARY_VERSION	2.8
 
 /*
-	Текущая версия: 2.7 от 05.10.2018
+	Текущая версия: 2.8 от 11.10.2018
 	GyverEncoder - библиотека для отработки энкодера. Возможности:
 	- Отработка поворота с антидребезгом
 	- Отработка нажатия кнопки с антидребезгом
@@ -43,8 +43,8 @@ typedef struct
 class Encoder
 {
   public:
-    Encoder(uint8_t, uint8_t, uint8_t);				// CLK, DT, SW
-	Encoder(uint8_t, uint8_t, uint8_t, boolean);	// CLK, DT, SW, тип (TYPE1 / TYPE2) TYPE1 одношаговый, TYPE2 двухшаговый. Если ваш энкодер работает странно, смените тип
+    Encoder(uint8_t clk, uint8_t dt, uint8_t sw);				// CLK, DT, SW
+	Encoder(uint8_t clk, uint8_t dt, uint8_t sw, boolean);		// CLK, DT, SW, тип (TYPE1 / TYPE2) TYPE1 одношаговый, TYPE2 двухшаговый. Если ваш энкодер работает странно, смените тип
 		
 	void tick();							// опрос энкодера, нужно вызывать постоянно или в прерывании
 	void setType(boolean type);				// TYPE1 / TYPE2 - тип энкодера TYPE1 одношаговый, TYPE2 двухшаговый. Если ваш энкодер работает странно, смените тип

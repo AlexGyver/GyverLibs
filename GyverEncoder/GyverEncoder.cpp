@@ -1,17 +1,17 @@
 #include "GyverEncoder.h"
 #include <Arduino.h>
 
-Encoder::Encoder(uint8_t CLK, uint8_t DT, uint8_t SW) {
-  _CLK = CLK;
-  _DT = DT;
-  _SW = SW;
+Encoder::Encoder(uint8_t clk, uint8_t dt, uint8_t sw) {
+  _CLK = clk;
+  _DT = dt;
+  _SW = sw;
   pinMode (_CLK, INPUT);
   pinMode (_DT, INPUT);
   pinMode (_SW, INPUT_PULLUP);
   flags.DT_last = digitalRead(_CLK);         // читаем начальное положение CLK
 }
-Encoder::Encoder(uint8_t CLK, uint8_t DT, uint8_t SW, boolean type) {
-	Encoder::Encoder(CLK, DT, SW);
+Encoder::Encoder(uint8_t clk, uint8_t dt, uint8_t sw, boolean type) {
+	Encoder::Encoder(clk, dt, sw);
 	_type = type;
 }
 void Encoder::setDirection(boolean direction) {
