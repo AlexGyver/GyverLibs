@@ -2,18 +2,26 @@
 #include <Arduino.h>
 
 Encoder::Encoder(uint8_t clk, uint8_t dt, uint8_t sw) {
-  _CLK = clk;
-  _DT = dt;
-  _SW = sw;
-  pinMode (_CLK, INPUT);
-  pinMode (_DT, INPUT);
-  pinMode (_SW, INPUT_PULLUP);
-  flags.DT_last = digitalRead(_CLK);         // читаем начальное положение CLK
+	_CLK = clk;
+	_DT = dt;
+	_SW = sw;
+	Encoder::init();
 }
 Encoder::Encoder(uint8_t clk, uint8_t dt, uint8_t sw, boolean type) {
-	Encoder::Encoder(clk, dt, sw);
+	_CLK = clk;
+	_DT = dt;
+	_SW = sw;
 	_type = type;
+	Encoder::init();	
 }
+
+void Encoder::init() {
+	pinMode (_CLK, INPUT);
+	pinMode (_DT, INPUT);
+	pinMode (_SW, INPUT_PULLUP);
+	flags.DT_last = digitalRead(_CLK);         // читаем начальное положение CLK
+}
+
 void Encoder::setDirection(boolean direction) {
 	if (_direction != direction) {
 		_direction = direction;

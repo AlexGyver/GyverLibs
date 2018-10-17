@@ -1,10 +1,10 @@
 #ifndef GyverEncoder_h
 #define GyverEncoder_h
 #include <Arduino.h>
-#define LIBRARY_VERSION	2.8
+#define LIBRARY_VERSION	2.9
 
 /*
-	Текущая версия: 2.8 от 11.10.2018
+	Текущая версия: 2.9 от 17.10.2018
 	GyverEncoder - библиотека для отработки энкодера. Возможности:
 	- Отработка поворота с антидребезгом
 	- Отработка нажатия кнопки с антидребезгом
@@ -64,6 +64,7 @@ class Encoder
 	boolean isHold();						// возвращает true при удержании кнопки, НЕ СБРАСЫВАЕТСЯ
 	
   private:
+	void init();
 	GyverEncoderFlags flags;
 	uint32_t debounce_timer = 0;
     byte _CLK = 0, _DT = 0, _SW = 0;	
