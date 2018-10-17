@@ -2,17 +2,22 @@
 #include <Arduino.h>
 
 GButton::GButton(uint8_t pin) {
-  _PIN = pin;  
-  _debounce = 100;
-  _timeout = 500;
-  _step_timeout = 400;
-  _inv_state = NORM_OPEN;
-  GButton::setType(HIGH_PULL);
+	_PIN = pin;
+	GButton::init();
 }
 GButton::GButton(uint8_t pin, boolean type, boolean dir) {
-	GButton::GButton(pin);
+	_PIN = pin;
+	GButton::init();
 	GButton::setType(type);
 	_inv_state = dir;
+}
+
+void GButton::init() {
+	_debounce = 100;
+	_timeout = 500;
+	_step_timeout = 400;
+	_inv_state = NORM_OPEN;
+	GButton::setType(HIGH_PULL);
 }
 
 void GButton::setDebounce(uint16_t debounce) {

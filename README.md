@@ -2,7 +2,7 @@
 ## Написанные с нуля/модифицированные библиотеки для Arduino
 [![AlexGyver YouTube](http://alexgyver.ru/git_banner.jpg)](https://www.youtube.com/channel/UCgtAOyEQdAyjvm9ATCi_Aig?sub_confirmation=1)
 > Внимание! Библиотеки написаны ютубером-ардуинщиком, возможна высокая концентрация костылей и стандартных подходов. Но всё работает замечательно!
-### GyverButton v2.7
+### GyverButton v2.8
 Библиотека для многофункциональной отработки нажатия кнопок с Arduino. Возможности:
 - Работа с нормально замкнутыми и нормально разомкнутыми кнопками
 - Работа с подключением PULL_UP и PULL_DOWN
@@ -340,7 +340,7 @@ void setDirection(boolean direction);
 
 ---
 
-### GyverRGB v1.6
+### GyverRGB v1.7
 Библиотека для удобного управления RGB светодиодами и лентами для Arduino
 - Работа в пространстве RGB
 - Работа в пространстве HSV

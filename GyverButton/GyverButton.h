@@ -1,10 +1,10 @@
 #ifndef GyverButton_h
 #define GyverButton_h
 #include <Arduino.h>
-#define LIBRARY_VERSION	2.7
+#define LIBRARY_VERSION	2.8
 
 /*
-	Текущая версия: 2.7 от 28.09.2018
+	Текущая версия: 2.8 от 17.10.2018
 	GyverButton - библиотека для многофункциональной отработки нажатия кнопки. Возможности:
 	- Работа с нормально замкнутыми и нормально разомкнутыми кнопками
 	- Работа с подключением PULL_UP и PULL_DOWN
@@ -44,7 +44,7 @@ class GButton
 	GButton(uint8_t pin, boolean type, boolean dir);	// класс кнопки, принимает PIN пин, тип type (HIGH_PULL / LOW_PULL) и направление dir (NORM_OPEN / NORM_CLOSE)
 														// HIGH_PULL - кнопка подключена к GND, пин подтянут к VCC, pinMode - INPUT_PULLUP (по умолчанию)
 														// LOW_PULL - кнопка подключена к VCC, пин подтянут к GND, pinMode - INPUT
-														// NORM_OPEN - кнопка по умолчанию разомкнута
+														// NORM_OPEN - кнопка по умолчанию разомкнута (по умолчанию)
 														// NORM_CLOSE - кнопка по умолчанию замкнута
 	
 	void setDebounce(uint16_t debounce);				// установка времени антидребезга (по умолчанию 80 мс)
@@ -77,6 +77,7 @@ class GButton
 	boolean isStep();		// возвращает true по таймеру setStepTimeout, смотри пример
 	
   private:
+	void init();
     GyverButtonFlags flags;
     uint8_t _PIN = 0;
 	uint16_t _debounce = 0;

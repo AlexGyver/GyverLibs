@@ -6,7 +6,13 @@ volatile uint8_t pwmsRGB[20];
 volatile boolean anyPWMpinsRGB[20];
 
 GRGB::GRGB(uint8_t rpin, uint8_t gpin, uint8_t bpin) {
-	GRGB::GRGB(rpin, gpin, bpin, false);	// по умолчанию pwmmode NORM_PWM
+	// по умолчанию pwmmode NORM_PWM
+	_rpin = rpin;
+	_gpin = gpin;
+	_bpin = bpin;
+	pinMode(_rpin, OUTPUT);
+	pinMode(_gpin, OUTPUT);
+	pinMode(_bpin, OUTPUT);
 }
 
 GRGB::GRGB(uint8_t rpin, uint8_t gpin, uint8_t bpin, boolean pwmmode) {
@@ -119,7 +125,7 @@ void GRGB::fadeTo(byte new_r, byte new_g, byte new_b, uint16_t fadeTime) {
 	float stepB = (float)deltaB / deltaMax;
 
 	// Защита от деления на 0. Завершаем работу
-	if (deltaMax == 0) return 0;
+	if (deltaMax == 0) return;
 
 	// Расчет задержки в мкс
 	uint16_t stepDelay = (long) 1000 * fadeTime / deltaMax;
@@ -170,18 +176,22 @@ void GRGB::setRGB() {
 
 void anyPWMinitRGB(byte prescaler) // 1 - 7
 {
-  cli();
-  TCCR2A = 0;   //при совпадении уровень OC1A меняется на противоположный
-  TCCR2B = 5;   //CLK
-  OCR2A = 1;
-  TIMSK2 = 2;   //разрешаем прерывание по совпадению
-  sei();
-  TCCR2B = prescaler;   // prescaler
+	#if defined(__AVR_ATmega328P__)
+	cli();
+	TCCR2A = 0;   //при совпадении уровень OC1A меняется на противоположный
+	TCCR2B = 5;   //CLK
+	OCR2A = 1;
+	TIMSK2 = 2;   //разрешаем прерывание по совпадению
+	sei();
+	TCCR2B = prescaler;   // prescaler
+	#endif
 }
  
-void anyPWMpinRGB(uint8_t pin) {	
+void anyPWMpinRGB(uint8_t pin) {
+	#if defined(__AVR_ATmega328P__)
 	anyPWMpinsRGB[pin] = 1;
 	pinMode(pin, OUTPUT);
+	#endif
 }
 
 void anyPWMRGB(byte pin, byte duty)
@@ -189,6 +199,7 @@ void anyPWMRGB(byte pin, byte duty)
 	pwmsRGB[pin] = duty;
 }
 
+#if defined(__AVR_ATmega328P__)
 ISR(TIMER2_COMPA_vect)
 {
   TCNT2 = 0;
@@ -215,3 +226,4 @@ ISR(TIMER2_COMPA_vect)
 
   pwmRGB++;
 }
+#endif
