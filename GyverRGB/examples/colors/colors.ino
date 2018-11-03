@@ -43,14 +43,14 @@ void setup() {
 }
 
 void loop() {
-  diode.setColor(G_RED);
+  diode.setHEX(G_RED);
   delay(1000);
-  diode.setColor(G_YELLOW);
+  diode.setHEX(G_YELLOW);
   delay(1000);
-  diode.setColor(G_LIME);
+  diode.setHEX(G_LIME);
   delay(1000);
-  diode.setColor(G_AQUA);
+  diode.setHEX(G_AQUA);
   delay(1000);
-  diode.setColor(G_PINK);
+  diode.setHEX(G_PINK);
   delay(1000);  
 }
