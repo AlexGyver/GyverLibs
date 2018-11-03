@@ -128,7 +128,7 @@ void GRGB::fadeTo(byte new_r, byte new_g, byte new_b, uint16_t fadeTime) {
 	if (deltaMax == 0) return;
 
 	// Расчет задержки в мкс
-	uint16_t stepDelay = (long) 1000 * fadeTime / deltaMax;
+	uint32_t stepDelay = (float) 1000 * fadeTime / deltaMax;
 
 	// Дробные величины для плавности, начальное значение = текущему у светодиода
 	float thisR = _r, thisG = _g, thisB = _b;
@@ -143,7 +143,9 @@ void GRGB::fadeTo(byte new_r, byte new_g, byte new_b, uint16_t fadeTime) {
 		_g = thisG;
 		_b = thisB;
 		GRGB::setRGB();
-		delayMicroseconds(stepDelay);
+		
+		uint32_t us_timer = micros();
+		while (micros() - us_timer <= stepDelay);
 	}
 }
 
@@ -199,7 +201,7 @@ void anyPWMRGB(byte pin, byte duty)
 	pwmsRGB[pin] = duty;
 }
 
-#if defined(__AVR_ATmega328P__)
+#if (defined(__AVR_ATmega328P__) && ALLOW_ANYPWM)
 ISR(TIMER2_COMPA_vect)
 {
   TCNT2 = 0;

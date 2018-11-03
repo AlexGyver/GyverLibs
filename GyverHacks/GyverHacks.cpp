@@ -280,6 +280,7 @@ void anyPWM(byte pin, byte duty)
 	pwms[pin] = duty;
 }
 
+#if (defined(__AVR_ATmega328P__) && ALLOW_ANYPWM)
 ISR(TIMER2_COMPA_vect)
 {
   TCNT2 = 0;
@@ -306,6 +307,7 @@ ISR(TIMER2_COMPA_vect)
 
   pwm++;
 }
+#endif
 
 // ***************************** ADC *****************************
 

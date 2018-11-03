@@ -1,10 +1,13 @@
 #ifndef GyverHacks_h
 #define GyverHacks_h
 #include <Arduino.h>
-#define LIBRARY_VERSION	2.1
+#define LIBRARY_VERSION	2.2
+
+#define ALLOW_ANYPWM 1		// (0 / 1) - включить или отключить ANYPWM
+// необходимо отключить, если этот режим не нужен и вы сами используете прерывания timer2 (COMPA_vect)
 
 /*	
-	Текущая версия: 2.1 от 04.10.2018	
+	Текущая версия: 2.2 от 03.11.2018	
 	GyverHacks - библиотека с некоторыми удобными хаками для Arduino UNO/NANO/MINI (atmega328):
 	- Быстрые аналоги стандартных функций чтения/записи 
 	- Изменение частоты ШИМ пинов (3, 5, 6, 9, 10, 11)
