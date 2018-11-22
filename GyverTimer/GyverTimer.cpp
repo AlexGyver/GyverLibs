@@ -17,7 +17,7 @@ void GTimer_ms::setMode(boolean mode) {
 }
 boolean GTimer_ms::isReady() {
 	if ((long)millis() - _timer >= _interval) {
-		if (!_mode) _timer = millis();
+		if (_mode) _timer = millis();
 		return true;
 	} else {
 		return false;
@@ -44,7 +44,7 @@ void GTimer_us::setMode(boolean mode) {
 }
 boolean GTimer_us::isReady() {
 	if ((long)micros() - _timer >= _interval) {
-		if (!_mode) _timer = micros();
+		if (_mode) _timer = micros();
 		return true;
 	} else {
 		return false;

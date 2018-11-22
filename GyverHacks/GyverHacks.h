@@ -1,13 +1,12 @@
 #ifndef GyverHacks_h
 #define GyverHacks_h
 #include <Arduino.h>
-#define LIBRARY_VERSION	2.2
 
 #define ALLOW_ANYPWM 1		// (0 / 1) - включить или отключить ANYPWM
 // необходимо отключить, если этот режим не нужен и вы сами используете прерывания timer2 (COMPA_vect)
 
 /*	
-	Текущая версия: 2.2 от 03.11.2018	
+	Текущая версия: 2.3 от 22.11.2018
 	GyverHacks - библиотека с некоторыми удобными хаками для Arduino UNO/NANO/MINI (atmega328):
 	- Быстрые аналоги стандартных функций чтения/записи 
 	- Изменение частоты ШИМ пинов (3, 5, 6, 9, 10, 11)
@@ -101,18 +100,18 @@ class GTimer
 {
   public:
 	GTimer();
-	GTimer(uint16_t);			// объявление таймера с указанием интервала
-	void setInterval(uint16_t);	// установка интервала
+	GTimer(uint32_t);			// объявление таймера с указанием интервала
+	void setInterval(uint32_t);	// установка интервала
 	void setMode(boolean);		// установка типа работы: AUTO или MANUAL (MANUAL нужно вручную сбрасывать reset)
 	boolean isReady();			// возвращает true, когда пришло время. Сбрасывается в false сам (AUTO) или вручную (MANUAL)
 	void reset();				// ручной сброс таймера на установленный интервал
   private:
 	uint32_t _timer;
-	uint16_t _interval;
-	boolean _mode;
+	uint32_t _interval;
+	boolean _mode = true;
 };
 
-#define AUTO 0
-#define MANUAL 1
+#define MANUAL 0
+#define AUTO 1
 
 #endif

@@ -335,9 +335,10 @@ void GTimer::setInterval(uint16_t interval) {
 void GTimer::setMode(boolean mode) {
 	_mode = mode;
 }
+
 boolean GTimer::isReady() {
 	if ((long)millis() > _timer) {
-		if (!_mode) _timer = millis() + _interval;
+		if (_mode) _timer = millis() + _interval;
 		return true;
 	} else {
 		return false;
