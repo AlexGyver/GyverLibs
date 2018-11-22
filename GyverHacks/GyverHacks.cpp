@@ -323,12 +323,12 @@ void setADCrate(byte mode) {
 // ***************************** GTimer *****************************
 GTimer::GTimer() {}
 
-GTimer::GTimer(uint16_t interval) {
+GTimer::GTimer(uint32_t interval) {
 	_interval = interval;
 	_timer = (long)millis() + _interval;
 }
 
-void GTimer::setInterval(uint16_t interval) {
+void GTimer::setInterval(uint32_t interval) {
 	_interval = interval;
 	GTimer::reset();
 }
