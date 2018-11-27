@@ -82,7 +82,7 @@ void twistClock() {
           if (hrs > 24) hrs = 0;
         }
         // ***** часы! ****
-        disp.displayClockScroll(hrs, mins, 35);    // выводим время
+        disp.displayClockTwist(hrs, mins, 35);    // выводим время
       }
     }
   }
