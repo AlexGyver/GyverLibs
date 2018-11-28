@@ -17,6 +17,8 @@ setInterval		KEYWORD2
 isReady			KEYWORD2
 reset			KEYWORD2
 setMode			KEYWORD2
+start			KEYWORD2
+stop			KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

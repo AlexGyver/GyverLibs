@@ -3,7 +3,7 @@
 #include <Arduino.h>
 
 /*
-	Текущая версия: 1.4 от 22.11.2018
+	Текущая версия: 1.5 от 29.11.2018
 	GTimer - компактная альтернатива конструкции таймера с millis() / micros()
 	- Вся работа с таймером заменяется одной функцией
 	- Миллисекундный и микросекундный таймер
@@ -19,11 +19,14 @@ class GTimer_ms
 	void setMode(boolean mode);				// установка типа работы: AUTO или MANUAL (MANUAL нужно вручную сбрасывать reset)
 	boolean isReady();						// возвращает true, когда пришло время. Сбрасывается в false сам (AUTO) или вручную (MANUAL)
 	void reset();							// ручной сброс таймера на установленный интервал
+	void stop();							// остановить таймер
+	void start();							// продолжить
 	
   private:
 	uint32_t _timer = 0;
 	uint32_t _interval = 0;
 	boolean _mode = true;
+	boolean _state = true;
 };
 
 class GTimer_us
@@ -35,11 +38,14 @@ class GTimer_us
 	void setMode(boolean mode);				// установка типа работы: AUTO или MANUAL (MANUAL нужно вручную сбрасывать reset)
 	boolean isReady();						// возвращает true, когда пришло время. Сбрасывается в false сам (AUTO) или вручную (MANUAL)
 	void reset();							// ручной сброс таймера на установленный интервал
+	void stop();							// остановить таймер
+	void start();							// продолжить
 	
   private:
 	uint32_t _timer = 0;
 	uint32_t _interval = 0;
 	boolean _mode = true;
+	boolean _state = true;
 };
 
 #define MANUAL 0

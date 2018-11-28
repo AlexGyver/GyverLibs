@@ -15,7 +15,14 @@ void GTimer_ms::setInterval(uint32_t interval) {
 void GTimer_ms::setMode(boolean mode) {
 	_mode = mode;
 }
+void GTimer_ms::start() {
+	_state = true;
+}
+void GTimer_ms::stop() {
+	_state = false;
+}
 boolean GTimer_ms::isReady() {
+	if (!_state) return false;
 	if ((long)millis() - _timer >= _interval) {
 		if (_mode) _timer = millis();
 		return true;
@@ -42,7 +49,14 @@ void GTimer_us::setInterval(uint32_t interval) {
 void GTimer_us::setMode(boolean mode) {
 	_mode = mode;
 }
+void GTimer_us::start() {
+	_state = true;
+}
+void GTimer_us::stop() {
+	_state = false;
+}
 boolean GTimer_us::isReady() {
+	if (!_state) return false;
 	if ((long)micros() - _timer >= _interval) {
 		if (_mode) _timer = micros();
 		return true;
