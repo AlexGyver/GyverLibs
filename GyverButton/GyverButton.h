@@ -89,8 +89,6 @@ class GButton
 	boolean _mode = false;
 	boolean _type = false;
 	boolean _tickMode = false;
-	//boolean btn_state = false, btn_flag = false, hold_flag = false, counter_flag = false;
-	//boolean flags.isHolded_f = false, isRelease_f = false, isPress_f = false, step_flag = false, oneClick_f = false, isOne_f = false;	
 };
 
 #define HIGH_PULL 0

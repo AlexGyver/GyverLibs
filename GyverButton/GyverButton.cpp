@@ -13,7 +13,7 @@ GButton::GButton(uint8_t pin, boolean type, boolean dir) {
 }
 
 void GButton::init() {
-	_debounce = 100;
+	_debounce = 120;
 	_timeout = 500;
 	_step_timeout = 400;
 	_inv_state = NORM_OPEN;

@@ -26,12 +26,13 @@ isClick			KEYWORD2
 isHolded		KEYWORD2
 isHold			KEYWORD2
 state			KEYWORD2
+
+hasClicks		KEYWORD2
 getClicks		KEYWORD2
 isSingle		KEYWORD2
 isDouble		KEYWORD2
 isTriple		KEYWORD2
 isStep			KEYWORD2
-inverse			KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
