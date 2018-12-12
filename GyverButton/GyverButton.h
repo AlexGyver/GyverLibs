@@ -1,10 +1,9 @@
 #ifndef GyverButton_h
 #define GyverButton_h
 #include <Arduino.h>
-#define LIBRARY_VERSION	2.8
 
 /*
-	Текущая версия: 2.8 от 17.10.2018
+	Текущая версия: 2.9 от 13.12.2018
 	GyverButton - библиотека для многофункциональной отработки нажатия кнопки. Возможности:
 	- Работа с нормально замкнутыми и нормально разомкнутыми кнопками
 	- Работа с подключением PULL_UP и PULL_DOWN
@@ -23,6 +22,7 @@
 typedef struct
 {	
 	bool btn_state: 1;
+	bool btn_deb: 1;
 	bool btn_flag: 1;
 	bool hold_flag: 1;
 	bool counter_flag: 1;

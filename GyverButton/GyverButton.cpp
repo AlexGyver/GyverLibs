@@ -13,7 +13,7 @@ GButton::GButton(uint8_t pin, boolean type, boolean dir) {
 }
 
 void GButton::init() {
-	_debounce = 120;
+	_debounce = 60;
 	_timeout = 500;
 	_step_timeout = 400;
 	_inv_state = NORM_OPEN;
@@ -124,15 +124,24 @@ void GButton::tick(boolean state) {
 	_mode = false;
 }
 void GButton::tick() {	
-	if (!_mode) flags.btn_state = !digitalRead(_PIN) ^ (_inv_state ^ _type);
+  if (!_mode) flags.btn_state = !digitalRead(_PIN) ^ (_inv_state ^ _type);
 	
-  if (flags.btn_state && !flags.btn_flag && (millis() - btn_timer >= _debounce)) {
-    flags.btn_flag = true;
-    btn_counter++;
-    btn_timer = millis();
-    flags.isPress_f = true;
-	flags.oneClick_f = true;
+  if (flags.btn_state && !flags.btn_flag) {
+	if (!flags.btn_deb) {
+		flags.btn_deb = true;
+		btn_timer = millis();
+	} else {
+		if (millis() - btn_timer >= _debounce) {
+			flags.btn_flag = true;
+			btn_counter++;
+			flags.isPress_f = true;
+			flags.oneClick_f = true;
+		}
+	}    
+  } else {
+	  flags.btn_deb = false;
   }
+  
   if (!flags.btn_state && flags.btn_flag) {
     flags.btn_flag = false;
     flags.hold_flag = false;
@@ -144,6 +153,7 @@ void GButton::tick() {
 		flags.isOne_f = true;
 	}
   }
+  
   if (flags.btn_flag && flags.btn_state && (millis() - btn_timer >= _timeout) && !flags.hold_flag) {
     flags.hold_flag = true;
     btn_counter = 0;

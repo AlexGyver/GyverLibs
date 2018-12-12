@@ -7,6 +7,7 @@
 #######################################
 
 GButton			KEYWORD1
+GyverButton		KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
