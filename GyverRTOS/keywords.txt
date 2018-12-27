@@ -8,6 +8,7 @@
 
 GRTOS			KEYWORD1
 Gtask			KEYWORD1
+GyverRTOS		KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)

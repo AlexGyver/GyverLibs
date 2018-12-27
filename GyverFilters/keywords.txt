@@ -6,11 +6,12 @@
 # Datatypes (KEYWORD1)
 #######################################
 
-GFilterRA	KEYWORD1
-GMedian3	KEYWORD1
-GMedian		KEYWORD1
-GABfilter	KEYWORD1
-GKalman		KEYWORD1
+GyverFilters	KEYWORD1
+GFilterRA		KEYWORD1
+GMedian3		KEYWORD1
+GMedian			KEYWORD1
+GABfilter		KEYWORD1
+GKalman			KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)

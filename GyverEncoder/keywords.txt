@@ -6,7 +6,8 @@
 # Datatypes (KEYWORD1)
 #######################################
 
-Encoder		KEYWORD1
+Encoder			KEYWORD1
+GyverEncoder	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)

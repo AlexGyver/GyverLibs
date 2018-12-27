@@ -6,6 +6,8 @@
 # Datatypes (KEYWORD1)
 #######################################
 
+GyverHacks	KEYWORD1
+
 
 #######################################
 # Methods and Functions (KEYWORD2)

@@ -8,6 +8,7 @@
 
 GTimer_ms		KEYWORD1
 GTimer_us		KEYWORD1
+GyverTimer		KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
