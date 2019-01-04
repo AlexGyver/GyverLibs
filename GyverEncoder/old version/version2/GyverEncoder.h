@@ -3,29 +3,33 @@
 #include <Arduino.h>
 
 /*
-	Текущая версия: 3.0 от 04.01.2019
+	Текущая версия: 2.10 от 04.01.2019
 	GyverEncoder - библиотека для отработки энкодера. Возможности:
 	- Отработка поворота с антидребезгом
 	- Отработка нажатия кнопки с антидребезгом
 	- Отработка нажатия и удержания кнопки
 	- Отработка "нажатого поворота"
 	- Работа с двумя типами экнодеров
-	- Отработка "быстрого поворота"
-	- Версия 3+ более оптимальная и быстрая
 */
 
 // настройка антидребезга энкодера, кнопки и таймаута удержания
-#define DEBOUNCE_TURN 5
-#define DEBOUNCE_BUTTON 80
-#define HOLD_TIMEOUT 700
+#define debounce_turn 10
+#define debounce_button 80
+#define hold_timer 800
 
 #pragma pack(push,1)
 typedef struct
 {	
+	bool DT_now: 1;
+	bool DT_last: 1;
 	bool SW_state: 1;
 	bool hold_flag: 1;
 	bool butt_flag: 1;
 	bool turn_flag: 1;
+	bool isRight_f: 1;
+	bool isLeft_f: 1;
+	bool isRightH_f: 1;
+	bool isLeftH_f: 1;
 	bool isTurn_f: 1;
 	bool isPress_f: 1;
 	bool isRelease_f: 1;
@@ -33,8 +37,6 @@ typedef struct
 	bool isHold_f: 1;
 	bool isFastR_f: 1;
 	bool isFastL_f: 1;
-	bool enc_tick_mode: 1;
-	bool enc_type: 1;
 
 } GyverEncoderFlags;
 #pragma pack(pop)
@@ -55,8 +57,8 @@ class Encoder
 	boolean isLeft();						// возвращает true при повороте налево, сама сбрасывается в false
 	boolean isRightH();						// возвращает true при удержании кнопки и повороте направо, сама сбрасывается в false
 	boolean isLeftH();						// возвращает true при удержании кнопки и повороте налево, сама сбрасывается в false
-	boolean isFastR();						// возвращает true при быстром повороте
-	boolean isFastL();						// возвращает true при быстром повороте
+	boolean isFastR();
+	boolean isFastL();
 	
 	boolean isPress();						// возвращает true при нажатии кнопки, сама сбрасывается в false
 	boolean isRelease();					// возвращает true при отпускании кнопки, сама сбрасывается в false
@@ -64,15 +66,12 @@ class Encoder
     boolean isHolded();						// возвращает true при удержании кнопки, сама сбрасывается в false
 	boolean isHold();						// возвращает true при удержании кнопки, НЕ СБРАСЫВАЕТСЯ
 	
-	int8_t fast_timeout = 50;
-	
   private:
 	void init();
 	GyverEncoderFlags flags;
-	byte curState, prevState;
-	byte encState;	// 0 не крутился, 1 лево, 2 право, 3 лево нажат, 4 право нажат
-	uint32_t debounce_timer = 0, fast_timer;
-    byte _CLK = 0, _DT = 0, _SW = 0;
+	uint32_t debounce_timer = 0;
+    byte _CLK = 0, _DT = 0, _SW = 0;	
+    boolean _type = false, _new_step = true, _tickMode = false, _direction = false;
 	
 };
 
