@@ -3,7 +3,7 @@
 #include <Arduino.h>
 
 /*
-	Текущая версия: 2.9 от 13.12.2018
+	Текущая версия: 2.11 от 19.02.2019
 	GyverButton - библиотека для многофункциональной отработки нажатия кнопки. Возможности:
 	- Работа с нормально замкнутыми и нормально разомкнутыми кнопками
 	- Работа с подключением PULL_UP и PULL_DOWN
@@ -32,7 +32,10 @@ typedef struct
 	bool step_flag: 1;
 	bool oneClick_f: 1;
 	bool isOne_f: 1;
-
+	bool inv_state: 1;
+	bool mode: 1;
+	bool type: 1;
+	bool tickMode: 1;
 } GyverButtonFlags;
 #pragma pack(pop)
 
@@ -48,7 +51,8 @@ class GButton
 														// NORM_CLOSE - кнопка по умолчанию замкнута
 	
 	void setDebounce(uint16_t debounce);				// установка времени антидребезга (по умолчанию 80 мс)
-	void setTimeout(uint16_t timeout);					// установка таймаута удержания (по умолчанию 500 мс)	
+	void setTimeout(uint16_t timeout);					// установка таймаута удержания (по умолчанию 300 мс)
+	void setClickTimeout(uint16_t timeout);				// установка таймаута между кликами (по умолчанию 500 мс)	
 	void setStepTimeout(uint16_t step_timeout);			// установка таймаута между инкрементами (по умолчанию 400 мс)	
 	void setType(boolean type);							// установка типа кнопки (HIGH_PULL - подтянута к питанию, LOW_PULL - к gnd)	
 	void setDirection(boolean dir);						// установка направления (разомкнута/замкнута по умолчанию - NORM_OPEN, NORM_CLOSE)	
@@ -82,13 +86,10 @@ class GButton
     uint8_t _PIN = 0;
 	uint16_t _debounce = 0;
 	uint16_t _timeout = 0;
+	uint16_t _click_timeout = 0;
 	uint16_t _step_timeout = 0;
 	uint8_t btn_counter = 0, last_counter = 0;	
 	uint32_t btn_timer = 0;		
-	boolean _inv_state = false;
-	boolean _mode = false;
-	boolean _type = false;
-	boolean _tickMode = false;
 };
 
 #define HIGH_PULL 0

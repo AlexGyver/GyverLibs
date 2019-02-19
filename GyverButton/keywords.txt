@@ -16,6 +16,7 @@ GyverButton		KEYWORD1
 setDebounce		KEYWORD2
 setTimeout		KEYWORD2
 setStepTimeout	KEYWORD2
+setClickTimeout	KEYWORD2
 setType			KEYWORD2
 setDirection	KEYWORD2
 setTickMode		KEYWORD2

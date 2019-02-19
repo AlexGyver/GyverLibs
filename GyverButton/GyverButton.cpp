@@ -9,14 +9,18 @@ GButton::GButton(uint8_t pin, boolean type, boolean dir) {
 	_PIN = pin;
 	GButton::init();
 	GButton::setType(type);
-	_inv_state = dir;
+	flags.inv_state = dir;
 }
 
 void GButton::init() {
 	_debounce = 60;
 	_timeout = 500;
 	_step_timeout = 400;
-	_inv_state = NORM_OPEN;
+	_click_timeout = 300;
+	flags.inv_state = NORM_OPEN;
+	flags.mode = false;
+	flags.type = false;
+	flags.tickMode = false;
 	GButton::setType(HIGH_PULL);
 }
 
@@ -26,81 +30,84 @@ void GButton::setDebounce(uint16_t debounce) {
 void GButton::setTimeout(uint16_t timeout) {
 	_timeout = timeout;
 }
+void GButton::setClickTimeout(uint16_t timeout) {
+	_click_timeout = timeout;
+}
 void GButton::setStepTimeout(uint16_t step_timeout) {
 	_step_timeout = step_timeout;
 }
 void GButton::setType(boolean type) {
-	_type = type;
+	flags.type = type;
 	if (type) pinMode(_PIN, INPUT);
 	else pinMode(_PIN, INPUT_PULLUP);
 }
 void GButton::setDirection(boolean dir) {
-	_inv_state = dir;
+	flags.inv_state = dir;
 }
 void GButton::setTickMode(boolean tickMode) {
-	_tickMode = tickMode;
+	flags.tickMode = tickMode;
 }
 
 boolean GButton::isPress() {
-	if (_tickMode) GButton::tick();
+	if (flags.tickMode) GButton::tick();
 	if (flags.isPress_f) {
 		flags.isPress_f = false;
 		return true;
 	} else return false;
 }
 boolean GButton::isRelease() {
-	if (_tickMode) GButton::tick();
+	if (flags.tickMode) GButton::tick();
 	if (flags.isRelease_f) {
 		flags.isRelease_f = false;
 		return true;
 	} else return false;
 }
 boolean GButton::isClick() {	
-	if (_tickMode) GButton::tick();
+	if (flags.tickMode) GButton::tick();
 	if (flags.isOne_f) {
 		flags.isOne_f = false;
 		return true;
 	} else return false;
 }
 boolean GButton::isHolded() {
-	if (_tickMode) GButton::tick();
+	if (flags.tickMode) GButton::tick();
 	if (flags.isHolded_f) {
 		flags.isHolded_f = false;
 		return true;
 	} else return false;
 }
 boolean GButton::isHold() {
-	if (_tickMode) GButton::tick();
+	if (flags.tickMode) GButton::tick();
 	if (flags.step_flag) return true;
 	else return false;
 }
 boolean GButton::state() {
-	if (_tickMode) GButton::tick();
+	if (flags.tickMode) GButton::tick();
 	return flags.btn_state;
 }
 boolean GButton::isSingle() {
-	if (_tickMode) GButton::tick();
+	if (flags.tickMode) GButton::tick();
 	if (flags.counter_flag && last_counter == 1) {
 		flags.counter_flag = false;
 		return true;
 	} else return false;
 }
 boolean GButton::isDouble() {
-	if (_tickMode) GButton::tick();
+	if (flags.tickMode) GButton::tick();
 	if (flags.counter_flag && last_counter == 2) {
 		flags.counter_flag = false;
 		return true;
 	} else return false;
 }
 boolean GButton::isTriple() {
-	if (_tickMode) GButton::tick();
+	if (flags.tickMode) GButton::tick();
 	if (flags.counter_flag && last_counter == 3) {
 		flags.counter_flag = false;
 		return true;
 	} else return false;
 }
 boolean GButton::hasClicks() {
-	if (_tickMode) GButton::tick();
+	if (flags.tickMode) GButton::tick();
 	if (flags.counter_flag) {
 		flags.counter_flag = false;
 		return true;
@@ -110,7 +117,7 @@ uint8_t GButton::getClicks() {
 	return last_counter;	
 }
 boolean GButton::isStep() {
-	if (_tickMode) GButton::tick();
+	if (flags.tickMode) GButton::tick();
 	if (flags.step_flag && (millis() - btn_timer >= _step_timeout)) {
 		btn_timer = millis();
 		return true;
@@ -118,13 +125,13 @@ boolean GButton::isStep() {
 	else return false;
 }
 void GButton::tick(boolean state) {
-	_mode = true;
-	flags.btn_state = state ^ _inv_state;
+	flags.mode = true;
+	flags.btn_state = state ^ flags.inv_state;
 	GButton::tick();
-	_mode = false;
+	flags.mode = false;
 }
 void GButton::tick() {	
-  if (!_mode) flags.btn_state = !digitalRead(_PIN) ^ (_inv_state ^ _type);
+  if (!flags.mode) flags.btn_state = !digitalRead(_PIN) ^ (flags.inv_state ^ flags.type);
 	
   if (flags.btn_state && !flags.btn_flag) {
 	if (!flags.btn_deb) {
@@ -163,7 +170,7 @@ void GButton::tick() {
 	btn_timer = millis();
   }
   
-  if ((millis() - btn_timer >= _timeout) && (btn_counter != 0)) {    
+  if ((millis() - btn_timer >= _click_timeout) && (btn_counter != 0)) {    
     last_counter = btn_counter;
     btn_counter = 0;
 	flags.counter_flag = true;
