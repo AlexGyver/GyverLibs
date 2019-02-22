@@ -168,42 +168,61 @@ void setPWMprescaler(uint8_t pin, uint16_t mode) {
   byte prescale;
   if (pin == 5 || pin == 6) {
     switch (mode) {
-      case 1: prescale = 0b001; break;
-      case 2: prescale = 0b010; break;
-      case 3: prescale = 0b011; break;
-      case 4: prescale = 0b100; break;
-      case 5: prescale = 0b101; break;
+      case 1: prescale = 0x01; break;
+      case 2: prescale = 0x02; break;
+      case 3: prescale = 0x03; break;
+      case 4: prescale = 0x04; break;
+      case 5: prescale = 0x05; break;
       default: return;
     }
   } else if (pin == 9 || pin == 10) {
 	  switch (mode) {
       case 1: prescale = 0x09; break;
-      case 2: prescale = 0x0a; break;
-      case 3: prescale = 0x0b; break;
-      case 4: prescale = 0x0c; break;
-      case 5: prescale = 0x0d; break;
+      case 2: prescale = 0x01; break;
+      case 3: prescale = 0x0a; break;
+      case 4: prescale = 0x02; break;
+      case 5: prescale = 0x0b; break;	  
+	  case 6: prescale = 0x03; break;
+	  case 7: prescale = 0x0c; break;
+	  case 8: prescale = 0x04; break;
+	  case 9: prescale = 0x0d; break;
+	  case 10: prescale = 0x05; break;
       default: return;
     }
   } else if (pin == 3 || pin == 11) {
     switch (mode) {
-      case 1: prescale = 0b001; break;
-      case 2: prescale = 0b010; break;
-      case 3: prescale = 0b011; break;
-      case 4: prescale = 0b100; break;
-      case 5: prescale = 0b101; break;
-      case 6: prescale = 0b110; break;
-      case 7: prescale = 0b111; break;
+      case 1: prescale = 0x01; break;
+      case 2: prescale = 0x02; break;
+      case 3: prescale = 0x03; break;
+      case 4: prescale = 0x04; break;
+      case 5: prescale = 0x05; break;
+      case 6: prescale = 0x06; break;
+      case 7: prescale = 0x07; break;
       default: return;
     }
   }
   if (pin == 5 || pin == 6) {
+	TCCR0B = 0;
     TCCR0B = TCCR0B & 0b11111000 | prescale;
   } else if (pin == 9 || pin == 10) {
+	TCCR1B = 0;
     TCCR1B = TCCR1B & 0b11111000 | prescale;
   } else if (pin == 3 || pin == 11) {
+	TCCR2B = 0;
     TCCR2B = TCCR2B & 0b11111000 | prescale;
   }
 }
+
+/*
+Default: delay(1000) or 1000 millis() ~ 1 second
+
+0x01: delay(64000) or 64000 millis() ~ 1 second
+0x02: delay(8000) or 8000 millis() ~ 1 second
+0x03: is the default
+0x04: delay(250) or 250 millis() ~ 1 second
+0x05: delay(62) or 62 millis() ~ 1 second
+(Or 63 if you need to round up.  The number is actually 62.5)
+*/
 
 // ***************************** fast digitalwrite *****************************
 void setPin(uint8_t pin, uint8_t x) { 	
@@ -223,7 +242,7 @@ boolean readPin(uint8_t pin) {
 
 // ***************************** fast analogwrite *****************************
 
-void setPWM(uint8_t pin, uint8_t duty) {
+void setPWM(uint8_t pin, uint16_t duty) {
 	switch (pin) {
 		case 5:
 		sbi(TCCR0A, COM0B1);
@@ -280,7 +299,7 @@ void anyPWM(byte pin, byte duty)
 	pwms[pin] = duty;
 }
 
-#if (defined(__AVR_ATmega328P__) && ALLOW_ANYPWM)
+#if (defined(__AVR_ATmega328P__) && (ALLOW_ANYPWM == 1))
 ISR(TIMER2_COMPA_vect)
 {
   TCNT2 = 0;
