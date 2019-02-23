@@ -231,6 +231,12 @@ void set8bitPWM();                 // установка ШИМ на пинах 
 
 void set10bitPWM();                // установка ШИМ на пинах 9 и 10 в режим 10 бит (analogWrite 0-1023)
 
+void delayFix(uint32_t delayTime);                  // аналог delay для корректной работы с изменённой частотой ШИМ пинов 5 и 6
+void delayMicrosecondsFix(uint32_t delayTime);      // аналог delayMicroseconds для корректной работы с изменённой частотой ШИМ пинов 5 и 6
+
+uint32_t millisFix();                               // аналог millis для корректной работы с изменённой частотой ШИМ пинов 5 и 6
+uint32_t microsFix();                               // аналог micros для корректной работы с изменённой частотой ШИМ пинов 5 и 6
+
 void anyPWMinit(byte prescaler);
 // инициализация ШИМ на любом пине
 // prescaler: 4 - 311 Гц, 5 - 244 Гц, 6 - 122 Гц, 7 - 30 Гц

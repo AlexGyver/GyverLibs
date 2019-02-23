@@ -163,16 +163,17 @@ void set10bitPWM() {
 }
 
 // ***************************** PWM freq *****************************
+float _fixMultiplier = 1.0;		// множитель для функций delayFix и millisFix, по умолч. 1
 
 void setPWMprescaler(uint8_t pin, uint16_t mode) {
   byte prescale;
   if (pin == 5 || pin == 6) {
     switch (mode) {
-      case 1: prescale = 0x01; break;
-      case 2: prescale = 0x02; break;
-      case 3: prescale = 0x03; break;
-      case 4: prescale = 0x04; break;
-      case 5: prescale = 0x05; break;
+      case 1: prescale = 0x01; _fixMultiplier = 64; break;
+      case 2: prescale = 0x02; _fixMultiplier = 8; break;
+      case 3: prescale = 0x03; _fixMultiplier = 1; break;
+      case 4: prescale = 0x04; _fixMultiplier = 0.25; break;
+      case 5: prescale = 0x05; _fixMultiplier = 0.0625; break;
       default: return;
     }
   } else if (pin == 9 || pin == 10) {
@@ -213,14 +214,31 @@ void setPWMprescaler(uint8_t pin, uint16_t mode) {
   }
 }
 
+void delayFix(uint32_t delayTime) {
+	delay((float) delayTime * _fixMultiplier);
+}
+
+void delayMicrosecondsFix(uint32_t delayTime) {
+	delayMicroseconds((float) delayTime * _fixMultiplier);
+}
+
+uint32_t millisFix() {
+	return (float) millis() / _fixMultiplier;
+}
+uint32_t microsFix() {
+	return (float) micros() / _fixMultiplier;
+}
+
+
 /*
 Default: delay(1000) or 1000 millis() ~ 1 second
 
-0x01: delay(64000) or 64000 millis() ~ 1 second
-0x02: delay(8000) or 8000 millis() ~ 1 second
+0x01: delay(64000) or 64000 millis() ~ 1 second x64
+0x02: delay(8000) or 8000 millis() ~ 1 second x8
 0x03: is the default
-0x04: delay(250) or 250 millis() ~ 1 second
-0x05: delay(62) or 62 millis() ~ 1 second
+0x04: delay(250) or 250 millis() ~ 1 second x0.25
+0x05: delay(62) or 62 millis() ~ 1 second x0.0625
+
 (Or 63 if you need to round up.  The number is actually 62.5)
 */
 

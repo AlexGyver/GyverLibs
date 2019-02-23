@@ -26,6 +26,11 @@ set8bitPWM		KEYWORD2
 set10bitPWM		KEYWORD2
 setPWMprescaler	KEYWORD2
 
+delayFix		KEYWORD2
+delayMicrosecondsFix	KEYWORD2
+millisFix		KEYWORD2
+microsFix		KEYWORD2
+
 getVCC			KEYWORD2
 getVoltage		KEYWORD2
 constantWizard	KEYWORD2

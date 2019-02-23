@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #define LIBRARY_VERSION	1.8
 
-#define ALLOW_ANYPWM 1		// (0 / 1) - включить или отключить ANYPWM
+#define ALLOW_ANYPWM 0		// (0 / 1) - включить или отключить ANYPWM
 // необходимо отключить, если этот режим не нужен и вы сами используете прерывания timer2 (COMPA_vect)
 
 /*
