@@ -97,6 +97,49 @@ void GRGB::setHSV(uint8_t h, uint8_t s, uint8_t v) {
 	GRGB::setRGB();
 }
 
+// источник: http://www.tannerhelland.com/4435/convert-temperature-rgb-algorithm-code/
+void GRGB::setKelvin(int16_t temperature) {
+  float tmpKelvin, tmpCalc;
+
+  temperature = constrain(temperature, 1000, 40000);
+  tmpKelvin = temperature / 100;
+
+  // red
+  if (tmpKelvin <= 66) _r = 255;
+  else {
+    tmpCalc = tmpKelvin - 60;
+    tmpCalc = (float)pow(tmpCalc, -0.1332047592);
+    tmpCalc *= (float)329.698727446;
+    tmpCalc = constrain(tmpCalc, 0, 255);
+    _r = tmpCalc;
+  }
+
+  // green
+  if (tmpKelvin <= 66) {
+    tmpCalc = tmpKelvin;
+    tmpCalc = (float)99.4708025861 * log(tmpCalc) - 161.1195681661;
+    tmpCalc = constrain(tmpCalc, 0, 255);
+    _g = tmpCalc;
+  } else {
+    tmpCalc = tmpKelvin - 60;
+    tmpCalc = (float)pow(tmpCalc, -0.0755148492);
+    tmpCalc *= (float)288.1221695283;
+    tmpCalc = constrain(tmpCalc, 0, 255);
+    _g = tmpCalc;
+  }
+
+  // blue
+  if (tmpKelvin >= 66) _b = 255;
+  else if (tmpKelvin <= 19) _b = 0;
+  else {
+    tmpCalc = tmpKelvin - 10;
+    tmpCalc = (float)138.5177312231 * log(tmpCalc) - 305.0447927307;
+    tmpCalc = constrain(tmpCalc, 0, 255);
+    _b = tmpCalc;
+  }
+  GRGB::setRGB();
+}
+
 // Для hex цветов
 void GRGB::fadeTo(uint32_t newColor, uint16_t fadeTime) {
 	// находим новые r g b
