@@ -25,6 +25,7 @@ anyPWM			KEYWORD2
 set8bitPWM		KEYWORD2
 set10bitPWM		KEYWORD2
 setPWMprescaler	KEYWORD2
+setPWMmode		KEYWORD2
 
 delayFix		KEYWORD2
 delayMicrosecondsFix	KEYWORD2

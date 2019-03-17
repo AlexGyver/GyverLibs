@@ -67,7 +67,7 @@ void constantWizard() {
 		char answer = Serial.read();
 		if (answer == 'N') {
 			Serial.println(F("Bye"));
-			return 0;
+			return;
 		}
 		if (answer == 'Y') {
 			break;
@@ -153,6 +153,23 @@ float getTemp() {
   return (t);
 }
 
+// ***************************** PWM mode *****************************
+void setPWMmode(byte pin, byte mode) {		// 0 - FastPWM, 1 - Phase-correct PWM
+	if (pin == 5 || pin == 6) {
+		if (mode) TCCR0A |= _BV(WGM00);
+		else TCCR0A |= _BV(WGM00) | _BV(WGM01);
+	} else
+	if (pin == 9 || pin == 10) {
+		if (mode) TCCR1B &= ~_BV(WGM12);
+		else TCCR1B |= _BV(WGM12);
+	} else
+	if (pin == 3 || pin == 11) {
+		if (mode) TCCR2A |= _BV(WGM20);
+		else TCCR2A |= _BV(WGM20) | _BV(WGM21);
+	} else {
+		return;
+	}
+}
 // ***************************** PWM resolution *****************************
 
 void set8bitPWM() {
@@ -178,16 +195,11 @@ void setPWMprescaler(uint8_t pin, uint16_t mode) {
     }
   } else if (pin == 9 || pin == 10) {
 	  switch (mode) {
-      case 1: prescale = 0x09; break;
-      case 2: prescale = 0x01; break;
-      case 3: prescale = 0x0a; break;
-      case 4: prescale = 0x02; break;
-      case 5: prescale = 0x0b; break;	  
-	  case 6: prescale = 0x03; break;
-	  case 7: prescale = 0x0c; break;
-	  case 8: prescale = 0x04; break;
-	  case 9: prescale = 0x0d; break;
-	  case 10: prescale = 0x05; break;
+      case 1: prescale = 0x01; break;
+      case 2: prescale = 0x02; break;
+      case 3: prescale = 0x03; break;
+      case 4: prescale = 0x04; break;
+      case 5: prescale = 0x05; break;
       default: return;
     }
   } else if (pin == 3 || pin == 11) {
@@ -247,7 +259,7 @@ void setPin(uint8_t pin, uint8_t x) {
 	if (pin < 8) bitWrite(PORTD, pin, x);
 	else if (pin < 14) bitWrite(PORTB, (pin - 8), x); 
 	else if (pin < 20) bitWrite(PORTC, (pin - 14), x);
-	if (pin > 19) return 0;
+	if (pin > 19) return;
 }
 
 // ***************************** fast digitalread *****************************
@@ -255,7 +267,7 @@ boolean readPin(uint8_t pin) {
 	if (pin < 8) return bitRead(PORTD, pin);
 	else if (pin < 14) return bitRead(PORTB, pin - 8);
 	else if (pin < 20) return bitRead(PORTC, pin - 14);	
-	if (pin > 19) return 0;
+	if (pin > 19) return;
 }
 
 // ***************************** fast analogwrite *****************************
