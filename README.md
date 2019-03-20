@@ -614,6 +614,7 @@ int16_t sampleTime = 1000;          // время итерации, мс (по �
 **СМОТРИ ПРИМЕР**
 
 ### TM74HC595_Gyver v1.1
+#### [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/TM74HC595_Gyver/TM74HC595_Gyver.zip)
 Библиотека для дисплея на сдвиговике TM74HC595 с Arduino
 - Подробное описание здесь http://alexgyver.ru/tm74hc595_display/
 
