@@ -9,10 +9,12 @@
 	- Настройка максимальной скорости сервопривода
 	- Настройка ускорения (разгон и торможение) сервопривода
 	- Устанвока целевой позиции серво по углу (0-180) и длине импульса (500-2400)
-	Текущая версия: 1.0 от 19.03.2019
+	Текущая версия: 1.1 от 20.03.2019: автоматическое отключение (detach) при достижении цели
 */
 
-#define SERVO_PERIOD 20
+#define SERVO_PERIOD 20		// период работы tick(), мс
+#define DEADZONE 20			// мёртвая зона
+#define TIMEOUT 100			// таймаут мёртвой зоны (в количестве периодов!!!)
 
 class ServoSmooth {
 	public:
@@ -49,6 +51,8 @@ class ServoSmooth {
 		int _newPos = 0;
 		float _k = 0.1;
 		boolean _tickFlag = true;
+		byte _timeoutCounter = 0;
+		boolean _servoState = true;
 };
 
 

@@ -51,14 +51,32 @@ void ServoSmooth::setTargetDeg(int target) {
 boolean ServoSmooth::tickManual() {
 	if (_tickFlag) {
 		_newSpeed = _servoTargetPos - _servoCurrentPos;						// расчёт скорости
-		_newSpeed = constrain(_newSpeed, -_servoMaxSpeed, _servoMaxSpeed);	// ограничиваем по макс.
-		_servoCurrentPos += _newSpeed;										// получаем новую позицию
-		_newPos += (float)(_servoCurrentPos - _newPos) * _k;				// и фильтруем её
-		_newPos = constrain(_newPos, _min, _max);							// ограничиваем
-		_servo.writeMicroseconds(_newPos);									// отправляем на серво		
+		if (_servoState) {
+			_newSpeed = constrain(_newSpeed, -_servoMaxSpeed, _servoMaxSpeed);	// ограничиваем по макс.
+			_servoCurrentPos += _newSpeed;										// получаем новую позицию
+			_newPos += (float)(_servoCurrentPos - _newPos) * _k;				// и фильтруем её
+			_newPos = constrain(_newPos, _min, _max);							// ограничиваем
+			_servo.writeMicroseconds(_newPos);									// отправляем на серво	
+		}			
 	}
-	if (_newSpeed == 0) return true;
-	else return false;
+	if (abs(_newSpeed) < DEADZONE) {
+		if (_servoState) {
+			_timeoutCounter++;
+			if (_timeoutCounter > TIMEOUT) {
+				_servoState = false;
+				_servo.detach();
+			}
+		}		
+		return true;
+	} else {
+		if (!_servoState) {
+			_servoState = true;
+			_servo.attach(_pin);
+		}
+		_timeoutCounter = 0;
+		return false;
+	}
+		
 }
 
 boolean ServoSmooth::tick() {
