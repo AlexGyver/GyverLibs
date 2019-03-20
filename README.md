@@ -133,7 +133,7 @@ void write(uint16_t angle);                 // аналог метода из б
 void writeMicroseconds(uint16_t angle);     // аналог метода из библиотеки Servo
 void attach(uint8_t pin);                   // аналог метода из библиотеки Servo
 void attach(uint8_t pin, int min, int max); // аналог метода из библиотеки Servo. min по умолч. 500, max 2400
-void detach();                              // аналог метода из библиотеки Servo
+void detach();                              // аналог метода detach из библиотеки Servo
 void start();                               // attach + разрешает работу tick
 void stop();                                // detach + запрещает работу tick
 		
