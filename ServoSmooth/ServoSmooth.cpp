@@ -14,6 +14,10 @@ void ServoSmooth::attach(uint8_t pin) {
 	_pin = pin;
 }
 
+void ServoSmooth::detach() {
+	_servo.detach();
+}
+
 void ServoSmooth::attach(uint8_t pin, int min, int max) {
 	_servo.attach(pin);
 	_pin = pin;
@@ -48,6 +52,10 @@ void ServoSmooth::setTargetDeg(int target) {
 	_servoTargetPos = map(target, 0, 180, _min, _max);
 }
 
+void ServoSmooth::setAutoDetach(boolean set) {
+	_autoDetach = set;
+}
+
 boolean ServoSmooth::tickManual() {
 	if (_tickFlag) {
 		_newSpeed = _servoTargetPos - _servoCurrentPos;						// расчёт скорости
@@ -60,7 +68,7 @@ boolean ServoSmooth::tickManual() {
 		}			
 	}
 	if (abs(_newSpeed) < DEADZONE) {
-		if (_servoState) {
+		if (_autoDetach && _servoState) {
 			_timeoutCounter++;
 			if (_timeoutCounter > TIMEOUT) {
 				_servoState = false;
@@ -69,7 +77,7 @@ boolean ServoSmooth::tickManual() {
 		}		
 		return true;
 	} else {
-		if (!_servoState) {
+		if (_autoDetach && !_servoState) {
 			_servoState = true;
 			_servo.attach(_pin);
 		}

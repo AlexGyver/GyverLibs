@@ -3,8 +3,6 @@
    при помощи потенциометра (на пине А0).
 */
 
-#define AMOUNT 2
-
 #include <ServoSmooth.h>
 ServoSmooth servo;
 
@@ -17,6 +15,8 @@ void setup() {
   
   servo.setSpeed(20);   // ограничить скорость
   servo.setAccel(0.2);  // установить ускорение (разгон и торможение)
+  
+  servo.setAutoDetach(false);	// отключить автоотключение (detach) при достижении целевого угла (по умолчанию включено)
 }
 
 void loop() {

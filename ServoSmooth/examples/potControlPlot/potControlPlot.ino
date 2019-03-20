@@ -1,9 +1,8 @@
 /*
    Данный код плавно управляет одной сервой (на пине 2)
    при помощи потенциометра (на пине А0).
+   Откройте порт по последовательному соединению для наблюдения за положением серво
 */
-
-#define AMOUNT 2
 
 #include <ServoSmooth.h>
 ServoSmooth servo;
@@ -28,7 +27,7 @@ void loop() {
   boolean state = servo.tick();   // здесь происходит движение серво по встроенному таймеру!
 
 
-  if (millis() - myTimer >= 50) {
+  if (millis() - myTimer >= 40) {
     myTimer = millis();
     int newPos = map(analogRead(0), 0, 1023, 500, 2400); // берём с потенцометра значение 0-180
     servo.setTarget(newPos);               // и отправляем на серво

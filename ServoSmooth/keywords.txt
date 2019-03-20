@@ -14,6 +14,7 @@ ServoSmooth			KEYWORD1
 write				KEYWORD2
 writeMicroseconds	KEYWORD2
 attach				KEYWORD2
+detach				KEYWORD2
 start				KEYWORD2
 stop				KEYWORD2
 tick				KEYWORD2
@@ -22,6 +23,7 @@ setSpeed			KEYWORD2
 setAccel			KEYWORD2
 setTarget			KEYWORD2
 setTargetDeg		KEYWORD2
+setAutoDetach		KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

@@ -10,7 +10,8 @@
 	- Настройка ускорения (разгон и торможение) сервопривода
 	- Устанвока целевой позиции серво по углу (0-180) и длине импульса (500-2400)
 	- Автоматическое отключение (detach) при достижении цели
-	Текущая версия: 1.1 от 20.03.2019: автоматическое отключение (detach) при достижении цели
+	v1.1 - автоматическое отключение (detach) при достижении цели
+	Текущая версия: 1.2 - вкл/выкл автоотключения серво
 */
 
 #define SERVO_PERIOD 20		// период работы tick(), мс
@@ -23,6 +24,7 @@ class ServoSmooth {
 		void writeMicroseconds(uint16_t angle);		// аналог метода из библиотеки Servo
 		void attach(uint8_t pin);					// аналог метода из библиотеки Servo
 		void attach(uint8_t pin, int min, int max);	// аналог метода из библиотеки Servo. min по умолч. 500, max 2400
+		void detach();								// аналог метода из библиотеки Servo
 		void start();								// attach + разрешает работу tick
 		void stop();								// detach + запрещает работу tick
 		
@@ -37,6 +39,7 @@ class ServoSmooth {
 		void setAccel(float accel);					// установка ускорения (0.05 - 1). При значении 1 ускорение максимальное
 		void setTarget(int target);					// установка целевой позиции в мкс (500 - 2400)
 		void setTargetDeg(int target);				// установка целевой позиции в градусах (0-180). Зависит от min и max
+		void setAutoDetach(boolean set);			// вкл/выкл автоматического отключения (detach) при достижении угла. По умолч. вкл
 	
 		Servo _servo;
 		int _servoCurrentPos = 0;
@@ -52,8 +55,9 @@ class ServoSmooth {
 		int _newPos = 0;
 		float _k = 0.1;
 		boolean _tickFlag = true;
-		byte _timeoutCounter = 0;
 		boolean _servoState = true;
+		boolean _autoDetach = true;
+		byte _timeoutCounter = 0;		
 };
 
 
