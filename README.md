@@ -247,7 +247,7 @@ void start();                         // продолжить
 
 ---
 
-### GyverHacks v2.6 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverHacks/GyverHacks.zip)
+### GyverHacks v2.7 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverHacks/GyverHacks.zip)
 Библиотека с некоторыми удобными хаками для Arduino UNO/NANO/MINI (atmega328):
 - Быстрые аналоги стандартных функций чтения/записи
 - Изменение частоты ШИМ пинов (3, 5, 6, 9, 10, 11)

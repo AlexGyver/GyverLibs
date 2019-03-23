@@ -267,7 +267,7 @@ boolean readPin(uint8_t pin) {
 	if (pin < 8) return bitRead(PORTD, pin);
 	else if (pin < 14) return bitRead(PORTB, pin - 8);
 	else if (pin < 20) return bitRead(PORTC, pin - 14);	
-	if (pin > 19) return;
+	if (pin > 19) return false;
 }
 
 // ***************************** fast analogwrite *****************************
