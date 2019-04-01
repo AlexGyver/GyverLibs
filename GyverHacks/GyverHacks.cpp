@@ -264,9 +264,9 @@ void setPin(uint8_t pin, uint8_t x) {
 
 // ***************************** fast digitalread *****************************
 boolean readPin(uint8_t pin) { 	
-	if (pin < 8) return bitRead(PORTD, pin);
-	else if (pin < 14) return bitRead(PORTB, pin - 8);
-	else if (pin < 20) return bitRead(PORTC, pin - 14);	
+	if (pin < 8) return bitRead(PIND, pin);
+	else if (pin < 14) return bitRead(PINB, pin - 8);
+	else if (pin < 20) return bitRead(PINC, pin - 14);	
 	else return false;
 }
 
