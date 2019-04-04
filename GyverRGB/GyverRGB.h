@@ -6,8 +6,7 @@
 #define ALLOW_ANYPWM 0		// (0 / 1) - включить или отключить ANYPWM
 // необходимо отключить, если этот режим не нужен и вы сами используете прерывания timer2 (COMPA_vect)
 
-/*
-	Версия 1.9 от 23.02.2019
+/*	
 	Библиотека для удобного управления RGB светодиодами и лентами
 	- Работа в пространстве RGB
 	- Работа в пространстве HSV
@@ -17,6 +16,7 @@
 	- Функция плавной смены цвета
 	- Возможность управления 6-ю RGB диодами/лентами с одной Arduino (только для ATmega328)
 		(встроенный генератор ШИМ на ВСЕХ 20 пинах atmega328)
+	Версия 1.10 от 04.04.2019
 */
 
 class GRGB
@@ -31,6 +31,15 @@ class GRGB
 	void setDirection(boolean direction);				// NORMAL / REVERSE - направление ШИМ
 														// общий катод - NORMAL
 														// общий анод - REVERSE
+														
+	void setMaxCurrent(uint16_t numLeds, float vcc, int maxCur);	// установка ограничения по току: 
+																	// количество светодиодов
+																	// напряжение питания в милливольтах
+																	// максимальный ток
+																	
+	void setBrightness(byte bright);					// установка яркости (0-255)
+	void constantBrightTick(int minVolts, int vcc);		// корректировка под напряжение питания
+	void gammaTick(int vcc);							// корректировка красного цвета при падении напряжения питания
 													
 	void setHEX(uint32_t color);						// установка цвета в формате HEX (вида 0x808080 )
 	void setRGB(uint8_t r, uint8_t g, uint8_t b);		// установка цвета в пространстве RGB (каждый цвет 0-255)
@@ -52,6 +61,17 @@ class GRGB
 	uint8_t _r = 0, _g = 0, _b = 0;				// цвета
 	boolean _reverse_flag = false;
 	boolean _PWMmode = false;
+	boolean _brightFlag = false;
+	float _brightC = 1.0;
+	float _constCoef = 0.0;
+	boolean _maxCurFlag = false;
+	boolean _constBrFlag = false;
+	boolean _gammaFlag;
+	float _gammaR = 1.0;
+	float _gammaG = 1.0;
+	int _vcc = 0;
+	int _maxCurrent = 0;
+	int _numLeds = 0;
 };
 
 void anyPWMinitRGB(byte prescaler);									

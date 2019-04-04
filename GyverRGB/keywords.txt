@@ -14,6 +14,10 @@ GyverRGB		KEYWORD1
 #######################################
 
 setDirection	KEYWORD2
+setMaxCurrent	KEYWORD2
+setBrightness	KEYWORD2
+constantBrightTick	KEYWORD2
+gammaTick		KEYWORD2
 setHEX			KEYWORD2
 setRGB			KEYWORD2
 setHSV			KEYWORD2

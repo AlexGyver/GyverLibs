@@ -395,7 +395,7 @@ void setDirection(boolean direction);
 
 ---
 
-### GyverRGB v1.9 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverRGB/GyverRGB.zip)
+### GyverRGB v1.10 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverRGB/GyverRGB.zip)
 Библиотека для удобного управления RGB светодиодами и лентами для Arduino
 - Работа в пространстве RGB
 - Работа в пространстве HSV
@@ -421,6 +421,9 @@ void setDirection(boolean direction);
 	+ PURPLE  - пурпурный
 - Настройка полярности ШИМ	
 - Функция плавной смены цвета
+- Ограничение тока (по расчёту)
+- Регулировка общей яркости
+- Поддержание яркости LED ленты по мере разряда АКБ
 - Возможность управления 6-ю RGB диодами/лентами с одной Arduino (встроенный генератор ШИМ на ВСЕХ 20 пинах atmega328)
 #### Методы и функции библиотеки
 <details>
@@ -429,19 +432,29 @@ void setDirection(boolean direction);
 Смотри примеры в папке examples!
 
 ```C
-GRGB(uint8_t rpin, uint8_t gpin, uint8_t bpin);
 // объявление
-	
-GRGB(uint8_t rpin, uint8_t gpin, uint8_t bpin, boolean pwmmode);
+GRGB(uint8_t rpin, uint8_t gpin, uint8_t bpin);
+
 // объявление с выбором режима генерации ШИМ (NORM_PWM / ANY_PWM)
 // NORM_PWM - дефолтные ШИМ пины (3, 5, 6, 9, 10, 11 для UNO/NANO/MINI)
 // ANY_PWM - любой пин делается ШИМ пином (частота ~150 Гц). Подробности в библиотеке GyverHacks
-	
-void setDirection(boolean direction);
+GRGB(uint8_t rpin, uint8_t gpin, uint8_t bpin, boolean pwmmode);
+
 // NORMAL / REVERSE - направление ШИМ
 // общий катод - NORMAL
 // общий анод - REVERSE
-													
+void setDirection(boolean direction);
+
+// установка ограничения по току: 
+// numLeds - количество светодиодов
+// vcc - напряжение питания в милливольтах
+// maxCur - максимальный ток
+void setMaxCurrent(uint16_t numLeds, float vcc, int maxCur);
+																	
+void setBrightness(byte bright);                     // установка яркости (0-255)
+void constantBrightTick(int minVolts, int vcc);      // корректировка под напряжение питания
+void gammaTick(int vcc);                             // корректировка красного цвета при падении напряжения питания
+
 void setHEX(uint32_t color);                         // установка цвета в формате HEX (вида 0x808080 )
 void setRGB(uint8_t r, uint8_t g, uint8_t b);        // установка цвета в пространстве RGB (каждый цвет 0-255)
 void setHSV(uint8_t h, uint8_t s, uint8_t v);        // установка цвета в пространстве HSV (каждая велиична 0-255)

@@ -39,6 +39,41 @@ void GRGB::setDirection(boolean direction) {
 	_reverse_flag = direction;
 }
 
+void GRGB::setBrightness(byte bright) {
+	_brightFlag = true;
+	_brightC = (float)bright / 255;
+	GRGB::setRGB();
+}
+
+void GRGB::setMaxCurrent(uint16_t numLeds, float vcc, int maxCur) {
+	_maxCurFlag = true;
+	_vcc = vcc;
+	_maxCurrent = maxCur;
+	_numLeds = numLeds;	
+}
+
+void GRGB::constantBrightTick(int minVolts, int vcc) {
+	_constBrFlag = true;
+	if (vcc > minVolts) {
+		int minCur = minVolts * 3.8 - 28700;
+		int nowCur = vcc * 3.8 - 28700;
+		_constCoef = (float)minCur / nowCur;
+	} else _constCoef = 1;
+	GRGB::setRGB();
+}
+
+void GRGB::gammaTick(int vcc) {
+	_gammaFlag = true;
+	if (vcc < 12000) {
+		_gammaR = (float)vcc / 10000 - 0.5;
+		_gammaG = (float)vcc / 10000 - 0.3;	
+	} else {
+		_gammaR = 1;
+		_gammaG = 1;
+	}
+	GRGB::setRGB();
+}
+
 void GRGB::setRGB(uint8_t new_r, uint8_t new_g, uint8_t new_b) {
 	_r = new_r;
 	_g = new_g;
@@ -194,25 +229,56 @@ void GRGB::fadeTo(byte new_r, byte new_g, byte new_b, uint16_t fadeTime) {
 
 // служебные функции
 void GRGB::setRGB() {
+	byte showR = _r, showG = _g, showB = _b;
+	
+	if (_brightFlag) {
+		showR *= (float)_brightC;
+		showG *= (float)_brightC;
+		showB *= (float)_brightC;
+	}
+	
+	if (_constBrFlag) {
+		showR *= (float)_constCoef;
+		showG *= (float)_constCoef;
+		showB *= (float)_constCoef;
+	}
+	
+	if (_maxCurFlag) {
+		float maxColorCur = ((float)_vcc * 3.8 - 28700) / 3000;	// макс ток (ма) на один цвет при напряжении vcc
+		float ledCur = (float)(showR + showG + showB) * maxColorCur / 255;	// реальный ток на один LED
+		int comLedCur = ledCur * _numLeds;							// ток всей ленты
+		if (comLedCur > _maxCurrent) {
+			float coef = (float)_maxCurrent / comLedCur;
+			showR *= (float)coef;
+			showG *= (float)coef;
+			showB *= (float)coef;
+		}
+	}
+	
+	if (_gammaFlag) {
+		showR *= (float)_gammaR;
+		showG *= (float)_gammaG;
+	}	
+	
 	if (!_PWMmode) {						// режим NORM_PWM
 		if (_reverse_flag) {				// обратная полярность ШИМ
-			analogWrite(_rpin, 255 - _r);
-			analogWrite(_gpin, 255 - _g);
-			analogWrite(_bpin, 255 - _b);
+			analogWrite(_rpin, 255 - showR);
+			analogWrite(_gpin, 255 - showG);
+			analogWrite(_bpin, 255 - showB);
 		} else {							// прямая полярность ШИМ
-			analogWrite(_rpin, _r);
-			analogWrite(_gpin, _g);
-			analogWrite(_bpin, _b);
+			analogWrite(_rpin, showR);
+			analogWrite(_gpin, showG);
+			analogWrite(_bpin, showB);
 		}
 	} else {								// режим ANY_PWM
 		if (_reverse_flag) {				// обратная полярность ШИМ
-			anyPWMRGB(_rpin, 255 - _r);
-			anyPWMRGB(_gpin, 255 - _g);
-			anyPWMRGB(_bpin, 255 - _b);
+			anyPWMRGB(_rpin, 255 - showR);
+			anyPWMRGB(_gpin, 255 - showG);
+			anyPWMRGB(_bpin, 255 - showB);
 		} else {							// прямая полярность ШИМ
-			anyPWMRGB(_rpin, _r);
-			anyPWMRGB(_gpin, _g);
-			anyPWMRGB(_bpin, _b);
+			anyPWMRGB(_rpin, showR);
+			anyPWMRGB(_gpin, showG);
+			anyPWMRGB(_bpin, showB);
 		}
 	}
 }
