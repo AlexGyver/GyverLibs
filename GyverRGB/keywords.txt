@@ -23,6 +23,7 @@ setRGB			KEYWORD2
 setHSV			KEYWORD2
 setHSV_fast		KEYWORD2
 setKelvin		KEYWORD2
+colorWheel		KEYWORD2
 fadeTo			KEYWORD2
 
 #######################################

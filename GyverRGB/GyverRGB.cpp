@@ -227,9 +227,45 @@ void GRGB::fadeTo(byte new_r, byte new_g, byte new_b, uint16_t fadeTime) {
 	}
 }
 
+void GRGB::colorWheel(int color) {
+	if (color <= 255) {						// красный макс, зелёный растёт
+      _r = 255;
+      _g = color;
+      _b = 0;
+    }
+    else if (color > 255 && color <= 510) {		// зелёный макс, падает красный 
+      _r = 510 - color;
+      _g = 255;
+      _b = 0;
+    }
+    else if (color > 510 && color <= 765) {		// зелёный макс, растёт синий
+      _r = 0;
+      _g = 255;
+      _b = color - 510;
+    }
+    else if (color > 765 && color <= 1020) {	// синий макс, падает зелёный
+      _r = 0;
+      _g = 1020 - color;
+      _b = 255;
+    }
+	else if (color > 1020 && color <= 1275) { 	// синий макс, растёт красный
+      _r = color - 1020;
+      _g = 0;
+      _b = 255;
+    }
+	else if (color > 1275 && color <= 1530) {	// красный макс, падает синий
+      _r = 255;
+      _g = 0;
+      _b = 1530 - color;
+    }
+	GRGB::setRGB();
+}
+
 // служебные функции
 void GRGB::setRGB() {
-	byte showR = _r, showG = _g, showB = _b;
+	showR = _r;
+	showG = _g;
+	showB = _b;
 	
 	if (_brightFlag) {
 		showR *= (float)_brightC;
@@ -258,28 +294,22 @@ void GRGB::setRGB() {
 	if (_gammaFlag) {
 		showR *= (float)_gammaR;
 		showG *= (float)_gammaG;
-	}	
+	}
+	
+	if (_reverse_flag) {
+		showR = 255 - showR;
+		showG = 255 - showG;
+		showB = 255 - showB;
+	}
 	
 	if (!_PWMmode) {						// режим NORM_PWM
-		if (_reverse_flag) {				// обратная полярность ШИМ
-			analogWrite(_rpin, 255 - showR);
-			analogWrite(_gpin, 255 - showG);
-			analogWrite(_bpin, 255 - showB);
-		} else {							// прямая полярность ШИМ
-			analogWrite(_rpin, showR);
-			analogWrite(_gpin, showG);
-			analogWrite(_bpin, showB);
-		}
+		analogWrite(_rpin, showR);
+		analogWrite(_gpin, showG);
+		analogWrite(_bpin, showB);
 	} else {								// режим ANY_PWM
-		if (_reverse_flag) {				// обратная полярность ШИМ
-			anyPWMRGB(_rpin, 255 - showR);
-			anyPWMRGB(_gpin, 255 - showG);
-			anyPWMRGB(_bpin, 255 - showB);
-		} else {							// прямая полярность ШИМ
-			anyPWMRGB(_rpin, showR);
-			anyPWMRGB(_gpin, showG);
-			anyPWMRGB(_bpin, showB);
-		}
+		anyPWMRGB(_rpin, showR);
+		anyPWMRGB(_gpin, showG);
+		anyPWMRGB(_bpin, showB);
 	}
 }
 
