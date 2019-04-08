@@ -20,22 +20,22 @@ GRGB diode(6, 5, 3);  // куда подключены цвета (R, G, B)
 
 /*
   Доступные цвета для setColor
-  G_WHITE
-  G_SILVER
-  G_GRAY
-  G_BLACK
-  G_RED
-  G_MAROON
-  G_YELLOW
-  G_OLIVE
-  G_LIME
-  G_GREEN
-  G_AQUA
-  G_TEAL
-  G_BLUE
-  G_NAVY
-  G_PINK
-  G_PURPLE
+  WHITE
+  SILVER
+  GRAY
+  BLACK
+  RED
+  MAROON
+  YELLOW
+  OLIVE
+  LIME
+  GREEN
+  AQUA
+  TEAL
+  BLUE
+  NAVY
+  PINK
+  PURPLE
 */
 
 void setup() {
@@ -43,14 +43,14 @@ void setup() {
 }
 
 void loop() {
-  diode.setHEX(G_RED);
+  diode.setHEX(RED);
   delay(1000);
-  diode.setHEX(G_YELLOW);
+  diode.setHEX(YELLOW);
   delay(1000);
-  diode.setHEX(G_LIME);
+  diode.setHEX(LIME);
   delay(1000);
-  diode.setHEX(G_AQUA);
+  diode.setHEX(AQUA);
   delay(1000);
-  diode.setHEX(G_PINK);
+  diode.setHEX(PINK);
   delay(1000);  
 }
