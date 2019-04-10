@@ -1,12 +1,13 @@
-#define CLK 7
-#define DT 8
-#define SW 9
+#define CLK 2
+#define DT 3
+#define SW 4
 
 #include "GyverEncoder.h"
 Encoder enc1(CLK, DT, SW);
 
 void setup() {
   Serial.begin(9600);
+  enc1.setType(TYPE2);
 }
 
 void loop() {
@@ -24,7 +25,9 @@ void loop() {
   if (enc1.isLeftH()) Serial.println("Left holded");
   
   if (enc1.isPress()) Serial.println("Press");         // нажатие на кнопку (+ дебаунс)
-  if (enc1.isRelease()) Serial.println("Release");     // отпускание кнопки (+ дебаунс)
+  if (enc1.isClick()) Serial.println("Click");         // отпускание кнопки (+ дебаунс)
+  //if (enc1.isRelease()) Serial.println("Release");     // то же самое, что isClick
+  
   if (enc1.isHolded()) Serial.println("Holded");       // если была удержана и энк не поворачивался
   //if (enc1.isHold()) Serial.println("Hold");         // возвращает состояние кнопки
 }

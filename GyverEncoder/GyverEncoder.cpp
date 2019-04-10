@@ -38,6 +38,9 @@ void Encoder::setType(boolean type) {
 void Encoder::setTickMode(boolean tickMode) {
 	flags.enc_tick_mode = tickMode;
 }
+void Encoder::setFastTimeout(int timeout) {
+	fast_timeout = timeout;
+}
 
 // повороты
 boolean Encoder::isTurn() {
@@ -114,59 +117,55 @@ boolean Encoder::isClick() {
 }
 boolean Encoder::isHolded() {
 	if (flags.enc_tick_mode) Encoder::tick();
-	if (flags.isHolded_f) {
+	if (flags.hold_flag && flags.isHolded_f) {
 		flags.isHolded_f = false;
 		return true;
 	} else return false;
 }
 boolean Encoder::isHold() {
 	if (flags.enc_tick_mode) Encoder::tick();
-	if (flags.isHold_f) {
-		flags.isHold_f = false;
-		return true;
-	} else return false;
+	return (flags.SW_state);
 }
 
-void Encoder::tick() {
-  flags.SW_state = !digitalRead(_SW);        // читаем положение кнопки SW
+void Encoder::tick() {  
+	flags.SW_state = !digitalRead(_SW);        // читаем положение кнопки SW
+
+	uint32_t debounceDelta = millis() - debounce_timer;
   
-  if (flags.SW_state) flags.isHold_f = true;
-  else flags.isHold_f = false;
-
-  // отработка нажатия кнопки энкодера
-  if (flags.SW_state && !flags.butt_flag && millis() - debounce_timer > DEBOUNCE_BUTTON) {
-    flags.hold_flag = false;
-    flags.butt_flag = true;
-    flags.turn_flag = false;
-    debounce_timer = millis();
-    flags.isPress_f = true;
-  }
-  if (!flags.SW_state && flags.butt_flag && millis() - debounce_timer > DEBOUNCE_BUTTON && millis() - debounce_timer < 500) {
-    flags.butt_flag = false;
-    if (!flags.turn_flag && !flags.hold_flag) {  // если кнопка отпущена и ручка не поворачивалась
-      flags.turn_flag = false;
-      flags.isRelease_f = true;
-    }
-    debounce_timer = millis();
-  }
-
-  if (flags.SW_state && flags.butt_flag && millis() - debounce_timer > HOLD_TIMEOUT && !flags.hold_flag) {
-    flags.hold_flag = true;
-    if (!flags.turn_flag) {  // если кнопка отпущена и ручка не поворачивалась
-      flags.turn_flag = false;
-      flags.isHolded_f = true;
-    }
-  }
-  if (!flags.SW_state && flags.butt_flag && flags.hold_flag) {
-    flags.butt_flag = false;
-    debounce_timer = millis();
-  }
-	
+	if (flags.SW_state && !flags.butt_flag && (debounceDelta > DEBOUNCE_BUTTON)) {
+		flags.butt_flag = true;
+		flags.turn_flag = false;
+		debounce_timer = millis();
+		debounceDelta = 0;
+		flags.isPress_f = true;
+		flags.isHolded_f = true;
+	}
+	if (!flags.SW_state && flags.butt_flag && (debounceDelta > DEBOUNCE_BUTTON)) {
+		if (!flags.turn_flag && !flags.hold_flag) {  // если кнопка отпущена и ручка не поворачивалась
+			flags.turn_flag = false;
+			flags.isRelease_f = true;
+		}
+		flags.butt_flag = false;
+		debounce_timer = millis();
+		debounceDelta = 0;
+		flags.hold_flag = false;
+	}
+	if (flags.butt_flag && debounceDelta > HOLD_TIMEOUT && !flags.turn_flag) {
+		if (flags.SW_state) {
+			flags.hold_flag = true;
+		} else {
+		flags.butt_flag = false;
+		flags.hold_flag = false;
+		debounce_timer = millis();
+		debounceDelta = 0;
+		}
+	}
+  
 	// читаем состояние энкодера
 	curState = digitalRead(_CLK);
 	curState += digitalRead(_DT) << 1;
 	
-	if (curState != prevState && (millis() - debounce_timer > DEBOUNCE_TURN)) {		
+	if (curState != prevState && (debounceDelta > DEBOUNCE_TURN)) {		
 		encState = 0;
 		if (curState == 0b11) {
 			if (prevState == 0b10) encState = 1;
@@ -187,5 +186,6 @@ void Encoder::tick() {
 		prevState = curState;
 		flags.turn_flag = true;
 		debounce_timer = millis();
+		debounceDelta = 0;
 	}
 }

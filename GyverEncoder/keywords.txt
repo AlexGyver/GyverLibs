@@ -16,6 +16,7 @@ GyverEncoder	KEYWORD1
 tick			KEYWORD2
 setType			KEYWORD2
 setDirection	KEYWORD2
+setFastTimeout	KEYWORD2
 isTurn			KEYWORD2
 isRight			KEYWORD2
 isLeft			KEYWORD2

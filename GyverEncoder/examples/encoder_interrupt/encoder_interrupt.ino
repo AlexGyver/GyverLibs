@@ -12,15 +12,19 @@ Encoder enc1(CLK, DT, SW);
 
 void setup() {
   Serial.begin(9600);
-  attachInterrupt(0, isr, CHANGE);    // прерывание на 2 пине! CLK у энка
+  attachInterrupt(0, isrCLK, CHANGE);    // прерывание на 2 пине! CLK у энка
+  attachInterrupt(1, isrDT, CHANGE);    // прерывание на 3 пине! DT у энка
 }
 
-void isr() {
+void isrCLK() {
+  enc1.tick();  // отработка в прерывании
+}
+void isrDT() {
   enc1.tick();  // отработка в прерывании
 }
 
 void loop() {
-  enc1.tick();  // отработка
+  enc1.tick();
   if (enc1.isRight()) Serial.println("Right");         // если был поворот
   if (enc1.isLeft()) Serial.println("Left");
 

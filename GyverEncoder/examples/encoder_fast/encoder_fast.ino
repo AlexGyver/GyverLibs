@@ -10,7 +10,7 @@ int value = 0;
 void setup() {
   Serial.begin(9600);
   enc1.setType(TYPE1);        // тип энкодера TYPE1 одношаговый, TYPE2 двухшаговый. Если ваш энкодер работает странно, смените тип\=
-  enc1.fast_timeout = 40;     // таймаут на скорость isFastR. По умолч. 50
+  enc1.setFastTimeout(40);    // таймаут на скорость isFastR. По умолч. 50
 }
 
 void loop() {

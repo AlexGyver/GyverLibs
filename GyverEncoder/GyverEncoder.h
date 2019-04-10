@@ -2,8 +2,7 @@
 #define GyverEncoder_h
 #include <Arduino.h>
 
-/*
-	Текущая версия: 3.0 от 04.01.2019
+/*	
 	GyverEncoder - библиотека для отработки энкодера. Возможности:
 	- Отработка поворота с антидребезгом
 	- Отработка нажатия кнопки с антидребезгом
@@ -12,11 +11,15 @@
 	- Работа с двумя типами экнодеров
 	- Отработка "быстрого поворота"
 	- Версия 3+ более оптимальная и быстрая
+	Текущая версия: 3.1 от 10.04.2019
+		- Больше оптимизации!
+		- 
 */
 
 // настройка антидребезга энкодера, кнопки и таймаута удержания
-#define DEBOUNCE_TURN 5
+#define DEBOUNCE_TURN 1
 #define DEBOUNCE_BUTTON 80
+#define CLICK_TIMEOUT 200
 #define HOLD_TIMEOUT 700
 
 #pragma pack(push,1)
@@ -30,7 +33,6 @@ typedef struct
 	bool isPress_f: 1;
 	bool isRelease_f: 1;
 	bool isHolded_f: 1;
-	bool isHold_f: 1;
 	bool isFastR_f: 1;
 	bool isFastL_f: 1;
 	bool enc_tick_mode: 1;
@@ -49,6 +51,7 @@ class Encoder
 	void setType(boolean type);				// TYPE1 / TYPE2 - тип энкодера TYPE1 одношаговый, TYPE2 двухшаговый. Если ваш энкодер работает странно, смените тип
 	void setTickMode(boolean tickMode); 	// MANUAL / AUTO - ручной или автоматический опрос энкодера функцией tick(). (по умолчанию ручной)
 	void setDirection(boolean direction);	// NORM / REVERSE - направление вращения энкодера
+	void setFastTimeout(int timeout);			// установка таймаута быстрого поворота
 	
 	boolean isTurn();						// возвращает true при любом повороте, сама сбрасывается в false
 	boolean isRight();						// возвращает true при повороте направо, сама сбрасывается в false
@@ -64,7 +67,7 @@ class Encoder
     boolean isHolded();						// возвращает true при удержании кнопки, сама сбрасывается в false
 	boolean isHold();						// возвращает true при удержании кнопки, НЕ СБРАСЫВАЕТСЯ
 	
-	int8_t fast_timeout = 50;
+	int8_t fast_timeout = 50;				// таймаут быстрого поворота
 	
   private:
 	void init();
