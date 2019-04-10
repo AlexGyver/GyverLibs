@@ -19,7 +19,6 @@
 // настройка антидребезга энкодера, кнопки и таймаута удержания
 #define DEBOUNCE_TURN 1
 #define DEBOUNCE_BUTTON 80
-#define CLICK_TIMEOUT 200
 #define HOLD_TIMEOUT 700
 
 #pragma pack(push,1)
@@ -51,7 +50,7 @@ class Encoder
 	void setType(boolean type);				// TYPE1 / TYPE2 - тип энкодера TYPE1 одношаговый, TYPE2 двухшаговый. Если ваш энкодер работает странно, смените тип
 	void setTickMode(boolean tickMode); 	// MANUAL / AUTO - ручной или автоматический опрос энкодера функцией tick(). (по умолчанию ручной)
 	void setDirection(boolean direction);	// NORM / REVERSE - направление вращения энкодера
-	void setFastTimeout(int timeout);			// установка таймаута быстрого поворота
+	void setFastTimeout(int timeout);		// установка таймаута быстрого поворота
 	
 	boolean isTurn();						// возвращает true при любом повороте, сама сбрасывается в false
 	boolean isRight();						// возвращает true при повороте направо, сама сбрасывается в false
