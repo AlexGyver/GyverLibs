@@ -1,7 +1,7 @@
 #ifndef GyverFilters_h
 #define GyverFilters_h
 #include <Arduino.h>
-#define LIBRARY_VERSION	1.3
+#define LIBRARY_VERSION	1.4
 
 #define	MEDIAN_FILTER_SIZE	(8)		// размер медианного фильтра!
 
@@ -19,6 +19,7 @@ class GFilterRA
 {
   public:
 	GFilterRA();								// инициализация фильтра
+	GFilterRA(float coef);						// расширенная инициализация фильтра (коэффициент)
 	GFilterRA(float coef, uint16_t interval);	// расширенная инициализация фильтра (коэффициент, шаг фильтрации)
 	void setCoef(float coef);	    			// настройка коэффициента фильтрации (0.00 - 1.00). Чем меньше, тем плавнее
 	void setStep(uint16_t interval);			// установка шага фильтрации (мс). Чем меньше, тем резче фильтр

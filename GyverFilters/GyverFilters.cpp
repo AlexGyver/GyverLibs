@@ -4,9 +4,14 @@
 
 // ***************************** GFilterRA *****************************
 GFilterRA::GFilterRA() {}
+
 GFilterRA::GFilterRA(float coef, uint16_t interval) {
 	_coef = coef;
 	_filterInterval = interval;
+}
+
+GFilterRA::GFilterRA(float coef) {
+	_coef = coef;
 }
 
 void GFilterRA::setCoef(float coef) {
