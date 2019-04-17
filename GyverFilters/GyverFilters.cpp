@@ -36,12 +36,12 @@ float GFilterRA::filteredTime(float value) {
 }
 
 float GFilterRA::filtered(int16_t value) {
-	_lastValue = _lastValue * ((float)1 - _coef) + (float)value * _coef;
+	_lastValue += (float)(value - _lastValue) * _coef;
 	return _lastValue;
 }
 
 float GFilterRA::filtered(float value) {
-	_lastValue = _lastValue * ((float)1 - _coef) + (float)value * _coef;
+	_lastValue += (float)(value - _lastValue) * _coef;
 	return _lastValue;
 }
 
