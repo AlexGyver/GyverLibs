@@ -7,6 +7,7 @@ minimLibs это набор классов, являющихся облегчё�
 - GyverButton
 - GyverEncoder
 - GyverTimer  
+
 Созданы для работы со скетчами, требовательными к памяти. Смотрите примеры!
 
 ### GyverButton v2.12 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/minimLibs/minimLibs.zip)
