@@ -15,7 +15,7 @@ class encMinim
   private:
     byte _clk, _dt, _sw;
     boolean _type = false;
-    boolean _state, _lastState, _turnFlag, _swState, _swFlag, _turnState;
+    boolean _state, _lastState, _turnFlag, _swState, _swFlag, _turnState, _turnStateFlag;
     byte _encState;
     uint32_t _debTimer;
     // 0 - ничего, 1 - лево, 2 - право, 3 - правоНажат, 4 - левоНажат
@@ -46,6 +46,7 @@ void encMinim::tick() {
     _turnState = true;
     _turnFlag = !_turnFlag;
     if (_turnFlag || !_type) {
+      _turnStateFlag = true;
       if (bitRead(PIND, _dt) != _lastState) {
         if (_swState) _encState = 1;
         else _encState = 3;
@@ -69,7 +70,8 @@ void encMinim::tick() {
   }
 }
 boolean encMinim::isTurn() {
-  if (_encState > 0 && _encState < 5) {
+  if (_turnStateFlag) {
+    _turnStateFlag = false;
     return true;
   } else return false;
 }
