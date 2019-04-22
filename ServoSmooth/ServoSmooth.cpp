@@ -25,8 +25,19 @@ void ServoSmooth::attach(uint8_t pin, int min, int max) {
 	_max = max;
 }
 
+void ServoSmooth::attach(uint8_t pin, int min, int max, int target) {
+	_servo.attach(pin);
+	if (target <= 180) {
+		target = map(target, 0, 180, _min, _max);
+	}
+	_servo.writeMicroseconds(target);
+	_pin = pin;
+	_min = min;
+	_max = max;
+}
+
 void ServoSmooth::start() {
-	_servo.attach(_pin);
+	_servo.attach(_pin);	
 	_tickFlag = true;
 }
 
@@ -52,6 +63,25 @@ void ServoSmooth::setTargetDeg(int target) {
 	_servoTargetPos = map(target, 0, 180, _min, _max);
 }
 
+void ServoSmooth::setCurrent(int target) {
+	_servoCurrentPos = target;
+	_newPos = _servoCurrentPos;
+}
+
+void ServoSmooth::setCurrentDeg(int target) {
+	target = constrain(target, 0, 180);
+	_servoCurrentPos = map(target, 0, 180, _min, _max);
+	_newPos = _servoCurrentPos;
+}
+
+int ServoSmooth::getCurrent() {
+	return _servoCurrentPos;
+}
+int ServoSmooth::getCurrentDeg() {
+	return (map(_servoCurrentPos, _min, _max, 0, 180));
+}
+
+
 void ServoSmooth::setAutoDetach(boolean set) {
 	_autoDetach = set;
 }
@@ -64,7 +94,7 @@ boolean ServoSmooth::tickManual() {
 			_servoCurrentPos += _newSpeed;										// получаем новую позицию
 			_newPos += (float)(_servoCurrentPos - _newPos) * _k;				// и фильтруем её
 			_newPos = constrain(_newPos, _min, _max);							// ограничиваем
-			_servo.writeMicroseconds(_newPos);									// отправляем на серво	
+			_servo.writeMicroseconds(_newPos);									// отправляем на серво
 		}			
 	}
 	if (abs(_newSpeed) < DEADZONE) {

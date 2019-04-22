@@ -23,6 +23,10 @@ setSpeed			KEYWORD2
 setAccel			KEYWORD2
 setTarget			KEYWORD2
 setTargetDeg		KEYWORD2
+setCurrent			KEYWORD2
+setCurrentDeg		KEYWORD2
+getCurrent			KEYWORD2
+getCurrentDeg		KEYWORD2
 setAutoDetach		KEYWORD2
 
 #######################################
