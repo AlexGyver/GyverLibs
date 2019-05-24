@@ -36,14 +36,16 @@ typedef struct
 	bool isFastL_f: 1;
 	bool enc_tick_mode: 1;
 	bool enc_type: 1;
-
+	bool without_sw: 1;
+	
 } GyverEncoderFlags;
 #pragma pack(pop)
 
 class Encoder
 {
   public:
-    Encoder(uint8_t clk, uint8_t dt, uint8_t sw);				// CLK, DT, SW
+	Encoder(uint8_t clk, uint8_t dt);				// CLK, DT
+    	Encoder(uint8_t clk, uint8_t dt, uint8_t sw);			// CLK, DT, SW
 	Encoder(uint8_t clk, uint8_t dt, uint8_t sw, boolean);		// CLK, DT, SW, тип (TYPE1 / TYPE2) TYPE1 одношаговый, TYPE2 двухшаговый. Если ваш энкодер работает странно, смените тип
 		
 	void tick();							// опрос энкодера, нужно вызывать постоянно или в прерывании
