@@ -1,6 +1,12 @@
 #include "GyverEncoder.h"
 #include <Arduino.h>
 
+Encoder::Encoder(uint8_t clk, uint8_t dt) {
+	_CLK = clk;
+	_DT = dt;
+	flags.without_sw = true;
+	Encoder::init();
+}
 Encoder::Encoder(uint8_t clk, uint8_t dt, uint8_t sw) {
 	_CLK = clk;
 	_DT = dt;
@@ -128,39 +134,42 @@ boolean Encoder::isHold() {
 }
 
 void Encoder::tick() {  
-	flags.SW_state = !digitalRead(_SW);        // читаем положение кнопки SW
 
 	uint32_t debounceDelta = millis() - debounce_timer;
-  
-	if (flags.SW_state && !flags.butt_flag && (debounceDelta > DEBOUNCE_BUTTON)) {
-		flags.butt_flag = true;
-		flags.turn_flag = false;
-		debounce_timer = millis();
-		debounceDelta = 0;
-		flags.isPress_f = true;
-		flags.isHolded_f = true;
-	}
-	if (!flags.SW_state && flags.butt_flag && (debounceDelta > DEBOUNCE_BUTTON)) {
-		if (!flags.turn_flag && !flags.hold_flag) {  // если кнопка отпущена и ручка не поворачивалась
+	
+	if (flags.without_sw) {
+		flags.SW_state = !digitalRead(_SW);        // читаем положение кнопки SW
+	  
+		if (flags.SW_state && !flags.butt_flag && (debounceDelta > DEBOUNCE_BUTTON)) {
+			flags.butt_flag = true;
 			flags.turn_flag = false;
-			flags.isRelease_f = true;
+			debounce_timer = millis();
+			debounceDelta = 0;
+			flags.isPress_f = true;
+			flags.isHolded_f = true;
 		}
-		flags.butt_flag = false;
-		debounce_timer = millis();
-		debounceDelta = 0;
-		flags.hold_flag = false;
-	}
-	if (flags.butt_flag && debounceDelta > HOLD_TIMEOUT && !flags.turn_flag) {
-		if (flags.SW_state) {
-			flags.hold_flag = true;
-		} else {
-		flags.butt_flag = false;
-		flags.hold_flag = false;
-		debounce_timer = millis();
-		debounceDelta = 0;
+		if (!flags.SW_state && flags.butt_flag && (debounceDelta > DEBOUNCE_BUTTON)) {
+			if (!flags.turn_flag && !flags.hold_flag) {  // если кнопка отпущена и ручка не поворачивалась
+				flags.turn_flag = false;
+				flags.isRelease_f = true;
+			}
+			flags.butt_flag = false;
+			debounce_timer = millis();
+			debounceDelta = 0;
+			flags.hold_flag = false;
 		}
-	}
+		if (flags.butt_flag && debounceDelta > HOLD_TIMEOUT && !flags.turn_flag) {
+			if (flags.SW_state) {
+				flags.hold_flag = true;
+			} else {
+			flags.butt_flag = false;
+			flags.hold_flag = false;
+			debounce_timer = millis();
+			debounceDelta = 0;
+			}
+		}
   
+	}
 	// читаем состояние энкодера
 	curState = digitalRead(_CLK);
 	curState += digitalRead(_DT) << 1;
