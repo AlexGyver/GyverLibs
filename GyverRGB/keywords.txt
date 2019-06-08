@@ -25,6 +25,10 @@ setHSV_fast		KEYWORD2
 setKelvin		KEYWORD2
 colorWheel		KEYWORD2
 fadeTo			KEYWORD2
+highFrequency	KEYWORD2
+setLUT			KEYWORD2
+setMinPWM		KEYWORD2
+setGammaBright	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

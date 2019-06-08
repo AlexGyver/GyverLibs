@@ -4,6 +4,77 @@
 volatile uint8_t pwmRGB;
 volatile uint8_t pwmsRGB[20];
 volatile boolean anyPWMpinsRGB[20];
+/*
+const uint8_t CRTgamma[256] PROGMEM = {
+	0,		0,		0,		0,		0,		0,		0,		0,
+	0,		0,		0,		0,		0,		0,		0,		0,		
+	0,		0,		0,		0,		0,		0,		0,		0,		
+	0,		0,		0,		1,		1,		1,		1,		1,		
+	1,		1,		1,		1,		2,		2,		2,		2,		
+	2,		2,		2,		3,		3,		3,		3,		3,		
+	4,		4,		4,		4,		4,		5,		5,		5,		
+	5,		6,		6,		6,		7,		7,		7,		8,		
+	8,		8,		8,		9,		9,		10,		10,		10,		
+	11,		11,		11,		12,		12,		13,		13,		13,		
+	14,		14,		15,		15,		16,		16,		17,		17,		
+	18,		18,		19,		19,		20,		20,		21,		22,		
+	22,		23,		23,		24,		25,		25,		26,		26,		
+	27,		28,		28,		29,		30,		30,		31,		32,		
+	33,		33,		34,		35,		36,		36,		37,		38,		
+	39,		40,		40,		41,		42,		43,		44,		45,		
+	46,		47,		47,		48,		49,		50,		51,		52,		
+	53,		54,		55,		56,		57,		58,		59,		60,		
+	61,		62,		63,		64,		66,		67,		68,		69,		
+	70,		71,		73,		74,		75,		76,		77,		79,		
+	80,		81,		82,		84,		85,		86,		87,		89,		
+	90,		91,		93,		94,		96,		97,		98,		100,		
+	101,	103,	104,	106,	107,	109,	110,	112,	
+	113,	115,	116,	118,	119,	121,	123,	124,	
+	126,	127,	129,	131,	132,	134,	136,	138,	
+	139,	141,	143,	145,	146,	148,	150,	152,	
+	154,	156,	157,	159,	161,	163,	165,	167,	
+	169,	171,	173,	175,	177,	179,	181,	183,	
+	185,	187,	189,	191,	193,	195,	198,	200,	
+	202,	204,	206,	208,	211,	213,	215,	217,	
+	220,	222,	224,	227,	229,	231,	234,	236,	
+	238,	241,	243,	246,	248,	251,	253,	255,		
+};
+*/
+const uint8_t CRTgamma[256] PROGMEM =
+{
+	0,		0,		1,		1,		1,		1,		1,		1,
+	1,		1,		1,		1,		1,		1,		1,		1,
+	2,		2,		2,		2,		2,		2,		2,		2,
+	3,		3,		3,		3,		3,		3,		4,		4,
+	4,		4,		4,		5,		5,		5,		5,		6,
+	6,		6,		7,		7,		7,		8,		8,		8,
+	9,		9,		9,		10,		10,		10,		11,		11,
+	12,		12,		12,		13,		13,		14,		14,		15,
+	15,		16,		16,		17,		17,		18,		18,		19,
+	19,		20,		20,		21,		22,		22,		23,		23,
+	24,		25,		25,		26,		26,		27,		28,		28,
+	29,		30,		30,		31,		32,		33,		33,		34,
+	35,		35,		36,		37,		38,		39,		39,		40,
+	41,		42,		43,		43,		44,		45,		46,		47,
+	48,		49,		49,		50,		51,		52,		53,		54,
+	55,		56,		57,		58,		59,		60,		61,		62,
+	63,		64,		65,		66,		67,		68,		69,		70,
+	71,		72,		73,		74,		75,		76,		77,		79,
+	80,		81,		82,		83,		84,		85,		87,		88,
+	89,		90,		91,		93,		94,		95,		96,		98,
+	99,		100,	101,	103,	104,	105,	107,	108,
+	109,	110,	112,	113,	115,	116,	117,	119,
+	120,	121,	123,	124,	126,	127,	129,	130,
+	131,	133,	134,	136,	137,	139,	140,	142,
+	143,	145,	146,	148,	149,	151,	153,	154,
+	156,	157,	159,	161,	162,	164,	165,	167,
+	169,	170,	172,	174,	175,	177,	179,	180,
+	182,	184,	186,	187,	189,	191,	193,	194,
+	196,	198,	200,	202,	203,	205,	207,	209,
+	211,	213,	214,	216,	218,	220,	222,	224,
+	226,	228,	230,	232,	233,	235,	237,	239,
+	241,	243,	245,	247,	249,	251,	253,	255,
+};
 
 GRGB::GRGB(uint8_t rpin, uint8_t gpin, uint8_t bpin) {
 	// по умолчанию pwmmode NORM_PWM
@@ -34,6 +105,19 @@ GRGB::GRGB(uint8_t rpin, uint8_t gpin, uint8_t bpin, boolean pwmmode) {
 		anyPWMpinRGB(_bpin);
 	}
 }
+// для пинов 3, 9, 10. Для 5 и 6 делать вручную, т.к. влияет на millis() и прочие
+void GRGB::highFrequency(long frequency) {
+	InitTimersSafe();
+	// таймер 2
+	SetPinFrequencySafe(3, frequency);
+	// на пине 11 не работает
+	
+	// таймер 1
+	SetPinFrequencySafe(9, frequency);
+	SetPinFrequencySafe(10, frequency);
+	
+	_highFreqFlag = true;
+}
 
 void GRGB::setDirection(boolean direction) {
 	_reverse_flag = direction;
@@ -45,11 +129,27 @@ void GRGB::setBrightness(byte bright) {
 	GRGB::setRGB();
 }
 
+void GRGB::setGammaBright(boolean val) {
+	_gammaBright = val;
+}
+
+void GRGB::setMinPWM(byte val) {
+	_minPWMflag = true;
+	_minPWMval = val;	
+}
+
 void GRGB::setMaxCurrent(uint16_t numLeds, float vcc, int maxCur) {
 	_maxCurFlag = true;
 	_vcc = vcc;
 	_maxCurrent = maxCur;
 	_numLeds = numLeds;	
+}
+
+void GRGB::setLUT(float rc, float gc, float bc) {
+	_LUTflag = true;
+	_rc = rc;
+	_gc = gc;
+	_bc = bc;
 }
 
 void GRGB::constantBrightTick(int minVolts, int vcc) {
@@ -296,6 +396,24 @@ void GRGB::setRGB() {
 		showG *= (float)_gammaG;
 	}
 	
+	if (_LUTflag) {
+		showR *= (float)_rc;
+		showG *= (float)_gc;
+		showB *= (float)_bc;
+	}
+	
+	if (_gammaBright) {
+		showR = pgm_read_byte(&(CRTgamma[showR]));
+		showG = pgm_read_byte(&(CRTgamma[showG]));
+		showB = pgm_read_byte(&(CRTgamma[showB]));
+	}
+	
+	if (_minPWMflag) {
+		showR = map(showR, 0, 255, _minPWMval, 255);
+		showG = map(showG, 0, 255, _minPWMval, 255);
+		showB = map(showB, 0, 255, _minPWMval, 255);
+	}
+	
 	if (_reverse_flag) {
 		showR = 255 - showR;
 		showG = 255 - showG;
@@ -303,9 +421,16 @@ void GRGB::setRGB() {
 	}
 	
 	if (!_PWMmode) {						// режим NORM_PWM
-		analogWrite(_rpin, showR);
-		analogWrite(_gpin, showG);
-		analogWrite(_bpin, showB);
+		if (_highFreqFlag) {
+			pwmWrite(_rpin, showR);
+			pwmWrite(_gpin, showG);
+			pwmWrite(_bpin, showB);
+		} else {
+			analogWrite(_rpin, showR);
+			analogWrite(_gpin, showG);
+			analogWrite(_bpin, showB);
+		}
+		
 	} else {								// режим ANY_PWM
 		anyPWMRGB(_rpin, showR);
 		anyPWMRGB(_gpin, showG);
