@@ -402,7 +402,7 @@ void setDirection(boolean direction);
 
 ---
 
-### GyverRGB v1.11 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverRGB/GyverRGB.zip)
+### GyverRGB v1.13 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverRGB/GyverRGB.zip)
 Библиотека для удобного управления RGB светодиодами и лентами для Arduino
 - 1530 значений для colorWheel
 - Работа в пространстве RGB
@@ -433,6 +433,11 @@ void setDirection(boolean direction);
 - Регулировка общей яркости
 - Поддержание яркости LED ленты по мере разряда АКБ
 - Возможность управления 6-ю RGB диодами/лентами с одной Arduino (встроенный генератор ШИМ на ВСЕХ 20 пинах atmega328)
+- Режим с настройкой частоты ШИМ
+- Матрица коррекции LUT
+- Коррекция по минимальному сигналу ШИМ
+- Гамма-коррекция яркости
+
 #### Методы и функции библиотеки
 <details>
 <summary>РАЗВЕРНУТЬ</summary>
