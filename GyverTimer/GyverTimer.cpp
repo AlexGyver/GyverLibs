@@ -23,6 +23,10 @@ void GTimer_ms::stop() {
 }
 boolean GTimer_ms::isReady() {
 	if (!_state) return false;
+	//Wraparound
+	if (_timer > millis() + 1000) {
+		_timer = millis();
+	}
 	if ((long)millis() - _timer >= _interval) {
 		if (_mode) _timer = millis();
 		return true;
@@ -57,6 +61,10 @@ void GTimer_us::stop() {
 }
 boolean GTimer_us::isReady() {
 	if (!_state) return false;
+	//Wraparound
+	if (_timer > micros() + 1000) {
+		_timer = micros();
+	}
 	if ((long)micros() - _timer >= _interval) {
 		if (_mode) _timer = micros();
 		return true;
