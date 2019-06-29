@@ -2,15 +2,16 @@
 ## Написанные с нуля/модифицированные библиотеки для Arduino
 [![AlexGyver YouTube](http://alexgyver.ru/git_banner.jpg)](https://www.youtube.com/channel/UCgtAOyEQdAyjvm9ATCi_Aig?sub_confirmation=1)
 > Внимание! Библиотеки написаны ютубером-ардуинщиком, возможна высокая концентрация костылей и стандартных подходов. Но всё работает замечательно!
-### minimLibs v1.0 [СКАЧАТЬ]()
+### minimLibs v1.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/minimLibs/minimLibs.zip)
 minimLibs это набор классов, являющихся облегчёнными и упрощёнными версиями библиотек, на данный момент таких как:
 - GyverButton
 - GyverEncoder
-- GyverTimer  
+- GyverTimer
+- Термистор  
 
 Созданы для работы со скетчами, требовательными к памяти. **НЕ НУЖНО ПОМЕЩАТЬ ИХ В ПАПКУ С БИБЛИОТЕКАМИ!** Примеры из minimLibs живут отдельной жизнью в сврих папках, им не нужны библиотеки. Смотрите примеры!
 
-### GyverButton v2.12 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/minimLibs/minimLibs.zip)
+### GyverButton v2.12 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverButton/GyverButton.zip)
 Библиотека для многофункциональной отработки нажатия кнопок с Arduino. Возможности:
 - Работа с нормально замкнутыми и нормально разомкнутыми кнопками
 - Работа с подключением PULL_UP и PULL_DOWN
