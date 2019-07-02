@@ -11,9 +11,9 @@
 	- Работа с двумя типами экнодеров
 	- Отработка "быстрого поворота"
 	- Версия 3+ более оптимальная и быстрая
-	Текущая версия: 3.1 от 10.04.2019
-		- Больше оптимизации!
-		- 
+	
+	Текущая версия: 3.2 от 02.07.2019
+	- Добавлено объявление без кнопки
 */
 
 // настройка антидребезга энкодера, кнопки и таймаута удержания
@@ -36,16 +36,18 @@ typedef struct
 	bool isFastL_f: 1;
 	bool enc_tick_mode: 1;
 	bool enc_type: 1;
+	bool use_button : 1;
 
 } GyverEncoderFlags;
 #pragma pack(pop)
 
 class Encoder
 {
-  public:
-    Encoder(uint8_t clk, uint8_t dt, uint8_t sw);				// CLK, DT, SW
-	Encoder(uint8_t clk, uint8_t dt, uint8_t sw, boolean);		// CLK, DT, SW, тип (TYPE1 / TYPE2) TYPE1 одношаговый, TYPE2 двухшаговый. Если ваш энкодер работает странно, смените тип
-		
+public:
+	Encoder(uint8_t clk, uint8_t dt);							// CLK, DT	
+	Encoder(uint8_t clk, uint8_t dt, uint8_t sw);				// CLK, DT, SW
+	Encoder(uint8_t clk, uint8_t dt, uint8_t sw, boolean type); // CLK, DT, SW, тип (TYPE1 / TYPE2) TYPE1 одношаговый, TYPE2 двухшаговый. Если ваш энкодер работает странно, смените тип
+	
 	void tick();							// опрос энкодера, нужно вызывать постоянно или в прерывании
 	void setType(boolean type);				// TYPE1 / TYPE2 - тип энкодера TYPE1 одношаговый, TYPE2 двухшаговый. Если ваш энкодер работает странно, смените тип
 	void setTickMode(boolean tickMode); 	// MANUAL / AUTO - ручной или автоматический опрос энкодера функцией tick(). (по умолчанию ручной)
@@ -63,18 +65,18 @@ class Encoder
 	boolean isPress();						// возвращает true при нажатии кнопки, сама сбрасывается в false
 	boolean isRelease();					// возвращает true при отпускании кнопки, сама сбрасывается в false
 	boolean isClick();						// возвращает true при нажатии и отпускании кнопки, сама сбрасывается в false
-    boolean isHolded();						// возвращает true при удержании кнопки, сама сбрасывается в false
+	boolean isHolded();						// возвращает true при удержании кнопки, сама сбрасывается в false
 	boolean isHold();						// возвращает true при удержании кнопки, НЕ СБРАСЫВАЕТСЯ
 	
 	int8_t fast_timeout = 50;				// таймаут быстрого поворота
 	
-  private:
+private:
 	void init();
 	GyverEncoderFlags flags;
 	byte curState, prevState;
 	byte encState;	// 0 не крутился, 1 лево, 2 право, 3 лево нажат, 4 право нажат
 	uint32_t debounce_timer = 0, fast_timer;
-    byte _CLK = 0, _DT = 0, _SW = 0;
+	byte _CLK = 0, _DT = 0, _SW = 0;
 	
 };
 
@@ -84,5 +86,5 @@ class Encoder
 #define REVERSE 1		// обратное
 #define MANUAL 0		// нужно вызывать функцию tick() вручную
 #define AUTO 1			// tick() входит во все остальные функции и опрашивается сама!
- 
+
 #endif

@@ -1,16 +1,25 @@
 #include "GyverEncoder.h"
 #include <Arduino.h>
 
+Encoder::Encoder(uint8_t clk, uint8_t dt) {
+	_CLK = clk;
+	_DT = dt;
+	flags.use_button = true;
+	Encoder::init();
+}
+
 Encoder::Encoder(uint8_t clk, uint8_t dt, uint8_t sw) {
 	_CLK = clk;
 	_DT = dt;
 	_SW = sw;
+	flags.use_button = false;
 	Encoder::init();
 }
 Encoder::Encoder(uint8_t clk, uint8_t dt, uint8_t sw, boolean type) {
 	_CLK = clk;
 	_DT = dt;
 	_SW = sw;
+	flags.use_button = false;
 	flags.enc_type = type;
 	Encoder::init();	
 }
@@ -18,7 +27,7 @@ Encoder::Encoder(uint8_t clk, uint8_t dt, uint8_t sw, boolean type) {
 void Encoder::init() {
 	pinMode (_CLK, INPUT);
 	pinMode (_DT, INPUT);
-	pinMode (_SW, INPUT_PULLUP);
+	if (flags.use_button) pinMode (_SW, INPUT_PULLUP);
 	
 	curState = digitalRead(_CLK);
 	curState += digitalRead(_DT) << 1;
@@ -127,40 +136,41 @@ boolean Encoder::isHold() {
 	return (flags.SW_state);
 }
 
-void Encoder::tick() {  
-	flags.SW_state = !digitalRead(_SW);        // читаем положение кнопки SW
-
+void Encoder::tick() {
 	uint32_t debounceDelta = millis() - debounce_timer;
-  
-	if (flags.SW_state && !flags.butt_flag && (debounceDelta > DEBOUNCE_BUTTON)) {
-		flags.butt_flag = true;
-		flags.turn_flag = false;
-		debounce_timer = millis();
-		debounceDelta = 0;
-		flags.isPress_f = true;
-		flags.isHolded_f = true;
-	}
-	if (!flags.SW_state && flags.butt_flag && (debounceDelta > DEBOUNCE_BUTTON)) {
-		if (!flags.turn_flag && !flags.hold_flag) {  // если кнопка отпущена и ручка не поворачивалась
+	
+	if (flags.use_button) {
+		flags.SW_state = !digitalRead(_SW);        // читаем положение кнопки SW
+		if (flags.SW_state && !flags.butt_flag && (debounceDelta > DEBOUNCE_BUTTON)) {
+			flags.butt_flag = true;
 			flags.turn_flag = false;
-			flags.isRelease_f = true;
+			debounce_timer = millis();
+			debounceDelta = 0;
+			flags.isPress_f = true;
+			flags.isHolded_f = true;
 		}
-		flags.butt_flag = false;
-		debounce_timer = millis();
-		debounceDelta = 0;
-		flags.hold_flag = false;
-	}
-	if (flags.butt_flag && debounceDelta > HOLD_TIMEOUT && !flags.turn_flag) {
-		if (flags.SW_state) {
-			flags.hold_flag = true;
-		} else {
-		flags.butt_flag = false;
-		flags.hold_flag = false;
-		debounce_timer = millis();
-		debounceDelta = 0;
+		if (!flags.SW_state && flags.butt_flag && (debounceDelta > DEBOUNCE_BUTTON)) {
+			if (!flags.turn_flag && !flags.hold_flag) {  // если кнопка отпущена и ручка не поворачивалась
+				flags.turn_flag = false;
+				flags.isRelease_f = true;
+			}
+			flags.butt_flag = false;
+			debounce_timer = millis();
+			debounceDelta = 0;
+			flags.hold_flag = false;
+		}
+		if (flags.butt_flag && debounceDelta > HOLD_TIMEOUT && !flags.turn_flag) {
+			if (flags.SW_state) {
+				flags.hold_flag = true;
+			} else {
+				flags.butt_flag = false;
+				flags.hold_flag = false;
+				debounce_timer = millis();
+				debounceDelta = 0;
+			}
 		}
 	}
-  
+
 	// читаем состояние энкодера
 	curState = digitalRead(_CLK);
 	curState += digitalRead(_DT) << 1;
