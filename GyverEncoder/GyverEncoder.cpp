@@ -4,7 +4,7 @@
 Encoder::Encoder(uint8_t clk, uint8_t dt) {
 	_CLK = clk;
 	_DT = dt;
-	flags.use_button = true;
+	flags.use_button = false;
 	Encoder::init();
 }
 
@@ -12,22 +12,22 @@ Encoder::Encoder(uint8_t clk, uint8_t dt, uint8_t sw) {
 	_CLK = clk;
 	_DT = dt;
 	_SW = sw;
-	flags.use_button = false;
+	flags.use_button = true;
 	Encoder::init();
 }
 Encoder::Encoder(uint8_t clk, uint8_t dt, uint8_t sw, boolean type) {
 	_CLK = clk;
 	_DT = dt;
 	_SW = sw;
-	flags.use_button = false;
+	flags.use_button = true;
 	flags.enc_type = type;
-	Encoder::init();	
+	Encoder::init();
 }
 
 void Encoder::init() {
 	pinMode (_CLK, INPUT);
 	pinMode (_DT, INPUT);
-	if (flags.use_button) pinMode (_SW, INPUT_PULLUP);
+	if (flags.use_button) pinMode(_SW, INPUT_PULLUP);
 	
 	curState = digitalRead(_CLK);
 	curState += digitalRead(_DT) << 1;
