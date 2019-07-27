@@ -6,15 +6,17 @@
 #define	MEDIAN_FILTER_SIZE	(8)		// размер медианного фильтра!
 
 /*
-	Текущая версия: 1.3 от 24.09.2018
+	Текущая версия: 1.5 от 27.07.2019
 	GyverFilters - библиотека с некоторыми удобными фильтрами:
 	- GFilterRA - компактная альтернатива фильтра экспоненциальное бегущее среднее (Running Average)			
 	- GMedian3 - быстрый медианный фильтр 3-го порядка (отсекает выбросы)
 	- GMedian - медианный фильтр N-го порядка. Порядок настраивается в GyverFilters.h - MEDIAN_FILTER_SIZE
 	- GABfilter - альфа-бета фильтр (разновидность Калмана для одномерного случая)
 	- GKalman - упрощённый Калман для одномерного случая (на мой взгляд лучший из фильтров)
+	- GLinear - линейная аппроксимация методом наименьших квадратов для двух массивов
 */
 
+// компактная альтернатива фильтра экспоненциальное бегущее среднее
 class GFilterRA
 {
   public:
@@ -36,6 +38,7 @@ class GFilterRA
 	uint16_t _filterInterval = 0;
 };
 
+// быстрый медианный фильтр 3-го порядка
 class GMedian3
 {
 	public:
@@ -47,6 +50,7 @@ class GMedian3
 		byte counter = 0;
 };
 
+// медианный фильтр N-го порядка
 class GMedian
 {
 	public:
@@ -54,6 +58,7 @@ class GMedian
 		uint16_t filtered(uint16_t value);	// возвращает фильтрованное значение
 };
 
+// альфа-бета фильтр
 class GABfilter
 {
 	public:
@@ -72,6 +77,7 @@ class GABfilter
 		float xm;
 };
 
+// упрощённый Калман для одномерного случая
 class GKalman
 {
 	public:
@@ -96,6 +102,19 @@ class GKalman
 		float _current_estimate = 0.0;
 		float _last_estimate = 0.0;
 		float _kalman_gain = 0.0;
+};
+
+// линейная аппроксимация методом наименьших квадратов
+class GLinear {
+	public:
+		GLinear();
+		void compute(int *x_array, int *y_array, int arrSize);		// аппроксимировать
+		float getA();		// получить коэффициент А
+		float getB();		// получить коэффициент В
+		float getDelta();	// получить аппроксимированное изменение
+	private:
+		int32_t sumX, sumY, sumX2, sumXY;
+		float a, b, delta;
 };
 
 #endif
