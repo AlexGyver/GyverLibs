@@ -136,13 +136,13 @@ boolean isHold();                        // возвращает true при у�
 
 ```C
 // N - номер таймера (0, 1 или 2)
-void timerN_ISR(void (*isr)());			// подключить прерывание
-void timerN_setPeriod(uint32_t time);	// установить период (мкс)
-void timerN_setFrequency(uint32_t hz);	// установить частоту (Гц)
-void timerN_start(void);				// запустить
-void timerN_stop(void);					// остановить
-void timerN_resume(void);				// продолжить
-void timerN_restart(void);				// перезапустить
+void timerN_ISR(void (*isr)());         // подключить прерывание
+void timerN_setPeriod(uint32_t time);   // установить период (мкс)
+void timerN_setFrequency(uint32_t hz);  // установить частоту (Гц)
+void timerN_start(void);                // запустить
+void timerN_stop(void);                 // остановить
+void timerN_resume(void);               // продолжить
+void timerN_restart(void);              // перезапустить
 ```
 </p>
 </details>
