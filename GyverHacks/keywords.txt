@@ -5,53 +5,50 @@
 #######################################
 # Datatypes (KEYWORD1)
 #######################################
-
 GyverHacks	KEYWORD1
-
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
 
-setPin			KEYWORD2
-readPin			KEYWORD2
-setPWM			KEYWORD2
-setADCrate		KEYWORD2
+setPin	KEYWORD2
+readPin	KEYWORD2
+setPWM	KEYWORD2
+setADCrate	KEYWORD2
 
-anyPWMinit		KEYWORD2
-anyPWMset		KEYWORD2
-anyPWM			KEYWORD2
+anyPWMinit	KEYWORD2
+anyPWMset	KEYWORD2
+anyPWM	KEYWORD2
 
-set8bitPWM		KEYWORD2
-set10bitPWM		KEYWORD2
+set8bitPWM	KEYWORD2
+set10bitPWM	KEYWORD2
 setPWMprescaler	KEYWORD2
-setPWMmode		KEYWORD2
+setPWMmode	KEYWORD2
 
-delayFix		KEYWORD2
+delayFix	KEYWORD2
 delayMicrosecondsFix	KEYWORD2
-millisFix		KEYWORD2
-microsFix		KEYWORD2
+millisFix	KEYWORD2
+microsFix	KEYWORD2
 
-getVCC			KEYWORD2
-getVoltage		KEYWORD2
+getVCC	KEYWORD2
+getVoltage	KEYWORD2
 constantWizard	KEYWORD2
 restoreConstant	KEYWORD2
-setConst		KEYWORD2
-getConst		KEYWORD2
+setConst	KEYWORD2
+getConst	KEYWORD2
 
 lithiumPercent	KEYWORD2
 alkaline3Percent	KEYWORD2
 nickel3Percent	KEYWORD2
 nickel4Percent	KEYWORD2
-mVtoPercent		KEYWORD2
+mVtoPercent	KEYWORD2
 
-getTemp			KEYWORD2
+getTemp	KEYWORD2
 
 parsingStream	KEYWORD2
-sendPacket		KEYWORD2
-dataReady		KEYWORD2
+sendPacket	KEYWORD2
+dataReady	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
 #######################################
-

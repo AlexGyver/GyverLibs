@@ -7,83 +7,84 @@
 # Datatypes (KEYWORD1)
 #######################################
 
-GyverTM1637		KEYWORD1
+GyverTM1637	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
 
-display				KEYWORD2
-displayByte			KEYWORD2
-displayInt			KEYWORD2
+display	KEYWORD2
+displayByte	KEYWORD2
+displayInt	KEYWORD2
 
-displayClock		KEYWORD2
+displayClock	KEYWORD2
 displayClockTwist	KEYWORD2
 displayClockScroll	KEYWORD2
 
-runningString		KEYWORD2
-scroll				KEYWORD2
-scrollByte			KEYWORD2
-twist				KEYWORD2
-twistByte			KEYWORD2
+runningString	KEYWORD2
+scroll		KEYWORD2
+scrollByte	KEYWORD2
+twist		KEYWORD2
+twistByte	KEYWORD2
 
-clear				KEYWORD2
-point				KEYWORD2
-brightness			KEYWORD2
+clear		KEYWORD2
+point		KEYWORD2
+brightness	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
 #######################################
 
-ON			LITERAL1
-OFF			LITERAL1
+ON	LITERAL1
+OFF	LITERAL1
 
-_A			LITERAL1
-_B			LITERAL1
-_C			LITERAL1
-_D			LITERAL1
-_E			LITERAL1
-_F			LITERAL1
-_G			LITERAL1
-_H			LITERAL1
-_J			LITERAL1
-_L			LITERAL1
-_N			LITERAL1
-_O			LITERAL1
-_P			LITERAL1
-_S			LITERAL1
-_U			LITERAL1
-_Y			LITERAL1
-_a			LITERAL1
-_b			LITERAL1
-_c			LITERAL1
-_d			LITERAL1
-_e			LITERAL1
-_f			LITERAL1
-_h			LITERAL1
-_i			LITERAL1
-_j			LITERAL1
-_l			LITERAL1
-_n			LITERAL1
-_o			LITERAL1
-_q			LITERAL1
-_r			LITERAL1
-_t			LITERAL1
-_u			LITERAL1
-_y			LITERAL1
-_dash		LITERAL1
-_under		LITERAL1
-_equal		LITERAL1
-_empty		LITERAL1
-_degree		LITERAL1
+_A	LITERAL1
+_B	LITERAL1
+_C	LITERAL1
+_D	LITERAL1
+_E	LITERAL1
+_F	LITERAL1
+_G	LITERAL1
+_H	LITERAL1
+_J	LITERAL1
+_L	LITERAL1
+_N	LITERAL1
+_O	LITERAL1
+_P	LITERAL1
+_S	LITERAL1
+_U	LITERAL1
+_Y	LITERAL1
+_a	LITERAL1
+_b	LITERAL1
+_c	LITERAL1
+_d	LITERAL1
+_e	LITERAL1
+_f	LITERAL1
+_h	LITERAL1
+_i	LITERAL1
+_j	LITERAL1
+_l	LITERAL1
+_n	LITERAL1
+_o	LITERAL1
+_q	LITERAL1
+_r	LITERAL1
+_t	LITERAL1
+_u	LITERAL1
+_y	LITERAL1
 
-_0			LITERAL1
-_1			LITERAL1
-_2			LITERAL1
-_3			LITERAL1
-_4			LITERAL1
-_5			LITERAL1
-_6			LITERAL1
-_7			LITERAL1
-_8			LITERAL1
-_9			LITERAL1
+_dash	LITERAL1
+_under	LITERAL1
+_equal	LITERAL1
+_empty	LITERAL1
+_degree	LITERAL1
+
+_0	LITERAL1
+_1	LITERAL1
+_2	LITERAL1
+_3	LITERAL1
+_4	LITERAL1
+_5	LITERAL1
+_6	LITERAL1
+_7	LITERAL1
+_8	LITERAL1
+_9	LITERAL1

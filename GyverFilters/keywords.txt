@@ -7,22 +7,22 @@
 #######################################
 
 GyverFilters	KEYWORD1
-GFilterRA		KEYWORD1
-GMedian3		KEYWORD1
-GMedian			KEYWORD1
-GABfilter		KEYWORD1
-GKalman			KEYWORD1
-GLinear			KEYWORD1
+GFilterRA	KEYWORD1
+GMedian3	KEYWORD1
+GMedian	KEYWORD1
+GABfilter	KEYWORD1
+GKalman	KEYWORD1
+GLinear	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
 
-setCoef			KEYWORD2
-setStep			KEYWORD2
+setCoef	KEYWORD2
+setStep	KEYWORD2
 filteredTime	KEYWORD2
-filtered		KEYWORD2
+filtered	KEYWORD2
 setParameters	KEYWORD2
-getA			KEYWORD2
-getB			KEYWORD2
-getDelta		KEYWORD2
+getA	KEYWORD2
+getB	KEYWORD2
+getDelta	KEYWORD2

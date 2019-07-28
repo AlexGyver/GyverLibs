@@ -1,0 +1,45 @@
+#######################################
+# Syntax Coloring Map For GyverTimer012
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+GyverTimer0	KEYWORD1
+GyverTimer1	KEYWORD1
+GyverTimer2	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+hz_to_us			KEYWORD2
+
+timer0_ISR			KEYWORD2
+timer0_setPeriod	KEYWORD2
+timer0_setFrequency	KEYWORD2
+timer0_start		KEYWORD2
+timer0_stop			KEYWORD2
+timer0_resume		KEYWORD2
+timer0_restart		KEYWORD2
+
+timer1_ISR			KEYWORD2
+timer1_setPeriod	KEYWORD2
+timer1_setFrequency	KEYWORD2
+timer1_start		KEYWORD2
+timer1_stop			KEYWORD2
+timer1_resume		KEYWORD2
+timer1_restart		KEYWORD2
+
+timer2_ISR			KEYWORD2
+timer2_setPeriod	KEYWORD2
+timer2_setFrequency	KEYWORD2
+timer2_start		KEYWORD2
+timer2_stop			KEYWORD2
+timer2_resume		KEYWORD2
+timer2_restart		KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+

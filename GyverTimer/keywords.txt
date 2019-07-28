@@ -6,24 +6,24 @@
 # Datatypes (KEYWORD1)
 #######################################
 
-GTimer_ms		KEYWORD1
-GTimer_us		KEYWORD1
-GyverTimer		KEYWORD1
+GTimer_ms	KEYWORD1
+GTimer_us	KEYWORD1
+GyverTimer	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
 
-setInterval		KEYWORD2
-isReady			KEYWORD2
-reset			KEYWORD2
-setMode			KEYWORD2
-start			KEYWORD2
-stop			KEYWORD2
+setInterval	KEYWORD2
+isReady	KEYWORD2
+reset	KEYWORD2
+setMode	KEYWORD2
+start	KEYWORD2
+stop	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
 #######################################
 
-AUTO		LITERAL1
-MANUAL		LITERAL1
+AUTO	LITERAL1
+MANUAL	LITERAL1

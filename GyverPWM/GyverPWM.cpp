@@ -564,20 +564,25 @@ void PWM_20KHZ_D10(int duty) {
 	OCR1BL = lowByte(duty);
 }
 
-void PWM_square_D9(float frequency) {
+float PWM_square_D9(float frequency) {
 	uint32_t top;
+	float realF;
 	TCCR1A = 0b01010000;
 	TCCR1C = 0b01000000;
 	if (frequency < 16) {
 		TCCR1B = 0b00011011;
 		top = (float)250000 / frequency / 2 - 1;
+		realF = (float)250000 / 2 / (1 + top);
 	} else if (frequency < 125) {
 		TCCR1B = 0b00011010;
 		top = (float)2000000 / frequency / 2 - 1;
+		realF = (float)2000000 / 2 / (1 + top);
 	} else {
 		TCCR1B = 0b00011001;
 		top = (float)16000000 / frequency / 2 - 1;
+		realF = (float)16000000 / 2 / (1 + top);
 	}
 	ICR1H = highByte(top);
 	ICR1L = lowByte(top);
+	return realF;
 }

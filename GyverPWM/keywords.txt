@@ -6,18 +6,18 @@
 # Datatypes (KEYWORD1)
 #######################################
 
-GyverPWM		KEYWORD1
+GyverPWM	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
 
-PWM_default		KEYWORD2
+PWM_default	KEYWORD2
 PWM_frequency	KEYWORD2
 PWM_resolution	KEYWORD2
-PWM_set			KEYWORD2
-PWM_detach		KEYWORD2
-PWM_attach		KEYWORD2
+PWM_set	KEYWORD2
+PWM_detach	KEYWORD2
+PWM_attach	KEYWORD2
 
 PWM_16KHZ_D3	KEYWORD2
 PWM_20KHZ_D3	KEYWORD2
@@ -28,8 +28,10 @@ PWM_20KHZ_D9	KEYWORD2
 PWM_16KHZ_D10	KEYWORD2
 PWM_20KHZ_D10	KEYWORD2
 
+PWM_square_D9	KEYWORD2
+
 PWM_prescaler	KEYWORD2
-PWM_mode		KEYWORD2
+PWM_mode	KEYWORD2
 PWM_TMR1_8BIT	KEYWORD2
 PWM_TMR1_10BIT	KEYWORD2
 
@@ -38,5 +40,5 @@ PWM_TMR1_10BIT	KEYWORD2
 # Constants (LITERAL1)
 #######################################
 
-CORRECT_PWM		LITERAL1
-FAST_PWM		LITERAL1
+CORRECT_PWM	LITERAL1
+FAST_PWM	LITERAL1
