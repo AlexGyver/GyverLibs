@@ -149,6 +149,79 @@ void timerN_restart(void);              // перезапустить
 
 ---
 
+### directADC v1.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/directADC/directADC.zip)
+Библиотека для расширенного (ручного) управления АЦП и компаратором ATmega328
+- Функции библиотеки позволяют получить доступ ко всем возможностям и режимам работы с АЦП и компаратором
+- Ничего не урезано и не упрощено, доступен весь описанный в даташите функционал
+- Смотрите примеры
+#### Методы и функции библиотеки
+<details>
+<summary>РАЗВЕРНУТЬ</summary>
+<p>
+Смотри примеры в папке examples!
+
+```C
+void setAnalogMux(ADC_modes mux);           // Аналоговый вход (ADC_A0-ADC_A7)/ термодатчик (ADC_SENSOR)/ 1.1V (ADC_1V1)/ ADC_GND (default: ADC_A0)
+void ADC_enable(void);                      // Включить АЦП 
+void ADC_disable(void);                     // Выключить АЦП (default)
+void ADC_setPrescaler(byte prescl);         // Выбрать делитель частоты АЦП (2, 4, 8, 16, 32, 64, 128) // (default: 2)
+void ADC_setReference(ADC_modes ref);       // Выбрать источник опорного напряжения АЦП (ADC_1V1, ADC_AREF, ADC_VCC) // (default: ADC_AREF)
+void ADC_autoTriggerEnable(ADC_modes trig); // Включить автозапуск АЦП и выбрать событие (FREE_RUN, ANALOG_COMP, ADC_INT0, TIMER0_COMPA, TIMER0_OVF, TIMER1_COMPB, TIMER1_OVF)
+void ADC_autoTriggerDisable(void);          // Выключить автозапуск АЦП // (default)
+void ADC_attachInterrupt(void (*isr)());    // Включить прерывание готовности АЦП и выбрать функцию, которая будет при этом выполняться
+void ADC_detachInterrupt(void);             // Выключить прерывание готовности АЦП // (default) 
+void ADC_startConvert(void);                // Ручной запуск преобразования
+unsigned int ADC_read(void);                // Прочитать значение регистров АЦП (Вызов до окончания преобразования вернет неверный результат)
+boolean ADC_available(void);                // Проверить готовность преобразования АЦП
+unsigned int ADC_readWhenAvailable(void);   // Дождаться окончания текущего преобразования и вернуть результат
+void ACOMP_attachInterrupt(void (*isr)(), ADC_modes source); // Включить прерывание компаратора и выбрать при каком событии оно будет вызвано (FALLING_TRIGGER, RISING_TRIGGER, CHANGE_TRIGGER)
+void ACOMP_detachInterrupt(void);           // Выключить прерывание компаратора // (default)
+void ACOMP_enable(void);                    // Включить компаратор // (default: Включен)
+void ACOMP_disable(void);                   // Принудительно выключить компаратор
+boolean ACOMP_read(void);                   // Прочитать значение на выходе компаратора 
+void ACOMP_setPositiveInput(ADC_modes in);  // Настроить куда подкл +Вход компаратора (ADC_1V1, ADC_AIN0) (default: ADC_AIN0 - pin 6) 
+void ACOMP_setNegativeInput(ADC_modes in);  // Настроить куда подкл -Вход компаратора (ADC_AIN1, ANALOG_MUX) (default: ADC_AIN1 - pin 7)
+```
+</p>
+</details>
+
+---
+
+### directTimers v1.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/directTimers/directTimers.zip)
+Библиотека для расширенного (ручного) управления таймерами ATmega328
+- Функции библиотеки позволяют получить доступ ко всем возможностям и режимам работы с таймерами/счётчиками + прерывания watchdog
+- Ничего не урезано и не упрощено, доступен весь описанный в даташите функционал
+- Смотрите примеры
+#### Методы и функции библиотеки
+<details>
+<summary>РАЗВЕРНУТЬ</summary>
+<p>
+Смотри примеры в папке examples!
+
+```C
+// n - номер таймера (0, 1 или 2)
+void TIMERn_COMPA_attachInterrupt(void (*isr)());
+void TIMERn_COMPB_attachInterrupt(void (*isr)());
+void TIMERn_COMPA_detachInterrupt(void);
+void TIMERn_COMPB_detachInterrupt(void);
+void TIMERn_setClock(byte clk);
+void TIMERn_setMode(byte mode);
+void TIMERn_COMPA_mode(byte mode);
+void TIMERn_COMPB_mode(byte mode);
+byte TIMERn_getCounter(void);
+void TIMERn_setCounter(byte value);
+void TIMERn_COMPA_setValue(byte value);
+void TIMERn_COMPB_setValue(byte value);
+
+// прерывания watchdog
+void WDT_attachInterrupt(void (*isr)(),int prescaler);
+void WDT_detachInterrupt(void);
+```
+</p>
+</details>
+
+---
+
 ### GyverPWM v1.1 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverPWM/GyverPWM.zip)
 Библиотека для расширенной генерации ШИМ на Arduino UNO/NANO/MINI (ATmega328p)
 - Генерация ШИМ любой частоты от 250 Гц до 200 кГц на пинах D3, D5, D9 и D10

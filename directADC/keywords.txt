@@ -1,0 +1,62 @@
+#######################################
+# Syntax Coloring Map For directTimers
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+directADC	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+setAnalogMux	KEYWORD2
+ADC_enable	KEYWORD2
+ADC_disable	KEYWORD2
+ADC_autoTriggerEnable	KEYWORD2
+ADC_setPrescaler	KEYWORD2
+ADC_setReference	KEYWORD2
+ADC_autoTriggerDisable	KEYWORD2
+ADC_attachInterrupt	KEYWORD2
+ADC_detachInterrupt	KEYWORD2
+ADC_startConvert	KEYWORD2
+ADC_read	KEYWORD2
+ADC_available	KEYWORD2
+ADC_readWhenAvailable	KEYWORD2
+ACOMP_attachInterrupt	KEYWORD2
+ACOMP_detachInterrupt	KEYWORD2
+ACOMP_enable	KEYWORD2
+ACOMP_disable	KEYWORD2
+ACOMP_read	KEYWORD2
+ACOMP_setPositiveInput	KEYWORD2
+ACOMP_setNegativeInput	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+ADC_A0	LITERAL1
+ADC_A1	LITERAL1
+ADC_A2	LITERAL1
+ADC_A3	LITERAL1
+ADC_A4	LITERAL1
+ADC_A5	LITERAL1
+ADC_A6	LITERAL1	
+ADC_A7	LITERAL1
+ADC_SENSOR	LITERAL1
+ADC_1V1	LITERAL1
+ADC_GND	LITERAL1
+FREE_RUN	LITERAL1
+ANALOG_COMP	LITERAL1
+ADC_INT0	LITERAL1
+TIMER0_COMPA	LITERAL1
+TIMER0_OVF	LITERAL1
+TIMER1_COMPB	LITERAL1
+TIMER1_OVF	LITERAL1
+ADC_AIN0	LITERAL1
+ADC_AIN1	LITERAL1
+ANALOG_MUX	LITERAL1
+FALLING_TRIGGER	LITERAL1
+RISING_TRIGGER	LITERAL1
+CHANGE_TRIGGER	LITERAL1
+ADC_AREF	LITERAL1
+ADC_VCC	LITERAL1
