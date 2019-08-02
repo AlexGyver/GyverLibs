@@ -1,0 +1,32 @@
+#######################################
+# Syntax Coloring Map For GyverUART
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+GyverUART	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+uartBegin	KEYWORD2
+uartEnd	KEYWORD2
+uartPeek	KEYWORD2
+uartClear	KEYWORD2
+uartRead	KEYWORD2
+uartWrite	KEYWORD2	
+uartPrint	KEYWORD2
+uartPrintln	KEYWORD2
+uartAvailable	KEYWORD2
+uartSetTimeout	KEYWORD2
+uartParseInt	KEYWORD2
+uartReadString	KEYWORD2
+uartParseFloat	KEYWORD2
+uartParsePacket	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
