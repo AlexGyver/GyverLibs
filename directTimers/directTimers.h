@@ -41,24 +41,23 @@
 #define INVERT_PWM 22 // выход генерирует инвертированный шим >>> 0В при сбросе таймера, +5В при совпадении
 #define TOGGLE_PIN 23 // выход генерирует меандр >>> инверсия состояния пина при совпадении
 
-/* сервисные указатели на функции прерываний */
-extern void (*isr0_compa)();  
-extern void (*isr0_compb)();
-extern void (*isr1_ovf)();
-extern void (*isr1_compa)();
-extern void (*isr1_compb)();
-extern void (*isr2_ovf)();
-extern void (*isr2_compa)();
-extern void (*isr2_compb)();
-extern void (*wdt_isr)();
+#define ISR_T0_OVF		ISR(TIMER0_OVF_vect)
+#define ISR_T0_COMPA	ISR(TIMER0_COMPA_vect)
+#define ISR_T0_COMPB	ISR(TIMER0_COMPB_vect)
+#define ISR_T1_OVF		ISR(TIMER1_OVF_vect)
+#define ISR_T1_COMPA	ISR(TIMER1_COMPA_vect)
+#define ISR_T1_COMPB	ISR(TIMER1_COMPB_vect)
+#define ISR_T2_OVF		ISR(TIMER2_OVF_vect)
+#define ISR_T2_COMPA	ISR(TIMER2_COMPA_vect)
+#define ISR_T2_COMPB	ISR(TIMER2_COMPB_vect)
+#define ISR_WDT			ISR(WDT_vect)
 
-
-void TIMER2_OVF_attachInterrupt(void (*isr)());
-void TIMER2_COMPA_attachInterrupt(void (*isr)());
-void TIMER2_COMPB_attachInterrupt(void (*isr)());
-void TIMER2_COMPA_detachInterrupt(void);
-void TIMER2_COMPB_detachInterrupt(void);
-void TIMER2_OVF_detachInterrupt(void);
+void TIMER2_attach_OVF(void);
+void TIMER2_attach_COMPA(void);
+void TIMER2_attach_COMPB(void);
+void TIMER2_detach_COMPA(void);
+void TIMER2_detach_COMPB(void);
+void TIMER2_detach_OVF(void);
 void TIMER2_setClock(byte clk);
 void TIMER2_setMode(byte mode);
 void TIMER2_COMPA_mode(byte mode);
@@ -68,12 +67,12 @@ void TIMER2_setCounter(byte value);
 void TIMER2_COMPA_setValue(byte value);
 void TIMER2_COMPB_setValue(byte value);
 
-void TIMER1_OVF_attachInterrupt(void (*isr)());
-void TIMER1_COMPA_attachInterrupt(void (*isr)());
-void TIMER1_COMPB_attachInterrupt(void (*isr)());
-void TIMER1_COMPA_detachInterrupt(void);
-void TIMER1_COMPB_detachInterrupt(void);
-void TIMER1_OVF_detachInterrupt(void);
+void TIMER1_attach_OVF(void);
+void TIMER1_attach_COMPA(void);
+void TIMER1_attach_COMPB(void);
+void TIMER1_detach_COMPA(void);
+void TIMER1_detach_COMPB(void);
+void TIMER1_detach_OVF(void);
 void TIMER1_setClock(byte clk);
 void TIMER1_setMode(byte mode);
 void TIMER1_COMPA_mode(byte mode);
@@ -84,10 +83,10 @@ void TIMER1_setCounter(unsigned int value);
 void TIMER1_COMPA_setValue(unsigned int value);
 void TIMER1_COMPB_setValue(unsigned int value);
 
-void TIMER0_COMPA_attachInterrupt(void (*isr)());
-void TIMER0_COMPB_attachInterrupt(void (*isr)());
-void TIMER0_COMPA_detachInterrupt(void);
-void TIMER0_COMPB_detachInterrupt(void);
+void TIMER0_attach_COMPA(void);
+void TIMER0_attach_COMPB(void);
+void TIMER0_detach_COMPA(void);
+void TIMER0_detach_COMPB(void);
 void TIMER0_setClock(byte clk);
 void TIMER0_setMode(byte mode);
 void TIMER0_COMPA_mode(byte mode);
@@ -97,7 +96,7 @@ void TIMER0_setCounter(byte value);
 void TIMER0_COMPA_setValue(byte value);
 void TIMER0_COMPB_setValue(byte value);
 
-void WDT_attachInterrupt(void (*isr)(),int prescaler);
+void WDT_attachInterrupt(int prescaler);
 void WDT_detachInterrupt(void);
 
 #endif

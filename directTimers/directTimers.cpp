@@ -7,18 +7,7 @@
 /* для ATMega2560  остается совместимость прерываний по таймеру и ШИМ, однако не будут работать каналы "C" */
 /* у ATMega32u4 нет таймера 2 */ 
 
-
-/* сервисные указатели на функции прерываний */
-void (*isr0_compa)();
-void (*isr0_compb)();
-void (*isr1_ovf)();
-void (*isr1_compa)();
-void (*isr1_compb)();
-void (*isr2_ovf)();
-void (*isr2_compa)();
-void (*isr2_compb)();
-void (*wdt_isr)();
-
+// ============== Timer 1 ==============
 
 /* функция установки тактирования таймера */
 void TIMER0_setClock(byte clk) { 
@@ -139,21 +128,19 @@ void TIMER0_COMPB_mode(byte mode) {
 
 
 /*функции прерываний по таймеру*/
-void TIMER0_COMPA_attachInterrupt(void (*isr)()) { 
-	isr0_compa = *isr; // указатель на функцию
+void TIMER0_attach_COMPA(void) { 
 	TIMSK0 |= (1 << OCIE0A); // подкл прерывание
 }
 
-void TIMER0_COMPB_attachInterrupt(void (*isr)()) { 
-	isr0_compb = *isr;
+void TIMER0_attach_COMPB(void) { 
 	TIMSK0 |= (1 << OCIE0B);
 }
 
-void TIMER0_COMPA_detachInterrupt() { 
+void TIMER0_detach_COMPA() { 
 	TIMSK0 &=~ (1 << OCIE0A); // выкл прерывание
 }
 
-void TIMER0_COMPB_detachInterrupt() { 
+void TIMER0_detach_COMPB() { 
 	TIMSK0 &=~  (1 << OCIE0B); // выкл прерывание
 }
 
@@ -184,18 +171,7 @@ void TIMER0_COMPB_setValue(byte value) { // записать значение в
 	sei();
 }
 
-
-/* непосредственно прерывания таймера */
-ISR(TIMER0_COMPA_vect) { 
-	(*isr0_compa)();
-}
-
-ISR(TIMER0_COMPB_vect) {
-	(*isr0_compb)();
-}
-
-
-
+// ============== Timer 1 ==============
 
 void TIMER1_setClock(byte clk) {
 	switch (clk) {
@@ -345,34 +321,29 @@ void TIMER1_setTop(unsigned int top) { // установка предела сч
 }
 
 
-
-void TIMER1_OVF_attachInterrupt(void (*isr)()) { // подкл прерывание переполнения
-	isr1_ovf = *isr;
+void TIMER1_attach_OVF(void) { // подкл прерывание переполнения
 	TIMSK1 |= (1 << TOIE1);
 }
 
-void TIMER1_COMPA_attachInterrupt(void (*isr)()) { // подкл прерывание А
-	isr1_compa = *isr;
+void TIMER1_attach_COMPA(void) { // подкл прерывание А
 	TIMSK1 |= (1 << OCIE1A);
 }
 
-void TIMER1_COMPB_attachInterrupt(void (*isr)()) { // подкл прерывание Б
-	isr1_compb = *isr;
+void TIMER1_attach_COMPB(void) { // подкл прерывание Б
 	TIMSK1 |= (1 << OCIE1B);
 }
 
-void TIMER1_OVF_detachInterrupt() { 
+void TIMER1_detach_OVF() { 
 	TIMSK1 &=~ (1 << TOIE1);
 }
 
-void TIMER1_COMPA_detachInterrupt() { 
+void TIMER1_detach_COMPA() { 
 	TIMSK1 &=~ (1 << OCIE1A);
 }
 
-void TIMER1_COMPB_detachInterrupt() { 
+void TIMER1_detach_COMPB() { 
 	TIMSK1 &=~ (1 << OCIE1B);
 }
-
 
 
 
@@ -401,21 +372,7 @@ void TIMER1_COMPB_setValue(unsigned int value) { // записать значе�
 	sei();
 }
 
-
-ISR(TIMER1_OVF_vect) {
-	(*isr1_ovf)();
-}
-
-ISR(TIMER1_COMPA_vect) {
-	(*isr1_compa)();
-}
-
-ISR(TIMER1_COMPB_vect) {
-	(*isr1_compb)();
-}
-
-
-
+// ============== Timer 2 ==============
 
 void TIMER2_setClock(byte clk) {
 	switch (clk) {
@@ -532,33 +489,28 @@ void TIMER2_COMPB_mode(byte mode) { // установить режим рабо�
 }
 
 
-void TIMER2_OVF_attachInterrupt(void (*isr)()) { // подкл прерывание переполнения
-	isr2_ovf = *isr;
+void TIMER2_attach_OVF(void) { // подкл прерывание переполнения
 	TIMSK2 |= (1 << TOIE2);
 }
 
-void TIMER2_COMPA_attachInterrupt(void (*isr)()) { // подкл прерывание А
-	isr2_compa = *isr;
+void TIMER2_attach_COMPA(void) { // подкл прерывание А
 	TIMSK2 |= (1 << OCIE2A);
 }
 
-void TIMER2_COMPB_attachInterrupt(void (*isr)()) { // подкл прерывание Б
-	isr2_compb = *isr;
+void TIMER2_attach_COMPB(void) { // подкл прерывание Б
 	TIMSK2 |= (1 << OCIE2B);
 }
-void TIMER2_OVF_detachInterrupt() { 
+void TIMER2_detach_OVF() { 
 	TIMSK2 &=~ (1 << TOIE2);
 }
 
-void TIMER2_COMPA_detachInterrupt() { 
+void TIMER2_detach_COMPA() { 
 	TIMSK2 &=~ (1 << OCIE2A);
 }
 
-void TIMER2_COMPB_detachInterrupt() { 
+void TIMER2_detach_COMPB() { 
 	TIMSK2 &=~ (1 << OCIE2B);
 }
-
-
 
 byte TIMER2_getCounter() { // прочитать и вернуть значение счетного регистра
 	return TCNT2;
@@ -569,7 +521,6 @@ void TIMER2_setCounter(byte value) { // записать новое значен
 	TCNT2 = value;
 	sei();
 }
-
 
 void TIMER2_COMPA_setValue(byte value) { // записать значение в регистр сравнения А
 	cli();
@@ -582,52 +533,40 @@ void TIMER2_COMPB_setValue(byte value) { // записать значение в
 	sei();
 }
 
-ISR(TIMER2_OVF_vect) {
-	(*isr2_ovf)();
-}
+// ============== Watchdog ==============
 
-ISR(TIMER2_COMPA_vect) {
-	(*isr2_compa)();
-}
-
-ISR(TIMER2_COMPB_vect) {
-	(*isr2_compb)();
-}
-
-
-void WDT_attachInterrupt(void (*isr)(), int prescaler) {
-	wdt_isr = *isr;
+void WDT_attachInterrupt(int prescaler) {
 	cli();
 	WDTCSR |= 0b00011000; // тут мы включаем прерывания ватдога
 	switch (prescaler) {
-	case 2:
+	case 2:		// предделитель 2, период 16мс
 		WDTCSR = 0b01000000; // тут настраиваем делитель		
 		break;
-	case 4:
+	case 4:		// предделитель 4, период 32мс
 		WDTCSR = 0b01000001;
 		break;
-	case 8:
+	case 8:		// предделитель 8, период 64мс
 		WDTCSR = 0b01000010;
 		break;
-	case 16:
+	case 16:	// предделитель 16, период 125мс
 		WDTCSR = 0b01000011;
 		break;
-	case 32:
+	case 32:	// предделитель 32, период 250мс
 		WDTCSR = 0b01000100;
 		break;
-	case 64:
+	case 64:	// предделитель 64, период 500мс
 		WDTCSR = 0b01000101;
 		break;
-	case 128:
+	case 128:	// предделитель 128, период 1с
 		WDTCSR = 0b01000110;
 		break;
-	case 256:
+	case 256:	// предделитель 256, период 2с
 		WDTCSR = 0b01000111;
 		break;
-	case 512:
+	case 512:	// предделитель 512, период 4с
 		WDTCSR = 0b01100100;
 		break;
-	case 1024:
+	case 1024:	// предделитель 1024, период 8с
 		WDTCSR = 0b01100001;
 		break;
 	}
@@ -638,9 +577,4 @@ void WDT_detachInterrupt() {
 	cli();
 	WDTCSR = 0; // полностью душим ватчдог
 	sei();
-}
-
-/* прерывание ватчдога */
-ISR(WDT_vect) {
-	(*wdt_isr)();
 }
