@@ -162,6 +162,7 @@ void Encoder::tick() {
 		if (flags.butt_flag && debounceDelta > HOLD_TIMEOUT && !flags.turn_flag) {
 			if (flags.SW_state) {
 				flags.hold_flag = true;
+				flags.isRelease_f = false;
 			} else {
 				flags.butt_flag = false;
 				flags.hold_flag = false;
