@@ -11,6 +11,7 @@
 * [directADC](#directADC)
 * [directTimers](#directTimers)
 * [GyverPWM](#GyverPWM)
+* [GyverWDT](#GyverWDT)
 * [ServoSmooth](#ServoSmooth)
 * [GyverFilters](#GyverFilters)
 * [GyverTimer](#GyverTimer)
@@ -446,6 +447,29 @@ void PWM_TMR1_10BIT();	// Установить таймер 1 (ШИМ на D9 и
 |7      | -             | -         | -                 | -         | 30 Hz         | 60 Hz     |
 |_______|_______________|___________|___________________|___________|_______________|___________|
 */
+```
+</p>
+</details>
+
+---
+
+<a id="GyverWDT"></a>
+### GyverWDT v1.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverWDT/GyverWDT.zip)
+Библиотека для расширенной и удобной работы с watchdog
+- Перезагрузка по прерыванию
+- Вызов обычных прерываний
+- Настройка периода работы
+#### Методы и функции библиотеки
+<details>
+<summary>РАЗВЕРНУТЬ</summary>
+<p>
+Смотри примеры в папке examples!
+
+```C
+void watchdog_reset(void);       // сбросить watchdog 
+void watchdog_disable(void);     // полностью выключить watchdog 
+void watchdog_enable(uint8_t mode , uint8_t  prescaler, void (*isr)());   // Включить и настроить ватчдог (с прерыванием)
+void watchdog_enable(uint8_t prescaler);   // Включить и настроить ватчдог (только reset)
 ```
 </p>
 </details>

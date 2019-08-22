@@ -1,0 +1,31 @@
+#######################################
+# Syntax Coloring Map For GyverWDT
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+GyverWDT	KEYWORD2
+watchdog_reset	KEYWORD2	
+watchdog_disable	KEYWORD2
+watchdog_enable	KEYWORD2
+#######################################
+# Constants (LITERAL1)
+#######################################
+WDT_PRESCALER_2	LITERAL1
+WDT_PRESCALER_4	LITERAL1
+WDT_PRESCALER_8	LITERAL1
+WDT_PRESCALER_16	LITERAL1
+WDT_PRESCALER_32	LITERAL1
+WDT_PRESCALER_64	LITERAL1
+WDT_PRESCALER_128	LITERAL1
+WDT_PRESCALER_256	LITERAL1
+WDT_PRESCALER_512	LITERAL1
+WDT_PRESCALER_1024	LITERAL1
+INTERRUPT_MODE	LITERAL1
+INTERRUPT_RESET_MODE	LITERAL1
