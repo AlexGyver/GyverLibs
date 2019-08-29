@@ -28,7 +28,7 @@ typedef struct
 	bool btn_flag: 1;
 	bool hold_flag: 1;
 	bool counter_flag: 1;
-	uint8_t isHolded_f: 5;
+	uint8_t isHolded_f: 4;
 	bool isRelease_f: 1;
 	bool isPress_f: 1;
 	bool step_flag: 1;
