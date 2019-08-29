@@ -28,7 +28,7 @@ typedef struct
 	bool btn_flag: 1;
 	bool hold_flag: 1;
 	bool counter_flag: 1;
-	uint8_t isHolded_f: 4;
+	uint8_t isHolded_f: 8;
 	bool isRelease_f: 1;
 	bool isPress_f: 1;
 	bool step_flag: 1;
@@ -70,7 +70,7 @@ class GButton
 	boolean isPress();		// возвращает true при нажатии на кнопку. Сбрасывается после вызова
 	boolean isRelease();	// возвращает true при отпускании кнопки. Сбрасывается после вызова
 	boolean isClick();		// возвращает true при клике. Сбрасывается после вызова
-    boolean isHolded(byte cnt = 255);		// возвращает true если количество нажатий перед ужержанием было равно cnt и удержание дольше timeout. Сбрасывается после вызова
+    	boolean isHolded(byte cnt = 255);		// возвращает true если количество нажатий перед ужержанием было равно cnt и удержание дольше timeout. Сбрасывается после вызова
 	boolean isHold();		// возвращает true при нажатой кнопке, не сбрасывается
 	boolean state();		// возвращает состояние кнопки
 
