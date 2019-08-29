@@ -71,7 +71,7 @@ boolean GButton::isClick() {
 }
 boolean GButton::isHolded(byte cnt) {
 	if (flags.tickMode) GButton::tick();
-	if (flags.isHolded_f == cnt || cnt == 255) {
+	if (flags.isHolded_f == cnt || cnt == 15) {
 		flags.isHolded_f = 0;
 		return true;
 	} else return false;
