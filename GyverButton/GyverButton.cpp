@@ -69,13 +69,14 @@ boolean GButton::isClick() {
 		return true;
 	} else return false;
 }
-boolean GButton::isHolded() {
+boolean GButton::isHolded(byte cnt) {
 	if (flags.tickMode) GButton::tick();
-	if (flags.isHolded_f) {
-		flags.isHolded_f = false;
+	if (flags.isHolded_f == cnt || cnt == 255) {
+		flags.isHolded_f = 0;
 		return true;
 	} else return false;
 }
+
 boolean GButton::isHold() {
 	if (flags.tickMode) GButton::tick();
 	if (flags.step_flag) return true;
@@ -167,9 +168,9 @@ void GButton::tick() {
   // кнопка удерживается
   if (flags.btn_flag && flags.btn_state && (millis() - btn_timer >= _timeout) && !flags.hold_flag) {
     flags.hold_flag = true;
+	flags.isHolded_f = btn_counter + 1;
     btn_counter = 0;
 	last_counter = 0;
-    flags.isHolded_f = true;
 	flags.step_flag = true;
 	flags.oneClick_f = false;
 	btn_timer = millis();
