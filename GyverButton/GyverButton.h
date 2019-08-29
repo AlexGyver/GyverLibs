@@ -28,7 +28,7 @@ typedef struct
 	bool btn_flag: 1;
 	bool hold_flag: 1;
 	bool counter_flag: 1;
-	bool isHolded_f: 1;
+	uint8_t isHolded_f: 5;
 	bool isRelease_f: 1;
 	bool isPress_f: 1;
 	bool step_flag: 1;
@@ -62,6 +62,7 @@ class GButton
 	void setTickMode(boolean tickMode);					// (MANUAL / AUTO) ручной или автоматический опрос кнопки функцией tick()	
 														// MANUAL - нужно вызывать функцию tick() вручную														
 														// AUTO - tick() входит во все остальные функции и опрашивается сама
+
 	
 	void tick();										// опрос кнопки	
 	void tick(boolean state);							// опрос внешнего значения (0 нажато, 1 не нажато) (для матричных, резистивных клавиатур и джойстиков)
@@ -69,7 +70,7 @@ class GButton
 	boolean isPress();		// возвращает true при нажатии на кнопку. Сбрасывается после вызова
 	boolean isRelease();	// возвращает true при отпускании кнопки. Сбрасывается после вызова
 	boolean isClick();		// возвращает true при клике. Сбрасывается после вызова
-    boolean isHolded();		// возвращает true при удержании дольше timeout. Сбрасывается после вызова
+    boolean isHolded(byte cnt = 255);		// возвращает true если количество нажатий перед ужержанием было равно cnt и удержание дольше timeout. Сбрасывается после вызова
 	boolean isHold();		// возвращает true при нажатой кнопке, не сбрасывается
 	boolean state();		// возвращает состояние кнопки
 
