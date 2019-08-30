@@ -1,4 +1,8 @@
 ﻿#include "GyverUART.h"
+#define UART_RX_BUFFER_SIZE 64
+volatile char _UART_RX_BUFFER[UART_RX_BUFFER_SIZE];
+volatile uint8_t _UART_RX_BUFFER_HEAD;
+volatile uint8_t _UART_RX_BUFFER_TAIL;
 
 // ===== INIT =====
 void uartBegin(uint32_t baudrate){
@@ -8,6 +12,7 @@ void uartBegin(uint32_t baudrate){
 	UCSR0A = (1 << U2X0);
 	UCSR0B = ((1<<TXEN0) | (1<<RXEN0) | (1<<RXCIE0));
 	UCSR0C = ((1<<UCSZ01) | (1<<UCSZ00));
+	_UART_RX_BUFFER_HEAD = _UART_RX_BUFFER_TAIL = 0;
 }
 void uartBegin(void) {
 	uartBegin(9600);
@@ -18,39 +23,41 @@ void uartEnd(){
 }
 
 // ===== READ =====
-volatile char _UART_RX_BUFFER[64];
-volatile int8_t _UART_RX_COUNTER;
 ISR(USART_RX_vect) {
-	_UART_RX_BUFFER[_UART_RX_COUNTER] = UDR0;
-	_UART_RX_COUNTER++;
+	if (bit_is_set(UCSR0A, UPE0)) UDR0; // Не сохранять новые данные если parity error
+	else {
+		unsigned char c = UDR0;
+		uint8_t i = (unsigned int)(_UART_RX_BUFFER_HEAD + 1) % UART_RX_BUFFER_SIZE;
+		// Не сохранять новые данные если нет места
+		if (i != _UART_RX_BUFFER_TAIL) {
+			_UART_RX_BUFFER[_UART_RX_BUFFER_HEAD] = c;
+			_UART_RX_BUFFER_HEAD = i;
+		}
+	}
 }
 
 char uartRead() {
-	char thisChar = _UART_RX_BUFFER[0];
-	for (byte i = 0; i < _UART_RX_COUNTER; i++) _UART_RX_BUFFER[i] = _UART_RX_BUFFER[i + 1];
-	if (--_UART_RX_COUNTER < 0) _UART_RX_COUNTER = 0;
-	return thisChar;
+	if (_UART_RX_BUFFER_HEAD == _UART_RX_BUFFER_TAIL) return -1;
+	unsigned char c = _UART_RX_BUFFER[_UART_RX_BUFFER_TAIL];
+	_UART_RX_BUFFER_TAIL = (_UART_RX_BUFFER_TAIL + 1) % UART_RX_BUFFER_SIZE;
+	return c;
 }
 
 char uartPeek() {
-	return _UART_RX_BUFFER[0];
+	//return _UART_RX_BUFFER[0];
+	return _UART_RX_BUFFER_HEAD != _UART_RX_BUFFER_TAIL? _UART_RX_BUFFER[_UART_RX_BUFFER_TAIL]: -1;
 }
 
 boolean uartAvailable() {
-	return _UART_RX_COUNTER;
+	return ((unsigned int)(UART_RX_BUFFER_SIZE + _UART_RX_BUFFER_HEAD - _UART_RX_BUFFER_TAIL)) % UART_RX_BUFFER_SIZE;
 }
+
+boolean uartAvailableForWrite() {return 1;}
 
 void uartClear() {
-	_UART_RX_COUNTER = 0;
+	_UART_RX_BUFFER_HEAD = _UART_RX_BUFFER_TAIL = 0;
 }
 
-/*
-byte uartRead(){
-	if (UCSR0A & (1<<RXC0))
-	{
-		return UDR0;
-	} else return false; 
-}*/
 uint32_t _UART_TIMEOUT = 100;
 void uartSetTimeout(int timeout) {
 	_UART_TIMEOUT = timeout;
