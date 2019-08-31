@@ -6,7 +6,7 @@ volatile uint8_t _UART_RX_BUFFER_TAIL;
 
 // ===== INIT =====
 void uartBegin(uint32_t baudrate){
-	uint16_t speed = (2000000/baudrate)-1;
+	uint16_t speed = (F_CPU / (8 * baudrate)) - 1;
 	UBRR0H = highByte(speed);
 	UBRR0L = lowByte(speed);
 	UCSR0A = (1 << U2X0);
@@ -14,9 +14,7 @@ void uartBegin(uint32_t baudrate){
 	UCSR0C = ((1<<UCSZ01) | (1<<UCSZ00));
 	_UART_RX_BUFFER_HEAD = _UART_RX_BUFFER_TAIL = 0;
 }
-void uartBegin(void) {
-	uartBegin(9600);
-}
+
 
 void uartEnd(){
 	UCSR0B = 0;
@@ -48,7 +46,7 @@ char uartPeek() {
 	return _UART_RX_BUFFER_HEAD != _UART_RX_BUFFER_TAIL? _UART_RX_BUFFER[_UART_RX_BUFFER_TAIL]: -1;
 }
 
-boolean uartAvailable() {
+uint8_t uartAvailable() {
 	return ((unsigned int)(UART_RX_BUFFER_SIZE + _UART_RX_BUFFER_HEAD - _UART_RX_BUFFER_TAIL)) % UART_RX_BUFFER_SIZE;
 }
 

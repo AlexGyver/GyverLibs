@@ -3,7 +3,7 @@
 	Практически полный аналог Serial, но гораздо легче
 	Данная версия встроена в ядро GyverCore!!!
 	Отдельное спасибо Egor 'Nich1con' Zaharov за помощь с регистрами
-	Версия 1.0
+	Версия 1.2
 */
 
 #ifndef GyverUART_h
@@ -12,11 +12,11 @@
 #include "Arduino.h"
 #include <avr/io.h>
 
-void uartBegin(void);
-void uartBegin(uint32_t baudrate);
+void uartBegin(uint32_t baudrate = 9600);
 void uartEnd();
 
-boolean uartAvailable();
+uint8_t uartAvailable();
+boolean uartAvailableForWrite();
 char uartRead();
 char uartPeek();
 void uartClear();
