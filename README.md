@@ -8,6 +8,7 @@
 * [GyverEncoder](#GyverEncoder)
 * [GyverUART](#GyverUART)
 * [GyverTimer012](#GyverTimer012)
+* [buildTime](#buildTime)
 * [directADC](#directADC)
 * [directTimers](#directTimers)
 * [GyverPWM](#GyverPWM)
@@ -213,6 +214,31 @@ void timerN_start(void);                // запустить
 void timerN_stop(void);                 // остановить
 void timerN_resume(void);               // продолжить
 void timerN_restart(void);              // перезапустить
+```
+</p>
+</details>
+
+---
+
+<a id="buildTime"></a>
+### buildTime v1.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/buildTime/buildTime.zip)
+Лёгкая библиотека для получения даты и времени компиляции скетча
+- Написана на "дефайнах", очень лёгкая и быстрая
+
+#### Методы и функции библиотеки
+<details>
+<summary>РАЗВЕРНУТЬ</summary>
+<p>
+Смотри пример в папке examples!
+
+```C
+// Библиотека содержит макро-функции, возвращающие цифру
+BUILD_YEAR	- год
+BUILD_MONTH	- месяц
+BUILD_DAY	- день
+BUILD_HOUR	- час
+BUILD_MIN	- минута
+BUILD_SEC	- секунда
 ```
 </p>
 </details>

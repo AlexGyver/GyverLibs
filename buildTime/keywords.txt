@@ -1,0 +1,23 @@
+#######################################
+# Syntax Coloring Map For buildTime
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+buildTime	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+BUILD_YEAR	LITERAL1
+BUILD_MONTH	LITERAL1
+BUILD_DAY	LITERAL1
+BUILD_HOUR	LITERAL1
+BUILD_MIN	LITERAL1
+BUILD_SEC	LITERAL1
