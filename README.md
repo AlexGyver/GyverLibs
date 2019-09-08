@@ -4,37 +4,37 @@
 > Внимание! Библиотеки написаны ютубером-ардуинщиком, возможна высокая концентрация костылей и стандартных подходов. Но всё работает замечательно!
 ## Содержание
 ### Железки
-* [GyverButton](#GyverButton)
-* [GyverEncoder](#GyverEncoder)
-* [GyverMotor](#GyverMotor)
-* [GyverRGB](#GyverRGB)
-* [GyverTM1637](#GyverTM1637)
+* [GyverButton](#GyverButton) - расширенный контроль кнопкой
+* [GyverEncoder](#GyverEncoder) - расширенный контроль с энкодером
+* [GyverMotor](#GyverMotor) - управление драйверами моторов
+* [GyverRGB](#GyverRGB) - управление RGB светодиодами и лентами
+* [GyverTM1637](#GyverTM1637) - управление дисплеем на TM1637
+* [ServoSmooth](#ServoSmooth) - плавное управление сервоприводами
 
 ### Периферия МК
-* [directADC](#directADC)
-* [directTimers](#directTimers)
-* [GyverPWM](#GyverPWM)
-* [GyverWDT](#GyverWDT)
-* [ServoSmooth](#ServoSmooth)
+* [directADC](#directADC) - расширенный контроль АЦП и компаратора
+* [directTimers](#directTimers)	- расширенный контроль за таймерами-счётчиками
+* [GyverPWM](#GyverPWM) - расширенная генерация ШИМ сигнала
+* [GyverWDT](#GyverWDT) - расширенный контроль за watchdog
 
 ### Алгоритмы
-* [GyverFilters](#GyverFilters)
-* [GyverTimer](#GyverTimer)
-* [GyverPID](#GyverPID)
-* [GyverRelay](#GyverRelay)
-* [GyverRTOS](#GyverRTOS)
+* [GyverFilters](#GyverFilters) - набор фильтров значений
+* [GyverTimer](#GyverTimer) - простой таймер для организации кода
+* [GyverPID](#GyverPID) - библиотека ПИД регулятора
+* [GyverRelay](#GyverRelay) - библиотека релейного регулятора
+* [GyverRTOS](#GyverRTOS) - система "реального времени" со сном и менеджером задач
 
 ### Системное
-* [buildTime](#buildTime)
-* [GyverTimer012](#GyverTimer012)
-* [GyverHacks](#GyverHacks)
+* [buildTime](#buildTime) - получение времени компиляции в численном виде
+* [GyverTimer012](#GyverTimer012) - настройка прерываний по таймерам 0/1/2
+* [GyverHacks](#GyverHacks) - набор различных хаков с микроконтроллером
 
 ### Лёгкие библиотеки
-* [microWire](#microWire)
-* [microDS3231](#microDS3231)
-* [microLiquidCrystal_I2C](#microLiquidCrystal_I2C)
-* [GyverUART](#GyverUART)
-* [minimLibs](#minimLibs)
+* [microWire](#microWire) - микро библиотека для работы с i2c
+* [microDS3231](#microDS3231) - лёгкая библиотека для RTC DS3231
+* [microLiquidCrystal_I2C](#microLiquidCrystal_I2C) - облегчённая библиотека для LCD дисплея
+* [GyverUART](#GyverUART) - облегчённый и ускоренный Serial
+* [minimLibs](#minimLibs) - набор классов для работы с железками
 
 ---
 
@@ -65,15 +65,15 @@ minimLibs это набор классов, являющихся облегчё�
 Смотри примеры в папке examples!
 
 ```C
-	void begin(int baudrate = 400);
-	void setClock(uint32_t clock);
-	void beginTransmission(void);
-	void beginTransmission(uint8_t addr);
-	void endTransmission(void);
-	void write(uint8_t data);
-	void requestFrom(uint8_t addr);
-	uint8_t receive_ack(void);
-	uint8_t receive_nack(void);
+void begin(int baudrate = 400);
+void setClock(uint32_t clock);
+void beginTransmission(void);
+void beginTransmission(uint8_t addr);
+void endTransmission(void);
+void write(uint8_t data);
+void requestFrom(uint8_t addr);
+uint8_t receive_ack(void);
+uint8_t receive_nack(void);
 ```
 </p>
 </details>
@@ -92,17 +92,17 @@ minimLibs это набор классов, являющихся облегчё�
 Смотри примеры в папке examples!
 
 ```C
-	MicroDS3231();                  // конструктор
-	void setTime(uint8_t seconds , uint8_t minutes , uint8_t hours , uint8_t date, uint8_t month, uint16_t year);	// установка времени
-	void setTime(uint8_t param);    // установка времени == времени компиляции
-	bool lostPower(void);           // проверка на сброс питания
-	uint8_t getSeconds(void);       // получить секунды
-	uint8_t getMinutes(void);       // получить минуты
-	uint8_t getHours(void);         // получить часы
-	uint8_t getDay(void);           // получить день недели
-	uint8_t getDate(void);          // получить число
-	uint16_t getYear(void);         // получить год
-	uint8_t getMonth(void);         // получить месяц
+MicroDS3231();                  // конструктор
+void setTime(uint8_t seconds , uint8_t minutes , uint8_t hours , uint8_t date, uint8_t month, uint16_t year);	// установка времени
+void setTime(uint8_t param);    // установка времени == времени компиляции
+bool lostPower(void);           // проверка на сброс питания
+uint8_t getSeconds(void);       // получить секунды
+uint8_t getMinutes(void);       // получить минуты
+uint8_t getHours(void);         // получить часы
+uint8_t getDay(void);           // получить день недели
+uint8_t getDate(void);          // получить число
+uint16_t getYear(void);         // получить год
+uint8_t getMonth(void);         // получить месяц
 ```
 </p>
 </details>
