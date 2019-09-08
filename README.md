@@ -110,7 +110,7 @@ minimLibs это набор классов, являющихся облегчё�
 ---
 
 <a id="microLiquidCrystal_I2C"></a>
-### microDS3231 v1.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microLiquidCrystal_I2C/microLiquidCrystal_I2C.zip)
+### microLiquidCrystal_I2C v1.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microLiquidCrystal_I2C/microLiquidCrystal_I2C.zip)
 Библиотека для LCD дисплея с переходником на I2C, облегчена за счёт использования microWire
 - Для работы нужна библиотека **microWire.h**
 
