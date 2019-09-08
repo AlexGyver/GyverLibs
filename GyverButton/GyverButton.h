@@ -16,8 +16,8 @@
 	- Функция изменения значения переменной с заданным шагом и заданным интервалом по времени
 	- Возможность опрашивать не кнопку, а напрямую давать величину (все возможности библиотеки для матричных и резистивных клавиатур)
 	
-	Текущая версия: 2.12 от 18.03.2019:
-	- Поправлены баги при совместной работе методов опроса
+	Текущая версия: 2.13 от 09.09.2019:
+	- Убраны дефайны
 */
 
 #pragma pack(push,1)
@@ -41,12 +41,21 @@ typedef struct
 } GyverButtonFlags;
 #pragma pack(pop)
 
+enum modes {
+	HIGH_PULL = 0,
+	LOW_PULL = 1,
+	NORM_OPEN = 0,
+	NORM_CLOSE = 1,
+	MANUAL = 0,
+	AUTO = 1,
+};
+
 class GButton
 {
   public:
     GButton(uint8_t pin);								// класс кнопки, принимает пин
 	
-	GButton(uint8_t pin, boolean type, boolean dir);	// класс кнопки, принимает PIN пин, тип type (HIGH_PULL / LOW_PULL) и направление dir (NORM_OPEN / NORM_CLOSE)
+	GButton(uint8_t pin, modes type, modes dir);	// класс кнопки, принимает PIN пин, тип type (HIGH_PULL / LOW_PULL) и направление dir (NORM_OPEN / NORM_CLOSE)
 														// HIGH_PULL - кнопка подключена к GND, пин подтянут к VCC, pinMode - INPUT_PULLUP (по умолчанию)
 														// LOW_PULL - кнопка подключена к VCC, пин подтянут к GND, pinMode - INPUT
 														// NORM_OPEN - кнопка по умолчанию разомкнута (по умолчанию)
@@ -56,10 +65,10 @@ class GButton
 	void setTimeout(uint16_t timeout);					// установка таймаута удержания (по умолчанию 300 мс)
 	void setClickTimeout(uint16_t timeout);				// установка таймаута между кликами (по умолчанию 500 мс)	
 	void setStepTimeout(uint16_t step_timeout);			// установка таймаута между инкрементами (по умолчанию 400 мс)	
-	void setType(boolean type);							// установка типа кнопки (HIGH_PULL - подтянута к питанию, LOW_PULL - к gnd)	
-	void setDirection(boolean dir);						// установка направления (разомкнута/замкнута по умолчанию - NORM_OPEN, NORM_CLOSE)	
+	void setType(modes type);							// установка типа кнопки (HIGH_PULL - подтянута к питанию, LOW_PULL - к gnd)	
+	void setDirection(modes dir);						// установка направления (разомкнута/замкнута по умолчанию - NORM_OPEN, NORM_CLOSE)	
 	
-	void setTickMode(boolean tickMode);					// (MANUAL / AUTO) ручной или автоматический опрос кнопки функцией tick()	
+	void setTickMode(modes tickMode);					// (MANUAL / AUTO) ручной или автоматический опрос кнопки функцией tick()	
 														// MANUAL - нужно вызывать функцию tick() вручную														
 														// AUTO - tick() входит во все остальные функции и опрашивается сама
 	
@@ -93,12 +102,5 @@ class GButton
 	uint8_t btn_counter = 0, last_counter = 0;	
 	uint32_t btn_timer = 0;		
 };
-
-#define HIGH_PULL 0
-#define LOW_PULL 1
-#define NORM_OPEN 0
-#define NORM_CLOSE 1
-#define MANUAL 0
-#define AUTO 1
  
 #endif

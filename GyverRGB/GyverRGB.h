@@ -27,20 +27,49 @@
 	- Добавлена матрица коррекции LUT
 	- Добавлено коррекция по минимальному сигналу ШИМ
 	- Добавлена гамма-коррекция яркости
+	
+	Версия 1.14 от 09.09.2019
+	- Убраны дефайны
 */
+
+enum modes {
+	NORMAL = 0,
+	REVERSE = 1,
+	NORM_PWM = 0,
+	ANY_PWM = 1,
+};
+
+enum colors {
+	WHITE =		0xFFFFFF,	// белый
+	SILVER =	0xC0C0C0,	// серебро
+	GRAY =		0x808080,	// серый
+	BLACK =		0x000000,	// чёрный
+	RED =		0xFF0000,	// красный
+	MAROON =	0x800000,	// бордовый
+	YELLOW =	0xFFFF00,	// жёлтый
+	OLIVE =		0x808000,	// олива
+	LIME =		0x00FF00,	// лайм
+	GREEN =		0x008000,	// зелёный
+	AQUA =		0x00FFFF,	// аква
+	TEAL =		0x008080,	// цвет головы утки чирка https://odesign.ru/teal-color/
+	BLUE =		0x0000FF,	// голубой
+	NAVY =		0x000080,	// тёмно-синий
+	PINK =		0xFF00FF,	// розовый
+	PURPLE =	0x800080,	// пурпурный
+};
 
 class GRGB
 {
   public:  
 	GRGB(uint8_t rpin, uint8_t gpin, uint8_t bpin);						// объявление
 	
-	GRGB(uint8_t rpin, uint8_t gpin, uint8_t bpin, boolean pwmmode);	// объявление с выбором режима генерации ШИМ (NORM_PWM / ANY_PWM)
+	GRGB(uint8_t rpin, uint8_t gpin, uint8_t bpin, modes pwmmode);	// объявление с выбором режима генерации ШИМ (NORM_PWM / ANY_PWM)
 																		// NORM_PWM - дефолтные ШИМ пины (3, 5, 6, 9, 10, 11 для UNO/NANO/MINI)
 																		// ANY_PWM - любой пин делается ШИМ пином (частота ~150 Гц). Подробности в библиотеке GyverHacks
 																		
 	void highFrequency(long frequency);					// режим работы на высокой частоте ШИМ (указать в Герцах). Работает с библиотекой PWM.h
 	
-	void setDirection(boolean direction);				// NORMAL / REVERSE - направление ШИМ
+	void setDirection(modes direction);				// NORMAL / REVERSE - направление ШИМ
 														// общий катод - NORMAL
 														// общий анод - REVERSE
 														
@@ -56,7 +85,7 @@ class GRGB
 	void constantBrightTick(int minVolts, int vcc);		// корректировка под напряжение питания
 	void gammaTick(int vcc);							// корректировка красного цвета при падении напряжения питания
 													
-	void setHEX(uint32_t color);						// установка цвета в формате HEX (вида 0x808080 )
+	void setHEX(colors color);						// установка цвета в формате HEX (вида 0x808080 )
 	void setRGB(uint8_t r, uint8_t g, uint8_t b);		// установка цвета в пространстве RGB (каждый цвет 0-255)
 	void setHSV(uint8_t h, uint8_t s, uint8_t v);		// установка цвета в пространстве HSV (каждая велиична 0-255)
 	void setHSV_fast(uint8_t h, uint8_t s, uint8_t v);	// более быстрый, но менее красивый вариант предыдущей функции
@@ -65,7 +94,7 @@ class GRGB
 	
 	// плавно изменить текущий цвет к новому за вермя fadeTime в миллисекундах
 	// для HEX цвета
-	void fadeTo(uint32_t newColor, uint16_t fadeTime);
+	void fadeTo(colors newColor, uint16_t fadeTime);
 	
 	// для R G B
 	void fadeTo(uint8_t new_r, uint8_t new_g, uint8_t new_b, uint16_t fadeTime);
@@ -100,27 +129,5 @@ class GRGB
 void anyPWMinitRGB(byte prescaler);									
 void anyPWMpinRGB(uint8_t pin);
 void anyPWMRGB(byte pin, byte duty);
-
-#define NORMAL 0
-#define REVERSE 1
-#define NORM_PWM 0
-#define ANY_PWM 1
-
-#define WHITE		0xFFFFFF	// белый
-#define SILVER		0xC0C0C0	// серебро
-#define GRAY		0x808080	// серый
-#define BLACK		0x000000	// чёрный
-#define RED			0xFF0000	// красный
-#define MAROON		0x800000	// бордовый
-#define YELLOW		0xFFFF00	// жёлтый
-#define OLIVE		0x808000	// олива
-#define LIME		0x00FF00	// лайм
-#define GREEN		0x008000	// зелёный
-#define AQUA		0x00FFFF	// аква
-#define TEAL		0x008080	// цвет головы утки чирка https://odesign.ru/teal-color/
-#define BLUE		0x0000FF	// голубой
-#define NAVY		0x000080	// тёмно-синий
-#define PINK		0xFF00FF	// розовый
-#define PURPLE		0x800080	// пурпурный
 
 #endif

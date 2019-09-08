@@ -1,0 +1,29 @@
+  
+#######################################
+# Syntax Coloring Map For microDS3231
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+microDS3231	KEYWORD1
+MicroDS3231	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+setTime	KEYWORD2
+lostPower	KEYWORD2
+getSeconds	KEYWORD2
+getMinutes	KEYWORD2
+getHours	KEYWORD2
+getDay	KEYWORD2
+getDate	KEYWORD2
+getYear	KEYWORD2
+getMonth	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+COMPILE_TIME	LITERAL1

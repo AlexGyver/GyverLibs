@@ -12,14 +12,14 @@
 	- Отработка "быстрого поворота"
 	- Версия 3+ более оптимальная и быстрая
 	
-	Текущая версия: 3.4 от 31.08.2019
-	- Исправлен небольшой баг
+	Текущая версия: 3.5 от 09.09.2019
+	- Убраны дефайны настроек
 */
 
 // настройка антидребезга энкодера, кнопки и таймаута удержания
-#define DEBOUNCE_TURN 1
-#define DEBOUNCE_BUTTON 80
-#define HOLD_TIMEOUT 700
+const byte DEBOUNCE_TURN = 1;
+const int DEBOUNCE_BUTTON = 80;
+const int HOLD_TIMEOUT = 700;
 
 #pragma pack(push,1)
 typedef struct
@@ -41,17 +41,26 @@ typedef struct
 } GyverEncoderFlags;
 #pragma pack(pop)
 
+enum modes {
+	TYPE1 = 0,		// полушаговый энкодер
+	TYPE2 = 1,		// полношаговый
+	NORM = 0,		// направление вращения обычное
+	REVERSE = 1,	// обратное
+	MANUAL = 0,		// нужно вызывать функцию tick() вручную
+	AUTO = 1,		// tick() входит во все остальные функции и опрашивается сама!
+};
+
 class Encoder
 {
 public:
 	Encoder(uint8_t clk, uint8_t dt);							// CLK, DT	
 	Encoder(uint8_t clk, uint8_t dt, uint8_t sw);				// CLK, DT, SW
-	Encoder(uint8_t clk, uint8_t dt, uint8_t sw, boolean type); // CLK, DT, SW, тип (TYPE1 / TYPE2) TYPE1 одношаговый, TYPE2 двухшаговый. Если ваш энкодер работает странно, смените тип
+	Encoder(uint8_t clk, uint8_t dt, uint8_t sw, modes type); // CLK, DT, SW, тип (TYPE1 / TYPE2) TYPE1 одношаговый, TYPE2 двухшаговый. Если ваш энкодер работает странно, смените тип
 	
 	void tick();							// опрос энкодера, нужно вызывать постоянно или в прерывании
-	void setType(boolean type);				// TYPE1 / TYPE2 - тип энкодера TYPE1 одношаговый, TYPE2 двухшаговый. Если ваш энкодер работает странно, смените тип
-	void setTickMode(boolean tickMode); 	// MANUAL / AUTO - ручной или автоматический опрос энкодера функцией tick(). (по умолчанию ручной)
-	void setDirection(boolean direction);	// NORM / REVERSE - направление вращения энкодера
+	void setType(modes type);				// TYPE1 / TYPE2 - тип энкодера TYPE1 одношаговый, TYPE2 двухшаговый. Если ваш энкодер работает странно, смените тип
+	void setTickMode(modes tickMode); 	// MANUAL / AUTO - ручной или автоматический опрос энкодера функцией tick(). (по умолчанию ручной)
+	void setDirection(modes direction);	// NORM / REVERSE - направление вращения энкодера
 	void setFastTimeout(int timeout);		// установка таймаута быстрого поворота
 	
 	boolean isTurn();						// возвращает true при любом повороте, сама сбрасывается в false
@@ -79,12 +88,5 @@ private:
 	byte _CLK = 0, _DT = 0, _SW = 0;
 	
 };
-
-#define TYPE1 0			// полушаговый энкодер
-#define TYPE2 1			// полношаговый
-#define NORM 0			// направление вращения обычное
-#define REVERSE 1		// обратное
-#define MANUAL 0		// нужно вызывать функцию tick() вручную
-#define AUTO 1			// tick() входит во все остальные функции и опрашивается сама!
 
 #endif

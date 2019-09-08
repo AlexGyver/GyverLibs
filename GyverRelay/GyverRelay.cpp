@@ -3,14 +3,14 @@
 
 GyverRelay::GyverRelay() {}
 
-GyverRelay::GyverRelay(float new_setpoint, float new_hysteresis, boolean direction) {
+GyverRelay::GyverRelay(float new_setpoint, float new_hysteresis, modes direction) {
 	setpoint = new_setpoint;
 	hysteresis = new_hysteresis;
 	_direction = direction;
 	_relayState = !_direction;		// выключить реле сразу
 }
 
-void GyverRelay::setDirection(boolean direction) {
+void GyverRelay::setDirection(modes direction) {
 	_direction = direction;
 }
 

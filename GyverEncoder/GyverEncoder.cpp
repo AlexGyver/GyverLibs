@@ -15,7 +15,7 @@ Encoder::Encoder(uint8_t clk, uint8_t dt, uint8_t sw) {
 	flags.use_button = true;
 	Encoder::init();
 }
-Encoder::Encoder(uint8_t clk, uint8_t dt, uint8_t sw, boolean type) {
+Encoder::Encoder(uint8_t clk, uint8_t dt, uint8_t sw, modes type) {
 	_CLK = clk;
 	_DT = dt;
 	_SW = sw;
@@ -34,17 +34,17 @@ void Encoder::init() {
 	prevState = curState;
 }
 
-void Encoder::setDirection(boolean direction) {
+void Encoder::setDirection(modes direction) {
 	if (direction) {
 		uint8_t buf = _CLK;
 		_CLK = _DT;
 		_DT = buf;
 	}
 }
-void Encoder::setType(boolean type) {
+void Encoder::setType(modes type) {
 	flags.enc_type = type;
 }
-void Encoder::setTickMode(boolean tickMode) {
+void Encoder::setTickMode(modes tickMode) {
 	flags.enc_tick_mode = tickMode;
 }
 void Encoder::setFastTimeout(int timeout) {

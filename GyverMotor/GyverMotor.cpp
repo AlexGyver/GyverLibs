@@ -11,7 +11,7 @@ GMotor::GMotor(uint8_t dig_pin, uint8_t pwm_pin) {
 	digitalWrite(_pwm_pin, 0);
 }
 
-void GMotor::setDirection(boolean direction) {
+void GMotor::setDirection(modes direction) {
 	_reverse = direction;
 }
 
@@ -53,7 +53,7 @@ void GMotor::runBkw10bit() {
 	analogWrite(_pwm_pin, 1023 - _duty);
 }
 
-void GMotor::setMode(uint8_t mode) {
+void GMotor::setMode(modes mode) {
 	_mode = mode;
 	if (mode == STOP) {
 		digitalWrite(_dig_pin, 0);

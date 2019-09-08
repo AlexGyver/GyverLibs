@@ -20,7 +20,7 @@ GyverPID::GyverPID(float new_kp, float new_ki, float new_kd, int16_t new_dt) {
 	ki = new_ki;
 	kd = new_kd;
 }
-void GyverPID::setDirection(boolean direction) {
+void GyverPID::setDirection(modes direction) {
 	_direction = direction;
 	if (kp > 0 && _direction) {				// смотрим по первому коэффициенту, если > 0 и надо менять на <0, меняем
 		kp = 0 - kp;
@@ -32,7 +32,7 @@ void GyverPID::setDirection(boolean direction) {
 		kd = 0 - kd;
 	}	
 }
-void GyverPID::setMode(boolean mode) {
+void GyverPID::setMode(modes mode) {
 	_mode = mode;
 }
 void GyverPID::setLimits(float min_output, float max_output) {	

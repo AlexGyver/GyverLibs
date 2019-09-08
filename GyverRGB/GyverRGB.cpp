@@ -86,7 +86,7 @@ GRGB::GRGB(uint8_t rpin, uint8_t gpin, uint8_t bpin) {
 	pinMode(_bpin, OUTPUT);
 }
 
-GRGB::GRGB(uint8_t rpin, uint8_t gpin, uint8_t bpin, boolean pwmmode) {
+GRGB::GRGB(uint8_t rpin, uint8_t gpin, uint8_t bpin, modes pwmmode) {
 	_PWMmode = pwmmode;
 	
 	_rpin = rpin;
@@ -99,7 +99,7 @@ GRGB::GRGB(uint8_t rpin, uint8_t gpin, uint8_t bpin, boolean pwmmode) {
 		pinMode(_bpin, OUTPUT);
 	} else {
 		anyPWMinitRGB(6);	// частота ~150 Гц
-			
+		
 		anyPWMpinRGB(_rpin);
 		anyPWMpinRGB(_gpin);
 		anyPWMpinRGB(_bpin);
@@ -119,7 +119,7 @@ void GRGB::highFrequency(long frequency) {
 	_highFreqFlag = true;
 }
 
-void GRGB::setDirection(boolean direction) {
+void GRGB::setDirection(modes direction) {
 	_reverse_flag = direction;
 }
 
@@ -181,10 +181,11 @@ void GRGB::setRGB(uint8_t new_r, uint8_t new_g, uint8_t new_b) {
 	GRGB::setRGB();
 }
 
-void GRGB::setHEX(uint32_t color) {
-	_r = (color >> 16) & 0xff;
-	_g = (color >> 8) & 0xff;
-	_b = color & 0xff;
+void GRGB::setHEX(colors color) {
+	uint32_t color32 = color;
+	_r = (color32 >> 16) & 0xff;
+	_g = (color32 >> 8) & 0xff;
+	_b = color32 & 0xff;
 	GRGB::setRGB();
 }
 
@@ -195,12 +196,12 @@ void GRGB::setHSV_fast(uint8_t hue, uint8_t sat, uint8_t val) {
 	byte vinc = vmin + a;
 	byte vdec = val - a;
 	switch (h) {
-		case 0: _r = val; _g = vinc; _b = vmin; break;
-		case 1: _r = vdec; _g = val; _b = vmin; break;
-		case 2: _r = vmin; _g = val; _b = vinc; break;
-		case 3: _r = vmin; _g = vdec; _b = val; break;
-		case 4: _r = vinc; _g = vmin; _b = val; break;
-		case 5: _r = val; _g = vmin; _b = vdec; break;
+	case 0: _r = val; _g = vinc; _b = vmin; break;
+	case 1: _r = vdec; _g = val; _b = vmin; break;
+	case 2: _r = vmin; _g = val; _b = vinc; break;
+	case 3: _r = vmin; _g = vdec; _b = val; break;
+	case 4: _r = vinc; _g = vmin; _b = val; break;
+	case 5: _r = val; _g = vmin; _b = vdec; break;
 	}	
 	GRGB::setRGB();
 }
@@ -212,20 +213,20 @@ void GRGB::setHSV(uint8_t h, uint8_t s, uint8_t v) {
 	float S = (float)s / 255;
 	float V = (float)v / 255;
 	
-    int i = int(H * 6);
-    float f = H * 6 - i;
-    float p = V * (1 - S);
-    float q = V * (1 - f * S);
-    float t = V * (1 - (1 - f) * S);
+	int i = int(H * 6);
+	float f = H * 6 - i;
+	float p = V * (1 - S);
+	float q = V * (1 - f * S);
+	float t = V * (1 - (1 - f) * S);
 
-    switch(i % 6){
-        case 0: r = V, g = t, b = p; break;
-        case 1: r = q, g = V, b = p; break;
-        case 2: r = p, g = V, b = t; break;
-        case 3: r = p, g = q, b = V; break;
-        case 4: r = t, g = p, b = V; break;
-        case 5: r = V, g = p, b = q; break;
-    }
+	switch(i % 6){
+	case 0: r = V, g = t, b = p; break;
+	case 1: r = q, g = V, b = p; break;
+	case 2: r = p, g = V, b = t; break;
+	case 3: r = p, g = q, b = V; break;
+	case 4: r = t, g = p, b = V; break;
+	case 5: r = V, g = p, b = q; break;
+	}
 	_r = r * 255;
 	_g = g * 255;
 	_b = b * 255;
@@ -234,53 +235,54 @@ void GRGB::setHSV(uint8_t h, uint8_t s, uint8_t v) {
 
 // источник: http://www.tannerhelland.com/4435/convert-temperature-rgb-algorithm-code/
 void GRGB::setKelvin(int16_t temperature) {
-  float tmpKelvin, tmpCalc;
+	float tmpKelvin, tmpCalc;
 
-  temperature = constrain(temperature, 1000, 40000);
-  tmpKelvin = temperature / 100;
+	temperature = constrain(temperature, 1000, 40000);
+	tmpKelvin = temperature / 100;
 
-  // red
-  if (tmpKelvin <= 66) _r = 255;
-  else {
-    tmpCalc = tmpKelvin - 60;
-    tmpCalc = (float)pow(tmpCalc, -0.1332047592);
-    tmpCalc *= (float)329.698727446;
-    tmpCalc = constrain(tmpCalc, 0, 255);
-    _r = tmpCalc;
-  }
+	// red
+	if (tmpKelvin <= 66) _r = 255;
+	else {
+		tmpCalc = tmpKelvin - 60;
+		tmpCalc = (float)pow(tmpCalc, -0.1332047592);
+		tmpCalc *= (float)329.698727446;
+		tmpCalc = constrain(tmpCalc, 0, 255);
+		_r = tmpCalc;
+	}
 
-  // green
-  if (tmpKelvin <= 66) {
-    tmpCalc = tmpKelvin;
-    tmpCalc = (float)99.4708025861 * log(tmpCalc) - 161.1195681661;
-    tmpCalc = constrain(tmpCalc, 0, 255);
-    _g = tmpCalc;
-  } else {
-    tmpCalc = tmpKelvin - 60;
-    tmpCalc = (float)pow(tmpCalc, -0.0755148492);
-    tmpCalc *= (float)288.1221695283;
-    tmpCalc = constrain(tmpCalc, 0, 255);
-    _g = tmpCalc;
-  }
+	// green
+	if (tmpKelvin <= 66) {
+		tmpCalc = tmpKelvin;
+		tmpCalc = (float)99.4708025861 * log(tmpCalc) - 161.1195681661;
+		tmpCalc = constrain(tmpCalc, 0, 255);
+		_g = tmpCalc;
+	} else {
+		tmpCalc = tmpKelvin - 60;
+		tmpCalc = (float)pow(tmpCalc, -0.0755148492);
+		tmpCalc *= (float)288.1221695283;
+		tmpCalc = constrain(tmpCalc, 0, 255);
+		_g = tmpCalc;
+	}
 
-  // blue
-  if (tmpKelvin >= 66) _b = 255;
-  else if (tmpKelvin <= 19) _b = 0;
-  else {
-    tmpCalc = tmpKelvin - 10;
-    tmpCalc = (float)138.5177312231 * log(tmpCalc) - 305.0447927307;
-    tmpCalc = constrain(tmpCalc, 0, 255);
-    _b = tmpCalc;
-  }
-  GRGB::setRGB();
+	// blue
+	if (tmpKelvin >= 66) _b = 255;
+	else if (tmpKelvin <= 19) _b = 0;
+	else {
+		tmpCalc = tmpKelvin - 10;
+		tmpCalc = (float)138.5177312231 * log(tmpCalc) - 305.0447927307;
+		tmpCalc = constrain(tmpCalc, 0, 255);
+		_b = tmpCalc;
+	}
+	GRGB::setRGB();
 }
 
 // Для hex цветов
-void GRGB::fadeTo(uint32_t newColor, uint16_t fadeTime) {
+void GRGB::fadeTo(colors newColor, uint16_t fadeTime) {
+	uint32_t newColor32 = newColor;
 	// находим новые r g b
-	byte new_r = (newColor >> 16) & 0xff;
-	byte new_g = (newColor >> 8) & 0xff;
-	byte new_b = newColor & 0xff;
+	byte new_r = (newColor32 >> 16) & 0xff;
+	byte new_g = (newColor32 >> 8) & 0xff;
+	byte new_b = newColor32 & 0xff;
 	GRGB::fadeTo(new_r, new_g, new_b, fadeTime);
 }
 
@@ -329,35 +331,35 @@ void GRGB::fadeTo(byte new_r, byte new_g, byte new_b, uint16_t fadeTime) {
 
 void GRGB::colorWheel(int color) {
 	if (color <= 255) {						// красный макс, зелёный растёт
-      _r = 255;
-      _g = color;
-      _b = 0;
-    }
-    else if (color > 255 && color <= 510) {		// зелёный макс, падает красный 
-      _r = 510 - color;
-      _g = 255;
-      _b = 0;
-    }
-    else if (color > 510 && color <= 765) {		// зелёный макс, растёт синий
-      _r = 0;
-      _g = 255;
-      _b = color - 510;
-    }
-    else if (color > 765 && color <= 1020) {	// синий макс, падает зелёный
-      _r = 0;
-      _g = 1020 - color;
-      _b = 255;
-    }
+		_r = 255;
+		_g = color;
+		_b = 0;
+	}
+	else if (color > 255 && color <= 510) {		// зелёный макс, падает красный 
+		_r = 510 - color;
+		_g = 255;
+		_b = 0;
+	}
+	else if (color > 510 && color <= 765) {		// зелёный макс, растёт синий
+		_r = 0;
+		_g = 255;
+		_b = color - 510;
+	}
+	else if (color > 765 && color <= 1020) {	// синий макс, падает зелёный
+		_r = 0;
+		_g = 1020 - color;
+		_b = 255;
+	}
 	else if (color > 1020 && color <= 1275) { 	// синий макс, растёт красный
-      _r = color - 1020;
-      _g = 0;
-      _b = 255;
-    }
+		_r = color - 1020;
+		_g = 0;
+		_b = 255;
+	}
 	else if (color > 1275 && color <= 1530) {	// красный макс, падает синий
-      _r = 255;
-      _g = 0;
-      _b = 1530 - color;
-    }
+		_r = 255;
+		_g = 0;
+		_b = 1530 - color;
+	}
 	GRGB::setRGB();
 }
 
@@ -452,7 +454,7 @@ void anyPWMinitRGB(byte prescaler) // 1 - 7
 	TCCR2B = prescaler;   // prescaler
 	#endif
 }
- 
+
 void anyPWMpinRGB(uint8_t pin) {
 	#if defined(__AVR_ATmega328P__)
 	anyPWMpinsRGB[pin] = 1;
@@ -468,28 +470,28 @@ void anyPWMRGB(byte pin, byte duty)
 #if (defined(__AVR_ATmega328P__) && ALLOW_ANYPWM)
 ISR(TIMER2_COMPA_vect)
 {
-  TCNT2 = 0;
-  anyPWMpinsRGB[0] && pwmsRGB[0] > pwmRGB ? PORTD |= B00000001 : PORTD &= B11111110;
-  anyPWMpinsRGB[1] && pwmsRGB[1] > pwmRGB ? PORTD |= B00000010 : PORTD &= B11111101;
-  anyPWMpinsRGB[2] && pwmsRGB[2] > pwmRGB ? PORTD |= B00000100 : PORTD &= B11111011;
-  anyPWMpinsRGB[3] && pwmsRGB[3] > pwmRGB ? PORTD |= B00001000 : PORTD &= B11110111;
-  anyPWMpinsRGB[4] && pwmsRGB[4] > pwmRGB ? PORTD |= B00010000 : PORTD &= B11101111;
-  anyPWMpinsRGB[5] && pwmsRGB[5] > pwmRGB ? PORTD |= B00100000 : PORTD &= B11011111;
-  anyPWMpinsRGB[6] && pwmsRGB[6] > pwmRGB ? PORTD |= B01000000 : PORTD &= B10111111;
-  anyPWMpinsRGB[7] && pwmsRGB[7] > pwmRGB ? PORTD |= B10000000 : PORTD &= B01111111;
-  anyPWMpinsRGB[8] && pwmsRGB[8] > pwmRGB ? PORTB |= B00000001 : PORTB &= B11111110;
-  anyPWMpinsRGB[9] && pwmsRGB[9] > pwmRGB ? PORTB |= B00000010 : PORTB &= B11111101;
-  anyPWMpinsRGB[10] && pwmsRGB[10] > pwmRGB ? PORTB |= B00000100 : PORTB &= B11111011;
-  anyPWMpinsRGB[11] && pwmsRGB[11] > pwmRGB ? PORTB |= B00001000 : PORTB &= B11110111;
-  anyPWMpinsRGB[12] && pwmsRGB[12] > pwmRGB ? PORTB |= B00010000 : PORTB &= B11101111;
-  anyPWMpinsRGB[13] && pwmsRGB[13] > pwmRGB ? PORTB |= B00100000 : PORTB &= B11011111;
-  anyPWMpinsRGB[14] && pwmsRGB[14] > pwmRGB ? PORTC |= B00000001 : PORTC &= B11111110;
-  anyPWMpinsRGB[15] && pwmsRGB[15] > pwmRGB ? PORTC |= B00000010 : PORTC &= B11111101;
-  anyPWMpinsRGB[16] && pwmsRGB[16] > pwmRGB ? PORTC |= B00000100 : PORTC &= B11111011;
-  anyPWMpinsRGB[17] && pwmsRGB[17] > pwmRGB ? PORTC |= B00001000 : PORTC &= B11110111;
-  anyPWMpinsRGB[18] && pwmsRGB[18] > pwmRGB ? PORTC |= B00010000 : PORTC &= B11101111;
-  anyPWMpinsRGB[19] && pwmsRGB[19] > pwmRGB ? PORTC |= B00100000 : PORTC &= B11011111;
+	TCNT2 = 0;
+	anyPWMpinsRGB[0] && pwmsRGB[0] > pwmRGB ? PORTD |= B00000001 : PORTD &= B11111110;
+	anyPWMpinsRGB[1] && pwmsRGB[1] > pwmRGB ? PORTD |= B00000010 : PORTD &= B11111101;
+	anyPWMpinsRGB[2] && pwmsRGB[2] > pwmRGB ? PORTD |= B00000100 : PORTD &= B11111011;
+	anyPWMpinsRGB[3] && pwmsRGB[3] > pwmRGB ? PORTD |= B00001000 : PORTD &= B11110111;
+	anyPWMpinsRGB[4] && pwmsRGB[4] > pwmRGB ? PORTD |= B00010000 : PORTD &= B11101111;
+	anyPWMpinsRGB[5] && pwmsRGB[5] > pwmRGB ? PORTD |= B00100000 : PORTD &= B11011111;
+	anyPWMpinsRGB[6] && pwmsRGB[6] > pwmRGB ? PORTD |= B01000000 : PORTD &= B10111111;
+	anyPWMpinsRGB[7] && pwmsRGB[7] > pwmRGB ? PORTD |= B10000000 : PORTD &= B01111111;
+	anyPWMpinsRGB[8] && pwmsRGB[8] > pwmRGB ? PORTB |= B00000001 : PORTB &= B11111110;
+	anyPWMpinsRGB[9] && pwmsRGB[9] > pwmRGB ? PORTB |= B00000010 : PORTB &= B11111101;
+	anyPWMpinsRGB[10] && pwmsRGB[10] > pwmRGB ? PORTB |= B00000100 : PORTB &= B11111011;
+	anyPWMpinsRGB[11] && pwmsRGB[11] > pwmRGB ? PORTB |= B00001000 : PORTB &= B11110111;
+	anyPWMpinsRGB[12] && pwmsRGB[12] > pwmRGB ? PORTB |= B00010000 : PORTB &= B11101111;
+	anyPWMpinsRGB[13] && pwmsRGB[13] > pwmRGB ? PORTB |= B00100000 : PORTB &= B11011111;
+	anyPWMpinsRGB[14] && pwmsRGB[14] > pwmRGB ? PORTC |= B00000001 : PORTC &= B11111110;
+	anyPWMpinsRGB[15] && pwmsRGB[15] > pwmRGB ? PORTC |= B00000010 : PORTC &= B11111101;
+	anyPWMpinsRGB[16] && pwmsRGB[16] > pwmRGB ? PORTC |= B00000100 : PORTC &= B11111011;
+	anyPWMpinsRGB[17] && pwmsRGB[17] > pwmRGB ? PORTC |= B00001000 : PORTC &= B11110111;
+	anyPWMpinsRGB[18] && pwmsRGB[18] > pwmRGB ? PORTC |= B00010000 : PORTC &= B11101111;
+	anyPWMpinsRGB[19] && pwmsRGB[19] > pwmRGB ? PORTC |= B00100000 : PORTC &= B11011111;
 
-  pwmRGB++;
+	pwmRGB++;
 }
 #endif

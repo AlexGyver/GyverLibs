@@ -6,7 +6,6 @@ void PIN_set(uint8_t pin, uint8_t x) {
 	if (pin < 8) bitWrite(PORTD, pin, x);
 	else if (pin < 14) bitWrite(PORTB, (pin - 8), x);
 	else if (pin < 20) bitWrite(PORTC, (pin - 14), x);
-	else return;
 }
 
 /* биты делителя называются CSn2/CSn1/CSn0 в регистре TCCRnB  где n- номер таймера*/
@@ -49,7 +48,7 @@ void PWM_default(byte pin) { // тут настроен максимально �
 	}
 }
 
-void PWM_frequency(byte pin, long freq, boolean correct) {
+void PWM_frequency(byte pin, long freq, modes correct) {
 	byte top0 , top2;
 	unsigned int top1;
 	freq = constrain(freq, 250, 200000);
@@ -199,7 +198,7 @@ void PWM_frequency(byte pin, long freq, boolean correct) {
 	}
 }
 
-void PWM_resolution(byte pin, byte res, boolean correct) {
+void PWM_resolution(byte pin, byte res, modes correct) {
 	res = constrain(res, 4, 16); // предел счета это кол-во ступеней (2 в степени)
 	unsigned int top = pow(2, res) - 1;
 	switch (pin) {
@@ -451,7 +450,7 @@ void PWM_prescaler(byte pin, byte mode) {
 	}
 }
 
-void PWM_mode(byte pin, byte mode) {		// 0 - FastPWM, 1 - Phase-correct PWM
+void PWM_mode(byte pin, modes mode) {		// 0 - FastPWM, 1 - Phase-correct PWM
 	if (pin == 5 || pin == 6) {
 		if (mode) TCCR0A |= _BV(WGM00);
 		else TCCR0A |= _BV(WGM00) | _BV(WGM01);

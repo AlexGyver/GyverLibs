@@ -2,20 +2,23 @@
 #define GyverPWM_h
 #include <Arduino.h>
 
-#define CORRECT_PWM 1
-#define FAST_PWM 0
+enum modes {
+	CORRECT_PWM = 1,
+	FAST_PWM = 0,
+};
+
 
 /*
 	Библиотека для расширенной генерации ШИМ на ATmega328 (Arduino UNO/Nano/Pro Mini...)
 	Разработчики: Egor Zaharov и AlexGyver
-	Версия библиотеки 1.2 от 13.07.2019
+	Версия библиотеки 1.3 от 09.09.2019
 */
 
 // ============== Функции для расширенной генерации ШИМ сигнала ==============
 
 // Данные функции убирают один ШИМ выход у 8-ми битных таймеров, оставляя нам ШИМ пины D3, D5, D9 и D10 на ATmega328
 
-void PWM_frequency(byte pin, long freq, boolean correct);
+void PWM_frequency(byte pin, long freq, modes correct);
 /*	PWM_freqency(пин, частота, режим) - запустить ШИМ с выбранной частотой
 	- Пины: D3 (таймер 2), D5 (таймер 0 - сломает millis/delay), D9 и D10 (таймер 1)
 	- Режим: 0 (FAST_PWM), 1 (CORRECT_PWM)
@@ -24,7 +27,7 @@ void PWM_frequency(byte pin, long freq, boolean correct);
 		- Разрядность в этом режиме приведена к 8 битам, на деле шаги изменения разные!
 */
 
-void PWM_resolution(byte pin, byte res, boolean correct);
+void PWM_resolution(byte pin, byte res, modes correct);
 /*	PWM_resolution(пин, разрядность, режим) - запустить ШИМ с выбранной разрядностью
 	- Пины: D3 (таймер 2), D5 (таймер 0 - сломает millis/delay), D9 и D10 (таймер 1)
 	- Режим: 0 (FAST_PWM), 1 (CORRECT_PWM)
@@ -141,7 +144,7 @@ void PWM_prescaler(byte pin, byte mode);
 	- Режим: 1-7, см. таблицу частот
 */
 
-void PWM_mode(byte pin, byte mode);
+void PWM_mode(byte pin, modes mode);
 /*	PWM_mode(пин, режим) - установить режим генерации ШИМ
 	- Пин: D3, D5, D6, D9, D10, D11
 	- Режим: 0 - FastPWM, 1 - Phase-correct, см. таблицу частот

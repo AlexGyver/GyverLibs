@@ -2,16 +2,21 @@
 #define GyverPID_h
 #include <Arduino.h>
 
-#define NORMAL 0
-#define REVERSE 1
-#define ON_ERROR 0
-#define ON_RATE 1
+enum modes {
+	NORMAL = 0,
+	REVERSE = 1,
+	ON_ERROR = 0,
+	ON_RATE = 1,
+};
+
 
 /*
 	GyverPID - библиотека классического PID регулятора для Arduino
 	- Время одного расчёта около 90 мкс
 	- Режим работы по величине или по её изменению (для интегрирующих процессов)
 	- Возвращает результат по встроенному таймеру или в ручном режиме
+	
+	Версия 1.1 - убраны дефайны
 */
 
 class GyverPID
@@ -31,8 +36,8 @@ class GyverPID
 	float getResultTimer();										// возвращает новое значение не ранее, чем через dt миллисекунд (встроенный таймер с периодом dt)
 	float getResultTimer(float new_setpoint, float new_input);	// тож самое, но принимает setpoint и input
 		
-	void setDirection(boolean direction);						// направление регулирования: NORMAL (0) или REVERSE (1)
-	void setMode(boolean mode);									// режим: работа по входной ошибке ON_ERROR (0) или по изменению ON_RATE (1)
+	void setDirection(modes direction);						// направление регулирования: NORMAL (0) или REVERSE (1)
+	void setMode(modes mode);									// режим: работа по входной ошибке ON_ERROR (0) или по изменению ON_RATE (1)
 	void setLimits(float min_output, float max_output);			// лимит выходной величины (например для ШИМ ставим 0-255)
 	void setDt(int16_t new_dt);									// установка времени дискретизации (для getResultTimer)
 	
