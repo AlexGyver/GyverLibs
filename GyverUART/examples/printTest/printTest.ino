@@ -16,6 +16,9 @@ const char *data10[] = {
   "CHEBUREK",
 };
 
+byte data11 = 0b11101011;
+uint32_t data12 = 0xFAB666;
+
 void setup() {
   uartBegin();
   uartPrintln(data1);
@@ -30,6 +33,8 @@ void setup() {
   uartPrintln("KEK KEK");
   uartPrintln(F("KEK KEK MACRO"));
   uartPrintln(data10[2]);
+  uartPrintln(data11, BIN);
+  uartPrintln(data12, HEX);
 }
 
 void loop() {
