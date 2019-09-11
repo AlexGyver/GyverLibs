@@ -16,7 +16,7 @@ void watchdog_reset(void) {
 
 /* Полное отключение watchdog'a */
 void watchdog_disable(void) {
-  WDTCSR |= (1 << WDCE); // разрешение на вмешательство
+  WDTCSR |= (1 << WDCE) | (1 << WDE); // разрешение на вмешательство
   WDTCSR = 0; // обнуление регистра wdt
 }
 

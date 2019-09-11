@@ -570,7 +570,7 @@ void PWM_TMR1_10BIT();	// Установить таймер 1 (ШИМ на D9 и
 ---
 
 <a id="GyverWDT"></a>
-### GyverWDT v1.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverWDT/GyverWDT.zip)
+### GyverWDT v1.1 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverWDT/GyverWDT.zip)
 Библиотека для расширенной и удобной работы с watchdog
 - Перезагрузка по прерыванию
 - Вызов обычных прерываний
