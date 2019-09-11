@@ -6,6 +6,7 @@
 # Datatypes (KEYWORD1)
 #######################################
 GyverUART	KEYWORD1
+uart	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)

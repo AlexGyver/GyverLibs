@@ -3,9 +3,10 @@
 static volatile char _UART_RX_BUFFER[UART_RX_BUFFER_SIZE];
 static volatile uint8_t _UART_RX_BUFFER_HEAD;
 static volatile uint8_t _UART_RX_BUFFER_TAIL;
+uint32_t _UART_TIMEOUT = 100;
 
-// ===== INIT =====
-void uartBegin(uint32_t baudrate){
+// =========================== INIT ========================
+void GyverUart::begin(uint32_t baudrate){
 	uint16_t speed = (F_CPU / (8L * baudrate)) - 1;
 	UBRR0H = highByte(speed);
 	UBRR0L = lowByte(speed);
@@ -15,11 +16,11 @@ void uartBegin(uint32_t baudrate){
 	_UART_RX_BUFFER_HEAD = _UART_RX_BUFFER_TAIL = 0;
 }
 
-void uartEnd(){
+void GyverUart::end(){
 	UCSR0B = 0;
 }
 
-// ===== READ =====
+// =========================== READ ============================
 ISR(USART_RX_vect) {
 	if (bit_is_set(UCSR0A, UPE0)) UDR0; // Не сохранять новые данные если parity error
 	else {
@@ -33,42 +34,42 @@ ISR(USART_RX_vect) {
 	}
 }
 
-char uartRead() {
+char GyverUart::read() {
 	if (_UART_RX_BUFFER_HEAD == _UART_RX_BUFFER_TAIL) return -1;
 	unsigned char c = _UART_RX_BUFFER[_UART_RX_BUFFER_TAIL];
 	_UART_RX_BUFFER_TAIL = (_UART_RX_BUFFER_TAIL + 1) % UART_RX_BUFFER_SIZE;
 	return c;
 }
 
-char uartPeek() {
+char GyverUart::peek() {
 	//return _UART_RX_BUFFER[0];
 	return _UART_RX_BUFFER_HEAD != _UART_RX_BUFFER_TAIL? _UART_RX_BUFFER[_UART_RX_BUFFER_TAIL]: -1;
 }
 
-uint8_t uartAvailable() {
+uint8_t GyverUart::available() {
 	return ((unsigned int)(UART_RX_BUFFER_SIZE + _UART_RX_BUFFER_HEAD - _UART_RX_BUFFER_TAIL)) % UART_RX_BUFFER_SIZE;
 }
 
-boolean uartAvailableForWrite() {return 1;}
+boolean GyverUart::availableForWrite() {return 1;}
 
-void uartClear() {
+void GyverUart::clear() {
 	_UART_RX_BUFFER_HEAD = _UART_RX_BUFFER_TAIL = 0;
 }
 
-uint32_t _UART_TIMEOUT = 100;
-void uartSetTimeout(int timeout) {
+
+void GyverUart::setTimeout(int timeout) {
 	_UART_TIMEOUT = timeout;
 }
 
-int32_t uartParseInt() {
+int32_t GyverUart::parseInt() {
 	uint32_t timeoutTime = millis();
 	uint32_t value = 0;
 	boolean negative = false;
 
 	while (millis() - timeoutTime < _UART_TIMEOUT) {
-		if (uartAvailable()) {
+		if (available()) {
 			timeoutTime = millis();
-			char newByte = uartRead();
+			char newByte = read();
 			if (newByte == '-') negative = true;
 			else {
 				value += (newByte - '0');
@@ -80,35 +81,35 @@ int32_t uartParseInt() {
 	return (!negative) ? value : -value;
 }
 
-boolean uartParsePacket(int *intArray) {
-	if (uartAvailable()) {
+boolean GyverUart::parsePacket(int *intArray) {
+	if (available()) {
 		uint32_t timeoutTime = millis();
 		int value = 0;
 		byte index = 0;
 		boolean parseStart = 0;
 
 		while (millis() - timeoutTime < 100) {
-			if (uartAvailable()) {
+			if (available()) {
 				timeoutTime = millis();
-				if (uartPeek() == '$') {
+				if (peek() == '$') {
 					parseStart = true;
-					uartRead();
+					read();
 					continue;
 				}
 				if (parseStart) {
-					if (uartPeek() == ' ') {
+					if (peek() == ' ') {
 						intArray[index] = value / 10;
 						value = 0;
 						index++;
-						uartRead();
+						read();
 						continue;
 					}
-					if (uartPeek() == ';') {
+					if (peek() == ';') {
 						intArray[index] = value / 10;
-						uartRead();
+						read();
 						return true;
 					}
-					value += uartRead() - '0';
+					value += read() - '0';
 					value *= 10;
 				}
 			}
@@ -117,7 +118,7 @@ boolean uartParsePacket(int *intArray) {
 	return false;
 }
 
-float uartParseFloat() {
+float GyverUart::parseFloat() {
 	uint32_t timeoutTime = millis();
 	float whole = 0.0;
 	float fract = 0.0;
@@ -126,9 +127,9 @@ float uartParseFloat() {
 	byte fractSize = 0;
 
 	while (millis() - timeoutTime < 100) {
-		if (uartAvailable()) {
+		if (available()) {
 			timeoutTime = millis();
-			char newByte = uartRead();
+			char newByte = read();
 			if (newByte == '-') {
 				negative = true;
 				continue;
@@ -153,53 +154,77 @@ float uartParseFloat() {
 	return (!negative) ? whole : -whole;
 }
 
-String uartReadString() {
+String GyverUart::readString() {
 	uint32_t timeoutTime = millis();
 	String buf = "";
 	while (millis() - timeoutTime < _UART_TIMEOUT) {
-		if (uartAvailable()) {
+		if (available()) {
 			timeoutTime = millis();
-			buf += uartRead();			
+			buf += read();			
 		}
 	}
 	return buf;
 }
 
-// ===== WRITE =====
+String GyverUart::readStringUntil(char terminator) {
+	uint32_t timeoutTime = millis();
+	String buf = "";
+	while (millis() - timeoutTime < _UART_TIMEOUT) {
+		if (available()) {
+			if (peek() == terminator) {
+				clear();
+				return buf;
+			}
+			timeoutTime = millis();
+			buf += read();
+		}
+	}
+	return buf;
+}
 
-void uartWrite(byte data){	
+// ====================== WRITE ===========================
+
+void GyverUart::write(byte data){	
 	while (!(UCSR0A & (1<<UDRE0)));
 	UDR0 = data;
 }
 
-void uartPrintln(void) {
-	uartWrite('\r');
-	uartWrite('\n');
+void GyverUart::println(void) {
+	write('\r');
+	write('\n');
 }
 
-void uartPrint(int8_t data, byte base)		{printHelper( (long) data, base);}
-void uartPrint(uint8_t data, byte base)		{printHelper( (uint32_t) data, base);}
-void uartPrint(int16_t data, byte base)		{printHelper( (long) data, base);}
-void uartPrint(uint16_t data, byte base)	{printHelper( (uint32_t) data, base);}
-void uartPrint(int32_t data, byte base)		{printHelper( (long) data, base);}
-void uartPrint(uint32_t data, byte base)	{printHelper( (uint32_t) data, base);}
+void GyverUart::print(char data) {
+	write(data);
+}
+void GyverUart::println(char data) {
+	print(data);
+	println();
+}
 
-void uartPrintln(int8_t data, byte base)	{printHelper( (long) data, base); uartPrintln();}
-void uartPrintln(uint8_t data, byte base)	{printHelper( (uint32_t) data, base); uartPrintln();}
-void uartPrintln(int16_t data, byte base)	{printHelper( (long) data, base); uartPrintln();}
-void uartPrintln(uint16_t data, byte base)	{printHelper( (uint32_t) data, base); uartPrintln();}
-void uartPrintln(int32_t data, byte base)	{printHelper( (long) data, base); uartPrintln();}
-void uartPrintln(uint32_t data, byte base)	{printHelper( (uint32_t) data, base); uartPrintln();}
+void GyverUart::print(int8_t data, byte base)		{printHelper( (long) data, base);}
+void GyverUart::print(uint8_t data, byte base)		{printHelper( (uint32_t) data, base);}
+void GyverUart::print(int16_t data, byte base)		{printHelper( (long) data, base);}
+void GyverUart::print(uint16_t data, byte base)	{printHelper( (uint32_t) data, base);}
+void GyverUart::print(int32_t data, byte base)		{printHelper( (long) data, base);}
+void GyverUart::print(uint32_t data, byte base)	{printHelper( (uint32_t) data, base);}
+
+void GyverUart::println(int8_t data, byte base)	{printHelper( (long) data, base); println();}
+void GyverUart::println(uint8_t data, byte base)	{printHelper( (uint32_t) data, base); println();}
+void GyverUart::println(int16_t data, byte base)	{printHelper( (long) data, base); println();}
+void GyverUart::println(uint16_t data, byte base)	{printHelper( (uint32_t) data, base); println();}
+void GyverUart::println(int32_t data, byte base)	{printHelper( (long) data, base); println();}
+void GyverUart::println(uint32_t data, byte base)	{printHelper( (uint32_t) data, base); println();}
 
 
-void printHelper(int32_t data, byte base) {
+void GyverUart::printHelper(int32_t data, byte base) {
 	if (data < 0) {
-		uartWrite(45);
+		write(45);
 		data = -data;
 	}
 	printHelper((uint32_t) data, base);
 }
-void printHelper(uint32_t data, byte base) {
+void GyverUart::printHelper(uint32_t data, byte base) {
 	if (base == 10) {
 		printBytes(data);
 	} else {
@@ -212,12 +237,12 @@ void printHelper(uint32_t data, byte base) {
 			data /= base;
 			*--str = c < 10 ? c + '0' : c + 'A' - 10;
 		} while (data);
-		uartPrint(str);
+		print(str);
 	}
 }
 
 
-void printBytes(uint32_t data) {
+void GyverUart::printBytes(uint32_t data) {
 	int8_t bytes[10];
 	byte amount;
 	for (byte i = 0; i < 10; i++) {
@@ -229,55 +254,51 @@ void printBytes(uint32_t data) {
 		}
 	}	
 	for (int8_t i = amount; i >= 0; i--) {
-		uartWrite(bytes[i] + '0');
+		write(bytes[i] + '0');
 	}
 }
 
-void uartPrint(double data, byte decimals) {
+void GyverUart::print(double data, byte decimals) {
 	if (data < 0) {
-		uartWrite(45);
+		write(45);
 		data = -data;
 	}
 	uint32_t integer = data;
 	printBytes(integer);
-	uartWrite(46);	// точка
+	write(46);	// точка
 	data -= integer;
 	for (byte i = 0; i < decimals; i++) {	
 		data *= 10.0;
-		uartPrint((byte)data);
+		print((byte)data);
 		data -= (byte)data;
 	}
 }
 
-void uartPrint(double data) {
-	uartPrint(data, 2);
-}
-
-void uartPrintln(double data, byte decimals) {
-	uartPrint(data, decimals);
-	uartPrintln();
+void GyverUart::println(double data, byte decimals) {
+	print(data, decimals);
+	println();
 }
 
 
-void uartPrint(String data) {
+void GyverUart::print(String data) {
 	byte stringSize = data.length();
 	for (byte i = 0; i < stringSize; i++) {
-		uartWrite(data[i]);
+		write(data[i]);
 	}
 }
-void uartPrintln(String data) {
-	uartPrint(data);
-	uartPrintln();
+void GyverUart::println(String data) {
+	print(data);
+	println();
 }
 
-void uartPrint(char data[]) {
+void GyverUart::print(char data[]) {
 	byte i = 0;
 	while (data[i] != '\0') {
-		uartWrite(data[i]);
+		write(data[i]);
 		i++;
 	}
 }
-void uartPrintln(char data[]) {
-	uartPrint(data);
-	uartPrintln();
+void GyverUart::println(char data[]) {
+	print(data);
+	println();
 }

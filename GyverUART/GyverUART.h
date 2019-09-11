@@ -5,6 +5,7 @@
 	Отдельное спасибо Egor 'Nich1con' Zaharov за помощь с регистрами
 	Версия 1.2 - добавлен циклический буфер
 	Версия 1.3 - поправлен вывод float и добавлен вывод с базисом
+	Версия 1.4 - либа собрана в класс, добавлена readStringUntil
 */
 
 #ifndef GyverUART_h
@@ -17,46 +18,55 @@
 #define HEX 16
 #define OCT 8
 
-void uartBegin(uint32_t baudrate = 9600);
-void uartEnd();
+class GyverUart {
+public:
+	void begin(uint32_t baudrate = 9600);
+	void end();
 
-uint8_t uartAvailable();
-boolean uartAvailableForWrite();
-char uartRead();
-char uartPeek();
-void uartClear();
+	uint8_t available();
+	boolean availableForWrite();
+	char read();
+	char peek();
+	void clear();
 
-void uartSetTimeout(int timeout);
-int32_t uartParseInt();
-float uartParseFloat();
-String uartReadString();
-boolean uartParsePacket(int *intArray);
+	void setTimeout(int timeout);
+	int32_t parseInt();
+	float parseFloat();
+	String readString();
+	String readStringUntil(char terminator);
+	boolean parsePacket(int *intArray);
 
-void uartWrite(byte data);
-void uartPrintln(void);
+	void write(byte data);
+	void println(void);
 
-void uartPrint(int8_t data, byte base = DEC);
-void uartPrint(uint8_t data, byte base = DEC);
-void uartPrint(int16_t data, byte base = DEC);
-void uartPrint(uint16_t data, byte base = DEC);
-void uartPrint(int32_t data, byte base = DEC);
-void uartPrint(uint32_t data, byte base = DEC);
-void uartPrint(double data, byte decimals = 2);
-void uartPrint(String data);
-void uartPrint(char data[]);
+	void print(char data);
+	void print(int8_t data, byte base = DEC);
+	void print(uint8_t data, byte base = DEC);
+	void print(int16_t data, byte base = DEC);
+	void print(uint16_t data, byte base = DEC);
+	void print(int32_t data, byte base = DEC);
+	void print(uint32_t data, byte base = DEC);
+	void print(double data, byte decimals = 2);
+	void print(String data);
+	void print(char data[]);
 
-void uartPrintln(int8_t data, byte base = DEC);
-void uartPrintln(uint8_t data, byte base = DEC);
-void uartPrintln(int16_t data, byte base = DEC);
-void uartPrintln(uint16_t data, byte base = DEC);
-void uartPrintln(int32_t data, byte base = DEC);
-void uartPrintln(uint32_t data, byte base = DEC);
-void uartPrintln(double data, byte decimals = 2);
-void uartPrintln(String data);
-void uartPrintln(char data[]);
+	void println(char data);
+	void println(int8_t data, byte base = DEC);
+	void println(uint8_t data, byte base = DEC);
+	void println(int16_t data, byte base = DEC);
+	void println(uint16_t data, byte base = DEC);
+	void println(int32_t data, byte base = DEC);
+	void println(uint32_t data, byte base = DEC);
+	void println(double data, byte decimals = 2);
+	void println(String data);
+	void println(char data[]);
+	
+private:
+	void printHelper(int32_t data, byte base);
+	void printHelper(uint32_t data, byte base);
+	void printBytes(uint32_t data);	
+};
 
-void printHelper(int32_t data, byte base);
-void printHelper(uint32_t data, byte base);
-void printBytes(uint32_t data);
+extern GyverUart uart;
 
 #endif

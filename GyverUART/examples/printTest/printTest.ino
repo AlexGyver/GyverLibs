@@ -1,5 +1,6 @@
 #include <GyverUART.h>
 
+char data0 = 'b';
 int8_t data1 = -50;
 uint8_t data2 = 125;
 int16_t data3 = -2000;
@@ -20,21 +21,22 @@ byte data11 = 0b11101011;
 uint32_t data12 = 0xFAB666;
 
 void setup() {
-  uartBegin();
-  uartPrintln(data1);
-  uartPrintln(data2);
-  uartPrintln(data3);
-  uartPrintln(data4);
-  uartPrintln(data5);
-  uartPrintln(data6);
-  uartPrintln(data7);
-  uartPrintln(data8, 3);
-  uartPrintln(data9);
-  uartPrintln("KEK KEK");
-  uartPrintln(F("KEK KEK MACRO"));
-  uartPrintln(data10[2]);
-  uartPrintln(data11, BIN);
-  uartPrintln(data12, HEX);
+  uart.begin();
+  uart.println(data0);
+  uart.println(data1);
+  uart.println(data2);
+  uart.println(data3);
+  uart.println(data4);
+  uart.println(data5);
+  uart.println(data6);
+  uart.println(data7);
+  uart.println(data8, 3);
+  uart.println(data9);
+  uart.println("KEK KEK");
+  uart.println(F("KEK KEK MACRO"));
+  uart.println(data10[2]);
+  uart.println(data11, BIN);
+  uart.println(data12, HEX);
 }
 
 void loop() {
