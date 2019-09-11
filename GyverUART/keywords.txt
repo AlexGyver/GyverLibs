@@ -12,20 +12,22 @@ uart	KEYWORD1
 # Methods and Functions (KEYWORD2)
 #######################################
 
-uartBegin	KEYWORD2
-uartEnd	KEYWORD2
-uartPeek	KEYWORD2
-uartClear	KEYWORD2
-uartRead	KEYWORD2
-uartWrite	KEYWORD2	
-uartPrint	KEYWORD2
-uartPrintln	KEYWORD2
-uartAvailable	KEYWORD2
-uartSetTimeout	KEYWORD2
-uartParseInt	KEYWORD2
-uartReadString	KEYWORD2
-uartParseFloat	KEYWORD2
-uartParsePacket	KEYWORD2
+begin	KEYWORD2
+end	KEYWORD2
+peek	KEYWORD2
+flush	KEYWORD2
+clear	KEYWORD2
+read	KEYWORD2
+write	KEYWORD2	
+print	KEYWORD2
+println	KEYWORD2
+available	KEYWORD2
+setTimeout	KEYWORD2
+parseInt	KEYWORD2
+readString	KEYWORD2
+parseFloat	KEYWORD2
+parsePacket	KEYWORD2
+
 
 #######################################
 # Constants (LITERAL1)
