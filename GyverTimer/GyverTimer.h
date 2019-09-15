@@ -23,8 +23,8 @@ enum mode {
 class GTimer_ms
 {
   public:
-	GTimer_ms();								// объявление таймера (МИЛЛИСЕКУНДНЫЙ)
-	GTimer_ms(uint32_t interval);				// объявление таймера с указанием интервала
+	GTimer_ms();							// объявление таймера (МИЛЛИСЕКУНДНЫЙ)
+	GTimer_ms(uint32_t interval);			// объявление таймера с указанием интервала
 	void setInterval(uint32_t interval);	// установка интервала работы таймера
 	void setMode(mode mode);				// установка типа работы: AUTO или MANUAL (MANUAL нужно вручную сбрасывать reset)
 	boolean isReady();						// возвращает true, когда пришло время. Сбрасывается в false сам (AUTO) или вручную (MANUAL)
