@@ -33,6 +33,7 @@
 * [microWire](#microWire) - микро библиотека для работы с i2c
 * [microDS3231](#microDS3231) - лёгкая библиотека для RTC DS3231
 * [microLiquidCrystal_I2C](#microLiquidCrystal_I2C) - облегчённая библиотека для LCD дисплея
+* [microDS18B20(#microDS18B20) - микро библиотека для работы с датчиком температуры ds18b20
 * [GyverUART](#GyverUART) - облегчённый и ускоренный Serial
 * [minimLibs](#minimLibs) - набор классов для работы с железками
 
@@ -103,6 +104,26 @@ uint8_t getDay(void);           // получить день недели
 uint8_t getDate(void);          // получить число
 uint16_t getYear(void);         // получить год
 uint8_t getMonth(void);         // получить месяц
+```
+</p>
+</details>
+
+---
+
+<a id="microDS18B20"></a>
+### microDS18B20 v1.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microDS18B20/microDS18B20.zip)
+Ультра лёгкая библиотека для работы с датчиком температуры Dallas DS18B20
+- Разработано by Egor 'Nich1con' Zaharov
+#### Методы и функции библиотеки
+<details>
+<summary>РАЗВЕРНУТЬ</summary>
+<p>
+Смотри примеры в папке examples!
+
+```C
+MicroDS18B20(uint8_t pin);  // конструктор
+void requestTemp();         // запросить температуру
+float getTemp(void);        // получить температуру
 ```
 </p>
 </details>
