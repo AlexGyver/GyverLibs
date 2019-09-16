@@ -150,7 +150,7 @@ float getTemp(void);        // получить температуру
 ---
 
 <a id="GyverButton"></a>
-### GyverButton v2.13 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverButton/GyverButton.zip)
+### GyverButton v2.14 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverButton/GyverButton.zip)
 Библиотека для многофункциональной отработки нажатия кнопок с Arduino. Возможности:
 - Работа с нормально замкнутыми и нормально разомкнутыми кнопками
 - Работа с подключением PULL_UP и PULL_DOWN
@@ -216,7 +216,7 @@ boolean isStep();       // возвращает true по таймеру setStep
 ---
 
 <a id="GyverEncoder "></a>
-### GyverEncoder v3.5 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverEncoder/GyverEncoder.zip)
+### GyverEncoder v3.6 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverEncoder/GyverEncoder.zip)
 Библиотека для отработки энкодера с Arduino. Возможности:
 - Отработка поворота с антидребезгом
 - Отработка нажатия кнопки с антидребезгом
@@ -431,7 +431,7 @@ void WDT_detachInterrupt(void);
 ---
 
 <a id="GyverPWM"></a>
-### GyverPWM v1.3 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverPWM/GyverPWM.zip)
+### GyverPWM v1.34 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverPWM/GyverPWM.zip)
 Библиотека для расширенной генерации ШИМ на Arduino UNO/NANO/MINI (ATmega328p)
 - Генерация ШИМ любой частоты от 250 Гц до 200 кГц на пинах D3, D5, D9 и D10
 - Изменение разрядности ШИМ (пины D3 и D5: 4-8 бит, пины D9 и D10: 4-16 бит) с максимальной частотой (пример: 4 бита - 1 МГц ШИМ) на пинах D3, D5, D9 и D10. Или 12 бит ШИМ на частоте 4 кГЦ (пины 9 и 10)
@@ -613,7 +613,7 @@ void watchdog_enable(uint8_t prescaler);   // Включить и настрои
 ---
 
 <a id="ServoSmooth"></a>
-### ServoSmooth v1.3 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/ServoSmooth/ServoSmooth.zip)
+### ServoSmooth v1.4 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/ServoSmooth/ServoSmooth.zip)
 Библиотека для плавного управления сервоприводами
 - Является дополнением к стандартной библиотеке Servo
 - Настройка максимальной скорости сервопривода
@@ -726,7 +726,7 @@ float getDelta();	// получить аппроксимированное из�
 ---
 
 <a id="GyverTimer"></a>
-### GyverTimer v2.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverTimer/GyverTimer.zip)
+### GyverTimer v2.1 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverTimer/GyverTimer.zip)
 Компактная альтернатива конструкции таймера с millis() / micros(), обеспечивающая удобную мультизадачность на Arduino
 - Вся работа с таймером заменяется одной функцией
 - Миллисекундный и микросекундный таймер
@@ -756,7 +756,7 @@ void start();                         // продолжить
 ---
 
 <a id="GyverHacks"></a>
-### GyverHacks v2.9 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverHacks/GyverHacks.zip)
+### GyverHacks v2.10 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverHacks/GyverHacks.zip)
 Библиотека с некоторыми удобными хаками для Arduino UNO/NANO/MINI (atmega328):
 - Быстрые аналоги стандартных функций чтения/записи (v2.8 исправлен баг)
 - Изменение частоты ШИМ пинов (3, 5, 6, 9, 10, 11)
@@ -857,7 +857,7 @@ float getTemp();		// получить примерную температуру 
 ---
 
 <a id="GyverMotor"></a>
-### GyverMotor v1.1 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverMotor/GyverMotor.zip)
+### GyverMotor v1.2 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverMotor/GyverMotor.zip)
 Библиотека для удобного управления моторчиками через драйвер полного моста для Arduino
 - Контроль скорости и направления вращения
 - Встроенный инструмент для настройки частоты ШИМ
@@ -906,7 +906,7 @@ void setDirection(boolean direction);
 ---
 
 <a id="GyverRGB"></a>
-### GyverRGB v1.14 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverRGB/GyverRGB.zip)
+### GyverRGB v1.15 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverRGB/GyverRGB.zip)
 Библиотека для удобного управления RGB светодиодами и лентами для Arduino
 - 1530 значений для colorWheel
 - Работа в пространстве RGB
@@ -1055,7 +1055,7 @@ void twistByte(uint8_t bit0, uint8_t bit1, uint8_t bit2, uint8_t bit3, int delay
 ---
 
 <a id="GyverPID"></a>
-### GyverPID v1.1 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverPID/GyverPID.zip)
+### GyverPID v1.2 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverPID/GyverPID.zip)
 Библиотека классического PID регулятора для Arduino
 - Время одного расчёта около 90 мкс
 - Режим работы по величине или по её изменению (для интегрирующих процессов)
@@ -1098,7 +1098,7 @@ float kd;
 ---
 
 <a id="GyverRelay"></a>
-### GyverRelay v1.1 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverRelay/GyverRelay.zip)
+### GyverRelay v1.2 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverRelay/GyverRelay.zip)
 Библиотека классического релейного регулятора для Arduino
 - Обратная связь по скорости изменения величины
 - Настройка гистерезиса, коэффициента усиления ОС, направления регулирования

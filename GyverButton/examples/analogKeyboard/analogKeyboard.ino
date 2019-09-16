@@ -1,5 +1,5 @@
 #include "GyverButton.h"
-
+// аналоговая клавиатура подключена на А7. Схему смотри на странице библиотеки
 // пин подключения не важен, лучше какой-нибудь ненужный
 GButton myButt1(3, LOW_PULL, NORM_OPEN);
 GButton myButt2(3, LOW_PULL, NORM_OPEN);

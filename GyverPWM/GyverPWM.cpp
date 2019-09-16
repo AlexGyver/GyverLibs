@@ -48,7 +48,7 @@ void PWM_default(byte pin) { // тут настроен максимально �
 	}
 }
 
-void PWM_frequency(byte pin, long freq, modes correct) {
+void PWM_frequency(byte pin, long freq, uint8_t correct) {
 	byte top0 , top2;
 	unsigned int top1;
 	freq = constrain(freq, 250, 200000);
@@ -198,7 +198,7 @@ void PWM_frequency(byte pin, long freq, modes correct) {
 	}
 }
 
-void PWM_resolution(byte pin, byte res, modes correct) {
+void PWM_resolution(byte pin, byte res, uint8_t correct) {
 	res = constrain(res, 4, 16); // предел счета это кол-во ступеней (2 в степени)
 	unsigned int top = pow(2, res) - 1;
 	switch (pin) {
@@ -450,7 +450,7 @@ void PWM_prescaler(byte pin, byte mode) {
 	}
 }
 
-void PWM_mode(byte pin, modes mode) {		// 0 - FastPWM, 1 - Phase-correct PWM
+void PWM_mode(byte pin, uint8_t mode) {		// 0 - FastPWM, 1 - Phase-correct PWM
 	if (pin == 5 || pin == 6) {
 		if (mode) TCCR0A |= _BV(WGM00);
 		else TCCR0A |= _BV(WGM00) | _BV(WGM01);

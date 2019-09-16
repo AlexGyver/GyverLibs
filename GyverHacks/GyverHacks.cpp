@@ -381,7 +381,7 @@ void GTimer::setInterval(uint32_t interval) {
 	_interval = interval;
 	GTimer::reset();
 }
-void GTimer::setMode(modes mode) {
+void GTimer::setMode(uint8_t mode) {
 	_mode = mode;
 }
 

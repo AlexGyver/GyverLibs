@@ -86,7 +86,7 @@ GRGB::GRGB(uint8_t rpin, uint8_t gpin, uint8_t bpin) {
 	pinMode(_bpin, OUTPUT);
 }
 
-GRGB::GRGB(uint8_t rpin, uint8_t gpin, uint8_t bpin, modes pwmmode) {
+GRGB::GRGB(uint8_t rpin, uint8_t gpin, uint8_t bpin, uint8_t pwmmode) {
 	_PWMmode = pwmmode;
 	
 	_rpin = rpin;
@@ -119,7 +119,7 @@ void GRGB::highFrequency(long frequency) {
 	_highFreqFlag = true;
 }
 
-void GRGB::setDirection(modes direction) {
+void GRGB::setDirection(uint8_t direction) {
 	_reverse_flag = direction;
 }
 

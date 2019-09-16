@@ -12,8 +12,8 @@
 	- Отработка "быстрого поворота"
 	- Версия 3+ более оптимальная и быстрая
 	
-	Текущая версия: 3.5 от 09.09.2019
-	- Убраны дефайны настроек
+	Текущая версия: 3.6 от 16.09.2019
+	- Возвращены дефайны настроек
 */
 
 // настройка антидребезга энкодера, кнопки и таймаута удержания
@@ -41,26 +41,24 @@ typedef struct
 } GyverEncoderFlags;
 #pragma pack(pop)
 
-enum modes {
-	TYPE1 = 0,		// полушаговый энкодер
-	TYPE2 = 1,		// полношаговый
-	NORM = 0,		// направление вращения обычное
-	REVERSE = 1,	// обратное
-	MANUAL = 0,		// нужно вызывать функцию tick() вручную
-	AUTO = 1,		// tick() входит во все остальные функции и опрашивается сама!
-};
+#define TYPE1 0		// полушаговый энкодер
+#define TYPE2 1		// полношаговый
+#define NORM 0		// направление вращения обычное
+#define REVERSE 1	// обратное
+#define MANUAL 0		// нужно вызывать функцию tick() вручную
+#define AUTO 1		// tick() входит во все остальные функции и опрашивается сама!
 
 class Encoder
 {
 public:
 	Encoder(uint8_t clk, uint8_t dt);							// CLK, DT	
 	Encoder(uint8_t clk, uint8_t dt, uint8_t sw);				// CLK, DT, SW
-	Encoder(uint8_t clk, uint8_t dt, uint8_t sw, modes type); // CLK, DT, SW, тип (TYPE1 / TYPE2) TYPE1 одношаговый, TYPE2 двухшаговый. Если ваш энкодер работает странно, смените тип
+	Encoder(uint8_t clk, uint8_t dt, uint8_t sw, uint8_t type); // CLK, DT, SW, тип (TYPE1 / TYPE2) TYPE1 одношаговый, TYPE2 двухшаговый. Если ваш энкодер работает странно, смените тип
 	
 	void tick();							// опрос энкодера, нужно вызывать постоянно или в прерывании
-	void setType(modes type);				// TYPE1 / TYPE2 - тип энкодера TYPE1 одношаговый, TYPE2 двухшаговый. Если ваш энкодер работает странно, смените тип
-	void setTickMode(modes tickMode); 	// MANUAL / AUTO - ручной или автоматический опрос энкодера функцией tick(). (по умолчанию ручной)
-	void setDirection(modes direction);	// NORM / REVERSE - направление вращения энкодера
+	void setType(uint8_t type);				// TYPE1 / TYPE2 - тип энкодера TYPE1 одношаговый, TYPE2 двухшаговый. Если ваш энкодер работает странно, смените тип
+	void setTickMode(uint8_t tickMode); 	// MANUAL / AUTO - ручной или автоматический опрос энкодера функцией tick(). (по умолчанию ручной)
+	void setDirection(uint8_t direction);	// NORM / REVERSE - направление вращения энкодера
 	void setFastTimeout(int timeout);		// установка таймаута быстрого поворота
 	
 	boolean isTurn();						// возвращает true при любом повороте, сама сбрасывается в false

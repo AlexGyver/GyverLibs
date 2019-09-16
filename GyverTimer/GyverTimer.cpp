@@ -14,7 +14,7 @@ void GTimer_ms::setInterval(uint32_t interval) {
 	_interval = interval;
 	GTimer_ms::reset();
 }
-void GTimer_ms::setMode(mode mode) {
+void GTimer_ms::setMode(uint8_t mode) {
 	_mode = mode;
 }
 void GTimer_ms::start() {
@@ -56,7 +56,7 @@ void GTimer_us::setInterval(uint32_t interval) {
 	_interval = interval;
 	_timer = micros();
 }
-void GTimer_us::setMode(mode mode) {
+void GTimer_us::setMode(uint8_t mode) {
 	_mode = mode;
 }
 void GTimer_us::start() {

@@ -8,16 +8,14 @@
 	- Встроенный инструмент для настройки частоты ШИМ
 	- Работа с 10 битным ШИМом
 	- Версия 1.1 - убраны дефайны
+	- Версия 1.2 - возвращены дефайны
 */
 
-enum modes {
-	NORM,
-	REVERSE,
-	FORWARD = 0,
-	BACKWARD,
-	STOP,
-};
-
+#define NORM 0
+#define REVERSE 1
+#define FORWARD 0
+#define BACKWARD 1
+#define STOP 2
 
 void PWM10bit();									// установка пинов 9 и 10 в режим 10 бит (управляется сигнало 0-1023)
 
@@ -38,12 +36,12 @@ public:
 	
 	void setSpeed10bit(uint16_t duty);			// установка скорости в режиме 10 бит (0-1023) для пинов 9 и 10
 	
-	void setMode(modes mode);					// режим работы мотора:
+	void setMode(uint8_t mode);					// режим работы мотора:
 	// FORWARD - вперёд
 	// BACKWARD - назад
 	// STOP - остановить												
 	
-	void setDirection(modes direction);		// направление вращения (один раз настроить в setup вместо переподключения мотора)
+	void setDirection(uint8_t direction);		// направление вращения (один раз настроить в setup вместо переподключения мотора)
 	// NORM - обычное
 	// REVERSE - обратное
 	

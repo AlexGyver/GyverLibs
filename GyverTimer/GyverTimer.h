@@ -13,20 +13,19 @@
 		- Защита от пропусков
 		- Защита от переполнения millis()
 		- Убраны дефайны
+	- Версия 2.1 - возвращены дефайны
 */
 
-enum mode {
-	MANUAL,
-	AUTO,
-};
+#define MANUAL 0
+#define AUTO 1
 
 class GTimer_ms
 {
   public:
-	GTimer_ms();							// объявление таймера (МИЛЛИСЕКУНДНЫЙ)
-	GTimer_ms(uint32_t interval);			// объявление таймера с указанием интервала
+	GTimer_ms();								// объявление таймера (МИЛЛИСЕКУНДНЫЙ)
+	GTimer_ms(uint32_t interval);				// объявление таймера с указанием интервала
 	void setInterval(uint32_t interval);	// установка интервала работы таймера
-	void setMode(mode mode);				// установка типа работы: AUTO или MANUAL (MANUAL нужно вручную сбрасывать reset)
+	void setMode(uint8_t mode);				// установка типа работы: AUTO или MANUAL (MANUAL нужно вручную сбрасывать reset)
 	boolean isReady();						// возвращает true, когда пришло время. Сбрасывается в false сам (AUTO) или вручную (MANUAL)
 	void reset();							// ручной сброс таймера на установленный интервал
 	void stop();							// остановить таймер
@@ -45,7 +44,7 @@ class GTimer_us
 	GTimer_us();							// объявление таймера (МИКРОСЕКУНДНЫЙ)
 	GTimer_us(uint32_t interval);			// объявление таймера с указанием интервала
 	void setInterval(uint32_t interval);	// установка интервала работы таймера
-	void setMode(mode mode);				// установка типа работы: AUTO или MANUAL (MANUAL нужно вручную сбрасывать reset)
+	void setMode(uint8_t mode);				// установка типа работы: AUTO или MANUAL (MANUAL нужно вручную сбрасывать reset)
 	boolean isReady();						// возвращает true, когда пришло время. Сбрасывается в false сам (AUTO) или вручную (MANUAL)
 	void reset();							// ручной сброс таймера на установленный интервал
 	void stop();							// остановить таймер

@@ -5,7 +5,7 @@ GButton::GButton(uint8_t pin) {
 	_PIN = pin;
 	GButton::init();
 }
-GButton::GButton(uint8_t pin, modes type, modes dir) {
+GButton::GButton(uint8_t pin, uint8_t type, uint8_t dir) {
 	_PIN = pin;
 	GButton::init();
 	GButton::setType(type);
@@ -36,15 +36,15 @@ void GButton::setClickTimeout(uint16_t timeout) {
 void GButton::setStepTimeout(uint16_t step_timeout) {
 	_step_timeout = step_timeout;
 }
-void GButton::setType(modes type) {
+void GButton::setType(uint8_t type) {
 	flags.type = type;
 	if (type) pinMode(_PIN, INPUT);
 	else pinMode(_PIN, INPUT_PULLUP);
 }
-void GButton::setDirection(modes dir) {
+void GButton::setDirection(uint8_t dir) {
 	flags.inv_state = dir;
 }
-void GButton::setTickMode(modes tickMode) {
+void GButton::setTickMode(uint8_t tickMode) {
 	flags.tickMode = tickMode;
 }
 

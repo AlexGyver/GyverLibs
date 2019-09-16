@@ -8,13 +8,11 @@
 	- Настройка гистерезиса, коэффициента усиления ОС, направления регулирования
 	- Возвращает результат по встроенному таймеру или в ручном режиме
 	
-	Версия 1.1 от 09.09.2019
+	Версия 1.2 от 16.09.2019
 */
 
-enum modes {
-	NORMAL,
-	REVERSE,
-};
+#define NORMAL 0
+#define REVERSE 1
 
 class GyverRelay
 {
@@ -22,7 +20,7 @@ class GyverRelay
 	// принимает установку, ширину гистерезиса, направление (NORMAL, REVERSE)
 	// NORMAL - включаем нагрузку при переходе через значение снизу (пример: охлаждение)
 	// REVERSE - включаем нагрузку при переходе через значение сверху (пример: нагрев)
-    GyverRelay(float new_setpoint, float new_hysteresis, modes direction);
+    GyverRelay(float new_setpoint, float new_hysteresis, uint8_t direction);
 	GyverRelay();
 	
 	// расчёт возвращает состояние для управляющего устройства (реле, транзистор) (1 вкл, 0 выкл)
@@ -31,7 +29,7 @@ class GyverRelay
 	boolean getResultTimer();					// расчёт по встроенному таймеру
 	boolean getResultTimer(float new_input);	// расчёт, принимает текущую величину с датчика (+ по встроенному таймеру)
 	
-	void setDirection(modes);					// направление регулирования (NORMAL, REVERSE)
+	void setDirection(uint8_t);					// направление регулирования (NORMAL, REVERSE)
 	
 	float input;						// сигнал с датчика (например температура, которую мы регулируем)
 	float setpoint;						// заданная величина, которую должен поддерживать регулятор (температура)

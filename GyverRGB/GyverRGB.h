@@ -30,14 +30,16 @@
 	
 	Версия 1.14 от 09.09.2019
 	- Убраны дефайны
+	
+	Версия 1.15 от 16.09.2019
+	- Возвращены дефайны
 */
 
-enum modes {
-	NORMAL = 0,
-	REVERSE = 1,
-	NORM_PWM = 0,
-	ANY_PWM = 1,
-};
+
+#define NORMAL 0
+#define REVERSE 1
+#define NORM_PWM 0
+#define ANY_PWM 1
 
 enum colors {
 	WHITE =		0xFFFFFF,	// белый
@@ -63,13 +65,13 @@ class GRGB
   public:  
 	GRGB(uint8_t rpin, uint8_t gpin, uint8_t bpin);						// объявление
 	
-	GRGB(uint8_t rpin, uint8_t gpin, uint8_t bpin, modes pwmmode);	// объявление с выбором режима генерации ШИМ (NORM_PWM / ANY_PWM)
+	GRGB(uint8_t rpin, uint8_t gpin, uint8_t bpin, uint8_t pwmmode);	// объявление с выбором режима генерации ШИМ (NORM_PWM / ANY_PWM)
 																		// NORM_PWM - дефолтные ШИМ пины (3, 5, 6, 9, 10, 11 для UNO/NANO/MINI)
 																		// ANY_PWM - любой пин делается ШИМ пином (частота ~150 Гц). Подробности в библиотеке GyverHacks
 																		
 	void highFrequency(long frequency);					// режим работы на высокой частоте ШИМ (указать в Герцах). Работает с библиотекой PWM.h
 	
-	void setDirection(modes direction);				// NORMAL / REVERSE - направление ШИМ
+	void setDirection(uint8_t direction);				// NORMAL / REVERSE - направление ШИМ
 														// общий катод - NORMAL
 														// общий анод - REVERSE
 														

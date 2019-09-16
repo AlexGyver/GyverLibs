@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #define LIBRARY_VERSION	1.4
 
-#define	MEDIAN_FILTER_SIZE	(8)		// размер медианного фильтра!
+const byte MEDIAN_FILTER_SIZE = 8;		// размер медианного фильтра!
 
 /*
 	Текущая версия: 1.5 от 27.07.2019
