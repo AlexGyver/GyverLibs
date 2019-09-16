@@ -33,7 +33,7 @@
 * [microWire](#microWire) - микро библиотека для работы с i2c
 * [microDS3231](#microDS3231) - лёгкая библиотека для RTC DS3231
 * [microLiquidCrystal_I2C](#microLiquidCrystal_I2C) - облегчённая библиотека для LCD дисплея
-* [microDS18B20(#microDS18B20) - микро библиотека для работы с датчиком температуры ds18b20
+* [microDS18B20](#microDS18B20) - микро библиотека для работы с датчиком температуры ds18b20
 * [GyverUART](#GyverUART) - облегчённый и ускоренный Serial
 * [minimLibs](#minimLibs) - набор классов для работы с железками
 
