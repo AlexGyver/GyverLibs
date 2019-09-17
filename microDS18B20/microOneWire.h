@@ -33,8 +33,6 @@ void oneWire_write(uint8_t data, byte pin) {
 	}
 }
 
-#endif
-
 uint8_t oneWire_read(byte pin) {
 	uint8_t data = 0;
 	for (uint8_t p = 8; p; p--) {
@@ -49,3 +47,5 @@ uint8_t oneWire_read(byte pin) {
 	}
 	return data;
 }
+
+#endif
