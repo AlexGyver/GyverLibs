@@ -28,14 +28,219 @@
 * [buildTime](#buildTime) - получение времени компиляции в численном виде
 * [GyverTimer012](#GyverTimer012) - настройка прерываний по таймерам 0/1/2
 * [GyverHacks](#GyverHacks) - набор различных хаков с микроконтроллером
+* [GyverPower](#GyverPower) - библиотека для управления энергопотреблением МК
 
 ### Лёгкие библиотеки
+* [microLED](#microLED) - ультра-лёгкая библиотека для адресных диодов
 * [microWire](#microWire) - микро библиотека для работы с i2c
 * [microDS3231](#microDS3231) - лёгкая библиотека для RTC DS3231
 * [microLiquidCrystal_I2C](#microLiquidCrystal_I2C) - облегчённая библиотека для LCD дисплея
 * [microDS18B20](#microDS18B20) - микро библиотека для работы с датчиком температуры ds18b20
 * [GyverUART](#GyverUART) - облегчённый и ускоренный Serial
 * [minimLibs](#minimLibs) - набор классов для работы с железками
+
+---
+
+<a id="microLED"></a>
+### microLED v1.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microLED/microLED.zip)
+microLED - ультра-лёгкая библиотека для работы с адресной лентой/матрицей
+- Основная фишка: сжатие цвета, код занимает в разы меньше места в SRAM по сравнению с аналогами (FastLED, NeoPixel и др.)
+	- Использование 8 битного цвета занимает в 3 раза меньше SRAM чем у других библиотек
+	- Использование 16 битного цвета занимает в 2/3 раза меньше SRAM чем у других библиотек
+- Поддержка сжатия цвета: 8, 16 и 24 бита
+- Поддержка порядка цветов: RGB, GRB, BRG
+- Работа с цветом:
+	- RGB
+	- HSV
+	- HEX цвета
+	- "Цветовое колесо" (1500 самых ярких оттенков)
+	- 16 встроенных цветов
+- Возможность чтения сжатого цвета в HEX 0xRRGGBB
+- Поддержка работы с адресными матрицами (см. пример)	
+- Поддержка чипов: 2811/2812, остальные не проверялись
+- Частичная совместимость со скетчами для FastLED (смотри пример fastToMicro)
+
+Частота обновления (**Гц**) от количества светодиодов (сравнение с другими библиотеками)
+
+Кол-во диодов | FastLED 24-bit | NeoPixel 24-bit | WS2812 24-bit | microLED 24-bit | microLED 16-bit | microLED 8-bit |
+--------------|----------------|-----------------|---------------|-----------------|-----------------|----------------|
+8			  |400	           |1818	         |3343	         |3436	           |3173	         |2800	          |
+16	          |400	           |1264	         |1760	         |1728	           |1594	         |1409	          |
+50	          |333	           |554	             |589	         |556	           |513	             |453	          |
+100	          |220	           |301	             |298	         |279	           |257	             |227	          |
+500	          |60	           |65	             |60	         |56	           |51	             |45	          |
+
+Занимаемая память (**байт**) от количества диодов, где **LED** - количество светодиодов (сравнение с другими библиотеками)
+Память        | FastLED 24-bit | NeoPixel 24-bit | WS2812 24-bit | microLED 24-bit | microLED 16-bit | microLED 8-bit |
+--------------|----------------|-----------------|---------------|-----------------|-----------------|----------------|
+Flash		  |2786	           |1984	         |946	         |306	           |346	             |324	          |
+SRAM	      |90+3*LED        |40+3*LED         |31+3*LED       |20+3*LED         |20+2*LED         |20+1*LED        |
+
+#### Методы и функции библиотеки
+<details>
+<summary>РАЗВЕРНУТЬ</summary>
+<p>
+Смотри примеры в папке examples!
+
+```C
+// ============ Методы класса microLED ============
+// ЛЕНТА: имя буфера, количество ледов, пин
+microLED(LEDdata *LEDarray, int LEDamount, byte pin);
+
+// МАТРИЦА: имя буфера, пин, ширина матрицы, высота матрицы, тип матрицы, угол подключения, направление	(см. ПОДКЛЮЧЕНИЕ МАТРИЦЫ)
+microLED(LEDdata *LEDarray, byte pin, byte width, byte height, M_type type, M_connection conn, M_dir dir);
+
+// лента и матрица
+void setRGB(int num, byte r, byte g, byte b);   // RGB
+void setHSV(int num, byte h, byte s, byte v);   // HSV
+void setHEX(int num, uint32_t color);           // HEX
+void setColor(int num, COLORS color);           // стандартный цвет (см. "Стандартные цвета")
+void colorWheel(int num, int color);            // цвет 0-1530	
+void fill(LEDdata color);                       // заливка цветом (mRGB, mWHEEL, mHEX, mHSV)
+void setLED(int n, LEDdata color);              // ставим цвет светодиода (mRGB, mWHEEL, mHEX, mHSV)	
+uint32_t getColorHEX(int num);                  // получить HEX цвет диода (для сравнения и т.п.)
+LEDdata getColor(int num);                      // получить цвет диода в LEDdata
+
+void setBrightness(byte newBright);             // яркость 0-255
+void clear();                                   // очистка
+void show();                                    // отправка
+
+// матрица
+void setPix(int x, int y, LEDdata color);       // ставим цвет пикселя x y в LEDdata (mRGB, mWHEEL, mHEX, mHSV)
+uint32_t getColorHEX(int x, int y);             // получить цвет пикселя в HEX
+LEDdata getColor(int x, int y);                 // получить цвет пикселя в LEDdata
+uint16_t getPixNumber(int x, int y);            // получить номер пикселя в ленте по координатам
+
+// ============ Функции кодирования цвета ============
+LEDdata mRGB(byte r, byte g, byte b);   // RGB 255, 255, 255
+LEDdata mWHEEL(int color);              // цвета 0-1530
+LEDdata mHEX(uint32_t color);           // HEX цвет
+LEDdata mHSV(byte h, byte s, byte v);   // HSV 255, 255, 255
+LEDdata mCOLOR(COLORS color);           // цвет
+
+// ==================== Константы ====================
+// Стандартные цвета
+WHITE
+SILVER
+GRAY
+BLACK
+RED
+MAROON
+YELLOW
+OLIVE
+LIME
+GREEN
+AQUA
+TEAL
+BLUE
+NAVY
+PINK
+PURPLE
+```
+</p>
+</details>
+---
+
+<a id="GyverPower"></a>
+### GyverPower v1.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverPower/GyverPower.zip)
+GyverPower - библиотека для расширенного управления энергопотреблением микроконтроллера
+- Управление системным клоком
+	- Функции времени (millis/delay) корректируются под выбранный клок
+- Включение/выключение периферии:
+	- BOD
+	- Таймеры
+	- I2C/UART/SPI
+	- USB
+	- ADC
+- Сон в разных режимах:
+	- IDLE_SLEEP		- отключается только CPU и Flash
+	- ADC_SLEEP			- автоматически начинает преобразование при уходе в сон, отключается CPU и system clock
+	- POWERDOWN_SLEEP	- отключается всё, кроме WDT и внешних прерываний, относительно долгий выход из сна
+	- POWERSAVE_SLEEP	- аналог power down, но timer 2 остается активным, можно использовать для счета времени
+	- STANDBY_SLEEP		- аналог power down, но system clock остается активен, быстрый выход из сна, большее потребление		
+	- EXTSTANDBY_SLEEP	- аналог standby, но timer 2 остается активным, можно использовать для счета времени
+- Сон на любой период
+	- Калибровка таймера для точных периодов сна
+- Поддерживаемые МК
+	- Atmega2560/32u4/328
+	- Attiny85/84/167
+- Разработано by Egor 'Nich1con' Zaharov
+#### Методы и функции библиотеки
+<details>
+<summary>РАЗВЕРНУТЬ</summary>
+<p>
+Смотри примеры в папке examples!
+
+```C
+void hardwareEnable(uint16_t data);         // Включение указанной периферии (см. ниже "Константы периферии")
+void hardwareDisable(uint16_t data);        // Выключение указанной периферии (см. ниже "Константы периферии")
+void setSystemPrescaler(uint8_t prescaler); // Установка делителя системной частоты (см. ниже "Константы делителя")
+void bodInSleep(bool en);                   // Brown-out detector в режиме сна [вкл-выкл] [true - false]
+void setSleepMode(uint8_t mode);            // Установка текущего режима сна (см. ниже "Режимы сна")
+void autoCalibrate(void);                   // автоматическая калибровка таймера сна, выполняется 2 секунды
+uint16_t getMaxTimeout(void);               // возвращает реальный период 8с, выполняется 8 секунд
+void calibrate(uint16_t ms);                // калибровка тайм-аутов watchdog для sleepDelay [ввести макс период из getMaxTimeout]
+void sleep(uint8_t period);                 // Переход мк в режим сна (см. ниже "Периоды сна")
+uint8_t sleepDelay(uint32_t ms);            // сон на произвольный период (до 52 суток)
+
+/* ======== РЕЖИМЫ СНА ========
+IDLE_SLEEP          - Легкий сон , отключается только CPU и Flash
+ADC_SLEEP           - Легкий сон , автоматически начинает преобразование при уходе в сон, отключается CPU и system clock
+POWERDOWN_SLEEP     - Наиболее глубокий сон, отключается все, кроме WDT и внешних прерываний,относительно долгий выход из сна
+STANDBY_SLEEP       - Глубокий сон, аналог power down, но system clock остается активен, быстрый выход из сна , большее потребление
+POWERSAVE_SLEEP     - Глубокий сон, аналог power down, но timer 2 остается активным, можно использовать для счета времени
+EXTSTANDBY_SLEEP    - Глубокий сон, аналог standby, но timer 2 остается активным, можно использовать для счета времени
+*/
+
+/* ======= ПЕРИОДЫ СНА =======
+SLEEP_16MS
+SLEEP_32MS
+SLEEP_64MS
+SLEEP_128MS
+SLEEP_256MS
+SLEEP_512MS
+SLEEP_1024MS
+SLEEP_2048MS
+SLEEP_4096MS
+SLEEP_8192MS
+
+SLEEP_FOREVER
+*/
+
+/* ==== КОНСТАНТЫ ДЕЛИТЕЛЯ ====
+PRESCALER_1
+PRESCALER_2
+PRESCALER_4
+PRESCALER_8
+PRESCALER_16
+PRESCALER_32
+PRESCALER_64
+PRESCALER_128
+PRESCALER_256
+*/
+
+/* ==== КОНСТАНТЫ ПЕРИФЕРИИ ====
+PWR_ALL     - всё
+PWR_USB     - usb
+PWR_TIMER5  - таймер 5
+PWR_TIMER4  - таймер 4
+PWR_TIMER3  - таймер 3
+PWR_TIMER2  - таймер 2
+PWR_TIMER0  - таймер 1
+PWR_TIMER1  - таймер 0
+PWR_UART3   - Serial3
+PWR_UART2   - Serial2
+PWR_UART1   - Serial1
+PWR_UART0   - Serial
+PWR_I2C     - Wire
+PWR_SPI     - Spi
+PWR_ADC     - АЦП
+PWR_USI     - Wire + Spi (ATtinyXX)
+PWR_USI     - USART LIN (ATtinyXX)
+*/
+```
+</p>
+</details>
 
 ---
 
