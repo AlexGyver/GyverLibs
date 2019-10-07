@@ -20,7 +20,7 @@ microLED matrix(leds, LED_PIN, M_WIDTH, M_HEIGHT, PARALLEL, LEFT_TOP, DIR_RIGHT)
 // шпаргалка по настройке матрицы в папке docs в библиотеке
 
 void setup() {
-  matrix.setBrightness(50);  // яркость (0-255)
+  matrix.setBrightness(30);  // яркость (0-255)
   // Проверка ориентации матрицы
   // Система координат - декартовая первая четверть
   // Левый нижний угол - голубой

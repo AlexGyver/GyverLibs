@@ -1,12 +1,12 @@
 // пример работы с лентой
 // ВНИМАНИЕ! define настройки делаются до подключения библиотеки!
 
-#define LED_PIN 8       // пин ленты
-#define NUMLEDS 8       // кол-во светодиодов
+#define LED_PIN 6       // пин ленты
+#define NUMLEDS 64       // кол-во светодиодов
 
 #define ORDER_GRB       // порядок цветов ORDER_GRB / ORDER_RGB / ORDER_BRG
 
-#define COLOR_DEBTH 3   // цветовая глубина: 1, 2, 3 (в байтах)
+#define COLOR_DEBTH 2   // цветовая глубина: 1, 2, 3 (в байтах)
 // на меньшем цветовом разрешении скетч будет занимать в разы меньше места,
 // но уменьшится и количество оттенков и уровней яркости!
 
@@ -17,7 +17,7 @@ LEDdata leds[NUMLEDS];  // буфер ленты типа LEDdata (размер 
 microLED strip(leds, NUMLEDS, LED_PIN);  // объект лента
 
 void setup() {
-  strip.setBrightness(50);    // яркость (0-255)
+  strip.setBrightness(30);    // яркость (0-255)
   // яркость применяется при выводе .show() !
 
   strip.clear();   // очищает буфер
@@ -112,12 +112,13 @@ void setup() {
   }
   strip.show(); // выводим изменения на ленту
   delay(2000);
+  strip.clear();
 }
 
 void loop() {
   // радуга!
   static byte counter = 0;
-  for (byte i = 0; i < 8; i++) {
+  for (byte i = 0; i < NUMLEDS; i++) {
     //strip.setHSV(i, counter + i * (255 / NUMLEDS), 255, 255);  // можно так
     leds[i] = mHSV(counter + i * (255 / NUMLEDS), 255, 255); // или в стиле fastLED
   }
