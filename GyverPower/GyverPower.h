@@ -100,8 +100,8 @@ PWR_LIN		- USART LIN (ATtinyXX)
 #ifdef FIX_TIME
 #define millis() (millis() << (CLKPR & 0xF))
 #define micros() (micros() << (CLKPR & 0xF))
-#define delay(x) delay(x >> (CLKPR & 0xf))
-#define delayMicroseconds(x) delayMicroseconds(x >> (CLKPR & 0xf))
+#define delay(x) delay((x) >> (CLKPR & 0xf))
+#define delayMicroseconds(x) delayMicroseconds((x) >> (CLKPR & 0xf))
 #endif
 
 /* --- system prescaler --- */
