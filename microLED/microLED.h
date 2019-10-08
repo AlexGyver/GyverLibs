@@ -40,7 +40,28 @@ typedef uint16_t LEDdata;
 #elif (COLOR_DEBTH == 3)
 typedef struct LEDdata {
 	byte r, g, b;
+	// default values are UNINITIALIZED
+	inline LEDdata() __attribute__((always_inline))
+	{
+	}
+	
+	// allow construction from 32-bit (really 24-bit) bit 0xRRGGBB color code
+	inline LEDdata(uint32_t colorcode)  __attribute__((always_inline))
+	: r((colorcode >> 16) & 0xFF), g((colorcode >> 8) & 0xFF), b((colorcode >> 0) & 0xFF)
+	{
+	}
+	
+	inline LEDdata& operator= (const uint32_t colorcode) __attribute__((always_inline))
+    {
+        r = (colorcode >> 16) & 0xFF;
+        g = (colorcode >>  8) & 0xFF;
+        b = (colorcode >>  0) & 0xFF;
+        return *this;
+    }
 };
+inline __attribute__((always_inline)) bool operator== (const LEDdata& lhs, const LEDdata& rhs) {
+	return (lhs.r == rhs.r) && (lhs.g == rhs.g) && (lhs.b == rhs.b);
+}
 #endif
 
 // ========== ПОДКЛЮЧЕНИЕ МАТРИЦЫ ==========
@@ -108,6 +129,7 @@ public:
 	void setLED(int n, LEDdata color);				// ставим цвет светодиода (mRGB, mWHEEL, mHEX, mHSV)	
 	uint32_t getColorHEX(int num);					// получить HEX цвет диода (для сравнения и т.п.)
 	LEDdata getColor(int num);						// получить цвет диода в LEDdata
+	void fade(int num, byte val);					// уменьшить яркость на val
 	
 	void setBrightness(byte newBright);				// яркость 0-255
 	void clear();									// очистка
@@ -117,9 +139,11 @@ public:
 	void setPix(int x, int y, LEDdata color);		// ставим цвет пикселя x y в LEDdata (mRGB, mWHEEL, mHEX, mHSV)
 	uint32_t getColorHEX(int x, int y);				// получить цвет пикселя в HEX
 	LEDdata getColor(int x, int y);					// получить цвет пикселя в LEDdata
-	uint16_t getPixNumber(int x, int y);			// получить номер пикселя в ленте по координатам
+	void fadePix(int x, int y, byte val);			// уменьшить яркость пикселя на val
+	uint16_t getPixNumber(int x, int y);			// получить номер пикселя в ленте по координатам	
 
 private:
+	void getColorPtr(int num, byte *ptr);
 	int _numLEDs;
 	LEDdata *LEDbuffer;
 	byte _bright = 0;
@@ -217,24 +241,53 @@ void microLED::setLED(int n, LEDdata color) {
 
 uint32_t microLED::getColorHEX(int num) {
 	byte thisData[3];
-#if (COLOR_DEBTH == 1)
-	thisData[0] = (LEDbuffer[num] & 0b11100000);
-	thisData[1] = ((LEDbuffer[num] & 0b00011000) << 3);
-	thisData[2] = ((LEDbuffer[num] & 0b00000111) << 5);
-#elif (COLOR_DEBTH == 2)
-	thisData[0] = (((LEDbuffer[num] & 0b1111100000000000) >> 8));
-	thisData[1] = (((LEDbuffer[num] & 0b0000011111100000) >> 3));
-	thisData[2] = (((LEDbuffer[num] & 0b0000000000011111) << 3));
-#elif (COLOR_DEBTH == 3)	
-	thisData[0] = LEDbuffer[num].r;
-	thisData[1] = LEDbuffer[num].g;
-	thisData[2] = LEDbuffer[num].b;
-#endif
+	getColorPtr(num, thisData);
 	return (((uint32_t)thisData[0] << 16) | ((uint32_t)thisData[1] << 8 ) | (uint32_t)thisData[2]);
 }
 
 LEDdata microLED::getColor(int num) {
 	return LEDbuffer[num];
+}
+
+void microLED::getColorPtr(int num, byte *ptr) {
+#if (COLOR_DEBTH == 1)
+	ptr[0] = (LEDbuffer[num] & 0b11100000);
+	ptr[1] = ((LEDbuffer[num] & 0b00011000) << 3);
+	ptr[2] = ((LEDbuffer[num] & 0b00000111) << 5);
+#elif (COLOR_DEBTH == 2)
+	ptr[0] = (((LEDbuffer[num] & 0b1111100000000000) >> 8));
+	ptr[1] = (((LEDbuffer[num] & 0b0000011111100000) >> 3));
+	ptr[2] = (((LEDbuffer[num] & 0b0000000000011111) << 3));
+#elif (COLOR_DEBTH == 3)	
+	ptr[0] = LEDbuffer[num].r;
+	ptr[1] = LEDbuffer[num].g;
+	ptr[2] = LEDbuffer[num].b;
+#endif
+}
+
+void microLED::fade(int num, byte val) {
+	if (LEDbuffer[num] == LEDdata(0)) return;
+	byte rgb[3];
+	getColorPtr(num, rgb);
+
+	byte maximum = max(max(rgb[0], rgb[1]), rgb[2]);
+	float coef = 0;
+
+	if (maximum >= val) {
+		coef = (float)(maximum - val) / maximum;
+	} else {
+		LEDbuffer[num] = 0;
+		return;
+	}
+
+	for (byte i = 0; i < 3; i++) {
+		rgb[i] *= coef;
+	}
+	LEDbuffer[num] = mRGB(rgb[0], rgb[1], rgb[2]);
+}
+
+void microLED::fadePix(int x, int y, byte val) {
+	fade(getPixNumber(x, y), val);
 }
 
 // ====================== МАТРИЦА ======================

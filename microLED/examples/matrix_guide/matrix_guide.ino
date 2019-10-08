@@ -11,7 +11,8 @@
 #include <microLED.h>
 #define LED_PIN 8       // пин ленты
 
-LEDdata leds[M_WIDTH * M_HEIGHT];  // буфер ленты типа LEDdata
+#define NUM_LEDS M_WIDTH * M_HEIGHT
+LEDdata leds[NUM_LEDS];  // буфер ленты типа LEDdata
 
 microLED matrix(leds, LED_PIN, M_WIDTH, M_HEIGHT, PARALLEL, LEFT_TOP, DIR_RIGHT);  // объект матрица
 // тип матрицы: ZIGZAG - зигзаг, PARALLEL - параллельная
@@ -34,7 +35,7 @@ void setup() {
   // mHEX(color);    // HEX цвет
   // mHSV(h, s, v);  // HSV 255, 255, 255
   // mCOLOR(color);  // цвет
-  
+
   matrix.setPix(0, 0, mCOLOR(YELLOW));
   matrix.setPix(0, 7, mCOLOR(PURPLE));
   matrix.setPix(7, 0, mCOLOR(TEAL));
@@ -44,12 +45,13 @@ void setup() {
 }
 
 void loop() {
-  // примеры эффектов 
-  
+  // примеры эффектов
+
   //rainbow();    // горизонтальная радуга
   //matrixNeo();  // матрица
-  balls();      // шарики
-  
+  //balls();      // шарики
+  confetti();
+
   matrix.show();
   delay(50);
 }
@@ -128,5 +130,13 @@ void balls() {
       vector[j][1] = -vector[j][1];
     }
     matrix.setPix(coord[j][0] / 10, coord[j][1] / 10, ballColors[j]);
+  }
+}
+
+void confetti() {
+  for (int i = 0; i < NUM_LEDS; i++) {
+    if (matrix.getColor(i) == 0)
+      if (random(0, 30) == 0) matrix.setLED(i, mHSV(random(0, 255), 255, 255));
+    matrix.fade(i, 20);
   }
 }

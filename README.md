@@ -56,6 +56,7 @@ microLED - ультра-лёгкая библиотека для работы с
 	- "Цветовое колесо" (1500 самых ярких оттенков)
 	- 16 встроенных цветов
 - Возможность чтения сжатого цвета в HEX 0xRRGGBB
+- Функция уменьшения яркости пикселя
 - Поддержка работы с адресными матрицами (см. пример)	
 - Поддержка чипов: 2811/2812, остальные не проверялись
 - Частичная совместимость со скетчами для FastLED (смотри пример fastToMicro)
@@ -101,6 +102,7 @@ void fill(LEDdata color);                       // заливка цветом (
 void setLED(int n, LEDdata color);              // ставим цвет светодиода (mRGB, mWHEEL, mHEX, mHSV)	
 uint32_t getColorHEX(int num);                  // получить HEX цвет диода (для сравнения и т.п.)
 LEDdata getColor(int num);                      // получить цвет диода в LEDdata
+void fade(int num, byte val);                   // уменьшить яркость на val
 
 void setBrightness(byte newBright);             // яркость 0-255
 void clear();                                   // очистка
@@ -110,6 +112,7 @@ void show();                                    // отправка
 void setPix(int x, int y, LEDdata color);       // ставим цвет пикселя x y в LEDdata (mRGB, mWHEEL, mHEX, mHSV)
 uint32_t getColorHEX(int x, int y);             // получить цвет пикселя в HEX
 LEDdata getColor(int x, int y);                 // получить цвет пикселя в LEDdata
+void fadePix(int x, int y, byte val);           // уменьшить яркость пикселя на val
 uint16_t getPixNumber(int x, int y);            // получить номер пикселя в ленте по координатам
 
 // ============ Функции кодирования цвета ============
