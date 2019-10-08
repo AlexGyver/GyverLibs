@@ -251,8 +251,8 @@ LEDdata microLED::getColor(int num) {
 
 void microLED::getColorPtr(int num, byte *ptr) {
 #if (COLOR_DEBTH == 1)
-	ptr[0] = (LEDbuffer[num] & 0b11100000);
-	ptr[1] = ((LEDbuffer[num] & 0b00011000) << 3);
+	ptr[0] = (LEDbuffer[num] & 0b11000000);
+	ptr[1] = ((LEDbuffer[num] & 0b00111000) << 2);
 	ptr[2] = ((LEDbuffer[num] & 0b00000111) << 5);
 #elif (COLOR_DEBTH == 2)
 	ptr[0] = (((LEDbuffer[num] & 0b1111100000000000) >> 8));
@@ -361,7 +361,7 @@ void microLED::show() {
 // ================== COLOR UTILITY ===================
 LEDdata mRGB(byte r, byte g, byte b) {
 #if (COLOR_DEBTH == 1)
-	return ( (r & 0b11100000) | ((g & 0b11000000) >> 3) | (b & 0b11100000) >> 5);
+	return ( (r & 0b11000000) | ((g & 0b11100000) >> 2) | (b & 0b11100000) >> 5);
 #elif (COLOR_DEBTH == 2)
 	return ((r & 0b11111000) << 8) | ((g & 0b11111100) << 3) | ((b & 0b11111000) >> 3);
 #elif (COLOR_DEBTH == 3)

@@ -114,8 +114,8 @@ void  ws2812_sendarray_mask(PTR_TYPE data,uint16_t datlen,uint8_t maskhi,uint8_t
 		data_ptr = loopData;
 #if (COLOR_DEBTH == 1)
 		// 8 бит
-		loopData[ORDER0] = (*data & 0b11100000) >> bright;
-		loopData[ORDER1] = ((*data & 0b00011000) << 3) >> bright;
+		loopData[ORDER0] = (*data & 0b11000000) >> bright;
+		loopData[ORDER1] = ((*data & 0b00111000) << 2) >> bright;
 		loopData[ORDER2] = ((*data & 0b00000111) << 5) >> bright;
 		*data++;
 		datlen--;
