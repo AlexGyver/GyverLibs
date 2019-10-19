@@ -90,9 +90,9 @@ using the fast 800kHz clockless WS2811/2812 protocol.
 #define ORDER1	1
 #define ORDER2	2
 #elif defined(ORDER_BRG)
-#define ORDER0	2
-#define ORDER1	0
-#define ORDER2	1
+#define ORDER0	1
+#define ORDER1	2
+#define ORDER2	0
 #else
 #define ORDER0	0
 #define ORDER1	1
