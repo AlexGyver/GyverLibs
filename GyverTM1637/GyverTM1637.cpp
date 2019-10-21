@@ -1,14 +1,20 @@
 #include "GyverTM1637.h"
 #include <Arduino.h>
-static int8_t TubeTab[] = {0x3f, 0x06, 0x5b, 0x4f,
+const uint8_t digitHEX[] = {0x3f, 0x06, 0x5b, 0x4f,
 	0x66, 0x6d, 0x7d, 0x07,
-	0x7f, 0x6f, 0x00, 0x40};		//0~9, ,-
+	0x7f, 0x6f, 0x00, 0x40
+};//0~9, ,-
+
 GyverTM1637::GyverTM1637(uint8_t clk, uint8_t dio)
 {
 	Clkpin = clk;
 	Datapin = dio;
 	pinMode(Clkpin, OUTPUT);
 	pinMode(Datapin, OUTPUT);
+}
+
+uint8_t digToHEX(uint8_t digit) {
+	return digitHEX[digit];
 }
 
 int GyverTM1637::writeByte(int8_t wr_data)
@@ -66,8 +72,8 @@ void GyverTM1637::display(uint8_t DispData[])
 		//if (DispData[i] == 0x7f) SegData[i] = 0x00;
 		//else 
 		//{
-		lastData[i] = TubeTab[DispData[i]];
-		SegData[i] = TubeTab[DispData[i]] + PointData;
+		lastData[i] = digitHEX[DispData[i]];
+		SegData[i] = digitHEX[DispData[i]] + PointData;
 		//}
 	}
 	sendArray(SegData);
@@ -92,8 +98,8 @@ void GyverTM1637::display(uint8_t BitAddr, int8_t DispData)
 	//if (DispData == 0x7f) SegData = 0x00;
 	//else
 	//{  
-	lastData[BitAddr] = TubeTab[DispData];
-	SegData = TubeTab[DispData] + PointData;
+	lastData[BitAddr] = digitHEX[DispData];
+	SegData = digitHEX[DispData] + PointData;
 	//}  
 	sendByte(BitAddr, SegData);
 }
@@ -268,18 +274,18 @@ void GyverTM1637::runningString(int8_t DispData[], byte amount, int delayMs) {
 void GyverTM1637::scroll(int8_t DispData[], int delayms) {
 	byte DispDataByte[4];
 	for (byte i = 0; i < 4; i++) {
-		DispDataByte[i] = TubeTab[DispData[i]];
+		DispDataByte[i] = digitHEX[DispData[i]];
 	}
 	scrollByte(DispDataByte, delayms);
 }
 
 void GyverTM1637::scroll(uint8_t bit0, uint8_t bit1, uint8_t bit2, uint8_t bit3, int delayms) {
-	byte DispData[] = {TubeTab[bit0], TubeTab[bit1], TubeTab[bit2], TubeTab[bit3]};
+	byte DispData[] = {digitHEX[bit0], digitHEX[bit1], digitHEX[bit2], digitHEX[bit3]};
 	GyverTM1637::scrollByte(DispData, delayms);
 }
 
 void GyverTM1637::scroll(uint8_t BitAddr, int8_t DispData, int delayms) {
-	byte DispDataByte = TubeTab[DispData];
+	byte DispDataByte = digitHEX[DispData];
 	scrollByte(BitAddr, DispDataByte, delayms);
 }
 
@@ -409,19 +415,19 @@ void swapBytes(byte* newByte, byte oldByte, byte newP, byte oldP) {
 }
 
 void GyverTM1637::twist(uint8_t BitAddr, int8_t DispData, int delayms) {
-	twistByte(BitAddr, TubeTab[DispData], delayms);
+	twistByte(BitAddr, digitHEX[DispData], delayms);
 }
 
 void GyverTM1637::twist(int8_t DispData[], int delayms) {
 	byte newData[4];
 	for (byte i = 0; i < 4; i++) {
-		newData[i] = TubeTab[DispData[i]];
+		newData[i] = digitHEX[DispData[i]];
 	}
 	twistByte(newData, delayms);
 }
 
 void GyverTM1637::twist(uint8_t bit0, uint8_t bit1, uint8_t bit2, uint8_t bit3, int delayms) {
-	byte DispData[] = {TubeTab[bit0], TubeTab[bit1], TubeTab[bit2], TubeTab[bit3]};
+	byte DispData[] = {digitHEX[bit0], digitHEX[bit1], digitHEX[bit2], digitHEX[bit3]};
 	GyverTM1637::twistByte(DispData, delayms);
 }
 

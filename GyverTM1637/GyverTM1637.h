@@ -21,6 +21,8 @@
 	- Дефайны букв заменены на енамы
 */
 
+
+
 class GyverTM1637
 {
 public:
@@ -62,7 +64,7 @@ public:
 	void twistByte(uint8_t BitAddr, int8_t DispData, int delayms);			// обновить значение скручиванием (адрес, БАЙТ, задержка в мс)
 	void twistByte(int8_t DispData[], int delayms);							// обновить значение скручиванием (массив БАЙТ, задержка в мс)
 	void twistByte(uint8_t bit0, uint8_t bit1, uint8_t bit2, uint8_t bit3, int delayms);	// скрутка посимвольно
-
+	
 private:
 	uint8_t lastData[4];
 	void update();
@@ -83,6 +85,7 @@ private:
 };
 
 void swapBytes(byte* newByte, byte oldByte, byte oldP, byte newP);
+uint8_t digToHEX(uint8_t digit);		// вернёт код цифры для displayByte
 
 //************definitions for TM1637*********************
 #define ADDR_AUTO  0x40

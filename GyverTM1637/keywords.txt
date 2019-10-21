@@ -30,13 +30,14 @@ twistByte	KEYWORD2
 clear		KEYWORD2
 point		KEYWORD2
 brightness	KEYWORD2
+digToHEX	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
 #######################################
 
-ON	LITERAL1
-OFF	LITERAL1
+POINT_ON	LITERAL1
+POINT_OFF	LITERAL1
 
 _A	LITERAL1
 _B	LITERAL1

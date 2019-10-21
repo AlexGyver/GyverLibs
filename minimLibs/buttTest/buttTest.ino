@@ -1,7 +1,7 @@
 /*
    Тест мини класса кнопки
 */
-#define SW 0    // пин кнопки, подключена на него и GND
+#define SW 7    // пин кнопки, подключена на него и GND
 
 #include "buttonMinim.h"
 buttonMinim butt(SW);
