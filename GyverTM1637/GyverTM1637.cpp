@@ -1,142 +1,142 @@
 #include "GyverTM1637.h"
 #include <Arduino.h>
 static int8_t TubeTab[] = {0x3f, 0x06, 0x5b, 0x4f,
-                           0x66, 0x6d, 0x7d, 0x07,
-                           0x7f, 0x6f, 0x00, 0x40};		//0~9, ,-
+	0x66, 0x6d, 0x7d, 0x07,
+	0x7f, 0x6f, 0x00, 0x40};		//0~9, ,-
 GyverTM1637::GyverTM1637(uint8_t clk, uint8_t dio)
 {
-  Clkpin = clk;
-  Datapin = dio;
-  pinMode(Clkpin, OUTPUT);
-  pinMode(Datapin, OUTPUT);
+	Clkpin = clk;
+	Datapin = dio;
+	pinMode(Clkpin, OUTPUT);
+	pinMode(Datapin, OUTPUT);
 }
 
 int GyverTM1637::writeByte(int8_t wr_data)
 {
-  uint8_t i, count1;
-  for (i = 0; i < 8; i++) //sent 8bit data
-  {
-    digitalWrite(Clkpin, LOW);
-    if (wr_data & 0x01)digitalWrite(Datapin, HIGH); //LSB first
-    else digitalWrite(Datapin, LOW);
-    wr_data >>= 1;
-    digitalWrite(Clkpin, HIGH);
+	uint8_t i, count1;
+	for (i = 0; i < 8; i++) //sent 8bit data
+	{
+		digitalWrite(Clkpin, LOW);
+		if (wr_data & 0x01)digitalWrite(Datapin, HIGH); //LSB first
+		else digitalWrite(Datapin, LOW);
+		wr_data >>= 1;
+		digitalWrite(Clkpin, HIGH);
 
-  }
-  digitalWrite(Clkpin, LOW); //wait for the ACK
-  digitalWrite(Datapin, HIGH);
-  digitalWrite(Clkpin, HIGH);
-  pinMode(Datapin, INPUT);
+	}
+	digitalWrite(Clkpin, LOW); //wait for the ACK
+	digitalWrite(Datapin, HIGH);
+	digitalWrite(Clkpin, HIGH);
+	pinMode(Datapin, INPUT);
 
-  delayMicroseconds(50);
-  uint8_t ack = digitalRead(Datapin);
-  if (ack == 0)
-  {
-    pinMode(Datapin, OUTPUT);
-    digitalWrite(Datapin, LOW);
-  }
-  delayMicroseconds(50);
-  pinMode(Datapin, OUTPUT);
-  delayMicroseconds(50);
+	delayMicroseconds(50);
+	uint8_t ack = digitalRead(Datapin);
+	if (ack == 0)
+	{
+		pinMode(Datapin, OUTPUT);
+		digitalWrite(Datapin, LOW);
+	}
+	delayMicroseconds(50);
+	pinMode(Datapin, OUTPUT);
+	delayMicroseconds(50);
 
-  return ack;
+	return ack;
 }
 //send start signal to GyverTM1637
 void GyverTM1637::start(void)
 {
-  digitalWrite(Clkpin, HIGH); //send start signal to GyverTM1637
-  digitalWrite(Datapin, HIGH);
-  digitalWrite(Datapin, LOW);
-  digitalWrite(Clkpin, LOW);
+	digitalWrite(Clkpin, HIGH); //send start signal to GyverTM1637
+	digitalWrite(Datapin, HIGH);
+	digitalWrite(Datapin, LOW);
+	digitalWrite(Clkpin, LOW);
 }
 //End of transmission
 void GyverTM1637::stop(void)
 {
-  digitalWrite(Clkpin, LOW);
-  digitalWrite(Datapin, LOW);
-  digitalWrite(Clkpin, HIGH);
-  digitalWrite(Datapin, HIGH);
+	digitalWrite(Clkpin, LOW);
+	digitalWrite(Datapin, LOW);
+	digitalWrite(Clkpin, HIGH);
+	digitalWrite(Datapin, HIGH);
 }
 
 // ************************** ФОРМИРУЕМ ДАННЫЕ *****************************
 void GyverTM1637::display(uint8_t DispData[])
 {
-  uint8_t SegData[4];
-  for (byte i = 0; i < 4; i ++) {
-	//if (DispData[i] == 0x7f) SegData[i] = 0x00;
-	//else 
-	//{
+	uint8_t SegData[4];
+	for (byte i = 0; i < 4; i ++) {
+		//if (DispData[i] == 0x7f) SegData[i] = 0x00;
+		//else 
+		//{
 		lastData[i] = TubeTab[DispData[i]];
 		SegData[i] = TubeTab[DispData[i]] + PointData;
-	//}
-  }
-  sendArray(SegData);
+		//}
+	}
+	sendArray(SegData);
 }
 void GyverTM1637::displayByte(uint8_t DispData[])
 {
-  uint8_t SegData[4];
-  for (byte i = 0; i < 4; i ++) {
-	//if (DispData[i] == 0x7f) SegData[i] = 0x00;
-	//else SegData[i] = DispData[i];
-	//{
+	uint8_t SegData[4];
+	for (byte i = 0; i < 4; i ++) {
+		//if (DispData[i] == 0x7f) SegData[i] = 0x00;
+		//else SegData[i] = DispData[i];
+		//{
 		lastData[i] = DispData[i];
 		SegData[i] = DispData[i] + PointData;
-	//}	
-  }
-  sendArray(SegData);
+		//}	
+	}
+	sendArray(SegData);
 }
 
 void GyverTM1637::display(uint8_t BitAddr, int8_t DispData)
 { 
-  uint8_t SegData;
-  //if (DispData == 0x7f) SegData = 0x00;
-  //else
-  //{  
+	uint8_t SegData;
+	//if (DispData == 0x7f) SegData = 0x00;
+	//else
+	//{  
 	lastData[BitAddr] = TubeTab[DispData];
 	SegData = TubeTab[DispData] + PointData;
-  //}  
-  sendByte(BitAddr, SegData);
+	//}  
+	sendByte(BitAddr, SegData);
 }
 
 void GyverTM1637::displayByte(uint8_t BitAddr, int8_t DispData)
 {
-  uint8_t SegData;
-  //if (DispData == 0x7f) SegData = 0x00;
-  //else
-  //{  
+	uint8_t SegData;
+	//if (DispData == 0x7f) SegData = 0x00;
+	//else
+	//{  
 	lastData[BitAddr] = DispData;
 	SegData = DispData + PointData;
-  //}  
-  sendByte(BitAddr, SegData);
+	//}  
+	sendByte(BitAddr, SegData);
 }
 
 // ************************** ОТПРАВКА НА ДИСПЛЕЙ *****************************
 void GyverTM1637::sendByte(uint8_t BitAddr, int8_t sendData) {
-  start();          //start signal sent to GyverTM1637 from MCU
-  writeByte(ADDR_FIXED);//
-  stop();           //
-  start();          //
-  writeByte(BitAddr | 0xc0); //
-  writeByte(sendData);//
-  stop();            //
-  start();          //
-  writeByte(Cmd_DispCtrl);//
-  stop();           //
+	start();          //start signal sent to GyverTM1637 from MCU
+	writeByte(ADDR_FIXED);//
+	stop();           //
+	start();          //
+	writeByte(BitAddr | 0xc0); //
+	writeByte(sendData);//
+	stop();            //
+	start();          //
+	writeByte(Cmd_DispCtrl);//
+	stop();           //
 }
 
 void GyverTM1637::sendArray(int8_t sendData[]) {
-  start();          //start signal sent to GyverTM1637 from MCU
-  writeByte(ADDR_AUTO);//
-  stop();           //
-  start();          //
-  writeByte(Cmd_SetAddr);//
-  for (byte i = 0; i < 4; i ++) {
-    writeByte(sendData[i]);        //
-  }
-  stop();           //
-  start();          //
-  writeByte(Cmd_DispCtrl);//
-  stop();           //
+	start();          //start signal sent to GyverTM1637 from MCU
+	writeByte(ADDR_AUTO);//
+	stop();           //
+	start();          //
+	writeByte(Cmd_SetAddr);//
+	for (byte i = 0; i < 4; i ++) {
+		writeByte(sendData[i]);        //
+	}
+	stop();           //
+	start();          //
+	writeByte(Cmd_DispCtrl);//
+	stop();           //
 }
 // ******************************************
 void GyverTM1637::displayByte(uint8_t bit0, uint8_t bit1, uint8_t bit2, uint8_t bit3) {
@@ -150,34 +150,34 @@ void GyverTM1637::display(uint8_t bit0, uint8_t bit1, uint8_t bit2, uint8_t bit3
 
 void GyverTM1637::clear(void)
 {
-  display(0x00, 0x7f);
-  display(0x01, 0x7f);
-  display(0x02, 0x7f);
-  display(0x03, 0x7f);
-  lastData[0] = 0x00;
-  lastData[1] = 0x00;
-  lastData[2] = 0x00;
-  lastData[3] = 0x00;
+	display(0x00, 0x7f);
+	display(0x01, 0x7f);
+	display(0x02, 0x7f);
+	display(0x03, 0x7f);
+	lastData[0] = 0x00;
+	lastData[1] = 0x00;
+	lastData[2] = 0x00;
+	lastData[3] = 0x00;
 }
 void GyverTM1637::update(void)
 {
-  displayByte(lastData);
+	displayByte(lastData);
 }
 
 void GyverTM1637::brightness(uint8_t brightness, uint8_t SetData, uint8_t SetAddr)
 {
-  Cmd_SetData = SetData;
-  Cmd_SetAddr = SetAddr;
-  Cmd_DispCtrl = 0x88 + brightness;//Set the brightness and it takes effect the next time it displays.
-  update();
+	Cmd_SetData = SetData;
+	Cmd_SetAddr = SetAddr;
+	Cmd_DispCtrl = 0x88 + brightness;//Set the brightness and it takes effect the next time it displays.
+	update();
 }
 
 
 void GyverTM1637::point(boolean PointFlag)
 {
-  if (PointFlag) PointData = 0x80;
-  else PointData = 0;
-  update();
+	if (PointFlag) PointData = 0x80;
+	else PointData = 0;
+	update();
 }
 
 // ************************** ВСЯКИЕ ФУНКЦИИ *****************************
@@ -248,20 +248,20 @@ void GyverTM1637::displayInt(int value) {
 }
 
 void GyverTM1637::runningString(int8_t DispData[], byte amount, int delayMs) {
-  uint8_t segm_data[amount + 8];    // оставляем место для 4х пустых слотов в начале и в конце
-  for (byte i = 0; i < 4; i++) {  // делаем первые 4 символа пустыми
-    segm_data[i] = 0x00;
-  }
-  for (byte i = 0; i < amount; i++) {  // далее забиваем тем что на входе (сам текст строки)
-    segm_data[i + 4] = DispData[i];
-  }
-  for (byte i = amount + 4; i < amount + 8; i++) {  // и последние 4 тоже забиваем пустыми символами
-    segm_data[i] = 0x00;
-  }
-  for (byte i = 0; i <= amount + 4; i++) {   // выводим
-    displayByte(segm_data[i], segm_data[i + 1], segm_data[i + 2], segm_data[i + 3]);
-    delay(delayMs);
-  }
+	uint8_t segm_data[amount + 8];    // оставляем место для 4х пустых слотов в начале и в конце
+	for (byte i = 0; i < 4; i++) {  // делаем первые 4 символа пустыми
+		segm_data[i] = 0x00;
+	}
+	for (byte i = 0; i < amount; i++) {  // далее забиваем тем что на входе (сам текст строки)
+		segm_data[i + 4] = DispData[i];
+	}
+	for (byte i = amount + 4; i < amount + 8; i++) {  // и последние 4 тоже забиваем пустыми символами
+		segm_data[i] = 0x00;
+	}
+	for (byte i = 0; i <= amount + 4; i++) {   // выводим
+		displayByte(segm_data[i], segm_data[i + 1], segm_data[i + 2], segm_data[i + 3]);
+		delay(delayMs);
+	}
 }
 
 
@@ -402,10 +402,10 @@ void GyverTM1637::scrollByte(uint8_t BitAddr, int8_t DispData, int delayms) {
 }
 
 void swapBytes(byte* newByte, byte oldByte, byte newP, byte oldP) {
-  byte newBit = 0;
-  if (oldByte & (1 << oldP)) newBit = 1;
-  else newBit = 0;
-  *newByte = *newByte | (newBit << newP);
+	byte newBit = 0;
+	if (oldByte & (1 << oldP)) newBit = 1;
+	else newBit = 0;
+	*newByte = *newByte | (newBit << newP);
 }
 
 void GyverTM1637::twist(uint8_t BitAddr, int8_t DispData, int delayms) {
@@ -445,39 +445,39 @@ void GyverTM1637::twistByte(int8_t DispData[], int delayms) {
 		step |= (1 << i);				// зажигаем по одной
 		for (byte k = 0; k < 4; k++) {
 			if (changeByte[k])
-				stepArray[k] = step;
+			stepArray[k] = step;
 		}		
-	displayByte(stepArray);
-	delay(delayms);
+		displayByte(stepArray);
+		delay(delayms);
 	}
 	//for (byte r = 0; r < 1; r++) {
-		for (byte i = 0; i < 6; i++) {
-			step = 0b11000000;
-			step = ~(step | (1 << i) | (1 << i + 1));	// бегает дырка
-				for (byte k = 0; k < 4; k++) {	
-					if (changeByte[k]) stepArray[k] = step;
-				}
-			displayByte(stepArray);
-			delay(delayms);
+	for (byte i = 0; i < 6; i++) {
+		step = 0b11000000;
+		step = ~(step | (1 << i) | (1 << i + 1));	// бегает дырка
+		for (byte k = 0; k < 4; k++) {	
+			if (changeByte[k]) stepArray[k] = step;
 		}
+		displayByte(stepArray);
+		delay(delayms);
+	}
 	//}
 	step = 0b11000000;
 	for (byte i = 0; i < 6; i++) {
 		step |= (1 << i);		
 		for (byte k = 0; k < 4; k++) {
 			if (changeByte[k])
-				stepArray[k] = ~step;
+			stepArray[k] = ~step;
 		}
 		displayByte(stepArray);		
 		delay(delayms);
 	}
 	for (byte k = 0; k < 4; k++) {
 		if (changeByte[k])
-			stepArray[k] = 0b0000000;
+		stepArray[k] = 0b0000000;
 	}
 	for (byte i = 0; i < 7; i++) {				
 		for (byte k = 0; k < 4; k++) {
-				if (changeByte[k]) {
+			if (changeByte[k]) {
 				byte newBit = 0;
 				if (DispData[k] & (1 << i)) newBit = 1;
 				else newBit = 0;
@@ -502,13 +502,13 @@ void GyverTM1637::twistByte(uint8_t BitAddr, int8_t DispData, int delayms) {
 		delay(delayms);
 	}
 	//for (byte r = 0; r < 1; r++) {
-		for (byte i = 0; i < 6; i++) {
-			step = 0b1000000;
-			step = ~(step | (1 << i) | (1 << i + 1));	// бегает дырка
+	for (byte i = 0; i < 6; i++) {
+		step = 0b1000000;
+		step = ~(step | (1 << i) | (1 << i + 1));	// бегает дырка
 
-			displayByte(BitAddr, step);			
-			delay(delayms);
-		}
+		displayByte(BitAddr, step);			
+		delay(delayms);
+	}
 	//}	
 	step = 0b1000000;
 	for (byte i = 0; i < 6; i++) {
