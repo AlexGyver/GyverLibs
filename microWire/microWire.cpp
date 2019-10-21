@@ -1,51 +1,67 @@
 ﻿#include "microWire.h"
 
-void I2C::begin(int baudrate) {		// частота шины в кгц (31-900кгц)	
-	pinMode(A4, INPUT_PULLUP);		// подправить для других мк ~ input_pullup
-	pinMode(A5, INPUT_PULLUP);		// подправить для других мк ~ input_pullup
+void TwoWire::begin() {	  			// Инициализация шины в роли master
+	pinMode(SDA, INPUT_PULLUP); 	// Подтяжка шины 
+	pinMode(SCL, INPUT_PULLUP);	// Подтяжка шины 
 
-	TWBR = ((F_CPU / ( baudrate * 1000L )) - 16) / 2; // расчет значения baudrate регистра
-	TWSR = 0;
-	TWCR = _BV(TWEN) | _BV(TWIE);
+	TWBR = 72;					// Стандартная скорость - 100kHz
+	TWSR = 0;						// Делитель - /1 , статус - 0;
 }
 
-void I2C::setClock(uint32_t clock) {		// частота шины в кгц (31-900кгц)	
-	TWBR = (((long)F_CPU / clock) - 16) / 2; // расчет значения baudrate регистра
+void TwoWire::setClock(uint32_t clock) { 		// Функция установки частоты шины 31-900 kHz (в герцах)
+	TWBR = (((long)F_CPU / clock) - 16) / 2; 	// Расчет baudrate - регистра
 }
 
-void I2C::beginTransmission() {								// Начало передачи
-	TWCR = _BV(TWSTA) | _BV(TWEN) | _BV(TWINT); // start + i2c enable + установка флага TWINT "Выполнить задание"
-	while (!(TWCR & _BV(TWINT)));				// ожидания завершения
+void TwoWire::beginTransmission(uint8_t address) { 	// Начать передачу (для записи данных)
+	TwoWire::start();                        			// Старт
+	TwoWire::write(address << 1);            			// Отправка slave - устройству адреса с битом "write"
 }
 
-void I2C::beginTransmission(uint8_t addr) {		// начало передачи по адресу
-	I2C::beginTransmission();
-	I2C::write(addr << 0x1);
+void TwoWire::endTransmission(bool stop = true) { 	// Завершить передачу (после записи данных)
+	if (stop) TwoWire::stop();						// Если задано stop или аргумент пуст - отпустить шину 
+	else TwoWire::start();							// Иначе - restart (другой master на шине не сможет влезть между сообщениями)
+	return (TWSR & 0xF8);							// Вернуть содержимое статус - регистра (для отладки)
 }
 
-void I2C::endTransmission() {								// окончание передачи
-	TWCR = _BV(TWSTO) | _BV(TWEN) | _BV(TWINT); // stop + i2c enable + установка флага TWINT "Выполнить задание"
+void TwoWire::write(uint8_t data) {					// Прямая отправка байта на шину
+	TWDR = data;									// Записать данные в data - регистр
+	TWCR = _BV(TWEN) | _BV(TWINT);				// Запустить передачу
+	while (!(TWCR & _BV(TWINT)));					// Дождаться окончания
 }
 
-void I2C::write(uint8_t data) {		// функция для отправки данных на шину
-	TWDR = data;						// закинуть данные в data - регистр
-	TWCR = _BV(TWEN) | _BV(TWINT);		// i2c enable + установка флага TWINT "Выполнить задание"
-	while (!(TWCR & _BV(TWINT)));		// ожидания завершения
+uint8_t TwoWire::available() {						// Вернуть оставшееся количество запрошенных для чтения байт
+	return _requested_bytes;						// Это содержимое этой переменной
 }
 
-void I2C::requestFrom(uint8_t addr) {
-	I2C::beginTransmission();
-	I2C::write((addr << 1) | 0x1);
+uint8_t TwoWire::read() {						  	// Прямое чтение байта из шины после запроса
+	if (_requested_bytes > 1) {					// Если байт не последний 
+		_requested_bytes--;							// Отнять от оставшееся количества еденицу
+		TWCR = _BV(TWEN) | _BV(TWINT) | _BV(TWEA);	// Запустить чтение шины (с подтверждением "ACK")
+		while (!(TWCR & _BV(TWINT)));				// Дождаться окончания приема данных
+		return TWDR;								// Вернуть принятые данные , это содержимое data - регистра 
+	}
+	_requested_bytes = 0; 						// Если читаем последний байт
+	TWCR = _BV(TWEN) | _BV(TWINT);				// Запустить чтение шины (БЕЗ подтверждения "NACK")
+	while (!(TWCR & _BV(TWINT)));					// Дождаться окончания приема данных
+	if (_stop_after_request) TwoWire::stop();  		// Если в requestFrom не задан аргумент stop , или stop задан как true - отпустить шину
+	else TwoWire::start();							// Иначе - restart (другой master на шине не сможет влезть между сообщениями)
+	return TWDR;									// Вернуть принятый ранее байт из data - регистра
 }
 
-uint8_t I2C::receive_ack() {						// функция для чтения данных с шины с ожиданием подтверждения
-	TWCR = _BV(TWEN) | _BV(TWINT) | _BV(TWEA);	// подтвердение + i2c enable + установка флага TWINT "Выполнить задание"
-	while (!(TWCR & _BV(TWINT)));				// ожидания завершения
-	return TWDR;								// вернуть содержимое data - регистра 
+void TwoWire::requestFrom(uint8_t address , uint8_t length , bool stop = true) {  // Запрос n-го кол-ва байт от ведомого устройства (Читайте все байты сразу!!!)
+	_stop_after_request = stop; 					// stop или restart после чтения последнего байта
+	_requested_bytes = length;					// Записать в переменную количество запрошенных байт
+	TwoWire::start();									// Начать работу на шине
+	TwoWire::write((address << 1) | 0x1);				// Отправить устройству адрес + бит "read" 
 }
 
-uint8_t I2C::receive_nack() {			// функция для чтения данных с шины без ожидания подтверждения
-	TWCR = _BV(TWEN) | _BV(TWINT);		// i2c enable + установка флага TWINT "Выполнить задание"
-	while (!(TWCR & _BV(TWINT)));		// ожидания завершения
-	return TWDR;						// вернуть содержимое data - регистра 
+void TwoWire::start() {								// сервисная функция с нее начинается любая работа с шиной
+	TWCR = _BV(TWSTA) | _BV(TWEN) | _BV(TWINT); 	// start + TwoWire enable + установка флага "выполнить задачу"
+	while (!(TWCR & _BV(TWINT)));					// Ожидание завершения 
 }
+
+void TwoWire::stop() {								// сервисная функция ей заканчивается работа с шиной
+	TWCR = _BV(TWSTO) | _BV(TWEN) | _BV(TWINT);	// stop + TwoWire enable + установка флага "выполнить задачу"
+}
+
+TwoWire Wire = TwoWire();

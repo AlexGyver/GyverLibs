@@ -263,7 +263,7 @@ minimLibs это набор классов, являющихся облегчё�
 ---
 
 <a id="microWire"></a>
-### microWire v1.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microWire/microWire.zip)
+### microWire v2.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microWire/microWire.zip)
 Лёгкая библиотека с минимальным набором инстурментов для работы с модулями по шине I2C
 - Не является полноценным аналогом библиотеки Wire!!!
 - Не все библиотеки на Wire смогут работать с microWire
@@ -292,7 +292,7 @@ uint8_t receive_nack(void);
 ---
 
 <a id="microDS3231"></a>
-### microDS3231 v1.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microDS3231/microDS3231.zip)
+### microDS3231 v1.1 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microDS3231/microDS3231.zip)
 Ультра лёгкая библиотека для работы с RTC DS3231
 - Для работы нужна библиотека **microWire.h**
 - Разработано by Egor 'Nich1con' Zaharov
