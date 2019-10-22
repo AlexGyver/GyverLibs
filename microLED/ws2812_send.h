@@ -75,6 +75,10 @@ using the fast 800kHz clockless WS2811/2812 protocol.
 #define w_nop8  w_nop4 w_nop4
 #define w_nop16 w_nop8 w_nop8
 
+#ifndef COLOR_DEBTH
+#define COLOR_DEBTH 3	// по умолчанию 24 бита
+#endif
+
 #if (COLOR_DEBTH == 2)
 #define PTR_TYPE uint16_t*
 #else
@@ -94,8 +98,8 @@ using the fast 800kHz clockless WS2811/2812 protocol.
 #define ORDER1	0
 #define ORDER2	1
 #else
-#define ORDER0	0
-#define ORDER1	1
+#define ORDER0	1
+#define ORDER1	0
 #define ORDER2	2
 #endif
 

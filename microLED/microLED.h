@@ -17,7 +17,9 @@
 	by AlexGyver & Egor 'Nich1con' Zaharov 07.10.2019
 	Основано на light weight WS2812 lib V2.1 https://github.com/cpldcpu/light_ws2812
 	
-	Версия 1.0
+	Версия 1.1
+	- Поправлена инициализация
+	- Добавлен оранжевый цвет
 */
 
 #pragma once
@@ -88,10 +90,11 @@ enum COLORS {
 	WHITE =		0xFFFFFF,	// белый
 	SILVER =	0xC0C0C0,	// серебро
 	GRAY =		0x808080,	// серый
-	BLACK =		0x000000,	// чёрный
+	BLACK =		0x000000,	// чёрный	
 	RED =		0xFF0000,	// красный
 	MAROON =	0x800000,	// бордовый
-	YELLOW =	0xFFFF00,	// жёлтый
+	ORANGE =	0xFF3000,	// оранжевый
+	YELLOW =	0xFF8000,	// жёлтый
 	OLIVE =		0x808000,	// олива
 	LIME =		0x00FF00,	// лайм
 	GREEN =		0x008000,	// зелёный
