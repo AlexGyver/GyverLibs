@@ -34,7 +34,7 @@ encMinim::encMinim(uint8_t clk, uint8_t dt, uint8_t sw, boolean dir, boolean typ
   pinMode (_clk, INPUT);
   pinMode (_dt, INPUT);
   pinMode (_sw, INPUT_PULLUP);
-  _lastState = bitRead(PIND, _clk);
+  _lastState = digitalRead(_clk);
 }
 
 void encMinim::tick() {
