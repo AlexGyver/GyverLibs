@@ -123,8 +123,7 @@ float pressureToMmHg(float pressure) {
 
 /* ============ Setup & begin ============ */
 
-bool GyverBME280::begin(byte addr) {
-	uint8_t _i2c_address = addr;
+bool GyverBME280::begin() {	
 	/* === Start I2C bus & check BME280 === */
 	Wire.begin();                             					// Start I2C bus 
 	GyverBME280::reset();                     					// BME280 software reset
@@ -246,7 +245,9 @@ void GyverBME280::oneMeasurement(void) {
 	GyverBME280::writeRegister(0xF4 , ((GyverBME280::readRegister(0xF4) & 0xFC) | 0x02));   // Set the operating mode to FORCED_MODE
 }
 
-GyverBME280::GyverBME280(){}
+GyverBME280::GyverBME280(byte addr) {
+	_i2c_address = addr;
+}
 
 
 
