@@ -5,8 +5,8 @@
 #define PIN 3				// кнопка подключена сюда (PIN --- КНОПКА --- GND)
 
 #include "GyverButton.h"
-//GButton butt1(PIN);
- GButton butt1(PIN, HIGH_PULL, NORM_OPEN); // можно инициализировать так
+GButton butt1(PIN);
+// GButton butt1(PIN, HIGH_PULL, NORM_OPEN); // можно инициализировать так
 
 int value = 0;
 

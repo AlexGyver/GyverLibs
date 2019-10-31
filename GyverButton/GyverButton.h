@@ -16,8 +16,11 @@
 	- Функция изменения значения переменной с заданным шагом и заданным интервалом по времени
 	- Возможность опрашивать не кнопку, а напрямую давать величину (все возможности библиотеки для матричных и резистивных клавиатур)
 	
-	Текущая версия: 2.14 от 09.09.2019:
+	Версия 2.14 от 09.09.2019:	
 	- Возвращены дефайны
+	
+	Версия 2.15
+	- Добавлена возможность объявить кнопку без привязки к пину
 */
 
 #pragma pack(push,1)
@@ -38,6 +41,7 @@ typedef struct
 	bool mode: 1;
 	bool type: 1;
 	bool tickMode: 1;
+	bool noPin: 1;
 } GyverButtonFlags;
 #pragma pack(pop)
 
@@ -51,9 +55,10 @@ typedef struct
 class GButton
 {
   public:
-    GButton(uint8_t pin);								// класс кнопки, принимает пин
+	GButton();											// конструктор (для работы без пина) по умолч. нормально открытая, срабатывание на лог. 1
+	GButton(uint8_t pin);								// конструктор кнопки, принимает пин
 	
-	GButton(uint8_t pin, uint8_t type, uint8_t dir);	// класс кнопки, принимает PIN пин, тип type (HIGH_PULL / LOW_PULL) и направление dir (NORM_OPEN / NORM_CLOSE)
+	GButton(uint8_t pin, uint8_t type, uint8_t dir);	// конструктор кнопки, принимает PIN пин, тип type (HIGH_PULL / LOW_PULL) и направление dir (NORM_OPEN / NORM_CLOSE)
 														// HIGH_PULL - кнопка подключена к GND, пин подтянут к VCC, pinMode - INPUT_PULLUP (по умолчанию)
 														// LOW_PULL - кнопка подключена к VCC, пин подтянут к GND, pinMode - INPUT
 														// NORM_OPEN - кнопка по умолчанию разомкнута (по умолчанию)
@@ -93,10 +98,10 @@ class GButton
 	void init();
     GyverButtonFlags flags;
     uint8_t _PIN = 0;
-	uint16_t _debounce = 0;
-	uint16_t _timeout = 0;
-	uint16_t _click_timeout = 0;
-	uint16_t _step_timeout = 0;
+	uint16_t _debounce = 60;
+	uint16_t _timeout = 500;
+	uint16_t _click_timeout = 300;
+	uint16_t _step_timeout = 400;
 	uint8_t btn_counter = 0, last_counter = 0;	
 	uint32_t btn_timer = 0;		
 };
