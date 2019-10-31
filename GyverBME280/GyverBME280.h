@@ -44,7 +44,7 @@ class GyverBME280 {
 
 public:
 
-	GyverBME280();								// Create an object of class BME280
+	GyverBME280(byte addr = 0x76);				// Create an object of class BME280
 	bool begin(void);							// Initialize sensor with standard or previously selected parameters
 	bool isMeasuring(void);						// Returns 'true' while the measurement is in progress					
 	float readPressure(void);					// Read and calculate atmospheric pressure [float , Pa]
@@ -61,7 +61,7 @@ public:
 private:
 
 	//============================== DEFAULT SETTINGS ========================================|
-	const uint8_t _i2c_address = 0x76;			// BME280 address on I2C bus                  |
+	uint8_t _i2c_address = 0x76;				// BME280 address on I2C bus                  |
 	uint8_t _operating_mode = NORMAL_MODE;		// Sensor operation mode                      |
 	uint8_t _standby_time = STANDBY_250MS;		// Time between measurements in NORMAL_MODE	  |
 	uint8_t _filter_coef = FILTER_COEF_16; 		// Filter ratio IIR                           |
@@ -123,8 +123,8 @@ float pressureToMmHg(float pressure) {
 
 /* ============ Setup & begin ============ */
 
-bool GyverBME280::begin(void) {
-
+bool GyverBME280::begin(byte addr) {
+	uint8_t _i2c_address = addr;
 	/* === Start I2C bus & check BME280 === */
 	Wire.begin();                             					// Start I2C bus 
 	GyverBME280::reset();                     					// BME280 software reset
