@@ -31,6 +31,7 @@
 * [GyverPower](#GyverPower) - библиотека для управления энергопотреблением МК
 
 ### Лёгкие библиотеки
+* [GyverBME280](#GyverBME280) - лёгкая библиотека для датчика BME280
 * [microLED](#microLED) - ультра-лёгкая библиотека для адресных диодов
 * [microWire](#microWire) - микро библиотека для работы с i2c
 * [microDS3231](#microDS3231) - лёгкая библиотека для RTC DS3231
@@ -259,6 +260,37 @@ minimLibs это набор классов, являющихся облегчё�
 - DS18B20 (датчик температуры)
 
 Созданы для работы со скетчами, требовательными к памяти. **НЕ НУЖНО ПОМЕЩАТЬ ИХ В ПАПКУ С БИБЛИОТЕКАМИ!** Примеры из minimLibs живут отдельной жизнью в сврих папках, им не нужны библиотеки. Смотрите примеры!
+
+---
+
+<a id="microBME280"></a>
+### microBME280 v1.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microWire/microBME280.zip)
+Лёгкая библиотека для работы с датчиком BME280
+- Легче аналогов =)
+- Разработано by Egor 'Nich1con' Zaharov
+#### Методы и функции библиотеки
+<details>
+<summary>РАЗВЕРНУТЬ</summary>
+<p>
+Смотри примеры в папке examples!
+
+```C
+GyverBME280();								// Create an object of class BME280
+bool begin(void);							// Initialize sensor with standard or previously selected parameters
+bool isMeasuring(void);						// Returns 'true' while the measurement is in progress					
+float readPressure(void);					// Read and calculate atmospheric pressure [float , Pa]
+float readHumidity(void);					// Read and calculate air humidity [float , %]
+void oneMeasurement(void);					// Make one measurement and go back to sleep [FORCED_MODE only]
+void setMode(uint8_t mode);
+float readTemperature(void);				// Read and calculate air temperature [float , *C]
+void setFilter(uint8_t mode);				// Adjust the filter ratio other than the standard one [before begin()]
+void setStandbyTime(uint8_t mode);			// Adjust the sleep time between measurements [NORMAL_MODE only][before begin()]
+void setHumOversampling(uint8_t mode);		// Set oversampling or disable humidity module [before begin()]
+void setTempOversampling(uint8_t mode);		// Set oversampling or disable temperature module [before begin()]
+void setPressOversampling(uint8_t mode);	// Set oversampling or disable pressure module [before begin()]
+```
+</p>
+</details>
 
 ---
 
@@ -1265,9 +1297,9 @@ void twistByte(uint8_t bit0, uint8_t bit1, uint8_t bit2, uint8_t bit3, int delay
 ---
 
 <a id="GyverPID"></a>
-### GyverPID v1.2 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverPID/GyverPID.zip)
+### GyverPID v1.3 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverPID/GyverPID.zip)
 Библиотека классического PID регулятора для Arduino
-- Время одного расчёта около 90 мкс
+- Время одного расчёта около 50 мкс
 - Режим работы по величине или по её изменению (для интегрирующих процессов)
 - Возвращает результат по встроенному таймеру или в ручном режиме
 
@@ -1279,28 +1311,27 @@ void twistByte(uint8_t bit0, uint8_t bit1, uint8_t bit2, uint8_t bit3, int delay
 Смотри примеры в папке examples!
 
 ```C
+==== datatype это float или int, в зависимости от выбранного (см. пример integer_calc) ====
+
 GyverPID();
-GyverPID(float new_kp, float new_ki, float new_kd);                     // kp, ki, kd
-GyverPID(float new_kp, float new_ki, float new_kd, int16_t new_dt);     // kp, ki, kd, dt
+GyverPID(float new_kp, float new_ki, float new_kd, int16_t new_dt = 100);		// kp, ki, kd, dt
 	
-float setpoint;        // заданная величина, которую должен поддерживать регулятор
-float input;           // сигнал с датчика (например температура, которую мы регулируем)
-float output;          // выход с регулятора на управляющее устройство (например величина ШИМ или угол поворота серво)
+datatype setpoint = 0;		// заданная величина, которую должен поддерживать регулятор
+datatype input = 0;			// сигнал с датчика (например температура, которую мы регулируем)
+datatype output = 0;		// выход с регулятора на управляющее устройство (например величина ШИМ или угол поворота серво)
 	
-float getResult();                                          // возвращает новое значение при вызове (если используем свой таймер с периодом dt!)	
-float getResult(float new_setpoint, float new_input);       // принимает setpoint и input
+datatype getResult();												// возвращает новое значение при вызове (если используем свой таймер с периодом dt!)	
+datatype getResult(datatype new_setpoint, datatype new_input);		// принимает setpoint и input
 	
-float getResultTimer();                                     // возвращает новое значение не ранее, чем через dt миллисекунд (встроенный таймер с периодом dt)
-float getResultTimer(float new_setpoint, float new_input);  // тож самое, но принимает setpoint и input
-		
-void setDirection(boolean direction);                       // направление регулирования: NORMAL (0) или REVERSE (1)
-void setMode(boolean mode);                                 // режим: работа по входной ошибке ON_ERROR (0) или по изменению ON_RATE (1)
-void setLimits(float min_output, float max_output);         // лимит выходной величины (например для ШИМ ставим 0-255)
-void setDt(int16_t new_dt);                                 // установка времени дискретизации (для getResultTimer)
+datatype getResultTimer();											// возвращает новое значение не ранее, чем через dt миллисекунд (встроенный таймер с периодом dt)
+datatype getResultTimer(datatype new_setpoint, datatype new_input);	// тож самое, но принимает setpoint и input
 	
-float kp;
-float ki;
-float kd;
+void setDirection(uint8_t direction);						// направление регулирования: NORMAL (0) или REVERSE (1)
+void setMode(uint8_t mode);									// режим: работа по входной ошибке ON_ERROR (0) или по изменению ON_RATE (1)
+void setLimits(int min_output, int max_output);				// лимит выходной величины (например для ШИМ ставим 0-255)
+void setDt(int16_t new_dt);									// установка времени дискретизации (для getResultTimer)
+void tune(float new_kp, float new_ki, float new_kd);		// перенастройка коэффициентов (П, И, Д)
+
 ```
 </p>
 </details>

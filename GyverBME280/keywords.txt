@@ -1,0 +1,52 @@
+  
+#######################################
+# Syntax Coloring Map For GyverBME280
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+GyverBME280	KEYWORD2
+begin	KEYWORD2
+isMeasuring	KEYWORD2 
+setFilter	KEYWORD2
+setMode		KEYWORD2
+setStandbyTime	KEYWORD2
+setHumOversampling	KEYWORD2
+setTempOversampling	KEYWORD2
+setPressOversampling	KEYWORD2
+oneMeasurement	KEYWORD2
+readTemperature	KEYWORD2
+readPressure	KEYWORD2
+readHumidity	KEYWORD2
+pressureToAltitude	KEYWORD2
+pressureToMmHg	KEYWORD2
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+NORMAL_MODE	LITERAL1
+FORCED_MODE	LITERAL1
+STANDBY_500US	LITERAL1
+STANDBY_10MS	LITERAL1
+STANDBY_20MS	LITERAL1
+STANDBY_6250US	LITERAL1
+STANDBY_125MS	LITERAL1
+STANDBY_250MS	LITERAL1
+STANDBY_500MS	LITERAL1
+STANDBY_1000MS	LITERAL1
+MODULE_DISABLE	LITERAL1
+OVERSAMPLING_1	LITERAL1
+OVERSAMPLING_2	LITERAL1
+OVERSAMPLING_4	LITERAL1
+OVERSAMPLING_8	LITERAL1
+OVERSAMPLING_16	LITERAL1
+FILTER_DISABLE	LITERAL1
+FILTER_COEF_2	LITERAL1
+FILTER_COEF_4	LITERAL1
+FILTER_COEF_8	LITERAL1
+FILTER_COEF_16	LITERAL1
