@@ -1,12 +1,15 @@
 #include "GyverButton.h"
 // аналоговая клавиатура подключена на А7. Схему смотри на странице библиотеки
-// пин подключения не важен, лучше какой-нибудь ненужный
-GButton myButt1(3, LOW_PULL, NORM_OPEN);
-GButton myButt2(3, LOW_PULL, NORM_OPEN);
-GButton myButt3(3, LOW_PULL, NORM_OPEN);
+GButton myButt1;
+GButton myButt2;
+GButton myButt3;
 
 void setup() {
   Serial.begin(9600);
+  // меняем тип на LOW_PULL, потому что по умолчанию стоит HIGH_PULL
+  myButt1.setType(LOW_PULL);
+  myButt2.setType(LOW_PULL);
+  myButt3.setType(LOW_PULL);
 }
 
 void loop() {
