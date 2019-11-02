@@ -4,9 +4,11 @@
 #if defined(PID_INTEGER)
 typedef int datatype;
 // расчёты с целыми числами
-#else
+#elif defined(PID_FLOAT)
 typedef float datatype;
 // расчёты с float числами
+#else
+typedef float datatype;
 #endif
 
 #define NORMAL 0
@@ -27,11 +29,12 @@ typedef float datatype;
 
 class GyverPID {
 public:
+	// ==== datatype это float или int, в зависимости от выбранного (см. пример integer_calc) ====
 	GyverPID();
 	GyverPID(float new_kp, float new_ki, float new_kd, int16_t new_dt = 100);		// kp, ki, kd, dt
 	
 	datatype setpoint = 0;		// заданная величина, которую должен поддерживать регулятор
-	datatype input = 0;			// сигнал с датчика (например температура, которую мы регулируем)
+	float input = 0;			// сигнал с датчика (например температура, которую мы регулируем)
 	datatype output = 0;		// выход с регулятора на управляющее устройство (например величина ШИМ или угол поворота серво)
 	
 	datatype getResult();												// возвращает новое значение при вызове (если используем свой таймер с периодом dt!)	
@@ -56,7 +59,7 @@ private:
 	float dt_s = 0.0;
 	float kd_dt_s = 0;
 	float ki_dt_s = 0;
-	datatype prevInput = 0.0;
+	float prevInput = 0.0;
 	float integral = 0.0;
 	uint32_t pidTimer = 0;
 };
