@@ -1234,7 +1234,7 @@ void fadeTo(uint8_t new_r, uint8_t new_g, uint8_t new_b, uint16_t fadeTime);
 ---
 
 <a id="GyverTM1637"></a>
-### GyverTM1637 v1.3 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverTM1637/GyverTM1637.zip)
+### GyverTM1637 v1.4 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverTM1637/GyverTM1637.zip)
 Бибилотека для 7 сегментного дисплея на чипе TM1637 с кучей приколюх
 - Вывод цифр массивом или прицельно
 - Вывод букв из списка доступных (листай ниже) массивом или прицельно
