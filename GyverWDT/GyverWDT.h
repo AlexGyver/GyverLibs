@@ -1,49 +1,84 @@
+﻿/***********************************************************************************
+* Developed for AlexGyver https://github.com/AlexGyver  by Egor 'Nich1con' Zaharov *
+* Support MCU's : AVR ATmega328p/32U4/2560 & ATtiny85/84/167 					   *												  
+* Distributed under a free license indicating the source						   * 														  
+* Version 2.0 from 03.11.19														   *
+***********************************************************************************/ 
+
 #ifndef GyverWDT_h
 #define GyverWDT_h
 #include <Arduino.h>
 
-/* библиотека для расширенной и удобной работы с watchdog.
-* created for AlexGyver by Egor 'Nich1con' Zaharov 10.08.2019
-* MCU supported : ATmega328/168 , ATmega32u4/16u4 , ATmega2560/1280 , ATtiny85/45 , ATtiny88/48 ...
-*/
+#if defined(__AVR_ATtiny85__) || defined(__AVR_ATtiny167__)
+#define WDTCSR WDTCR
+#endif
 
-/* О прескалерах и режимах работы watchdog таймера:
-* 1) Осцилятор сторжевого таймера не предполагает высокой точности и имеет отклонение при производстве около 10%
-* 2) Приблизительное соотношение делителей и таймаутов:
-* [/2 ~ 16ms   /4 ~ 32ms  /8 ~ 64ms  /16 ~ 0.125s  /32 ~ 0.25s  /64 ~ 0.5s  /128 ~ 1s  /256 ~ 2s  /512 ~ 4s  /1024 ~ 8s ]
-* 3) Описание режимов работы сторжевого таймера:
-* - INTERRUPT_MODE  => Таймаут инициирует вызов прерывания , работает на любом bootloader'e 
-* - RESET_MODE  => Таймаут инициирует сброс микроконтроллера , работает НЕ со всеми загрузчиками , для проверки воспользуйтесь примером "watchdog_support_test"
-* - INTERRUPT_RESET_MODE  => Первый таймаут инициирует прерывание,и автоматически переводит watchdog в режим "RESET_MODE",
-*  соотв. последующий таймаут иницирует сброс. Если в вызванном прерывании удалось побороть причину зависания,
-*  вы можете перенастроить сторжевой таймер конструкцией [watchdog_disable() + watchdog_enable()],чтобы следующий таймаут не инициировал сброс.
-*/
-// версия 1.1 от 11.09.2019 - чуть улучшена стабильность
-// версия 1.2 от 15.09.2019 - почищен код
+#define	WATCHDOG WDT_vect
 
-/* варианты предделителей для watchdog'a */
-#define WDT_PRESCALER_2		0
-#define WDT_PRESCALER_4		1
-#define WDT_PRESCALER_8		2
-#define WDT_PRESCALER_16	3
-#define WDT_PRESCALER_32	4
-#define WDT_PRESCALER_64	5
-#define WDT_PRESCALER_128	6
-#define WDT_PRESCALER_256	7
-#define WDT_PRESCALER_512	8
-#define WDT_PRESCALER_1024	9
+/**************************
+* Watchdog operating mode *
+**************************/
+#define RESET_MODE				0x08	// To reset the CPU if there is a timeout
+#define INTERRUPT_MODE			0x40	// Timeout will cause an interrupt
+#define INTERRUPT_RESET_MODE	0x48	// First time-out interrupt , the second time out - reset
 
-/* Режимы работы watchdog'a */
-#define INTERRUPT_MODE			0 // вызывает прерывание при таймауте
-#define INTERRUPT_RESET_MODE	1  // вызывает прерывание при таймауте, следующий таймаут инициирует сброс
 
-/* указатель на функцию прерывания */
-extern void (*isr_wdt)();
+/**********************************
+* Watchdog time-out vs prescaler: *
+**********************************/
+#define WDT_PRESCALER_2		0x00	// (16 ± 1.6) ms
+#define WDT_PRESCALER_4		0x01	// (32 ± 3.2) ms
+#define WDT_PRESCALER_8		0x02	// (64 ± 6.4) ms
+#define WDT_PRESCALER_16	0x03	// (128 ± 12.8) ms
+#define WDT_PRESCALER_32	0x04	// (256 ± 25.6) ms
+#define WDT_PRESCALER_64	0x05	// (512 ± 51.2) ms
+#define WDT_PRESCALER_128	0x06	// (1024 ± 102.4) ms
+#define WDT_PRESCALER_256	0x07	// (2048 ± 204.8) ms
+#define WDT_PRESCALER_512	0x08	// (4096 ± 409.6) ms
+#define WDT_PRESCALER_1024	0x09	// (8192 ± 819.2) ms
 
-/* Все функции библиотеки */
-void watchdog_reset(void); // сбросить watchdog 
-void watchdog_disable(void); // полностью выключить watchdog 
-void watchdog_enable(uint8_t mode , uint8_t  prescaler, void (*isr)()); // Включить и настроить ватчдог (с прерыванием)
-void watchdog_enable(uint8_t prescaler); // Включить и настроить ватчдог (только reset)
+// ========================================================= CLASS ========================================================= //
 
+class GyverWDT {
+
+public:
+	void reset(void);                               // сброс
+	void disable(void);                             // отключить WDT
+	void enable(uint8_t mode, uint8_t prescaler);   // включить WDT с настройками
+	// mode:
+	// RESET_MODE - сброс при зависании (при тайм-ауте WDT)
+	// INTERRUPT_MODE - прерывание при зависании (при тайм-ауте WDT)
+	// INTERRUPT_RESET_MODE - первый таймаут - прерывание, второй - сброс
+	// prescaler:
+	// WDT_PRESCALER_2, WDT_PRESCALER_4... WDT_PRESCALER_1024
+	
+private:
+
+};
+
+// ========================================================= SOURCE CODE ==================================================== //
+
+void GyverWDT::enable(uint8_t mode, uint8_t prescaler) {						// Enable watchdog with selected options
+	uint8_t sregCopy , wdtRegister;												// Local variables of a function
+	wdtRegister = mode | ((prescaler > 7) ? 0x20 | (prescaler - 8) : prescaler);	// Creating new watchdog settings
+	sregCopy = SREG;																// Save global interrupt settings
+	cli();																		// Disable global interrupts
+	WDTCSR = ((1 << WDCE) | (1 << WDE));											// Allow changing settings
+	WDTCSR = wdtRegister;															// Setting new watchdog settings
+	SREG = sregCopy;																// Restore global interrupt settings
+}
+
+void GyverWDT::disable(void) {				// Complete shutdown of watchdog
+	uint8_t sregCopy = SREG;					// Save global interrupt settings
+	cli();									// Disable global interrupts
+	WDTCSR = ((1 << WDCE) | (1 << WDE));		// Allow changing settings
+	WDTCSR = 0x00;							// Reset all watchdog settings
+	SREG = sregCopy;							// Restore global interrupt settings
+}
+
+void GyverWDT::reset(void) { 	// Reset watchdog counter (avoid watchdog time-out)
+	asm volatile ("WDR");			// Watchdog assembly reset instruction  
+}
+
+extern GyverWDT Watchdog;
 #endif

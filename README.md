@@ -832,7 +832,7 @@ void PWM_TMR1_10BIT();	// Установить таймер 1 (ШИМ на D9 и
 ---
 
 <a id="GyverWDT"></a>
-### GyverWDT v1.2 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverWDT/GyverWDT.zip)
+### GyverWDT v2.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverWDT/GyverWDT.zip)
 Библиотека для расширенной и удобной работы с watchdog
 - Перезагрузка по прерыванию
 - Вызов обычных прерываний
@@ -844,10 +844,15 @@ void PWM_TMR1_10BIT();	// Установить таймер 1 (ШИМ на D9 и
 Смотри примеры в папке examples!
 
 ```C
-void watchdog_reset(void);       // сбросить watchdog 
-void watchdog_disable(void);     // полностью выключить watchdog 
-void watchdog_enable(uint8_t mode , uint8_t  prescaler, void (*isr)());   // Включить и настроить ватчдог (с прерыванием)
-void watchdog_enable(uint8_t prescaler);   // Включить и настроить ватчдог (только reset)
+void reset(void);                               // сброс
+void disable(void);                             // отключить WDT
+void enable(uint8_t mode, uint8_t prescaler);   // включить WDT с настройками
+// mode:
+// RESET_MODE - сброс при зависании (при тайм-ауте WDT)
+// INTERRUPT_MODE - прерывание при зависании (при тайм-ауте WDT)
+// INTERRUPT_RESET_MODE - первый таймаут - прерывание, второй - сброс
+// prescaler:
+// WDT_PRESCALER_2, WDT_PRESCALER_4... WDT_PRESCALER_1024
 ```
 </p>
 </details>
