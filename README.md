@@ -973,7 +973,7 @@ float getDelta();	// получить аппроксимированное из�
 ---
 
 <a id="GyverTimer"></a>
-### GyverTimer v2.1 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverTimer/GyverTimer.zip)
+### GyverTimer v2.2 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverTimer/GyverTimer.zip)
 Компактная альтернатива конструкции таймера с millis() / micros(), обеспечивающая удобную мультизадачность на Arduino
 - Вся работа с таймером заменяется одной функцией
 - Миллисекундный и микросекундный таймер

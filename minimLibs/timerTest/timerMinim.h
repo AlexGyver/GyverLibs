@@ -19,7 +19,7 @@ timerMinim::timerMinim(uint32_t interval) {
 }
 
 void timerMinim::setInterval(uint32_t interval) {
-  _interval = interval;
+  _interval = (interval == 0) ? 1 : interval;		// защита от ввода 0
 }
 
 boolean timerMinim::isReady() {

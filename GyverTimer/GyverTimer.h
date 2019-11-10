@@ -1,9 +1,7 @@
-#ifndef GyverTimer_h
-#define GyverTimer_h
+#pragma once
 #include <Arduino.h>
 
 /*
-	Текущая версия: 2.0 от 09.09.2019
 	GTimer - компактная альтернатива конструкции таймера с millis() / micros()
 	- Вся работа с таймером заменяется одной функцией
 	- Миллисекундный и микросекундный таймер
@@ -14,6 +12,7 @@
 		- Защита от переполнения millis()
 		- Убраны дефайны
 	- Версия 2.1 - возвращены дефайны
+	- Версия 2.2 - улучшена стабильность
 */
 
 #define MANUAL 0
@@ -28,8 +27,8 @@ class GTimer_ms
 	void setMode(uint8_t mode);				// установка типа работы: AUTO или MANUAL (MANUAL нужно вручную сбрасывать reset)
 	boolean isReady();						// возвращает true, когда пришло время. Сбрасывается в false сам (AUTO) или вручную (MANUAL)
 	void reset();							// ручной сброс таймера на установленный интервал
-	void stop();							// остановить таймер
-	void start();							// продолжить
+	void stop();							// остановить таймер (без сброса счёта)
+	void start();							// продолжить (без сброса счёта)
 	
   private:
 	uint32_t _timer = 0;
@@ -56,5 +55,3 @@ class GTimer_us
 	boolean _mode = true;
 	boolean _state = true;
 };
-
-#endif

@@ -1,7 +1,7 @@
-#include "GyverTimer.h"
-#include <Arduino.h> 
+#include <Arduino.h>
+#include <GyverTimer.h>
 
-// millis
+// ====== millis ======
 
 GTimer_ms::GTimer_ms() {}
 
@@ -11,7 +11,7 @@ GTimer_ms::GTimer_ms(uint32_t interval) {
 }
 
 void GTimer_ms::setInterval(uint32_t interval) {
-	_interval = interval;
+	_interval = (interval == 0) ? 1 : interval;		// защита от ввода 0
 	GTimer_ms::reset();
 }
 void GTimer_ms::setMode(uint8_t mode) {
@@ -43,7 +43,7 @@ void GTimer_ms::reset() {
 	_timer = millis();
 }
 
-// micros
+// ====== micros ======
 
 GTimer_us::GTimer_us() {}
 
@@ -53,7 +53,7 @@ GTimer_us::GTimer_us(uint32_t interval) {
 }
 
 void GTimer_us::setInterval(uint32_t interval) {
-	_interval = interval;
+	_interval = (interval == 0) ? 1 : interval;		// защита от ввода 0
 	_timer = micros();
 }
 void GTimer_us::setMode(uint8_t mode) {
