@@ -1,18 +1,92 @@
 #include <Arduino.h>
-#include <GyverTimer.h>
+#include "GyverTimer.h"
+
+// конструктор
+GTimer::GTimer(timerType type, uint32_t interval) {
+	setInterval(interval);		// запуск в режиме ИНТЕРВАЛА
+	_type = type;				// установка типа
+}
+
+// запуск в режиме интервала
+void GTimer::setInterval(uint32_t interval) {
+	_interval = (interval == 0) ? 1 : interval;		// защита от ввода 0
+	_mode = TIMER_INTERVAL;							// режим "интервал"
+	start();										// сброс и запуск	
+}
+
+// запуск в режиме таймаута
+void GTimer::setTimeout(uint32_t timeout) {
+	setInterval(timeout);		// задать интервал и запустить
+	_mode = TIMER_TIMEOUT;		// режим "таймаут"
+}
+
+// остановить счёт
+void GTimer::stop() {
+	_state = false;
+	_resumeBuffer = ( (_type) ? millis() : micros() ) - _timer;		// запомнили "время остановки"
+}
+
+// продолжить счёт
+void GTimer::resume() {
+	reset();
+	_timer -= _resumeBuffer;	// восстановили время остановки
+	_state = true;
+}
+
+// перезапустить счёт
+void GTimer::start() {
+	resume();
+	reset();
+}
+
+// сброс периода
+void GTimer::reset() {
+	_timer = (_type) ? millis() : micros();
+}
+
+// проверка таймера v2.0 (соблюдение интервалов, защита от пропуска и переполнения)
+boolean GTimer::isReady() {	
+	if (!_state) return false;							// если таймер остановлен
+	uint32_t thisTime = (_type) ? millis() : micros();	// текущее время
+	if (thisTime - _timer >= _interval) {				// проверка времени
+		if (_mode) {						// если режим интервалов
+			do {
+				_timer += _interval;
+				if (_timer < _interval) break;			// защита от переполнения uint32_t
+			} while (_timer < thisTime - _interval);	// защита от пропуска шага			
+		} else {							// если режим таймаута
+			_state = false;					// остановить таймер
+		}
+		return true;
+	} else {
+		return false;
+	}
+}
+
+// сменить режим вручную
+void GTimer::setMode(boolean mode) {
+	_mode = mode;
+}
+
+// ================== УСТАРЕЛО (но работает, для совместимости) ===================
 
 // ====== millis ======
-
 GTimer_ms::GTimer_ms() {}
 
 GTimer_ms::GTimer_ms(uint32_t interval) {
-	_interval = interval;
-	_timer = millis();
+	_interval = (interval == 0) ? 1 : interval;		// защита от ввода 0
+	reset();
 }
 
 void GTimer_ms::setInterval(uint32_t interval) {
 	_interval = (interval == 0) ? 1 : interval;		// защита от ввода 0
 	GTimer_ms::reset();
+	_state = true;
+	_mode = true;
+}
+void GTimer_ms::setTimeout(uint32_t interval) {
+	setInterval(interval);
+	_mode = false;
 }
 void GTimer_ms::setMode(uint8_t mode) {
 	_mode = mode;
@@ -32,6 +106,8 @@ boolean GTimer_ms::isReady() {
 				_timer += _interval;
 				if (_timer < _interval) break;          // переполнение uint32_t
 			} while (_timer < thisMls - _interval);  // защита от пропуска шага			
+		} else {
+			_state = false;
 		}
 		return true;
 	} else {
@@ -44,17 +120,22 @@ void GTimer_ms::reset() {
 }
 
 // ====== micros ======
-
 GTimer_us::GTimer_us() {}
 
 GTimer_us::GTimer_us(uint32_t interval) {
-	_interval = interval;
-	_timer = micros();
+	_interval = (interval == 0) ? 1 : interval;		// защита от ввода 0
+	reset();
 }
 
 void GTimer_us::setInterval(uint32_t interval) {
 	_interval = (interval == 0) ? 1 : interval;		// защита от ввода 0
-	_timer = micros();
+	GTimer_us::reset();
+	_state = true;
+	_mode = true;
+}
+void GTimer_us::setTimeout(uint32_t interval) {
+	setInterval(interval);
+	_mode = false;
 }
 void GTimer_us::setMode(uint8_t mode) {
 	_mode = mode;
@@ -74,6 +155,8 @@ boolean GTimer_us::isReady() {
 				_timer += _interval;
 				if (_timer < _interval) break;          // переполнение uint32_t
 			} while (_timer < thisUs - _interval);  // защита от пропуска шага			
+		} else {
+			_state = false;
 		}
 		return true;
 	} else {

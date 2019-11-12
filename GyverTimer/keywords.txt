@@ -6,6 +6,7 @@
 # Datatypes (KEYWORD1)
 #######################################
 
+GTimer	KEYWORD1
 GTimer_ms	KEYWORD1
 GTimer_us	KEYWORD1
 GyverTimer	KEYWORD1
@@ -15,11 +16,13 @@ GyverTimer	KEYWORD1
 #######################################
 
 setInterval	KEYWORD2
+setTimeout	KEYWORD2
 isReady	KEYWORD2
 reset	KEYWORD2
 setMode	KEYWORD2
 start	KEYWORD2
 stop	KEYWORD2
+resume	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
@@ -27,3 +30,7 @@ stop	KEYWORD2
 
 AUTO	LITERAL1
 MANUAL	LITERAL1
+TIMER_TIMEOUT	LITERAL1
+TIMER_INTERVAL	LITERAL1
+MS	LITERAL1
+US	LITERAL1
