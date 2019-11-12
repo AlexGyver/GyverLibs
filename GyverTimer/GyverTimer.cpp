@@ -44,6 +44,11 @@ void GTimer::reset() {
 	_timer = (_type) ? millis() : micros();
 }
 
+// состояние
+boolean GTimer::isEnabled() {
+	return _state;
+}
+
 // проверка таймера v2.0 (соблюдение интервалов, защита от пропуска и переполнения)
 boolean GTimer::isReady() {	
 	if (!_state) return false;							// если таймер остановлен

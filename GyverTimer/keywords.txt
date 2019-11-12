@@ -18,6 +18,7 @@ GyverTimer	KEYWORD1
 setInterval	KEYWORD2
 setTimeout	KEYWORD2
 isReady	KEYWORD2
+isEnabled	KEYWORD2
 reset	KEYWORD2
 setMode	KEYWORD2
 start	KEYWORD2

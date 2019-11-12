@@ -973,7 +973,7 @@ float getDelta();	// получить аппроксимированное из�
 ---
 
 <a id="GyverTimer"></a>
-### GyverTimer v3.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverTimer/GyverTimer.zip)
+### GyverTimer v3.1 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverTimer/GyverTimer.zip)
 GTimer - полноценный таймер на базе системных millis() / micros(), обеспечивающий удобную мультизадачность и работу с временем
 - Миллисекундный и микросекундный таймер
 - Два режима работы:
