@@ -9,9 +9,11 @@ GTimer::GTimer(timerType type, uint32_t interval) {
 
 // запуск в режиме интервала
 void GTimer::setInterval(uint32_t interval) {
-	_interval = (interval == 0) ? 1 : interval;		// защита от ввода 0
-	_mode = TIMER_INTERVAL;							// режим "интервал"
-	start();										// сброс и запуск	
+	if (interval != 0) {				// защита от ввода 0
+		_interval = interval;			// установка
+		_mode = TIMER_INTERVAL;			// режим "интервал"
+		start();						// сброс и запуск	
+	} else stop();						// остановка, если время == 0
 }
 
 // запуск в режиме таймаута
@@ -28,14 +30,13 @@ void GTimer::stop() {
 
 // продолжить счёт
 void GTimer::resume() {
-	reset();
+	start();
 	_timer -= _resumeBuffer;	// восстановили время остановки
-	_state = true;
 }
 
 // перезапустить счёт
 void GTimer::start() {
-	resume();
+	_state = true;
 	reset();
 }
 

@@ -26,8 +26,9 @@
 		- Логика работы разделена на интервал и таймаут
 		- Добавлен общий класс GTimer (для миллисекундного и микросекундного таймера)
 		- Добавлена возможность остановить и продолжить счёт таймера
-	- 3.1
+	- 3.2
 		- Добавлен isEnabled
+		- Возможность не запускать таймер при создании
 */
 
 enum timerType {
@@ -38,15 +39,15 @@ enum timerType {
 // ============== GTimer (микросекундный и миллисекундный таймер) ================
 class GTimer {
   public:
-	GTimer(timerType type = MS, uint32_t interval = 1000);	// объявление таймера с указанием типа и интервала (по умолч. миллисекундный на 1 секунду)
+	GTimer(timerType type = MS, uint32_t interval = 0);	// объявление таймера с указанием типа и интервала (таймер не запущен, если не указывать)
 	void setInterval(uint32_t interval);	// установка интервала работы таймера (также запустит и сбросит таймер) - режим интервала
 	void setTimeout(uint32_t timeout);		// установка таймаута работы таймера (также запустит и сбросит таймер) - режим таймаута
 	boolean isReady();						// возвращает true, когда пришло время
+	boolean isEnabled();					// вернуть состояние таймера (остановлен/запущен)
 	void reset();							// сброс таймера на установленный период работы
 	void start();							// запустить/перезапустить (со сбросом счёта)
 	void stop();							// остановить таймер (без сброса счёта)	
-	void resume();							// продолжить (без сброса счёта)
-	boolean isEnabled();					// вернуть состояние таймера (остановлен/запущен)
+	void resume();							// продолжить (без сброса счёта)	
 	
 	// служебное
 	void setMode(boolean mode);				// установка режима работы вручную: AUTO или MANUAL (TIMER_INTERVAL / TIMER_TIMEOUT)
@@ -56,7 +57,7 @@ class GTimer {
 	uint32_t _interval = 0;
 	uint32_t _resumeBuffer = 0;
 	boolean _mode = true;
-	boolean _state = true;
+	boolean _state = false;
 	boolean _type = true;
 };
 
@@ -83,7 +84,7 @@ class GTimer_ms {
 	
   private:
 	uint32_t _timer = 0;
-	uint32_t _interval = 0;
+	uint32_t _interval = 1000;
 	boolean _mode = true;
 	boolean _state = true;
 };
@@ -102,7 +103,7 @@ class GTimer_us {
 	
   private:
 	uint32_t _timer = 0;
-	uint32_t _interval = 0;
+	uint32_t _interval = 1000;
 	boolean _mode = true;
 	boolean _state = true;
 };
