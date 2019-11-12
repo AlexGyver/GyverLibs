@@ -1,6 +1,7 @@
 #include <Servo.h>
 #include "ServoSmooth.h"
 
+// ====== WRITE ======
 void ServoSmooth::write(uint16_t angle) {
 	_servo.write(angle);
 }
@@ -9,20 +10,14 @@ void ServoSmooth::writeMicroseconds(uint16_t angle) {
 	_servo.writeMicroseconds(angle);
 }
 
-void ServoSmooth::attach(uint8_t pin) {
+// ====== ATTACH ======
+void ServoSmooth::attach(uint8_t pin, int target) {
 	_servo.attach(pin);
 	_pin = pin;
-}
-
-void ServoSmooth::detach() {
-	_servo.detach();
-}
-
-void ServoSmooth::attach(uint8_t pin, int min, int max) {
-	_servo.attach(pin);
-	_pin = pin;
-	_min = min;
-	_max = max;
+	if (target <= 180) {
+		target = map(target, 0, 180, _min, _max);
+	}
+	_servo.writeMicroseconds(target);
 }
 
 void ServoSmooth::attach(uint8_t pin, int min, int max, int target) {
@@ -36,6 +31,10 @@ void ServoSmooth::attach(uint8_t pin, int min, int max, int target) {
 	_max = max;
 }
 
+void ServoSmooth::detach() {
+	_servo.detach();
+}
+
 void ServoSmooth::start() {
 	_servo.attach(_pin);	
 	_tickFlag = true;
@@ -46,6 +45,7 @@ void ServoSmooth::stop() {
 	_tickFlag = false;
 }
 
+// ====== SET ======
 void ServoSmooth::setSpeed(int speed) {
 	_servoMaxSpeed = speed;
 }
@@ -75,10 +75,10 @@ void ServoSmooth::setCurrentDeg(int target) {
 }
 
 int ServoSmooth::getCurrent() {
-	return _servoCurrentPos;
+	return _newPos;
 }
 int ServoSmooth::getCurrentDeg() {
-	return (map(_servoCurrentPos, _min, _max, 0, 180));
+	return (map(_newPos, _min, _max, 0, 180));
 }
 
 
@@ -86,6 +86,7 @@ void ServoSmooth::setAutoDetach(boolean set) {
 	_autoDetach = set;
 }
 
+// ====== TICK ======
 boolean ServoSmooth::tickManual() {
 	if (_tickFlag) {
 		_newSpeed = _servoTargetPos - _servoCurrentPos;						// расчёт скорости

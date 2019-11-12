@@ -1,20 +1,25 @@
-#ifndef ServoSmooth_h
-#define ServoSmooth_h
+#pragma once
 #include <Arduino.h>
 #include <Servo.h>
 
 /*	
-	ServoSmooth (by AlexGyver) - библиотека для плавного управления сервоприводами
+	ServoSmooth - библиотека для плавного управления сервоприводами
 	- Является дополнением к стандартной библиотеке Servo
 	- Настройка максимальной скорости сервопривода
 	- Настройка ускорения (разгон и торможение) сервопривода
 	- При использовании ESC и БК мотора получаем "плавный пуск" мотора
 	- Устанвока целевой позиции серво по углу (0-180) и длине импульса (500-2400)
 	- Автоматическое отключение (detach) при достижении цели
+	Читай документацию здесь: https://alexgyver.ru/servosmooth/	
+	
 	v1.1 - автоматическое отключение (detach) при достижении цели
 	v1.2 - вкл/выкл автоотключения серво
 	v1.3 - отдельный метод для установки и чтения текущего положения. Добавлен вариант метода attach
 	v1.4 - улучшена совместимость
+	v1.5 - исправлены getCurrent и getCurrentDeg
+	v1.6 - чуть оптимизирована инициализация
+	
+	2019 by AlexGyver
 */
 
 #define SS_SERVO_PERIOD 20		// период работы tick(), мс
@@ -25,9 +30,8 @@ class ServoSmooth {
 	public:
 		void write(uint16_t angle);					// аналог метода из библиотеки Servo
 		void writeMicroseconds(uint16_t angle);		// аналог метода из библиотеки Servo
-		void attach(uint8_t pin);					// аналог метода из библиотеки Servo
-		void attach(uint8_t pin, int min, int max);	// аналог метода из библиотеки Servo. min по умолч. 500, max 2400
-		void attach(uint8_t pin, int min, int max, int target);	// аналог метода из библиотеки Servo. min по умолч. 500, max 2400. target - положение (в углах или мкс, на которые серво повернётся при подключении)
+		void attach(uint8_t pin, int target = 0);	// аналог метода из библиотеки Servo
+		void attach(uint8_t pin, int min, int max, int target = 0);	// аналог метода из библиотеки Servo. min по умолч. 500, max 2400. target - положение (в углах или мкс, на которые серво повернётся при подключении)
 		void detach();								// аналог метода из библиотеки Servo
 		void start();								// attach + разрешает работу tick
 		void stop();								// detach + запрещает работу tick
@@ -48,12 +52,12 @@ class ServoSmooth {
 		void setCurrentDeg(int target);				// установка текущей позиции в градусах (0-180). Зависит от min и max
 		int getCurrent();							// получение текущей позиции в мкс (500 - 2400)
 		int getCurrentDeg();						// получение текущей позиции в градусах (0-180). Зависит от min и max
-	
-		Servo _servo;
-		int _servoCurrentPos = 0;
-		int _servoTargetPos = 0;
 		
-	private:		
+		Servo _servo;		
+		
+	private:
+		int _servoCurrentPos = 0;
+		int _servoTargetPos = 0;	
 		int _min = 500;
 		int _max = 2400;
 		uint32_t _prevServoTime = 0;		
@@ -67,6 +71,3 @@ class ServoSmooth {
 		boolean _autoDetach = true;
 		byte _timeoutCounter = 0;		
 };
-
-
-#endif

@@ -11,12 +11,12 @@ uint32_t myTimer;
 
 void setup() {
   Serial.begin(9600);
-  servo.attach(2, 600, 2400);  // 600 и 2400 - длины импульсов, при которых
+  servo.attach(A1, 600, 2400);  // 600 и 2400 - длины импульсов, при которых
   // серво поворачивается максимально в одну и другую сторону, зависят от самой серво
   // и обычно даже указываются продавцом. Мы их тут указываем для того, чтобы
   // метод setTargetDeg() корректно отрабатывал диапазон поворота сервы
 
-  servo.setSpeed(60);   // ограничить скорость
+  servo.setSpeed(90);   // ограничить скорость
   servo.setAccel(0.1);  // установить ускорение (разгон и торможение)
 }
 
@@ -29,8 +29,8 @@ void loop() {
 
   if (millis() - myTimer >= 40) {
     myTimer = millis();
-    int newPos = map(analogRead(0), 0, 1023, 500, 2400); // берём с потенцометра значение 0-180
+    int newPos = map(analogRead(A2), 0, 1023, 500, 2400); // берём с потенцометра значение 0-180
     servo.setTarget(newPos);               // и отправляем на серво
-    Serial.println(String(newPos) + " " + String(servo._servoCurrentPos)/* + " " + String(state)*/);
+    Serial.println(String(newPos) + " " + String(servo.getCurrent())/* + " " + String(state)*/);
   }
 }
