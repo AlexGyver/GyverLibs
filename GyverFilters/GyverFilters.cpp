@@ -1,6 +1,6 @@
 #include "GyverFilters.h"
 #include <Arduino.h>
-#define STOPPER 0  
+#define MEDIAN_STOPPER 0  
 
 // ***************************** GFilterRA *****************************
 GFilterRA::GFilterRA() {}
@@ -81,7 +81,7 @@ uint16_t GMedian::filtered(uint16_t value) {
 	};
 	static struct pair buffer[MEDIAN_FILTER_SIZE] = {0}; /* Buffer of nwidth pairs */
 	static struct pair *datpoint = buffer;               /* Pointer into circular buffer of data */
-	static struct pair small = {NULL, STOPPER};          /* Chain stopper */
+	static struct pair small = {NULL, MEDIAN_STOPPER};          /* Chain MEDIAN_STOPPER */
 	static struct pair big = {&small, 0};                /* Pointer to head (largest) of linked list.*/
 
 	struct pair *successor;                              /* Pointer to successor of replaced data item */
@@ -90,9 +90,9 @@ uint16_t GMedian::filtered(uint16_t value) {
 	struct pair *median;                                 /* Pointer to median */
 	uint16_t i;
 
-	if (value == STOPPER)
+	if (value == MEDIAN_STOPPER)
 	{
-		value = STOPPER + 1;                             /* No stoppers allowed. */
+		value = MEDIAN_STOPPER + 1;                             /* No MEDIAN_STOPPERs allowed. */
 	}
 
 	if ( (++datpoint - buffer) >= MEDIAN_FILTER_SIZE)
@@ -127,7 +127,7 @@ uint16_t GMedian::filtered(uint16_t value) {
 		{
 			datpoint->point = scanold->point;             /* Chain it in here.  */
 			scanold->point = datpoint;                    /* Mark it chained in. */
-			value = STOPPER;
+			value = MEDIAN_STOPPER;
 		};
 
 		/* Step median pointer down chain after doing odd-numbered element */
@@ -149,7 +149,7 @@ uint16_t GMedian::filtered(uint16_t value) {
 		{
 			datpoint->point = scanold->point;
 			scanold->point = datpoint;
-			value = STOPPER;
+			value = MEDIAN_STOPPER;
 		}
 
 		if (scan == &small)
