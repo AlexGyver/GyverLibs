@@ -27,10 +27,10 @@ Encoder::Encoder(uint8_t clk, uint8_t dt, int8_t sw, bool type) {
 	}	
 	flags.enc_type = type;
 	
-	pinMode (_CLK, INPUT);
-	pinMode (_DT, INPUT);
+	pinMode(_CLK, DEFAULT_PULL);
+	pinMode(_DT, DEFAULT_PULL);
 	
-	if (flags.use_button) pinMode(_SW, INPUT_PULLUP);
+	if (flags.use_button) pinMode(_SW, DEFAULT_BTN_PULL);
 
 #if defined(FAST_ALGORITHM)
 	prevState = digitalRead(_CLK);
@@ -46,6 +46,10 @@ void Encoder::setDirection(bool direction) {
 		_CLK = _DT;
 		_DT = buf;
 	}
+}
+void Encoder::setPinMode(bool mode) {
+	pinMode(_CLK, (mode) ? INPUT : INPUT_PULLUP);
+	pinMode(_DT, (mode) ? INPUT : INPUT_PULLUP);
 }
 void Encoder::setType(bool type) {
 	flags.enc_type = type;
@@ -156,7 +160,7 @@ void Encoder::tick(bool clk, bool dt, bool sw) {
 void Encoder::tick() {
 	uint32_t thisMls = millis();
 	uint32_t debounceDelta = thisMls - debounce_timer;	
-	
+
 #ifdef ENC_WITH_BUTTON
 	if (flags.use_button) {
 		if (!extTick) SW_state = !digitalRead(_SW);        // читаем положение кнопки SW
@@ -197,7 +201,11 @@ void Encoder::tick() {
 #if defined(FAST_ALGORITHM)
 	uint8_t curState = (extTick) ? (flags.extCLK) : digitalRead(_CLK);
 	
-	if (curState != prevState/* && (debounceDelta > ENC_DEBOUNCE_TURN)*/) {
+	if (curState != prevState
+#if (ENC_DEBOUNCE_TURN > 0)
+	&& (debounceDelta > ENC_DEBOUNCE_TURN)
+#endif
+	) {
 		encState = 0;
 		turnFlag = !turnFlag;
 		if (turnFlag || !flags.enc_type) {
@@ -211,7 +219,11 @@ void Encoder::tick() {
 #elif defined(BINARY_ALGORITHM)		
 		uint8_t curState = (extTick) ? (flags.extCLK | (flags.extDT << 1)) : (digitalRead(_CLK) | (digitalRead(_DT) << 1));
 		
-		if (curState != prevState/* && (debounceDelta > ENC_DEBOUNCE_TURN)*/) {			
+		if (curState != prevState
+#if (ENC_DEBOUNCE_TURN > 0)
+		&& (debounceDelta > ENC_DEBOUNCE_TURN)
+#endif
+		) {			
 			encState = 0;
 			if (curState == 0b11) {
 				switch (prevState) {
@@ -228,7 +240,11 @@ void Encoder::tick() {
 #elif defined(PRECISE_ALGORITHM)			
 			uint8_t curState = (extTick) ? (flags.extCLK | (flags.extDT << 1)) : (digitalRead(_CLK) | (digitalRead(_DT) << 1));
 
-			if (prevState != curState/* && (debounceDelta > ENC_DEBOUNCE_TURN)*/) {
+			if (prevState != curState
+#if (ENC_DEBOUNCE_TURN > 0)
+			&& (debounceDelta > ENC_DEBOUNCE_TURN)
+#endif
+			) {
 				encState = 0;
 				encPos += KNOBDIR[curState | (prevState << 2)];
 				if (curState == 0x3 && encPos != 0) {
