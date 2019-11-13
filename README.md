@@ -392,7 +392,7 @@ float getTemp(void);        // получить температуру
 ---
 
 <a id="GyverButton"></a>
-### GyverButton v2.15 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverButton/GyverButton.zip)
+### GyverButton v3.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverButton/GyverButton.zip)
 Библиотека для многофункциональной отработки нажатия кнопок с Arduino. Возможности:
 - Работа с нормально замкнутыми и нормально разомкнутыми кнопками
 - Работа с подключением PULL_UP и PULL_DOWN
@@ -458,13 +458,15 @@ boolean isStep();       // возвращает true по таймеру setStep
 ---
 
 <a id="GyverEncoder "></a>
-### GyverEncoder v3.6 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverEncoder/GyverEncoder.zip)
+### GyverEncoder v4.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverEncoder/GyverEncoder.zip)
 Библиотека для отработки энкодера с Arduino. Возможности:
 - Отработка поворота с антидребезгом
 - Отработка нажатия кнопки с антидребезгом
 - Отработка нажатия и удержания кнопки
 - Отработка "нажатого поворота"
 - Отработка "быстрого поворота"
+- Три алгоритма опроса энкодера
+- Работа с виртуальным энкодером
 - Работа с двумя типами экнодеров
 - Версия 3+ более оптимальная
 #### Методы и функции библиотеки

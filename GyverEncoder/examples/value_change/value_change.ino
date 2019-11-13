@@ -3,7 +3,10 @@
 #define SW 9
 
 #include "GyverEncoder.h"
-Encoder enc1(CLK, DT, SW);
+//Encoder enc1(CLK, DT);      // для работы без кнопки
+Encoder enc1(CLK, DT, SW);  // для работы c кнопкой
+//Encoder enc1(CLK, DT, SW, TYPE2);  // для работы c кнопкой и сразу выбираем тип
+//Encoder enc1(CLK, DT, ENC_NO_BUTTON, TYPE2);  // для работы без кнопки и сразу выбираем тип
 
 int value = 0;
 

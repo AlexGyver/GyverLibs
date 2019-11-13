@@ -30,7 +30,6 @@ isRelease	KEYWORD2
 isClick	KEYWORD2
 isHolded	KEYWORD2
 isHold	KEYWORD2
-fast_timeout	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
@@ -42,3 +41,4 @@ MANUAL	LITERAL1
 AUTO	LITERAL1
 NORM	LITERAL1
 REVERSE	LITERAL1
+ENC_NO_BUTTON	LITERAL1

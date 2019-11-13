@@ -1,30 +1,47 @@
-#ifndef GyverEncoder_h
-#define GyverEncoder_h
+#pragma once
 #include <Arduino.h>
 
 /*	
-	GyverEncoder - библиотека для отработки энкодера. Возможности:
-	- Отработка поворота с антидребезгом
-	- Отработка нажатия кнопки с антидребезгом
-	- Отработка нажатия и удержания кнопки
-	- Отработка "нажатого поворота"
-	- Работа с двумя типами экнодеров
+	GyverEncoder - библиотека для отработки энкодера. Возможности:	
+	- Отработка поворота энкодера
+	- Отработка "нажатого поворота"	
 	- Отработка "быстрого поворота"
-	- Версия 3+ более оптимальная и быстрая
+	- Несколько алгоритмов опроса энкодера
+	- Работа с двумя типами экнодеров
+	- Работа с внешним энкодером (через расширитель пинов и т.п.)
+	- Отработка нажатия/удержания кнопки с антидребезгом
 	
-	Текущая версия: 3.6 от 16.09.2019
-	- Возвращены дефайны настроек
+	Документацию читай здесь: https://alexgyver.ru/encoder/
+	Для максимально быстрого опроса энкодера рекомендуется использовать ядро GyverCore https://alexgyver.ru/gyvercore/
+	
+	Версии:
+	- 3.6 от 16.09.2019	- Возвращены дефайны настроек
+	- 4.0 от 12.11.2019
+		- Оптимизирован код
+		- Исправлены баги
+		- Добавлены другие алгоритмы опроса
+		- Добавлена возможность полностью убрать кнопку (экономия памяти)
+		- Добавлена возможность подключения внешнего энкодера
 */
 
+// =========== НАСТРОЙКИ ===========
+// закомментируй строку, чтобы полностью убрать отработку кнопки из кода
+#define ENC_WITH_BUTTON
+
+// алгоритмы опроса энкодера (раскомментировать нужный)
+//#define FAST_ALGORITHM		// быстрый, не справляется с люфтами
+//#define BINARY_ALGORITHM		// медленнее, лучше справляется с люфтами
+#define PRECISE_ALGORITHM		// медленнее, но работает даже с убитым энкодером (по мотивам https://github.com/mathertel/RotaryEncoder)
+
 // настройка антидребезга энкодера, кнопки и таймаута удержания
-const byte DEBOUNCE_TURN = 1;
-const int DEBOUNCE_BUTTON = 80;
-const int HOLD_TIMEOUT = 700;
+#define ENC_DEBOUNCE_TURN 1
+#define ENC_DEBOUNCE_BUTTON 80
+#define ENC_HOLD_TIMEOUT 700
+
 
 #pragma pack(push,1)
 typedef struct
 {	
-	bool SW_state: 1;
 	bool hold_flag: 1;
 	bool butt_flag: 1;
 	bool turn_flag: 1;
@@ -37,29 +54,38 @@ typedef struct
 	bool enc_tick_mode: 1;
 	bool enc_type: 1;
 	bool use_button : 1;
-
+	bool extCLK : 1;
+	bool extDT : 1;
+	bool extSW : 1;
 } GyverEncoderFlags;
 #pragma pack(pop)
 
+#define ENC_NO_BUTTON -1	// константа для работы без пина
 #define TYPE1 0		// полушаговый энкодер
 #define TYPE2 1		// полношаговый
 #define NORM 0		// направление вращения обычное
 #define REVERSE 1	// обратное
-#define MANUAL 0		// нужно вызывать функцию tick() вручную
+#define MANUAL 0	// нужно вызывать функцию tick() вручную
 #define AUTO 1		// tick() входит во все остальные функции и опрашивается сама!
 
-class Encoder
-{
+// Варианты инициализации:
+// Encoder enc;									// не привязан к пину
+// Encoder enc(пин CLK, пин DT);				// энкодер без кнопки (ускоренный опрос)
+// Encoder enc(пин CLK, пин DT, пин SW);		// энкодер с кнопкой
+// Encoder enc(пин CLK, пин DT, пин SW, тип);	// энкодер с кнопкой и указанием типа
+// Encoder enc(пин CLK, пин DT, ENC_NO_BUTTON, тип);	// энкодер без кнопкой и с указанием типа
+
+class Encoder {
 public:
-	Encoder(uint8_t clk, uint8_t dt);							// CLK, DT	
-	Encoder(uint8_t clk, uint8_t dt, uint8_t sw);				// CLK, DT, SW
-	Encoder(uint8_t clk, uint8_t dt, uint8_t sw, uint8_t type); // CLK, DT, SW, тип (TYPE1 / TYPE2) TYPE1 одношаговый, TYPE2 двухшаговый. Если ваш энкодер работает странно, смените тип
+	Encoder();								// для непривязанного к пинам энкодера
+	Encoder(uint8_t clk, uint8_t dt, int8_t sw = -1, bool type = false); // CLK, DT, SW, тип (TYPE1 / TYPE2) TYPE1 одношаговый, TYPE2 двухшаговый. Если ваш энкодер работает странно, смените тип
 	
 	void tick();							// опрос энкодера, нужно вызывать постоянно или в прерывании
-	void setType(uint8_t type);				// TYPE1 / TYPE2 - тип энкодера TYPE1 одношаговый, TYPE2 двухшаговый. Если ваш энкодер работает странно, смените тип
-	void setTickMode(uint8_t tickMode); 	// MANUAL / AUTO - ручной или автоматический опрос энкодера функцией tick(). (по умолчанию ручной)
-	void setDirection(uint8_t direction);	// NORM / REVERSE - направление вращения энкодера
-	void setFastTimeout(int timeout);		// установка таймаута быстрого поворота
+	void tick(bool clk, bool dt, bool sw);	// опрос "внешнего" энкодера
+	void setType(bool type);				// TYPE1 / TYPE2 - тип энкодера TYPE1 одношаговый, TYPE2 двухшаговый. Если ваш энкодер работает странно, смените тип
+	void setTickMode(bool tickMode); 		// MANUAL / AUTO - ручной или автоматический опрос энкодера функцией tick(). (по умолчанию ручной)
+	void setDirection(bool direction);		// NORM / REVERSE - направление вращения энкодера
+	void setFastTimeout(uint16_t timeout);	// установка таймаута быстрого поворота
 	
 	boolean isTurn();						// возвращает true при любом повороте, сама сбрасывается в false
 	boolean isRight();						// возвращает true при повороте направо, сама сбрасывается в false
@@ -75,16 +101,12 @@ public:
 	boolean isHolded();						// возвращает true при удержании кнопки, сама сбрасывается в false
 	boolean isHold();						// возвращает true при удержании кнопки, НЕ СБРАСЫВАЕТСЯ
 	
-	int8_t fast_timeout = 50;				// таймаут быстрого поворота
-	
 private:
-	void init();
 	GyverEncoderFlags flags;
-	byte curState, prevState;
-	byte encState;	// 0 не крутился, 1 лево, 2 право, 3 лево нажат, 4 право нажат
-	uint32_t debounce_timer = 0, fast_timer;
-	byte _CLK = 0, _DT = 0, _SW = 0;
-	
+	uint8_t _fast_timeout = 50;				// таймаут быстрого поворота
+	uint8_t prevState = 0;
+	uint8_t encState = 0;	// 0 не крутился, 1 лево, 2 право, 3 лево нажат, 4 право нажат
+	uint32_t debounce_timer = 0, fast_timer = 0;
+	uint8_t _CLK = 0, _DT = 0, _SW = 0;
+	bool turnFlag = false, extTick = false, SW_state = false;
 };
-
-#endif
