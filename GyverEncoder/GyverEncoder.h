@@ -31,7 +31,7 @@
 #define ENC_WITH_BUTTON
 
 // тип подключения энкодера по умолчанию (INPUT или INPUT_PULLUP)
-#define DEFAULT_PULL INPUT
+#define DEFAULT_ENC_PULL INPUT
 
 // тип подключения кнопки энкодера по умолчанию (INPUT или INPUT_PULLUP)
 #define DEFAULT_BTN_PULL INPUT_PULLUP
@@ -64,6 +64,7 @@ typedef struct
 	bool extCLK : 1;
 	bool extDT : 1;
 	bool extSW : 1;
+	bool invBtn : 1;
 } GyverEncoderFlags;
 #pragma pack(pop)
 
@@ -93,6 +94,7 @@ public:
 	void tick(bool clk, bool dt, bool sw = 0);	// опрос "внешнего" энкодера
 	void setType(bool type);				// TYPE1 / TYPE2 - тип энкодера TYPE1 одношаговый, TYPE2 двухшаговый. Если ваш энкодер работает странно, смените тип
 	void setPinMode(bool mode);				// тип подключения энкодера, подтяжка HIGH_PULL (внутренняя) или LOW_PULL (внешняя на GND)
+	void setBtnPinMode(bool mode);			// тип подключения кнопки, подтяжка HIGH_PULL (внутренняя) или LOW_PULL (внешняя на GND)
 	void setTickMode(bool tickMode); 		// MANUAL / AUTO - ручной или автоматический опрос энкодера функцией tick(). (по умолчанию ручной)
 	void setDirection(bool direction);		// NORM / REVERSE - направление вращения энкодера
 	void setFastTimeout(uint16_t timeout);	// установка таймаута быстрого поворота

@@ -18,6 +18,7 @@ setType	KEYWORD2
 setDirection	KEYWORD2
 setFastTimeout	KEYWORD2
 setPinMode	KEYWORD2
+setBtnPinMode	KEYWORD2
 isTurn	KEYWORD2
 isRight	KEYWORD2
 isLeft	KEYWORD2

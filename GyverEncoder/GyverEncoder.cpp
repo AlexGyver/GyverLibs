@@ -13,7 +13,7 @@ int8_t encPos = 0;
 
 // ================= CONSTRUCTOR =================
 Encoder::Encoder() {
-	flags.use_button = true;
+	flags.use_button = true;	
 }
 
 Encoder::Encoder(uint8_t clk, uint8_t dt, int8_t sw, bool type) {
@@ -27,10 +27,11 @@ Encoder::Encoder(uint8_t clk, uint8_t dt, int8_t sw, bool type) {
 	}	
 	flags.enc_type = type;
 	
-	pinMode(_CLK, DEFAULT_PULL);
-	pinMode(_DT, DEFAULT_PULL);
+	pinMode(_CLK, DEFAULT_ENC_PULL);
+	pinMode(_DT, DEFAULT_ENC_PULL);
 	
 	if (flags.use_button) pinMode(_SW, DEFAULT_BTN_PULL);
+	flags.invBtn = (DEFAULT_BTN_PULL == INPUT_PULLUP) ? true : false;
 
 #if defined(FAST_ALGORITHM)
 	prevState = digitalRead(_CLK);
@@ -50,6 +51,10 @@ void Encoder::setDirection(bool direction) {
 void Encoder::setPinMode(bool mode) {
 	pinMode(_CLK, (mode) ? INPUT : INPUT_PULLUP);
 	pinMode(_DT, (mode) ? INPUT : INPUT_PULLUP);
+}
+void Encoder::setBtnPinMode(bool mode) {
+	pinMode(_SW, (mode) ? INPUT : INPUT_PULLUP);
+	flags.invBtn = (mode) ? 0 : 1;
 }
 void Encoder::setType(bool type) {
 	flags.enc_type = type;
@@ -163,7 +168,7 @@ void Encoder::tick() {
 
 #ifdef ENC_WITH_BUTTON
 	if (flags.use_button) {
-		if (!extTick) SW_state = !digitalRead(_SW);        // читаем положение кнопки SW
+		if (!extTick) SW_state = digitalRead(_SW) ^ flags.invBtn;	// читаем состояние кнопки SW
 		else SW_state = flags.extSW;
 		
 		if (SW_state && !flags.butt_flag && (debounceDelta > ENC_DEBOUNCE_BUTTON)) {
