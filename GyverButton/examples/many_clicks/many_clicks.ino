@@ -2,9 +2,9 @@
    Пример использования библиотеки GyverButton, отработка любого количества нажатий
 */
 
-#define PIN 3				// кнопка подключена сюда (PIN --- КНОПКА --- GND)
+#define BTN_PIN 3				// кнопка подключена сюда (BTN_PIN --- КНОПКА --- GND)
 #include "GyverButton.h"
-GButton butt1(PIN);
+GButton butt1(BTN_PIN);
 
 void setup() {
   Serial.begin(9600);

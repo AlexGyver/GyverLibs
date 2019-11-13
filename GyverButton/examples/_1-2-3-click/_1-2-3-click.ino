@@ -1,11 +1,9 @@
-/*
-   Пример использования библиотеки GyverButton, 1- 2- 3- нажатие
-*/
+// Пример использования библиотеки GyverButton, 1- 2- 3- нажатие
 
-#define PIN 3				// кнопка подключена сюда (PIN --- КНОПКА --- GND)
+#define BTN_PIN 3   // кнопка подключена сюда (BTN_PIN --- КНОПКА --- GND)
 
 #include "GyverButton.h"
-GButton butt1(PIN);
+GButton butt1(BTN_PIN);
 
 void setup() {
   Serial.begin(9600);

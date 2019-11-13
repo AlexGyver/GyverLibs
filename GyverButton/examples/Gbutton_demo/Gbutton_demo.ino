@@ -1,12 +1,16 @@
-/*
-   Пример использования библиотеки GyverButton, все возможности в одном скетче.
-*/
+// Пример использования библиотеки GyverButton, все возможности в одном скетче.
 
-#define PIN 3				// кнопка подключена сюда (PIN --- КНОПКА --- GND)
+#define BTN_PIN 3				// кнопка подключена сюда (BTN_PIN --- КНОПКА --- GND)
 
 #include "GyverButton.h"
-GButton butt1(PIN);
-// GButton butt1(PIN, HIGH_PULL, NORM_OPEN); // можно инициализировать так
+GButton butt1(BTN_PIN);
+
+// Варианты инициализации:
+// GButton btn;               // без привязки к пину (виртуальная кнопка) и без указания типа (по умолч. HIGH_PULL и NORM_OPEN)
+// GButton btn(пин);          // с привязкой к пину и без указания типа (по умолч. HIGH_PULL и NORM_OPEN)
+// GButton btn(пин, тип подключ.);    // с привязкой к пину и указанием типа подключения (HIGH_PULL / LOW_PULL) и без указания типа кнопки (по умолч. NORM_OPEN)
+// GButton btn(пин, тип подключ., тип кнопки);      // с привязкой к пину и указанием типа подключения (HIGH_PULL / LOW_PULL) и типа кнопки (NORM_OPEN / NORM_CLOSE)
+// GButton btn(BTN_NO_BTN_PIN, тип подключ., тип кнопки); // без привязки к пину и указанием типа подключения (HIGH_PULL / LOW_PULL) и типа кнопки (NORM_OPEN / NORM_CLOSE)
 
 int value = 0;
 
@@ -17,12 +21,14 @@ void setup() {
   butt1.setTimeout(300);        // настройка таймаута на удержание (по умолчанию 500 мс)
   butt1.setClickTimeout(600);   // настройка таймаута между кликами (по умолчанию 300 мс)
 
-  // HIGH_PULL - кнопка подключена к GND, пин подтянут к VCC (PIN --- КНОПКА --- GND)
+  // HIGH_PULL - кнопка подключена к GND, пин подтянут к VCC (BTN_PIN --- КНОПКА --- GND)
   // LOW_PULL  - кнопка подключена к VCC, пин подтянут к GND
+  // по умолчанию стоит HIGH_PULL
   butt1.setType(HIGH_PULL);
 
   // NORM_OPEN - нормально-разомкнутая кнопка
   // NORM_CLOSE - нормально-замкнутая кнопка
+  // по умолчанию стоит NORM_OPEN
   butt1.setDirection(NORM_OPEN);
 }
 

@@ -1,29 +1,21 @@
 #include "GyverButton.h"
 #include <Arduino.h>
 
-GButton::GButton() {	
-	flags.noPin = true;
-}
-GButton::GButton(uint8_t pin) {
-	_PIN = pin;
-	GButton::init();
-}
-GButton::GButton(uint8_t pin, uint8_t type, uint8_t dir) {
-	_PIN = pin;
-	GButton::init();
-	GButton::setType(type);
+// ==================== CONSTRUCTOR ====================
+GButton::GButton(int8_t pin, uint8_t type, uint8_t dir) {
+	if (pin != BTN_NO_PIN) {
+		_PIN = (uint8_t)pin;
+		flags.noPin = false;
+	} else {
+		flags.noPin = true;
+	}
+	setType(type);
+	flags.mode = false;
+	flags.tickMode = false;
 	flags.inv_state = dir;
 }
 
-void GButton::init() {
-	flags.inv_state = NORM_OPEN;
-	flags.mode = false;
-	flags.type = false;
-	flags.tickMode = false;
-	GButton::setType(HIGH_PULL);
-	flags.noPin = false;
-}
-
+// ==================== SET ====================
 void GButton::setDebounce(uint16_t debounce) {
 	_debounce = debounce;
 }
@@ -50,6 +42,7 @@ void GButton::setTickMode(uint8_t tickMode) {
 	flags.tickMode = tickMode;
 }
 
+// ==================== IS ====================
 boolean GButton::isPress() {
 	if (flags.tickMode) GButton::tick();
 	if (flags.isPress_f) {
@@ -85,7 +78,7 @@ boolean GButton::isHold() {
 }
 boolean GButton::state() {
 	if (flags.tickMode) GButton::tick();
-	return flags.btn_state;
+	return btn_state;
 }
 boolean GButton::isSingle() {
 	if (flags.tickMode) GButton::tick();
@@ -126,24 +119,29 @@ boolean GButton::isStep() {
 	}
 	else return false;
 }
+
+// ==================== TICK ====================
 void GButton::tick(boolean state) {
 	flags.mode = true;
-	flags.btn_state = state ^ flags.inv_state;
+	btn_state = state ^ flags.inv_state;
 	GButton::tick();
 	flags.mode = false;
 }
+
 void GButton::tick() {	
 	// читаем пин
-	if (!flags.mode && !flags.noPin) flags.btn_state = !digitalRead(_PIN) ^ (flags.inv_state ^ flags.type);
+	if (!flags.mode && !flags.noPin) btn_state = !digitalRead(_PIN) ^ (flags.inv_state ^ flags.type);
+	
+	uint32_t thisMls = millis();
 	
 	// нажатие
-	if (flags.btn_state && !flags.btn_flag) {
+	if (btn_state && !btn_flag) {
 		if (!flags.btn_deb) {
 			flags.btn_deb = true;
-			btn_timer = millis();
+			btn_timer = thisMls;
 		} else {
-			if (millis() - btn_timer >= _debounce) {
-				flags.btn_flag = true;			
+			if (thisMls - btn_timer >= _debounce) {
+				btn_flag = true;			
 				flags.isPress_f = true;
 				flags.oneClick_f = true;
 			}
@@ -153,12 +151,12 @@ void GButton::tick() {
 	}
 
 	// отпускание
-	if (!flags.btn_state && flags.btn_flag) {
-		flags.btn_flag = false;
+	if (!btn_state && btn_flag) {
+		btn_flag = false;
 		if (!flags.hold_flag) btn_counter++;
 		flags.hold_flag = false;
 		flags.isRelease_f = true;
-		btn_timer = millis();
+		btn_timer = thisMls;
 		flags.step_flag = false;	
 		if (flags.oneClick_f) {
 			flags.oneClick_f = false;
@@ -167,18 +165,18 @@ void GButton::tick() {
 	}
 
 	// кнопка удерживается
-	if (flags.btn_flag && flags.btn_state && (millis() - btn_timer >= _timeout) && !flags.hold_flag) {
+	if (btn_flag && btn_state && (thisMls - btn_timer >= _timeout) && !flags.hold_flag) {
 		flags.hold_flag = true;
 		btn_counter = 0;
 		last_counter = 0;
 		flags.isHolded_f = true;
 		flags.step_flag = true;
 		flags.oneClick_f = false;
-		btn_timer = millis();
+		btn_timer = thisMls;
 	}
 
 	// обработка накликивания
-	if ((millis() - btn_timer >= _click_timeout) && (btn_counter != 0)) {    
+	if ((thisMls - btn_timer >= _click_timeout) && (btn_counter != 0)) {    
 		last_counter = btn_counter;
 		btn_counter = 0;
 		flags.counter_flag = true;
