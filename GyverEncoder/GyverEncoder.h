@@ -81,7 +81,7 @@ public:
 	Encoder(uint8_t clk, uint8_t dt, int8_t sw = -1, bool type = false); // CLK, DT, SW, тип (TYPE1 / TYPE2) TYPE1 одношаговый, TYPE2 двухшаговый. Если ваш энкодер работает странно, смените тип
 	
 	void tick();							// опрос энкодера, нужно вызывать постоянно или в прерывании
-	void tick(bool clk, bool dt, bool sw);	// опрос "внешнего" энкодера
+	void tick(bool clk, bool dt, bool sw = 0);	// опрос "внешнего" энкодера
 	void setType(bool type);				// TYPE1 / TYPE2 - тип энкодера TYPE1 одношаговый, TYPE2 двухшаговый. Если ваш энкодер работает странно, смените тип
 	void setTickMode(bool tickMode); 		// MANUAL / AUTO - ручной или автоматический опрос энкодера функцией tick(). (по умолчанию ручной)
 	void setDirection(bool direction);		// NORM / REVERSE - направление вращения энкодера
