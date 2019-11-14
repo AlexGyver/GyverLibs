@@ -13,7 +13,7 @@
 	- Отработка нажатия/удержания кнопки с антидребезгом	
 	
 	Документацию читай здесь: https://alexgyver.ru/encoder/
-	Для максимально быстрого опроса энкодера рекомендуется использовать ядро GyverCore https://alexgyver.ru/gyvercore/
+	Для максимально быстрого (в 2 раза быстрее) опроса энкодера рекомендуется использовать ядро GyverCore https://alexgyver.ru/gyvercore/
 	
 	Версии:
 	- 3.6 от 16.09.2019	- Возвращены дефайны настроек
@@ -24,25 +24,39 @@
 		- Добавлена возможность полностью убрать кнопку (экономия памяти)
 		- Добавлена возможность подключения внешнего энкодера
 		- Добавлена настройка подтяжки пинов
+	- 4.1
+		- Исправлено изменение подтяжек
 */
+// ========= КОНСТАНТЫ ==========
+#define ENC_NO_BUTTON -1	// константа для работы без пина
+#define TYPE1 0			// полушаговый энкодер
+#define TYPE2 1			// полношаговый
+#define NORM 0			// направление вращения обычное
+#define REVERSE 1		// обратное
+#define MANUAL 0		// нужно вызывать функцию tick() вручную
+#define AUTO 1			// tick() входит во все остальные функции и опрашивается сама!
+#define HIGH_PULL 0		// внутренняя подтяжка к питанию (pinMode INPUT_PULLUP)
+#define LOW_PULL 1		// внешняя подтяжка к GND (pinMode INPUT)
 
 // =========== НАСТРОЙКИ ===========
 // закомментируй строку, чтобы полностью убрать отработку кнопки из кода
 #define ENC_WITH_BUTTON
 
-// тип подключения энкодера по умолчанию (INPUT или INPUT_PULLUP)
-#define DEFAULT_ENC_PULL INPUT
+// тип подключения энкодера по умолчанию (LOW_PULL или HIGH_PULL)
+#define DEFAULT_ENC_PULL LOW_PULL
+//#define DEFAULT_ENC_PULL HIGH_PULL
 
-// тип подключения кнопки энкодера по умолчанию (INPUT или INPUT_PULLUP)
-#define DEFAULT_BTN_PULL INPUT_PULLUP
+// тип подключения кнопки энкодера по умолчанию (LOW_PULL или HIGH_PULL)
+//#define DEFAULT_BTN_PULL LOW_PULL
+#define DEFAULT_BTN_PULL HIGH_PULL
 
 // алгоритмы опроса энкодера (раскомментировать нужный)
-//#define FAST_ALGORITHM		// быстрый, не справляется с люфтами
-//#define BINARY_ALGORITHM		// медленнее, лучше справляется с люфтами
-#define PRECISE_ALGORITHM		// медленнее, но работает даже с убитым энкодером (по мотивам https://github.com/mathertel/RotaryEncoder)
+//#define FAST_ALGORITHM		// тик 10 мкс, быстрый, не справляется с люфтами
+//#define BINARY_ALGORITHM	// тик 14 мкс, лучше справляется с люфтами
+#define PRECISE_ALGORITHM	// тик 16 мкс, медленнее, но работает даже с убитым энкодером (по мотивам https://github.com/mathertel/RotaryEncoder)
 
 // настройка антидребезга энкодера, кнопки и таймаута удержания
-#define ENC_DEBOUNCE_TURN 0
+#define ENC_DEBOUNCE_TURN 1
 #define ENC_DEBOUNCE_BUTTON 80
 #define ENC_HOLD_TIMEOUT 700
 
@@ -65,18 +79,9 @@ typedef struct
 	bool extDT : 1;
 	bool extSW : 1;
 	bool invBtn : 1;
+	bool invEnc : 1;
 } GyverEncoderFlags;
 #pragma pack(pop)
-
-#define ENC_NO_BUTTON -1	// константа для работы без пина
-#define TYPE1 0		// полушаговый энкодер
-#define TYPE2 1		// полношаговый
-#define NORM 0		// направление вращения обычное
-#define REVERSE 1	// обратное
-#define MANUAL 0	// нужно вызывать функцию tick() вручную
-#define AUTO 1		// tick() входит во все остальные функции и опрашивается сама!
-#define HIGH_PULL 0
-#define LOW_PULL 1
 
 // Варианты инициализации:
 // Encoder enc;									// не привязан к пину

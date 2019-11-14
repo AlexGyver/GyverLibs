@@ -28,16 +28,17 @@ Encoder::Encoder(uint8_t clk, uint8_t dt, int8_t sw, bool type) {
 	flags.enc_type = type;
 	
 	pinMode(_CLK, DEFAULT_ENC_PULL);
-	pinMode(_DT, DEFAULT_ENC_PULL);
-	
+	pinMode(_DT, DEFAULT_ENC_PULL);	
 	if (flags.use_button) pinMode(_SW, DEFAULT_BTN_PULL);
-	flags.invBtn = (DEFAULT_BTN_PULL == INPUT_PULLUP) ? true : false;
+	
+	flags.invBtn = (DEFAULT_BTN_PULL == HIGH_PULL) ? true : false;
+	flags.invEnc = (DEFAULT_ENC_PULL == HIGH_PULL) ? true : false;
 
 #if defined(FAST_ALGORITHM)
-	prevState = digitalRead(_CLK);
+	prevState = digitalRead(_CLK) ^ flags.invEnc;
 #else
-	prevState = digitalRead(_CLK) | (digitalRead(_DT) << 1);
-#endif	
+	prevState = (digitalRead(_CLK) ^ flags.invEnc) | ((digitalRead(_DT) ^ flags.invEnc) << 1);
+#endif
 }
 
 // ================= SET =================
@@ -204,7 +205,7 @@ void Encoder::tick() {
 #endif
 
 #if defined(FAST_ALGORITHM)
-	uint8_t curState = (extTick) ? (flags.extCLK) : digitalRead(_CLK);
+	uint8_t curState = (extTick) ? (flags.extCLK) : (digitalRead(_CLK) ^ flags.invEnc);
 	
 	if (curState != prevState
 #if (ENC_DEBOUNCE_TURN > 0)
@@ -222,7 +223,7 @@ void Encoder::tick() {
 		}
 
 #elif defined(BINARY_ALGORITHM)		
-		uint8_t curState = (extTick) ? (flags.extCLK | (flags.extDT << 1)) : (digitalRead(_CLK) | (digitalRead(_DT) << 1));
+		uint8_t curState = (extTick) ? (flags.extCLK | (flags.extDT << 1)) : ((digitalRead(_CLK) ^ flags.invEnc) | ((digitalRead(_DT) ^ flags.invEnc) << 1));
 		
 		if (curState != prevState
 #if (ENC_DEBOUNCE_TURN > 0)
@@ -243,7 +244,7 @@ void Encoder::tick() {
 			}
 
 #elif defined(PRECISE_ALGORITHM)			
-			uint8_t curState = (extTick) ? (flags.extCLK | (flags.extDT << 1)) : (digitalRead(_CLK) | (digitalRead(_DT) << 1));
+			uint8_t curState = (extTick) ? (flags.extCLK | (flags.extDT << 1)) : ((digitalRead(_CLK) ^ flags.invEnc) | ((digitalRead(_DT) ^ flags.invEnc) << 1));
 
 			if (prevState != curState
 #if (ENC_DEBOUNCE_TURN > 0)
