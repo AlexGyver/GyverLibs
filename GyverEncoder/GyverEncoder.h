@@ -43,8 +43,8 @@
 #define ENC_WITH_BUTTON
 
 // тип подключения энкодера по умолчанию (LOW_PULL или HIGH_PULL)
-#define DEFAULT_ENC_PULL LOW_PULL
-//#define DEFAULT_ENC_PULL HIGH_PULL
+//#define DEFAULT_ENC_PULL LOW_PULL
+#define DEFAULT_ENC_PULL HIGH_PULL
 
 // тип подключения кнопки энкодера по умолчанию (LOW_PULL или HIGH_PULL)
 //#define DEFAULT_BTN_PULL LOW_PULL
@@ -79,7 +79,6 @@ typedef struct
 	bool extDT : 1;
 	bool extSW : 1;
 	bool invBtn : 1;
-	bool invEnc : 1;
 } GyverEncoderFlags;
 #pragma pack(pop)
 
