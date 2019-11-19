@@ -1,12 +1,16 @@
 #ifndef microOneWire_h
 #define microOneWire_h
 
+boolean oneWire_reset(byte pin);
+void oneWire_write(uint8_t data, byte pin);
+uint8_t oneWire_read(byte pin);
+
 boolean oneWire_reset(byte pin) {
 	pinMode(pin, 1);
 	delayMicroseconds(640);
 	pinMode(pin, 0);
 	delayMicroseconds(2);
-	for (uint8_t c = 80; c; c--) {
+	for (int8_t c = 80; c; c--) {
 		if (!digitalRead(pin)) {
 			uint32_t tmr = micros();
 			while (!digitalRead(pin)) { if (micros() - tmr > 200) return false;}

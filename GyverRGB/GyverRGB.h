@@ -53,7 +53,7 @@ enum colors {
 	LIME =		0x00FF00,	// лайм
 	GREEN =		0x008000,	// зелёный
 	AQUA =		0x00FFFF,	// аква
-	TEAL =		0x008080,	// цвет головы утки чирка https://odesign.ru/teal-color/
+	TEAL =		0x008080,	// цвет головы утки чирка
 	BLUE =		0x0000FF,	// голубой
 	NAVY =		0x000080,	// тёмно-синий
 	PINK =		0xFF00FF,	// розовый

@@ -1,9 +1,6 @@
 #include <microLiquidCrystal_I2C.h>
 
-LiquidCrystal_I2C lcd(0x3f, 20, 4);
-// адрес дисплея 0x3f или 0x27
-// ширина дисплея (тут 20 символов)
-// высота дисплея (тут 4 строки)
+LiquidCrystal_I2C lcd(0x3f, 20, 4); // set the LCD address to 0x27 for a 16 chars and 2 line display
 
 void setup()
 {
@@ -20,6 +17,7 @@ void setup()
   lcd.setCursor(2, 3);
   lcd.print("Power By Ec-yuan!");
 }
+
 
 void loop()
 {
