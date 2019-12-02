@@ -88,6 +88,7 @@ typedef struct
 	bool isDouble_f : 1;
 	bool countFlag : 1;
 	bool doubleFlag : 1;
+	bool doubleAllow : 1;
 } GyverEncoderFlags;
 #pragma pack(pop)
 

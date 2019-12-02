@@ -17,7 +17,7 @@ Encoder enc1(CLK, DT, SW);  // для работы c кнопкой
 
 void setup() {
   Serial.begin(9600);
-  enc1.setType(TYPE1);
+  enc1.setType(TYPE2);
 }
 
 void loop() {

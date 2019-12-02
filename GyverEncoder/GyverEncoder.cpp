@@ -192,7 +192,8 @@ void Encoder::tick() {
 			debounce_timer = thisMls;
 			debounceDelta = 0;
 			flags.isPress_f = true;
-			flags.isHolded_f = true;			
+			flags.isHolded_f = true;
+			flags.doubleAllow = true;			
 		}
 		if (!SW_state && flags.butt_flag && (debounceDelta > ENC_DEBOUNCE_BUTTON)) {
 			if (!flags.turn_flag && !flags.hold_flag) {  // если кнопка отпущена и ручка не поворачивалась
@@ -204,12 +205,12 @@ void Encoder::tick() {
 			debounceDelta = 0;
 			flags.hold_flag = false;
 			
-			if (!flags.doubleFlag) {
+			if (flags.doubleAllow && !flags.doubleFlag) {
 				flags.doubleFlag = true;
 				flags.countFlag = false;
 			} else {
 				flags.countFlag = true;
-			}		
+			}
 		}
 		if (flags.doubleFlag && debounceDelta > ENC_DOUBLE_TIMEOUT) {
 			if (!flags.countFlag) flags.isSingle_f = true;
@@ -220,12 +221,13 @@ void Encoder::tick() {
 			if (SW_state) {
 				flags.hold_flag = true;
 				flags.isRelease_f = false;
+				flags.doubleAllow = false;
 			} else {
 				flags.butt_flag = false;
 				flags.hold_flag = false;
 				debounce_timer = thisMls;
 				debounceDelta = 0;
-			}
+			}	
 		}
 	}
 #endif
