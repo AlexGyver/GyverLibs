@@ -26,6 +26,10 @@
 		- Добавлена настройка подтяжки пинов
 	- 4.1
 		- Исправлено изменение подтяжек
+		
+	- 4.2
+		- Добавлена поддержка TYPE1 для алгоритма PRECISE_ALGORITHM
+		- Добавлена отработка двойного клика: isSingle / isDouble
 */
 // ========= КОНСТАНТЫ ==========
 #define ENC_NO_BUTTON -1	// константа для работы без пина
@@ -55,10 +59,11 @@
 //#define BINARY_ALGORITHM	// тик 14 мкс, лучше справляется с люфтами
 #define PRECISE_ALGORITHM	// тик 16 мкс, медленнее, но работает даже с убитым энкодером (по мотивам https://github.com/mathertel/RotaryEncoder)
 
-// настройка антидребезга энкодера, кнопки и таймаута удержания
+// настройка антидребезга энкодера, кнопки, таймаута удержания и таймаута двойного клика
 #define ENC_DEBOUNCE_TURN 1
 #define ENC_DEBOUNCE_BUTTON 80
 #define ENC_HOLD_TIMEOUT 700
+#define ENC_DOUBLE_TIMEOUT 300
 
 #pragma pack(push,1)
 typedef struct
@@ -79,6 +84,10 @@ typedef struct
 	bool extDT : 1;
 	bool extSW : 1;
 	bool invBtn : 1;
+	bool isSingle_f : 1;
+	bool isDouble_f : 1;
+	bool countFlag : 1;
+	bool doubleFlag : 1;
 } GyverEncoderFlags;
 #pragma pack(pop)
 
@@ -116,6 +125,8 @@ public:
 	boolean isClick();						// возвращает true при нажатии и отпускании кнопки, сама сбрасывается в false
 	boolean isHolded();						// возвращает true при удержании кнопки, сама сбрасывается в false
 	boolean isHold();						// возвращает true при удержании кнопки, НЕ СБРАСЫВАЕТСЯ
+	boolean isSingle();						// возвращает true при одиночном клике (после таймаута), сама сбрасывается в false
+	boolean isDouble();						// возвращает true при двойном клике, сама сбрасывается в false
 	
 private:
 	GyverEncoderFlags flags;

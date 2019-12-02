@@ -17,7 +17,7 @@ Encoder enc1(CLK, DT, SW);  // для работы c кнопкой
 
 void setup() {
   Serial.begin(9600);
-  enc1.setType(TYPE2);
+  enc1.setType(TYPE1);
 }
 
 void loop() {
@@ -34,9 +34,13 @@ void loop() {
   if (enc1.isRightH()) Serial.println("Right holded"); // если было удержание + поворот
   if (enc1.isLeftH()) Serial.println("Left holded");
   
-  if (enc1.isPress()) Serial.println("Press");         // нажатие на кнопку (+ дебаунс)
-  if (enc1.isClick()) Serial.println("Click");         // отпускание кнопки (+ дебаунс)
+  //if (enc1.isPress()) Serial.println("Press");         // нажатие на кнопку (+ дебаунс)
   //if (enc1.isRelease()) Serial.println("Release");     // то же самое, что isClick
+  
+  if (enc1.isClick()) Serial.println("Click");         // одиночный клик
+  if (enc1.isSingle()) Serial.println("Single");       // одиночный клик (с таймаутом для двойного)
+  if (enc1.isDouble()) Serial.println("Double");       // двойной клик
+  
   
   if (enc1.isHolded()) Serial.println("Holded");       // если была удержана и энк не поворачивался
   //if (enc1.isHold()) Serial.println("Hold");         // возвращает состояние кнопки

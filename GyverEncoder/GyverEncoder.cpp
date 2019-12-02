@@ -146,6 +146,22 @@ boolean Encoder::isHolded() {
 		return true;
 	} else return false;
 }
+boolean Encoder::isSingle() {
+	if (flags.enc_tick_mode) Encoder::tick();
+	if (flags.isSingle_f) {
+		flags.isSingle_f = false;
+		flags.isDouble_f = false;
+		return true;
+	} else return false;
+}
+boolean Encoder::isDouble() {
+	if (flags.enc_tick_mode) Encoder::tick();
+	if (flags.isDouble_f) {
+		flags.isDouble_f = false;
+		flags.isSingle_f = false;
+		return true;
+	} else return false;
+}
 boolean Encoder::isHold() {
 	if (flags.enc_tick_mode) Encoder::tick();
 	return (SW_state);
@@ -176,7 +192,7 @@ void Encoder::tick() {
 			debounce_timer = thisMls;
 			debounceDelta = 0;
 			flags.isPress_f = true;
-			flags.isHolded_f = true;
+			flags.isHolded_f = true;			
 		}
 		if (!SW_state && flags.butt_flag && (debounceDelta > ENC_DEBOUNCE_BUTTON)) {
 			if (!flags.turn_flag && !flags.hold_flag) {  // если кнопка отпущена и ручка не поворачивалась
@@ -187,6 +203,18 @@ void Encoder::tick() {
 			debounce_timer = thisMls;
 			debounceDelta = 0;
 			flags.hold_flag = false;
+			
+			if (!flags.doubleFlag) {
+				flags.doubleFlag = true;
+				flags.countFlag = false;
+			} else {
+				flags.countFlag = true;
+			}		
+		}
+		if (flags.doubleFlag && debounceDelta > ENC_DOUBLE_TIMEOUT) {
+			if (!flags.countFlag) flags.isSingle_f = true;
+			else flags.isDouble_f = true;
+			flags.doubleFlag = false;
 		}
 		if (flags.butt_flag && debounceDelta > ENC_HOLD_TIMEOUT && !flags.turn_flag) {
 			if (SW_state) {
@@ -251,26 +279,33 @@ void Encoder::tick() {
 			) {
 				encState = 0;
 				encPos += KNOBDIR[curState | (prevState << 2)];
-				if (curState == 0x3 && encPos != 0) {
-					encState = ((encPos >> 2) > 0) ? 1 : 2;
-					encPos = 0;
-				}
+				if (flags.enc_type) {
+					if (curState == 0x3 && encPos != 0) {
+						encState = (encPos == 4) ? 1 : 2;
+						encPos = 0;
+					}
+				} else {
+					if ((curState == 0x3 || !curState) && encPos != 0) {
+						encState = (encPos == 2) ? 1 : 2;
+						encPos = 0;
+					}
+				}				
 #endif
-			
-			if (encState != 0) {
-				flags.isTurn_f = true;
-				if (thisMls - fast_timer < _fast_timeout) {
-					if (encState == 1) flags.isFastL_f = true;
-					else if (encState == 2) flags.isFastR_f = true;
-					fast_timer = thisMls;
-				} else fast_timer = thisMls;
+				
+				if (encState != 0) {
+					flags.isTurn_f = true;
+					if (thisMls - fast_timer < _fast_timeout) {
+						if (encState == 1) flags.isFastL_f = true;
+						else if (encState == 2) flags.isFastR_f = true;
+						fast_timer = thisMls;
+					} else fast_timer = thisMls;
 #ifdef ENC_WITH_BUTTON
-				if (flags.use_button) if (SW_state) encState += 2;
+					if (flags.use_button) if (SW_state) encState += 2;
 #endif
-			}		
-			prevState = curState;
-			flags.turn_flag = true;
-			debounce_timer = thisMls;
-			debounceDelta = 0;
+				}		
+				prevState = curState;
+				flags.turn_flag = true;
+				debounce_timer = thisMls;
+				debounceDelta = 0;
+			}
 		}
-	}
