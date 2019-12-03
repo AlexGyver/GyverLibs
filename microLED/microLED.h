@@ -11,19 +11,24 @@
 		- 16 встроенных цветов
 	- Возможность чтения сжатого цвета в HEX 0xRRGGBB
 	- Поддержка работы с адресными матрицами (см. пример)	
-	- Поддержка чипов: 2811/2812, остальные не проверялись
+	- Поддержка чипов: 2811/2812/2813/2815
 	- Частичная совместимость со скетчами для FastLED (смотри пример fastToMicro)	
+	- Режим MAX_DATA_SPEED - скорость вывода увеличивается на 40%
 	
 	by AlexGyver & Egor 'Nich1con' Zaharov 07.10.2019
-	Основано на light weight WS2812 lib V2.1 https://github.com/cpldcpu/light_ws2812
 	
 	Версия 1.1
 	- Поправлена инициализация
 	- Добавлен оранжевый цвет
+	
+	Версия 2.0
+	- Переписан и сильно ускорен алгоритм вывода
+	- Добавлено ограничение тока
 */
 
 #pragma once
 #include "ws2812_send.h"
+
 
 #ifndef COLOR_DEBTH
 #define COLOR_DEBTH 3	// по умолчанию 24 бита
@@ -54,12 +59,12 @@ typedef struct LEDdata {
 	}
 	
 	inline LEDdata& operator= (const uint32_t colorcode) __attribute__((always_inline))
-    {
-        r = (colorcode >> 16) & 0xFF;
-        g = (colorcode >>  8) & 0xFF;
-        b = (colorcode >>  0) & 0xFF;
-        return *this;
-    }
+	{
+		r = (colorcode >> 16) & 0xFF;
+		g = (colorcode >>  8) & 0xFF;
+		b = (colorcode >>  0) & 0xFF;
+		return *this;
+	}
 };
 inline __attribute__((always_inline)) bool operator== (const LEDdata& lhs, const LEDdata& rhs) {
 	return (lhs.r == rhs.r) && (lhs.g == rhs.g) && (lhs.b == rhs.b);
@@ -143,9 +148,14 @@ public:
 	uint32_t getColorHEX(int x, int y);				// получить цвет пикселя в HEX
 	LEDdata getColor(int x, int y);					// получить цвет пикселя в LEDdata
 	void fadePix(int x, int y, byte val);			// уменьшить яркость пикселя на val
-	uint16_t getPixNumber(int x, int y);			// получить номер пикселя в ленте по координатам	
-
+	uint16_t getPixNumber(int x, int y);			// получить номер пикселя в ленте по координатам
+	
+	void setVoltage(int mv);						// установить напряжение питания в мв, по умолч. 5000 (для расчёта тока)
+	void setMaxCurrent(int ma);						// установить максимальный ток (автокоррекция яркости). 0 - выключено
+	
 private:
+	void setCurrentSettings();
+	byte correctBright();
 	void getColorPtr(int num, byte *ptr);
 	int _numLEDs;
 	LEDdata *LEDbuffer;
@@ -154,6 +164,10 @@ private:
 	byte _matrixType = 0;
 	byte _matrixW;
 	byte _width, _height;
+	int _maxCurrent = 0;
+	int _voltage = 5000;
+	int _idleCurrent = 0;
+	byte _oneLedCurrent = 0;
 	
 	const volatile uint8_t *ws2812_port;
 	volatile uint8_t *ws2812_port_reg;
@@ -349,16 +363,60 @@ LEDdata microLED::getColor(int x, int y) {
 	return LEDbuffer[getPixNumber(x, y)];
 }
 
-// ====================== ВЫВОД ======================
+// ======================УТИЛИТЫ =====================
 #if (COLOR_DEBTH == 2)
 #define PTR_TYPE uint16_t*
 #else
 #define PTR_TYPE uint8_t*
 #endif
 
+void microLED::setVoltage(int mv) {
+	_voltage = mv;
+	setCurrentSettings();
+}
+void microLED::setMaxCurrent(int ma) {
+	_maxCurrent = ma;
+	setCurrentSettings();
+}
+
+void microLED::setCurrentSettings() {
+	_idleCurrent = (float)_numLEDs * map(_voltage, 3000, 6000, 184, 934) / 1000L;
+	_oneLedCurrent = map(_voltage, 3000, 6000, 9, 12);
+}
+
+byte microLED::correctBright() {
+	if (_maxCurrent == 0) return _bright;
+	else {
+		long sum = 0;
+		for (int i = 0; i < _numLEDs; i++) {
+#if (COLOR_DEBTH == 1)
+			// 8 бит
+			sum += (LEDbuffer[i] & 0b11000000) >> _bright;
+			sum += ((LEDbuffer[i] & 0b00111000) << 2) >> _bright;
+			sum += ((LEDbuffer[i] & 0b00000111) << 5) >> _bright;
+#elif (COLOR_DEBTH == 2)
+			// 16 бит
+			sum += (((LEDbuffer[i] & 0b1111100000000000) >> 8) * _bright) >> 8;
+			sum += (((LEDbuffer[i] & 0b0000011111100000) >> 3) * _bright) >> 8;
+			sum += (((LEDbuffer[i] & 0b0000000000011111) << 3) * _bright) >> 8;
+#elif (COLOR_DEBTH == 3)
+			// 32 бит		
+			sum += ((long)LEDbuffer[i].r * _bright) >> 8;
+			sum += ((long)LEDbuffer[i].g * _bright) >> 8;
+			sum += ((long)LEDbuffer[i].b * _bright) >> 8;
+#endif
+		}		
+		sum = (float)sum / 255 * _oneLedCurrent;		// текущий ток (* макс ток одного канала от напряжения)
+		int realMax = _maxCurrent - _idleCurrent;		// макс. ток - минус холостой ток (от напряжения)
+		if (sum < realMax) return _bright;
+		else return ((float)realMax / sum * _bright);		
+	}
+}
+
+// ====================== ВЫВОД ======================
 void microLED::show() {
 	*ws2812_port_reg |= pinMask; // Enable DDR
-	ws2812_sendarray_mask((PTR_TYPE)LEDbuffer, COLOR_DEBTH * _numLEDs, pinMask, (uint8_t*) ws2812_port, (uint8_t*) ws2812_port_reg, _bright);
+	WS2812B_sendData((PTR_TYPE)LEDbuffer, COLOR_DEBTH * _numLEDs, pinMask, (uint8_t*) ws2812_port, (uint8_t*) ws2812_port_reg, correctBright());
 }
 
 // ================== COLOR UTILITY ===================
