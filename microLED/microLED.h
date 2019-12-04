@@ -24,6 +24,9 @@
 	Версия 2.0
 	- Переписан и сильно ускорен алгоритм вывода
 	- Добавлено ограничение тока
+	
+	Версия 2.1
+	- Поправлена ошибка с матрицей
 */
 
 #pragma once
@@ -309,45 +312,46 @@ void microLED::fadePix(int x, int y, byte val) {
 
 // ====================== МАТРИЦА ======================
 uint16_t microLED::getPixNumber(int x, int y) {
+	int thisX, thisY;
 	switch(_matrixConfig) {
 	case 0:
-		x = x;
-		y = y;
+		thisX = x;
+		thisY = y;
 		break;
 	case 4:
-		x = y;
-		y = x;
+		thisX = y;
+		thisY = x;
 		break;
 	case 1:
-		x = x;
-		y = (_height - y - 1);
+		thisX = x;
+		thisY = (_height - y - 1);
 		break;
 	case 13:
-		x = (_height - y - 1);
-		y = x;
+		thisX = (_height - y - 1);
+		thisY = x;
 		break;
 	case 10:
-		x = (_width - x - 1);
-		y = (_height - y - 1);
+		thisX = (_width - x - 1);
+		thisY = (_height - y - 1);
 		break;
 	case 14:
-		x = (_height - y - 1);
-		y = (_width - x - 1);
+		thisX = (_height - y - 1);
+		thisY = (_width - x - 1);
 		break;
 	case 11:
-		x = (_width - x - 1);
-		y = y;
+		thisX = (_width - x - 1);
+		thisY = y;
 		break;
 	case 7:
-		x = y;
-		y = (_width - x - 1);
+		thisX = y;
+		thisY = (_width - x - 1);
 		break;
 	}
 	
-	if (_matrixType || !(y % 2)) {               // если чётная строка
-		return (y * _matrixW + x);
+	if (_matrixType || !(thisY % 2)) {               // если чётная строка
+		return (thisY * _matrixW + thisX);
 	} else {                                              // если нечётная строка
-		return (y * _matrixW + _matrixW - x - 1);
+		return (thisY * _matrixW + _matrixW - thisX - 1);
 	}
 }
 
