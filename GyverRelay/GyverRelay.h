@@ -1,5 +1,4 @@
-#ifndef GyverRelay_h
-#define GyverRelay_h
+#pragma once
 #include <Arduino.h>
 
 /*
@@ -8,7 +7,7 @@
 	- Настройка гистерезиса, коэффициента усиления ОС, направления регулирования
 	- Возвращает результат по встроенному таймеру или в ручном режиме
 	
-	Версия 1.2 от 16.09.2019
+	Версия 2.0 от 04.12.2019
 */
 
 #define NORMAL 0
@@ -16,36 +15,29 @@
 
 class GyverRelay
 {
-  public:
+public:
 	// принимает установку, ширину гистерезиса, направление (NORMAL, REVERSE)
 	// NORMAL - включаем нагрузку при переходе через значение снизу (пример: охлаждение)
 	// REVERSE - включаем нагрузку при переходе через значение сверху (пример: нагрев)
-    GyverRelay(float new_setpoint, float new_hysteresis, uint8_t direction);
-	GyverRelay();
+	GyverRelay(boolean direction = REVERSE);
 	
 	// расчёт возвращает состояние для управляющего устройства (реле, транзистор) (1 вкл, 0 выкл)
-	boolean getResult();						// расчёт
-	boolean getResult(float new_input);			// расчёт, принимает текущую величину с датчика
-	boolean getResultTimer();					// расчёт по встроенному таймеру
-	boolean getResultTimer(float new_input);	// расчёт, принимает текущую величину с датчика (+ по встроенному таймеру)
+	boolean compute(float dt = 0);		// моментальный расчёт. Принимает dt в секундах для режима с ОС
+	boolean getResult();				// моментальный расчёт. Встроенный таймер для режима с ОС
+	boolean getResultTimer();			// расчёт по встроенному таймеру
+
+	void setDirection(boolean dir);		// направление регулирования (NORMAL, REVERSE)
 	
-	void setDirection(uint8_t);					// направление регулирования (NORMAL, REVERSE)
+	float input = 0;					// сигнал с датчика (например температура, которую мы регулируем)
+	float setpoint = 0;					// заданная величина, которую должен поддерживать регулятор (температура)
+	boolean output = 0;					// выход регулятора (0 или 1)
 	
-	float input;						// сигнал с датчика (например температура, которую мы регулируем)
-	float setpoint;						// заданная величина, которую должен поддерживать регулятор (температура)
+	float hysteresis = 0;				// ширина окна гистерезиса
+	float k = 0;						// коэффициент усиления	по скорости (по умолч. 0)	
+	int16_t dT = 1000;					// время итерации, мс (по умолч. секунда)
 	
-	float signal;						// сигнал (для отладки)
-	float hysteresis;					// ширина гистерезиса (половина в минус, половина в плюс)
-	float k = 0;						// коэффициент усиления	по скорости (по умолч. 0)
-	float rate;							// скорость изменения величины (производная)
-	int16_t sampleTime = 1000;			// время итерации, мс (по умолч. секунда)
-		
-  private:
-	boolean compute(float);
+private:	
 	uint32_t prevTime = 0;
 	float prevInput = 0.0;
 	boolean _direction = false;
-	boolean _relayState = false;
 };
-
-#endif

@@ -1,58 +1,47 @@
 #include "GyverRelay.h"
 #include <Arduino.h>
 
-GyverRelay::GyverRelay() {}
-
-GyverRelay::GyverRelay(float new_setpoint, float new_hysteresis, uint8_t direction) {
-	setpoint = new_setpoint;
-	hysteresis = new_hysteresis;
+GyverRelay::GyverRelay(boolean direction) {
 	_direction = direction;
-	_relayState = !_direction;		// выключить реле сразу
+	output = !_direction;   // выключить реле сразу
 }
 
-void GyverRelay::setDirection(uint8_t direction) {
-	_direction = direction;
+void GyverRelay::setDirection(boolean dir) {
+	_direction = dir;
 }
 
-int8_t sign(float value) {
-	if (value > 0) return 1;
-	else if (value < 0) return -1;
+int signum(float val) {
+	return ((val > 0) ? 1 : ((val < 0) ? -1 : 0));
 }
 
+// вернёт выход, принимает время итерации в секундах
 boolean GyverRelay::compute(float dt) {
-	rate = (float)(input - prevInput) / dt;		// производная от величины (величина/секунду)
-	prevInput = input;
-	signal = input + rate * k;
-	
-	// жуткая функция реле из лекций
-	int8_t F = ((float)sign(signal - setpoint - hysteresis / 2) + (float)sign(signal - setpoint + hysteresis / 2)) / 2;
-	
-	if (F == 1) _relayState = !_direction;
-	else if (F == -1) _relayState = _direction;
+	float signal;
+	if (dt > 0) {
+		float rate = (input - prevInput) / dt;    // производная от величины (величина/секунду)
+		prevInput = input;
+		signal = input + rate * k;
+	} else {
+		signal = input;
+	}
+
+	// жуткая функция реле из лекций по ТАУ
+	int8_t F = (signum(signal - setpoint - hysteresis / 2) + signum(signal - setpoint + hysteresis / 2)) / 2;
+
+	if (F == 1) output = !_direction;
+	else if (F == -1) output = _direction;
+	return output;
 }
 
 boolean GyverRelay::getResult() {
-	GyverRelay::compute((float)(millis() - prevTime) / 1000);	
+	GyverRelay::compute((millis() - prevTime) / 1000.0f);
 	prevTime = millis();
-	return _relayState;
-}
-boolean GyverRelay::getResultTimer() {
-	if ((long)millis() > prevTime) {
-		prevTime = millis() + sampleTime;		
-		GyverRelay::compute((float)sampleTime / 1000);
-		return _relayState;
-	} else {
-		return _relayState;
-	}
+	return output;
 }
 
-boolean GyverRelay::getResult(float new_input) {
-	input = new_input;
-	GyverRelay::getResult();
-	return _relayState;
-}
-boolean GyverRelay::getResultTimer(float new_input) {
-	input = new_input;
-	GyverRelay::getResultTimer();
-	return _relayState;
+boolean GyverRelay::getResultTimer() {
+	if (millis() - prevTime > dT) {
+		prevTime = millis();
+		return GyverRelay::compute((float)dT / 1000);
+	}
 }

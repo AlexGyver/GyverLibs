@@ -1353,7 +1353,7 @@ void tune(float new_kp, float new_ki, float new_kd);		// перенастрой�
 ---
 
 <a id="GyverRelay"></a>
-### GyverRelay v1.2 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverRelay/GyverRelay.zip)
+### GyverRelay v2.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverRelay/GyverRelay.zip)
 Библиотека классического релейного регулятора для Arduino
 - Обратная связь по скорости изменения величины
 - Настройка гистерезиса, коэффициента усиления ОС, направления регулирования
