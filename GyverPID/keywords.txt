@@ -26,6 +26,7 @@ setDirection	KEYWORD2
 setMode	KEYWORD2
 setLimits	KEYWORD2
 setDt	KEYWORD2
+integral	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

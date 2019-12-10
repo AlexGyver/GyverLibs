@@ -26,6 +26,7 @@ typedef float datatype;
 	Версия 1.2 - возвращены дефайны
 	Версия 1.3 - вычисления ускорены, библиотека облегчена
 	Версия 2.0 - логика работы чуть переосмыслена, код улучшен, упрощён и облегчён
+	Версия 2.1 - integral вынесен в private
 */
 
 class GyverPID {
@@ -45,18 +46,17 @@ public:
 	void setMode(boolean mode);							// режим: работа по входной ошибке ON_ERROR (0) или по изменению ON_RATE (1)
 	void setLimits(int min_output, int max_output);		// лимит выходной величины (например для ШИМ ставим 0-255)
 	void setDt(int16_t new_dt);							// установка времени дискретизации (для getResultTimer)
-
 	float Kp = 0.0;
 	float Ki = 0.0;
-	float Kd = 0.0;
+	float Kd = 0.0;	
+	float integral = 0.0;
 	
 private:
 	int16_t _dt = 100;		// время итерации в мс
 	float _dt_s = 0.1;		// время итерации в с
 	boolean _mode = 0, _direction = 0;
 	int _minOut = 0, _maxOut = 255;	
-	datatype prevInput = 0;
-	float integral = 0.0;
+	datatype prevInput = 0;	
 	uint32_t pidTimer = 0;
 };
 
