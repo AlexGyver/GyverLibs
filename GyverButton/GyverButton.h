@@ -23,6 +23,9 @@
 	
 	Версия 3.0
 	- Ускорен и оптимизирован код, переделана инициализация, дополнены примеры
+	
+	Версия 3.1
+	- isStep может принимать количество кликов, сделанных перед ним (см. пример clicks_step)
 */
 
 #pragma pack(push,1)
@@ -95,14 +98,14 @@ class GButton {
 	boolean hasClicks();	// проверка на наличие кликов. Сбрасывается после вызова
 	uint8_t getClicks();	// вернуть количество кликов
 	
-	boolean isStep();		// возвращает true по таймеру setStepTimeout, смотри пример
+	boolean isStep(byte clicks = 0); // возвращает true по таймеру setStepTimeout, смотри пример
 	
   private:
     GyverButtonFlags flags;
     uint8_t _PIN = 0;
 	uint16_t _debounce = 60;
 	uint16_t _timeout = 500;
-	uint16_t _click_timeout = 300;
+	uint16_t _click_timeout = 500;
 	uint16_t _step_timeout = 400;
 	uint8_t btn_counter = 0, last_counter = 0;	
 	uint32_t btn_timer = 0;	

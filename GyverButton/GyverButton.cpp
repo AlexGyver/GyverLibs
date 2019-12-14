@@ -83,6 +83,7 @@ boolean GButton::state() {
 boolean GButton::isSingle() {
 	if (flags.tickMode) GButton::tick();
 	if (flags.counter_flag && last_counter == 1) {
+		last_counter = 0;
 		flags.counter_flag = false;
 		return true;
 	} else return false;
@@ -91,6 +92,7 @@ boolean GButton::isDouble() {
 	if (flags.tickMode) GButton::tick();
 	if (flags.counter_flag && last_counter == 2) {
 		flags.counter_flag = false;
+		last_counter = 0;
 		return true;
 	} else return false;
 }
@@ -98,6 +100,7 @@ boolean GButton::isTriple() {
 	if (flags.tickMode) GButton::tick();
 	if (flags.counter_flag && last_counter == 3) {
 		flags.counter_flag = false;
+		last_counter = 0;
 		return true;
 	} else return false;
 }
@@ -109,12 +112,14 @@ boolean GButton::hasClicks() {
 	} else return false;
 }
 uint8_t GButton::getClicks() {
-	return last_counter;	
+	byte thisCount = last_counter;
+	last_counter = 0;
+	return thisCount;	
 }
-boolean GButton::isStep() {
+boolean GButton::isStep(byte clicks) {
 	if (flags.tickMode) GButton::tick();
-	if (flags.step_flag && (millis() - btn_timer >= _step_timeout)) {
-		btn_timer = millis();
+	if (btn_counter == clicks && flags.step_flag && (millis() - btn_timer >= _step_timeout)) {
+		btn_timer = millis();		
 		return true;
 	}
 	else return false;
@@ -157,7 +162,11 @@ void GButton::tick() {
 		flags.hold_flag = false;
 		flags.isRelease_f = true;
 		btn_timer = thisMls;
-		flags.step_flag = false;	
+		if (flags.step_flag) {
+			last_counter = 0;
+			btn_counter = 0;
+			flags.step_flag = false;	
+		}		
 		if (flags.oneClick_f) {
 			flags.oneClick_f = false;
 			flags.isOne_f = true;
@@ -167,8 +176,8 @@ void GButton::tick() {
 	// кнопка удерживается
 	if (btn_flag && btn_state && (thisMls - btn_timer >= _timeout) && !flags.hold_flag) {
 		flags.hold_flag = true;
-		btn_counter = 0;
-		last_counter = 0;
+		//btn_counter = 0;
+		//last_counter = 0;
 		flags.isHolded_f = true;
 		flags.step_flag = true;
 		flags.oneClick_f = false;
