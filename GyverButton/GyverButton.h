@@ -26,6 +26,9 @@
 	
 	Версия 3.1
 	- isStep может принимать количество кликов, сделанных перед ним (см. пример clicks_step)
+	
+	Версия 3.2
+	- Добавлен метод getHoldClicks() - вернуть количество кликов, предшествующее удерживанию
 */
 
 #pragma pack(push,1)
@@ -97,6 +100,7 @@ class GButton {
 	
 	boolean hasClicks();	// проверка на наличие кликов. Сбрасывается после вызова
 	uint8_t getClicks();	// вернуть количество кликов
+	uint8_t getHoldClicks();// вернуть количество кликов, предшествующее удерживанию
 	
 	boolean isStep(byte clicks = 0); // возвращает true по таймеру setStepTimeout, смотри пример
 	
@@ -107,7 +111,7 @@ class GButton {
 	uint16_t _timeout = 500;
 	uint16_t _click_timeout = 500;
 	uint16_t _step_timeout = 400;
-	uint8_t btn_counter = 0, last_counter = 0;	
+	uint8_t btn_counter = 0, last_counter = 0, last_hold_counter = 0;
 	uint32_t btn_timer = 0;	
 	bool btn_state = false;
 	bool btn_flag = false;

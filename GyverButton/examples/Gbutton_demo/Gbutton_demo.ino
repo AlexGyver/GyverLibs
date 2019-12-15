@@ -45,7 +45,10 @@ void loop() {
 
   if (butt1.isPress()) Serial.println("Press");         // нажатие на кнопку (+ дебаунс)
   if (butt1.isRelease()) Serial.println("Release");     // отпускание кнопки (+ дебаунс)
-  if (butt1.isHolded()) Serial.println("Holded");       // проверка на удержание
+  if (butt1.isHold()) {									// если кнопка удерживается
+    Serial.print("Holding ");							// выводим пока удерживается
+    Serial.println(butt1.getHoldClicks());				// можно вывести количество кликов перед удержанием!
+  }
   if (butt1.isHold()) Serial.println("Holding");        // проверка на удержание
   //if (butt1.state()) Serial.println("Hold");          // возвращает состояние кнопки
 

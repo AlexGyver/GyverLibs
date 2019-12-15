@@ -116,6 +116,10 @@ uint8_t GButton::getClicks() {
 	last_counter = 0;
 	return thisCount;	
 }
+uint8_t GButton::getHoldClicks() {
+	if (flags.tickMode) GButton::tick();
+	return flags.hold_flag ? last_hold_counter : 0;	
+}
 boolean GButton::isStep(byte clicks) {
 	if (flags.tickMode) GButton::tick();
 	if (btn_counter == clicks && flags.step_flag && (millis() - btn_timer >= _step_timeout)) {
@@ -176,6 +180,7 @@ void GButton::tick() {
 	// кнопка удерживается
 	if (btn_flag && btn_state && (thisMls - btn_timer >= _timeout) && !flags.hold_flag) {
 		flags.hold_flag = true;
+		last_hold_counter = btn_counter;
 		//btn_counter = 0;
 		//last_counter = 0;
 		flags.isHolded_f = true;
