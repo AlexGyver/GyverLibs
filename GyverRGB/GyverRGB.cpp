@@ -298,14 +298,14 @@ void GRGB::fadeTo(byte new_r, byte new_g, byte new_b, uint16_t fadeTime) {
 	if (abs(deltaR) > deltaMax) deltaMax = abs(deltaR);
 	if (abs(deltaG) > deltaMax) deltaMax = abs(deltaG);
 	if (abs(deltaB) > deltaMax) deltaMax = abs(deltaB);
+	
+	// Защита от деления на 0. Завершаем работу
+	if (deltaMax == 0) return;
 
 	// Шаг изменения цвета
 	float stepR = (float)deltaR / deltaMax;
 	float stepG = (float)deltaG / deltaMax;
 	float stepB = (float)deltaB / deltaMax;
-
-	// Защита от деления на 0. Завершаем работу
-	if (deltaMax == 0) return;
 
 	// Расчет задержки в мкс
 	uint32_t stepDelay = (float) 1000 * fadeTime / deltaMax;

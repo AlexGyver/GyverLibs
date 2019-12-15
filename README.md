@@ -1163,7 +1163,7 @@ void setDirection(boolean direction);
 ---
 
 <a id="GyverRGB"></a>
-### GyverRGB v1.15 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverRGB/GyverRGB.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverrgb-lib/)
+### GyverRGB v1.16 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverRGB/GyverRGB.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverrgb-lib/)
 Библиотека для удобного управления RGB светодиодами и лентами для Arduino
 - 1530 значений для colorWheel
 - Работа в пространстве RGB
