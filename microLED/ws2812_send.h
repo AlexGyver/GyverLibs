@@ -33,6 +33,10 @@
 #define ORDER2	2
 #endif
 
+#ifndef COLOR_DEBTH
+#define COLOR_DEBTH 3
+#endif
+
 #if (COLOR_DEBTH == 2)
 #define PTR_TYPE uint16_t*
 #else
@@ -40,16 +44,18 @@
 #endif
 
 
-void WS2812B_sendData (PTR_TYPE data, uint16_t datlen, uint8_t maskhi, uint8_t *port, uint8_t *portreg, uint8_t bright) {
+void WS2812B_sendData (PTR_TYPE data, int16_t datlen, uint8_t maskhi, uint8_t *port, uint8_t *portreg, uint8_t bright) {
 	uint8_t ctr,masklo;
-	uint8_t sreg_prev;
 	uint8_t loopData[3];
 	uint8_t *data_ptr = loopData;	
 
 	masklo = ~maskhi & *port;
 	maskhi |= *port;
+#ifndef MICROLED_ALLOW_INTERRUPTS
+	uint8_t sreg_prev;
 	sreg_prev=SREG;
 	cli();  
+#endif
 
 	while (datlen) {
 		data_ptr = loopData;
@@ -105,6 +111,7 @@ void WS2812B_sendData (PTR_TYPE data, uint16_t datlen, uint8_t maskhi, uint8_t *
 			);
 		}
 	}
-
+#ifndef MICROLED_ALLOW_INTERRUPTS
 	SREG=sreg_prev;
+#endif
 }

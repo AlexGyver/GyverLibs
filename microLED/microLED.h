@@ -30,6 +30,10 @@
 	
 	Версия 2.2
 	- Цвет PINK заменён на MAGENTA
+	
+	Версия 2.3
+	- Добавлена дефайн настройка MICROLED_ALLOW_INTERRUPTS
+	- Исправлены мелкие ошибки, улучшена стабильность
 */
 
 #pragma once
@@ -423,7 +427,7 @@ byte microLED::correctBright() {
 // ====================== ВЫВОД ======================
 void microLED::show() {
 	*ws2812_port_reg |= pinMask; // Enable DDR
-	WS2812B_sendData((PTR_TYPE)LEDbuffer, COLOR_DEBTH * _numLEDs, pinMask, (uint8_t*) ws2812_port, (uint8_t*) ws2812_port_reg, correctBright());
+	WS2812B_sendData((PTR_TYPE)LEDbuffer, (int16_t)COLOR_DEBTH * _numLEDs, pinMask, (uint8_t*) ws2812_port, (uint8_t*) ws2812_port_reg, correctBright());
 }
 
 // ================== COLOR UTILITY ===================

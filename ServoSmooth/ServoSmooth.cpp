@@ -11,6 +11,10 @@ void ServoSmooth::writeMicroseconds(uint16_t angle) {
 }
 
 // ====== ATTACH ======
+void ServoSmooth::attach() {
+	_servo.attach(_pin);
+}
+
 void ServoSmooth::attach(uint8_t pin, int target) {
 	_pin = pin;
 	_servo.attach(_pin);
@@ -101,23 +105,25 @@ boolean ServoSmooth::tickManual() {
 		}			
 	}
 	if (abs(_servoTargetPos - (int)_newPos) < SS_DEADZONE) {		
-		if (_autoDetach && _servoState) {
-			_timeoutCounter++;
+		if (_autoDetach && _servoState) {			
 			if (_timeoutCounter > SS_TIMEOUT) {
+				_newPos = _servoTargetPos;
+				_servoCurrentPos = _servoTargetPos;
 				_servoState = false;
 				_servo.detach();
+				return true;
+			} else {
+				_timeoutCounter++;
 			}
-		}
-		return true;
+		}		
 	} else {
 		if (_autoDetach && !_servoState) {
 			_servoState = true;
 			_servo.attach(_pin);
 		}
-		_timeoutCounter = 0;
-		return false;
+		_timeoutCounter = 0;		
 	}
-	
+	return false;
 }
 
 boolean ServoSmooth::tick() {

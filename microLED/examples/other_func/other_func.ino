@@ -2,6 +2,7 @@
 #define LED_PIN 6       // пин ленты
 #define NUMLEDS 64       // кол-во светодиодов
 
+#define MICROLED_ALLOW_INTERRUPTS	// запрещает запрет прерываний на время отправки данных
 #define ORDER_GRB       // порядок цветов ORDER_GRB / ORDER_RGB / ORDER_BRG
 #define MAX_DATA_SPEED  // разогнанный протокол связи (на 40% быстрее). Работает на ws2812/13. На 2811 не работает
 

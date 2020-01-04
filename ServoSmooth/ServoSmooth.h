@@ -19,18 +19,20 @@
 	v1.5 - исправлены getCurrent и getCurrentDeg
 	v1.6 - чуть оптимизирована инициализация
 	v1.7 - исправлен баг с низкой скоростью/ускорением, код оптимизирован
+	v1.8 - улучшена стабильность
 	
 	2019 by AlexGyver
 */
 
 #define SS_SERVO_PERIOD 20		// период работы tick(), мс
-#define SS_DEADZONE 20			// мёртвая зона
-#define SS_TIMEOUT 100			// таймаут мёртвой зоны (в количестве периодов SS_SERVO_PERIOD!!!)
+#define SS_DEADZONE 30			// мёртвая зона
+#define SS_TIMEOUT 15			// таймаут мёртвой зоны (в количестве периодов SS_SERVO_PERIOD!!!)
 
 class ServoSmooth {
 public:
 	void write(uint16_t angle);					// аналог метода из библиотеки Servo
 	void writeMicroseconds(uint16_t angle);		// аналог метода из библиотеки Servo
+	void attach();								// подключает к выбранному в attach(pin) пину
 	void attach(uint8_t pin, int target = 0);	// аналог метода из библиотеки Servo
 	void attach(uint8_t pin, int min, int max, int target = 0);	// аналог метода из библиотеки Servo. min по умолч. 500, max 2400. target - положение (в углах или мкс, на которые серво повернётся при подключении)
 	void detach();								// аналог метода из библиотеки Servo

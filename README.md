@@ -43,7 +43,7 @@
 ---
 
 <a id="microLED"></a>
-### microLED v2.2 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microLED/microLED.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/microled/)
+### microLED v2.3 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microLED/microLED.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/microled/)
 microLED - ультра-лёгкая библиотека для работы с адресной лентой/матрицей
 - Основная фишка: сжатие цвета, код занимает в разы меньше места в SRAM по сравнению с аналогами (FastLED, NeoPixel и др.)
 	- Использование 8 битного цвета занимает в 3 раза меньше SRAM чем у других библиотек
@@ -865,7 +865,7 @@ void enable(uint8_t mode, uint8_t prescaler);   // включить WDT с на�
 ---
 
 <a id="ServoSmooth"></a>
-### ServoSmooth v1.7 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/ServoSmooth/ServoSmooth.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/servosmooth/)
+### ServoSmooth v1.8 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/ServoSmooth/ServoSmooth.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/servosmooth/)
 Библиотека для плавного управления сервоприводами
 - Является дополнением к стандартной библиотеке Servo
 - Настройка максимальной скорости сервопривода
