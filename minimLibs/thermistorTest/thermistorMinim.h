@@ -1,22 +1,22 @@
 // мини-класс для работы с термисторами по закону Стейнхарта-Харта
 // GND --- термистор --- A0 --- 10к --- 5V
+#define SAMPLE_AVERAGE 20
 
 class thermistor {
   public:
-    thermistor(byte pin, int resistance, int beta, int tempBase, byte resistBase);
-    thermistor(byte pin, int resistance, int beta);
+    thermistor(byte pin, int resistance, int beta, int tempBase = 25, int resistBase = 10000);
     float getTemp();
     float getTempAverage();
   private:
     float computeTemp(int analog);
-    byte _pin;
-    int _beta;
+    byte _pin = 0;
+    int _beta = 0;
     int _tempBase = 25;
     int _resistance = 10000;
-    byte _resistBase = 10000;
+    int _resistBase = 10000;
 };
 
-thermistor::thermistor(byte pin, int resistance, int beta, int tempBase, byte resistBase) {
+thermistor::thermistor(byte pin, int resistance, int beta, int tempBase, int resistBase) {
   _pin = pin;
   _beta = beta;
   _tempBase = tempBase;
@@ -24,16 +24,10 @@ thermistor::thermistor(byte pin, int resistance, int beta, int tempBase, byte re
   _resistance = resistance;
 }
 
-thermistor::thermistor(byte pin, int resistance, int beta) {
-  _pin = pin;
-  _beta = beta;
-  _resistance = resistance;
-}
-
 float thermistor::computeTemp(int analog) {
   float temp;
   temp = _resistance / ((float)1023 / analog - 1);
-  temp /= _resistBase;                        // (R/Ro)
+  temp /= (float)_resistBase;                        // (R/Ro)
   temp = log(temp) / _beta;            		// 1/B * ln(R/Ro)
   temp += (float)1.0 / (_tempBase + 273.15);  // + (1/To)
   temp = (float)1.0 / temp - 273.15;    		// инвертируем и конвертируем в градусы по Цельсию
@@ -46,8 +40,8 @@ float thermistor::getTemp() {
 
 float thermistor::getTempAverage() {
   int analogAverage = 0;
-  for (byte i = 0; i < 10; i++)
+  for (byte i = 0; i < SAMPLE_AVERAGE; i++)
     analogAverage += analogRead(_pin);
-  analogAverage /= 10;
+  analogAverage /= SAMPLE_AVERAGE;
   return computeTemp(analogAverage);
 }
