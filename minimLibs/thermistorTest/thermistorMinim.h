@@ -1,6 +1,6 @@
 // мини-класс для работы с термисторами по закону Стейнхарта-Харта
 // GND --- термистор --- A0 --- 10к --- 5V
-#define SAMPLE_AVERAGE 20
+#define SAMPLE_AVERAGE 20   // количество чтений для усреднения
 
 class thermistor {
   public:
@@ -26,8 +26,8 @@ thermistor::thermistor(byte pin, int resistance, int beta, int tempBase, int res
 
 float thermistor::computeTemp(int analog) {
   float temp;
-  temp = _resistance / ((float)1023 / analog - 1);
-  temp /= (float)_resistBase;                        // (R/Ro)
+  temp = _resistBase / ((float)1023 / analog - 1);
+  temp /= (float)_resistance;                        // (R/Ro)
   temp = log(temp) / _beta;            		// 1/B * ln(R/Ro)
   temp += (float)1.0 / (_tempBase + 273.15);  // + (1/To)
   temp = (float)1.0 / temp - 273.15;    		// инвертируем и конвертируем в градусы по Цельсию
