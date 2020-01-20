@@ -25,7 +25,7 @@ void MicroDS18B20::setResolution(uint8_t res) {
 
 float MicroDS18B20::getTemp() {
 	uint8_t data[2];
-	if (oneWire_reset(_pin)) return;
+	if (oneWire_reset(_pin)) return 0;
 	oneWire_write(0xCC, _pin);
 	oneWire_write(0xBE, _pin);
 	data[0] = oneWire_read(_pin);
