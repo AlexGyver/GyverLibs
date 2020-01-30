@@ -461,7 +461,7 @@ boolean isStep();       // возвращает true по таймеру setStep
 ---
 
 <a id="GyverEncoder "></a>
-### GyverEncoder v4.2 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverEncoder/GyverEncoder.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/encoder/)
+### GyverEncoder v4.3 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverEncoder/GyverEncoder.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/encoder/)
 Библиотека для отработки энкодера с Arduino. Возможности:
 - Отработка поворота с антидребезгом
 - Отработка нажатия кнопки с антидребезгом

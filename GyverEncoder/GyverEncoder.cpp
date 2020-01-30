@@ -212,9 +212,11 @@ void Encoder::tick() {
 				flags.countFlag = true;
 			}
 		}
-		if (flags.doubleFlag && debounceDelta > ENC_DOUBLE_TIMEOUT) {
-			if (!flags.countFlag) flags.isSingle_f = true;
-			else flags.isDouble_f = true;
+		if (flags.doubleFlag && debounceDelta > ENC_DOUBLE_TIMEOUT) {	
+			if (!flags.turn_flag) {
+				if (!flags.countFlag) flags.isSingle_f = true;
+				else flags.isDouble_f = true;
+			}			
 			flags.doubleFlag = false;
 		}
 		if (flags.butt_flag && debounceDelta > ENC_HOLD_TIMEOUT && !flags.turn_flag) {
