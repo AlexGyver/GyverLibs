@@ -14,21 +14,13 @@
 	
 	Документацию читай здесь: https://alexgyver.ru/gyverbutton/
 	Для максимально быстрого опроса кнопки рекомендуется использовать ядро GyverCore https://alexgyver.ru/gyvercore/
-	
-	Версия 2.14 от 09.09.2019:	
-	- Возвращены дефайны
-	
-	Версия 2.15
-	- Добавлена возможность объявить кнопку без привязки к пину
-	
-	Версия 3.0
-	- Ускорен и оптимизирован код, переделана инициализация, дополнены примеры
-	
-	Версия 3.1
-	- isStep может принимать количество кликов, сделанных перед ним (см. пример clicks_step)
-	
-	Версия 3.2
-	- Добавлен метод getHoldClicks() - вернуть количество кликов, предшествующее удерживанию
+		
+	Версия 2.15: Добавлена возможность объявить кнопку без привязки к пину	
+	Версия 3.0: Ускорен и оптимизирован код, переделана инициализация, дополнены примеры	
+	Версия 3.1: isStep может принимать количество кликов, сделанных перед ним (см. пример clicks_step)	
+	Версия 3.2: Добавлен метод getHoldClicks() - вернуть количество кликов, предшествующее удерживанию	
+	Версия 3.3: Мелкие исправления
+	Версия 3.4: Добавлен метод resetStates(), сбрасывающий состояния и счётчики
 */
 
 #pragma pack(push,1)
@@ -67,20 +59,20 @@ typedef struct {
 
 class GButton {
   public:
-	GButton(int8_t pin = BTN_NO_PIN, uint8_t type = HIGH_PULL, uint8_t dir = NORM_OPEN);	// конструктор кнопки, принимает PIN пин, тип type (HIGH_PULL / LOW_PULL) и направление dir (NORM_OPEN / NORM_CLOSE)
+	GButton(int8_t pin = BTN_NO_PIN, bool type = HIGH_PULL, bool dir = NORM_OPEN);	// конструктор кнопки, принимает PIN пин, тип type (HIGH_PULL / LOW_PULL) и направление dir (NORM_OPEN / NORM_CLOSE)
 														// HIGH_PULL - кнопка подключена к GND, пин подтянут к VCC, pinMode - INPUT_PULLUP (по умолчанию)
 														// LOW_PULL - кнопка подключена к VCC, пин подтянут к GND, pinMode - INPUT
 														// NORM_OPEN - кнопка по умолчанию разомкнута (по умолчанию)
 														// NORM_CLOSE - кнопка по умолчанию замкнута
 	
 	void setDebounce(uint16_t debounce);				// установка времени антидребезга (по умолчанию 80 мс)
-	void setTimeout(uint16_t timeout);					// установка таймаута удержания (по умолчанию 300 мс)
-	void setClickTimeout(uint16_t timeout);				// установка таймаута между кликами (по умолчанию 500 мс)	
+	void setTimeout(uint16_t new_timeout);				// установка таймаута удержания (по умолчанию 300 мс)
+	void setClickTimeout(uint16_t new_timeout);			// установка таймаута между кликами (по умолчанию 500 мс)	
 	void setStepTimeout(uint16_t step_timeout);			// установка таймаута между инкрементами (по умолчанию 400 мс)	
-	void setType(uint8_t type);							// установка типа кнопки (HIGH_PULL - подтянута к питанию, LOW_PULL - к gnd)	
-	void setDirection(uint8_t dir);						// установка направления (разомкнута/замкнута по умолчанию - NORM_OPEN, NORM_CLOSE)	
+	void setType(bool type);							// установка типа кнопки (HIGH_PULL - подтянута к питанию, LOW_PULL - к gnd)	
+	void setDirection(bool dir);						// установка направления (разомкнута/замкнута по умолчанию - NORM_OPEN, NORM_CLOSE)	
 	
-	void setTickMode(uint8_t tickMode);					// (MANUAL / AUTO) ручной или автоматический опрос кнопки функцией tick()	
+	void setTickMode(bool tickMode);					// (MANUAL / AUTO) ручной или автоматический опрос кнопки функцией tick()	
 														// MANUAL - нужно вызывать функцию tick() вручную														
 														// AUTO - tick() входит во все остальные функции и опрашивается сама
 	
@@ -103,6 +95,8 @@ class GButton {
 	uint8_t getHoldClicks();// вернуть количество кликов, предшествующее удерживанию
 	
 	boolean isStep(byte clicks = 0); // возвращает true по таймеру setStepTimeout, смотри пример
+	
+	void resetStates();		// сбрасывает все is-флаги и счётчики
 	
   private:
     GyverButtonFlags flags;

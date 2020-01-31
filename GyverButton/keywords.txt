@@ -37,6 +37,8 @@ isDouble	KEYWORD2
 isTriple	KEYWORD2
 isStep	KEYWORD2
 
+resetStates	KEYWORD2
+
 #######################################
 # Constants (LITERAL1)
 #######################################
