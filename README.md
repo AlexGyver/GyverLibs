@@ -394,7 +394,7 @@ float getTemp(void);        // получить температуру
 ---
 
 <a id="GyverButton"></a>
-### GyverButton v3.2 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverButton/GyverButton.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverbutton/)
+### GyverButton v3.4 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverButton/GyverButton.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverbutton/)
 Библиотека для многофункциональной отработки нажатия кнопок с Arduino. Возможности:
 - Работа с нормально замкнутыми и нормально разомкнутыми кнопками
 - Работа с подключением PULL_UP и PULL_DOWN
@@ -454,6 +454,7 @@ uint8_t getClicks();    // вернуть количество кликов
 uint8_t getHoldClicks();// вернуть количество кликов, предшествующее удерживанию
 	
 boolean isStep();       // возвращает true по таймеру setStepTimeout, смотри пример
+void resetStates();     // сбрасывает все is-флаги и счётчики
 ```
 </p>
 </details>
