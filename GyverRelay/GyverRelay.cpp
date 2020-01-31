@@ -42,6 +42,7 @@ boolean GyverRelay::getResult() {
 boolean GyverRelay::getResultTimer() {
 	if (millis() - prevTime > dT) {
 		prevTime = millis();
-		return GyverRelay::compute((float)dT / 1000);
+		GyverRelay::compute((float)dT / 1000);
 	}
+	return output;
 }
