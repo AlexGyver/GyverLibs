@@ -1,6 +1,11 @@
 #include <Servo.h>
 #include "ServoSmooth.h"
 
+// ====== CONSTRUCTOR ======
+ServoSmooth::ServoSmooth(int maxAngle) {
+	_maxAngle = maxAngle;
+}
+
 // ====== WRITE ======
 void ServoSmooth::write(uint16_t angle) {
 	_servo.write(angle);
@@ -18,7 +23,7 @@ void ServoSmooth::attach() {
 void ServoSmooth::attach(uint8_t pin, int target) {
 	_pin = pin;
 	_servo.attach(_pin);
-	if (target <= 180) target = map(target, 0, 180, _min, _max);	
+	if (target <= _maxAngle) target = map(target, 0, _maxAngle, _min, _max);	
 	_servo.writeMicroseconds(target);
 	_servoTargetPos = target;
 	_servoCurrentPos = target;
@@ -59,8 +64,8 @@ void ServoSmooth::setTarget(int target) {
 }
 
 void ServoSmooth::setTargetDeg(int target) {
-	target = constrain(target, 0, 180);
-	_servoTargetPos = map(target, 0, 180, _min, _max);
+	target = constrain(target, 0, _maxAngle);
+	_servoTargetPos = map(target, 0, _maxAngle, _min, _max);
 }
 
 void ServoSmooth::setCurrent(int target) {
@@ -69,8 +74,8 @@ void ServoSmooth::setCurrent(int target) {
 }
 
 void ServoSmooth::setCurrentDeg(int target) {
-	target = constrain(target, 0, 180);
-	_servoCurrentPos = map(target, 0, 180, _min, _max);
+	target = constrain(target, 0, _maxAngle);
+	_servoCurrentPos = map(target, 0, _maxAngle, _min, _max);
 	_newPos = _servoCurrentPos;
 }
 
@@ -78,19 +83,24 @@ int ServoSmooth::getCurrent() {
 	return (int)_newPos;
 }
 int ServoSmooth::getCurrentDeg() {
-	return (map((int)_newPos, _min, _max, 0, 180));
+	return (map((int)_newPos, _min, _max, 0, _maxAngle));
 }
 
 int ServoSmooth::getTarget() {
 	return _servoTargetPos;
 }
 int ServoSmooth::getTargetDeg() {
-	return (map(_servoTargetPos, _min, _max, 0, 180));
+	return (map(_servoTargetPos, _min, _max, 0, _maxAngle));
 }
 
 void ServoSmooth::setAutoDetach(boolean set) {
 	_autoDetach = set;
 }
+
+void ServoSmooth::setMaxAngle(int maxAngle) {
+	_maxAngle = maxAngle;
+}
+
 
 // ====== TICK ======
 boolean ServoSmooth::tickManual() {

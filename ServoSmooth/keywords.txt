@@ -30,6 +30,7 @@ getCurrentDeg	KEYWORD2
 getTarget	KEYWORD2
 getTargetDeg	KEYWORD2
 setAutoDetach	KEYWORD2
+setMaxAngle	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
