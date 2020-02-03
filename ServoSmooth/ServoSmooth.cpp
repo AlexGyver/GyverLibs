@@ -111,21 +111,21 @@ boolean ServoSmooth::tickManual() {
 			_servoCurrentPos += _newSpeed;										// получаем новую позицию			
 			_newPos += (float)(_servoCurrentPos - _newPos) * _k;				// и фильтруем её
 			_newPos = constrain(_newPos, _min, _max);							// ограничиваем
-			_servo.writeMicroseconds((int)_newPos);									// отправляем на серво
-		}			
+			_servo.writeMicroseconds((int)_newPos);								// отправляем на серво
+		}
 	}
-	if (abs(_servoTargetPos - (int)_newPos) < SS_DEADZONE) {		
-		if (_autoDetach && _servoState) {			
+	if (abs(_servoTargetPos - (int)_newPos) < SS_DEADZONE) {
+		if (_autoDetach && _servoState) {		
 			if (_timeoutCounter > SS_TIMEOUT) {
 				_newPos = _servoTargetPos;
 				_servoCurrentPos = _servoTargetPos;
 				_servoState = false;
 				_servo.detach();
-				return true;
 			} else {
 				_timeoutCounter++;
 			}
 		}		
+		return !_servoState;	// приехали
 	} else {
 		if (_autoDetach && !_servoState) {
 			_servoState = true;
@@ -139,7 +139,7 @@ boolean ServoSmooth::tickManual() {
 boolean ServoSmooth::tick() {
 	if (millis() - _prevServoTime >= SS_SERVO_PERIOD) {
 		_prevServoTime = millis();
-		if (ServoSmooth::tickManual()) return true;
-		else return false;
+		ServoSmooth::tickManual();
 	}
+	return !_servoState;
 }
