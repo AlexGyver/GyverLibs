@@ -7,7 +7,7 @@
 
 #include <inttypes.h>
 #include "Print.h" 
-#include <microWire.h>
+#include "microWire.h"
 
 // commands
 #define LCD_CLEARDISPLAY 0x01
