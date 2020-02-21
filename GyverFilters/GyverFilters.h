@@ -15,12 +15,13 @@ const byte MEDIAN_FILTER_SIZE = 8;		// размер медианного фил�
 	
 	Версии
 	- 1.6 от 12.11.2019
+	- 1.7: исправлен GLinear
 */
 
 // компактная альтернатива фильтра экспоненциальное бегущее среднее
 class GFilterRA
 {
-  public:
+public:
 	GFilterRA();								// инициализация фильтра
 	GFilterRA(float coef);						// расширенная инициализация фильтра (коэффициент)
 	GFilterRA(float coef, uint16_t interval);	// расширенная инициализация фильтра (коэффициент, шаг фильтрации)
@@ -33,7 +34,7 @@ class GFilterRA
 	float filteredTime(float value);			// возвращает фильтрованное значение с опорой на встроенный таймер	
 	float filtered(float value);				// возвращает фильтрованное значение
 	
-  private:
+private:
 	float _coef = 0.0, _lastValue = 0.0;
 	uint32_t _filterTimer = 0;
 	uint16_t _filterInterval = 0;
@@ -42,80 +43,79 @@ class GFilterRA
 // быстрый медианный фильтр 3-го порядка
 class GMedian3
 {
-	public:
-		GMedian3();
-		uint16_t filtered(uint16_t value);	// возвращает фильтрованное значение
-		
-	private:
-		uint16_t buffer[3];
-		byte counter = 0;
+public:
+	GMedian3();
+	uint16_t filtered(uint16_t value);	// возвращает фильтрованное значение
+	
+private:
+	uint16_t buffer[3];
+	byte counter = 0;
 };
 
 // медианный фильтр N-го порядка
 class GMedian
 {
-	public:
-		GMedian();
-		uint16_t filtered(uint16_t value);	// возвращает фильтрованное значение
+public:
+	GMedian();
+	uint16_t filtered(uint16_t value);	// возвращает фильтрованное значение
 };
 
 // альфа-бета фильтр
 class GABfilter
 {
-	public:
-		GABfilter(float delta, float sigma_process, float sigma_noise);
-		// период дискретизации (измерений), process variation, noise variation
-		
-		void setParameters(float delta, float sigma_process, float sigma_noise);
-		// период дискретизации (измерений), process variation, noise variation
-		
-		float filtered(float value);				// возвращает фильтрованное значение
-		
-	private:
-		float dt;
-		float xk_1, vk_1, a, b;
-		float xk, vk, rk;
-		float xm;
+public:
+	GABfilter(float delta, float sigma_process, float sigma_noise);
+	// период дискретизации (измерений), process variation, noise variation
+	
+	void setParameters(float delta, float sigma_process, float sigma_noise);
+	// период дискретизации (измерений), process variation, noise variation
+	
+	float filtered(float value);				// возвращает фильтрованное значение
+	
+private:
+	float dt;
+	float xk_1, vk_1, a, b;
+	float xk, vk, rk;
+	float xm;
 };
 
 // упрощённый Калман для одномерного случая
 class GKalman
 {
-	public:
-		GKalman(float mea_e, float est_e, float q);
-		// разброс измерения, разброс оценки, скорость изменения значений
-		
-		GKalman(float mea_e, float q);
-		// разброс измерения, скорость изменения значений (разброс измерения принимается равным разбросу оценки)
-		
-		void setParameters(float mea_e, float est_e, float q);
-		// разброс измерения, разброс оценки, скорость изменения значений
-		
-		void setParameters(float mea_e, float q);
-		// разброс измерения, скорость изменения значений (разброс измерения принимается равным разбросу оценки)
-		
-		float filtered(float value);		// возвращает фильтрованное значение
-  
-	private:
-		float _err_measure = 0.0;
-		float _err_estimate = 0.0;
-		float _q = 0.0;
-		float _current_estimate = 0.0;
-		float _last_estimate = 0.0;
-		float _kalman_gain = 0.0;
+public:
+	GKalman(float mea_e, float est_e, float q);
+	// разброс измерения, разброс оценки, скорость изменения значений
+	
+	GKalman(float mea_e, float q);
+	// разброс измерения, скорость изменения значений (разброс измерения принимается равным разбросу оценки)
+	
+	void setParameters(float mea_e, float est_e, float q);
+	// разброс измерения, разброс оценки, скорость изменения значений
+	
+	void setParameters(float mea_e, float q);
+	// разброс измерения, скорость изменения значений (разброс измерения принимается равным разбросу оценки)
+	
+	float filtered(float value);		// возвращает фильтрованное значение
+
+private:
+	float _err_measure = 0.0;
+	float _err_estimate = 0.0;
+	float _q = 0.0;
+	float _current_estimate = 0.0;
+	float _last_estimate = 0.0;
+	float _kalman_gain = 0.0;
 };
 
 // линейная аппроксимация методом наименьших квадратов
 class GLinear {
-	public:
-		GLinear();
-		void compute(int *x_array, int *y_array, int arrSize);		// аппроксимировать
-		float getA();		// получить коэффициент А
-		float getB();		// получить коэффициент В
-		float getDelta();	// получить аппроксимированное изменение
-	private:
-		int32_t sumX, sumY, sumX2, sumXY;
-		float a, b, delta;
+public:
+	GLinear();
+	void compute(int *x_array, int *y_array, int arrSize);		// аппроксимировать
+	float getA();		// получить коэффициент А
+	float getB();		// получить коэффициент В
+	float getDelta();	// получить аппроксимированное изменение
+private:	
+	float a, b, delta;
 };
 
 #endif

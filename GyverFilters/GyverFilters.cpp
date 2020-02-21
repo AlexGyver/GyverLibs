@@ -22,14 +22,14 @@ void GFilterRA::setStep(uint16_t interval) {
 }
 
 float GFilterRA::filteredTime(int16_t value) {
-	if ((long)millis() - _filterTimer >= _filterInterval) {
+	if (millis() - _filterTimer >= _filterInterval) {
 		_filterTimer = millis();
 		return GFilterRA::filtered(value);
 	}
 }
 
 float GFilterRA::filteredTime(float value) {
-	if ((long)millis() - _filterTimer >= _filterInterval) {
+	if (millis() - _filterTimer >= _filterInterval) {
 		_filterTimer = millis();
 		return GFilterRA::filtered(value);
 	}
@@ -226,8 +226,8 @@ float GKalman::filtered(float value)
 GLinear::GLinear() {}
 
 void GLinear::compute(int *x_array, int *y_array, int arrSize) {
+	int32_t sumX = 0, sumY = 0, sumX2 = 0, sumXY = 0;	
 	arrSize /= sizeof(int);
-
 	for (int i = 0; i < arrSize; i++) {		// для всех элементов массива
 		sumX += x_array[i];
 		sumY += (long)y_array[i];
