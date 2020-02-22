@@ -1,0 +1,62 @@
+#######################################
+# Syntax Coloring Map For GyverTimers
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+GyverTimers	KEYWORD1
+
+Timer0	KEYWORD1
+Timer1	KEYWORD1
+Timer2	KEYWORD1
+Timer3	KEYWORD1
+Timer4	KEYWORD1
+Timer5	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+ISR	KEYWORD2
+
+setPeriod	KEYWORD2
+setFrequency	KEYWORD2
+setFrequencyFloat	KEYWORD2
+enableISR	KEYWORD2
+disableISR	KEYWORD2
+pause	KEYWORD2
+resume	KEYWORD2
+stop	KEYWORD2
+restart	KEYWORD2
+setDefault	KEYWORD2
+outputEnable	KEYWORD2
+outputDisable	KEYWORD2
+outputState	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+TIMER0_A	LITERAL1
+TIMER0_B	LITERAL1
+TIMER1_A	LITERAL1
+TIMER1_B	LITERAL1
+TIMER1_C	LITERAL1
+TIMER2_A	LITERAL1
+TIMER2_B	LITERAL1
+TIMER3_A	LITERAL1
+TIMER3_B	LITERAL1
+TIMER3_C	LITERAL1
+TIMER4_A	LITERAL1
+TIMER4_B	LITERAL1
+TIMER4_C	LITERAL1
+TIMER5_A	LITERAL1
+TIMER5_B	LITERAL1
+TIMER5_C	LITERAL1
+
+CHANNEL_A	LITERAL1
+CHANNEL_B	LITERAL1
+CHANNEL_C	LITERAL1
+
+TOGGLE_PIN	LITERAL1
+CLEAR_PIN	LITERAL1
+SET_PIN	LITERAL1
