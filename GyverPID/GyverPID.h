@@ -1,20 +1,4 @@
 #pragma once
-#include <Arduino.h>
-
-#if defined(PID_INTEGER)
-typedef int datatype;
-// расчёты с целыми числами
-#elif defined(PID_FLOAT)
-typedef float datatype;
-// расчёты с float числами
-#else
-typedef float datatype;
-#endif
-
-#define NORMAL 0
-#define REVERSE 1
-#define ON_ERROR 0
-#define ON_RATE 1
 
 /*
 	GyverPID - библиотека классического PID регулятора для Arduino
@@ -27,7 +11,21 @@ typedef float datatype;
 	Версия 1.3 - вычисления ускорены, библиотека облегчена
 	Версия 2.0 - логика работы чуть переосмыслена, код улучшен, упрощён и облегчён
 	Версия 2.1 - integral вынесен в public
+	Версия 2.2 - оптимизация вычислений
 */
+
+#include <Arduino.h>
+
+#if defined(PID_INTEGER)	// расчёты с целыми числами
+typedef int datatype;
+#else						// расчёты с float числами
+typedef float datatype;
+#endif
+
+#define NORMAL 0
+#define REVERSE 1
+#define ON_ERROR 0
+#define ON_RATE 1
 
 class GyverPID {
 public:
@@ -73,7 +71,6 @@ GyverPID::GyverPID(float new_kp, float new_ki, float new_kd, int16_t new_dt) {
 // ================== SETTINGS ===================
 void GyverPID::setDirection(boolean direction) {
 	_direction = direction;
-	setDt(_dt);
 }
 
 void GyverPID::setMode(boolean mode) {
@@ -86,24 +83,24 @@ void GyverPID::setLimits(int min_output, int max_output) {
 }
 
 void GyverPID::setDt(int16_t new_dt) {
-	_dt_s = new_dt / 1000.0f * (_direction ? -1 : 1);
+	_dt_s = new_dt / 1000.0f;
 	_dt = new_dt;
 }
 
 // ================== COMPUTE ===================
 datatype GyverPID::getResult() {
 	datatype error = setpoint - input;				// ошибка регулирования
-	datatype delta_input = input - prevInput;		// изменение входного сигнала
+	datatype delta_input = prevInput - input;		// изменение входного сигнала
 	prevInput = input;
-	
-	output = 0;	
-	if (!_mode) output += (float)error * (_direction ? -Kp : Kp);	// пропорционально ошибке регулирования
-	else output -= (float)delta_input * (_direction ? -Kp : Kp);	// пропорционально изменению входного сигнала
-	output -= (float)delta_input * Kd / _dt_s;						// дифференциальная составляющая	
-	integral += (float)error * Ki * _dt_s;							// расчёт интегральной составляющей
-	output += integral;												// прибавляем
-	
-	output = constrain(output, _minOut, _maxOut);    // ограничиваем
+	if (_direction) {
+		error = -error;
+		delta_input = -delta_input;
+	}
+	output = (float)Kp * (_mode ? delta_input : error); // пропорциональая составляющая
+	output += (float)delta_input * Kd / _dt_s;			// дифференциальная составляющая	
+	integral += (float)error * _dt_s;					// интегральная составляющая
+	output += integral * Ki;							// прибавляем	
+	output = constrain(output, _minOut, _maxOut);		// ограничиваем
 	return output;
 }
 
