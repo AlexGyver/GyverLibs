@@ -267,7 +267,7 @@ minimLibs это набор классов, являющихся облегчё�
 ---
 
 <a id="microBME280"></a>
-### microBME280 v1.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microWire/microBME280.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/microlibs/)
+### microBME280 v1.2 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microWire/microBME280.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/microlibs/)
 Лёгкая библиотека для работы с датчиком BME280
 - Легче аналогов =)
 - Разработано by Egor 'Nich1con' Zaharov
@@ -298,7 +298,7 @@ void setPressOversampling(uint8_t mode);	// Set oversampling or disable pressure
 ---
 
 <a id="microWire"></a>
-### microWire v2.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microWire/microWire.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/microlibs/)
+### microWire v2.1 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microWire/microWire.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/microlibs/)
 Лёгкая библиотека с минимальным набором инстурментов для работы с модулями по шине I2C
 - Не является полноценным аналогом библиотеки Wire!!!
 - Не все библиотеки на Wire смогут работать с microWire
@@ -327,7 +327,7 @@ uint8_t receive_nack(void);
 ---
 
 <a id="microDS3231"></a>
-### microDS3231 v1.1 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microDS3231/microDS3231.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/microlibs/)
+### microDS3231 v1.2 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microDS3231/microDS3231.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/microlibs/)
 Ультра лёгкая библиотека для работы с RTC DS3231
 - Для работы нужна библиотека **microWire.h**
 - Разработано by Egor 'Nich1con' Zaharov
@@ -356,7 +356,7 @@ uint8_t getMonth(void);         // получить месяц
 ---
 
 <a id="microDS18B20"></a>
-### microDS18B20 v1.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microDS18B20/microDS18B20.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/microlibs/)
+### microDS18B20 v2.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microDS18B20/microDS18B20.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/microlibs/)
 Ультра лёгкая библиотека для работы с датчиком температуры Dallas DS18B20
 - Разработано by Egor 'Nich1con' Zaharov
 #### Методы и функции библиотеки

@@ -22,7 +22,13 @@ MicroDS3231::MicroDS3231(void) {
 	Wire.begin();
 }
 
-void MicroDS3231::setTime(uint8_t seconds , uint8_t minutes , uint8_t hours , uint8_t date, uint8_t month, uint16_t year) {
+void MicroDS3231::setTime(int8_t seconds, int8_t minutes, int8_t hours, int8_t date, int8_t month, int16_t year) {
+	month = constrain(month, 1, 12);
+	date = constrain(date, 0, pgm_read_byte(daysInMonth + month - 1));
+	seconds = constrain(seconds, 0, 59);
+	minutes = constrain(minutes, 0, 59);
+	hours = constrain(hours, 0, 23);
+	
 	uint8_t day = getWeekDay(year, month, date);
 	year -= 2000;
 	Wire.beginTransmission(0x68);

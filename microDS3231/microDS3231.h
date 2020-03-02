@@ -3,6 +3,8 @@
 	Для работы нужна библиотека microWire.h
 	Версия 1.1 by Egor
 	- Совместимость с microWire 2.0
+	v1.2 - добавлены ограничения на вводимые в setTime числа. Также нельзя ввести 29 февраля увы =)
+
 */
 
 #ifndef microDS3231_h
@@ -15,7 +17,7 @@ const boolean COMPILE_TIME = true;
 class MicroDS3231 {
 public:
 	MicroDS3231();	// конструктор
-	void setTime(uint8_t seconds , uint8_t minutes , uint8_t hours , uint8_t date, uint8_t month, uint16_t year);	// установка времени
+	void setTime(int8_t seconds , int8_t minutes , int8_t hours , int8_t date, int8_t month, int16_t year);	// установка времени
 	void setTime(uint8_t param);	// установка времени == времени компиляции
 	bool lostPower(void);			// проверка на сброс питания
 	uint8_t getSeconds(void);		// получить секунды

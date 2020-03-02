@@ -6,11 +6,11 @@
 #######################################
 # Datatypes (KEYWORD1)
 #######################################
+GyverBME280	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
-GyverBME280	KEYWORD2
 begin	KEYWORD2
 isMeasuring	KEYWORD2 
 setFilter	KEYWORD2

@@ -4,7 +4,7 @@
 	Облегчайте свой код простой заменой Wire.h  на microWire.h
 	Не все библиотеки на Wire смогут работать с microWire , подробный список поддерживаемых библиотек уточняйте на сайте.
 	Поддержка контроллеров : ATmega168/328p (nano,uno,mini), ATmega32u4 (leonardo,micro) , ATmega2560 (mega)
-	Версия 2.0 by Egor 'Nich1con' Zaharov
+	Версия 2.1 by Egor 'Nich1con' Zaharov от 02.03.2020
 */
 
 /*
@@ -25,13 +25,17 @@ public:
 	void begin(void);            				// инициализация шины
 	void setClock(uint32_t clock);       		// ручная установка частоты шины 31-900 kHz (в герцах)
 	void beginTransmission(uint8_t address); 	// открыть соединение (для записи данных)
-	void endTransmission(bool stop = true);  	// закрыть соединение , произвести stop или restart (по умолчанию - stop)
+	uint8_t endTransmission(bool stop);  		// закрыть соединение , произвести stop или restart (по умолчанию - stop)
+	uint8_t endTransmission(void);  			// закрыть соединение , произвести stop
 	void write(uint8_t data);                	// отправить в шину байт данных , отправка производится сразу , формат - byte "unsigned char"
-	void requestFrom(uint8_t address , uint8_t length , bool stop = true);  //открыть соединение и запросить данные от устройства
+	void requestFrom(uint8_t address , uint8_t length , bool stop); //открыть соединение и запросить данные от устройства, отпустить или удержать шину
+	void requestFrom(uint8_t address , uint8_t length);  			//открыть соединение и запросить данные от устройства, отпустить шину
 	uint8_t read(void);                      	// прочитать байт , БУФЕРА НЕТ!!! , читайте сразу все запрошенные байты , stop или restart после чтения последнего байта, настраивается в requestFrom
 	uint8_t available(void);                 	// вернет количество оставшихся для чтения байт
 private:
 	uint8_t _requested_bytes = 0;            	// переменная хранит количество запрошенных и непрочитанных байт
+	bool _address_nack = false;					// Флаг для отслеживания ошибки при передаче адреса
+	bool _data_nack = false;					// Флаг для отслеживания ошибки при передаче данных
 	bool _stop_after_request = true;         	// stop или restart после чтения последнего байта
 	void start(void);                        	// сервисная функция с нее начинается любая работа с шиной
 	void stop(void);                         	// сервисная функция ей заканчивается работа с шиной

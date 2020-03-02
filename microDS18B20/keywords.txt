@@ -1,4 +1,3 @@
-  
 #######################################
 # Syntax Coloring Map For microDS18B20
 #######################################
@@ -7,14 +6,15 @@
 # Datatypes (KEYWORD1)
 #######################################
 MicroDS18B20	KEYWORD1
+microDS18B20	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
-microDS18B20	KEYWORD2
+setResolution	KEYWORD2
+readAddress	KEYWORD2
 requestTemp	KEYWORD2
 getTemp	KEYWORD2
-setResolution	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
