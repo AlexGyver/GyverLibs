@@ -912,7 +912,7 @@ void enable(uint8_t mode, uint8_t prescaler);   // включить WDT с на�
 ---
 
 <a id="ServoSmooth"></a>
-### ServoSmooth v1.10 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/ServoSmooth/ServoSmooth.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/servosmooth/)
+### ServoSmooth v2.1 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/ServoSmooth/ServoSmooth.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/servosmooth/)
 Библиотека для плавного управления сервоприводами
 - Является дополнением к стандартной библиотеке Servo
 - Настройка максимальной скорости сервопривода

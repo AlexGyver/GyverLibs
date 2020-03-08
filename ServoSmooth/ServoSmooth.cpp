@@ -7,12 +7,15 @@ ServoSmooth::ServoSmooth(int maxAngle) {
 }
 
 // ====== WRITE ======
+void ServoSmooth::writeUs(int val) {
+	_servo.writeMicroseconds(_dir ? (_max - val) : val);
+}
 void ServoSmooth::write(uint16_t angle) {
-	_servo.writeMicroseconds(map(angle, 0, _maxAngle, _min, _max));
+	writeUs(map(angle, 0, _maxAngle, _min, _max));
 }
 
 void ServoSmooth::writeMicroseconds(uint16_t angle) {
-	_servo.writeMicroseconds(angle);
+	writeUs(angle);
 }
 
 // ====== ATTACH ======
@@ -24,7 +27,7 @@ void ServoSmooth::attach(uint8_t pin, int target) {
 	_pin = pin;
 	_servo.attach(_pin);
 	if (target <= _maxAngle) target = map(target, 0, _maxAngle, _min, _max);	
-	_servo.writeMicroseconds(target);
+	writeUs(target);
 	_servoTargetPos = target;
 	_servoCurrentPos = target;
 	_newPos = target;
@@ -101,6 +104,10 @@ void ServoSmooth::setMaxAngle(int maxAngle) {
 	_maxAngle = maxAngle;
 }
 
+void ServoSmooth::setDirection(bool dir) {
+	_dir = dir;
+}
+
 
 // ====== TICK ======
 boolean ServoSmooth::tickManual() {
@@ -111,20 +118,15 @@ boolean ServoSmooth::tickManual() {
 			_servoCurrentPos += _newSpeed;										// получаем новую позицию			
 			_newPos += (float)(_servoCurrentPos - _newPos) * _k;				// и фильтруем её
 			_newPos = constrain(_newPos, _min, _max);							// ограничиваем
-			_servo.writeMicroseconds((int)_newPos);								// отправляем на серво
+			writeUs((int)_newPos);								// отправляем на серво
 		}
 	}
 	if (abs(_servoTargetPos - (int)_newPos) < SS_DEADZONE) {
-		if (_autoDetach && _servoState) {		
-			if (_timeoutCounter > SS_TIMEOUT) {
-				_newPos = _servoTargetPos;
-				_servoCurrentPos = _servoTargetPos;
-				_servoState = false;
-				_servo.detach();
-			} else {
-				_timeoutCounter++;
-			}
-		}		
+		if (_autoDetach && _servoState) {			
+			_servoCurrentPos = _servoTargetPos;
+			_servoState = false;
+			_servo.detach();
+		}			
 		return !_servoState;	// приехали
 	} else {
 		if (_autoDetach && !_servoState) {

@@ -22,13 +22,16 @@
 	v1.8 - улучшена стабильность
 	v1.9 - добавлена настройка макс. угла серво
 	v1.10 - исправлен баг когда текущая позиция совпадает с позицией таргета
+	v2.0 - упрощён алгоритм
+	v2.1 - добавлена смена направления
 	
 	2019 by AlexGyver
 */
 
 #define SS_SERVO_PERIOD 20		// период работы tick(), мс
-#define SS_DEADZONE 30			// мёртвая зона
-#define SS_TIMEOUT 15			// таймаут мёртвой зоны (в количестве периодов SS_SERVO_PERIOD!!!)
+#define SS_DEADZONE 10			// мёртвая зона
+#define NORMAL 0
+#define REVERSE 1
 
 class ServoSmooth {
 public:
@@ -62,9 +65,12 @@ public:
 	int getTarget();							// получение целевой позиции в мкс (500 - 2400)
 	int getTargetDeg();							// получение целевой позиции в градусах (0-макс. угол). Зависит от min и max
 	
+	void setDirection(bool _dir);				// смена направления поворота
+	
 	Servo _servo;		
 	
 private:
+	void writeUs(int val);
 	int _maxAngle = 180;
 	int _servoCurrentPos = 0;
 	int _servoTargetPos = 0;
@@ -79,5 +85,6 @@ private:
 	boolean _tickFlag = true;
 	boolean _servoState = true;
 	boolean _autoDetach = true;
-	byte _timeoutCounter = 0;		
+	byte _timeoutCounter = 0;	
+	bool _dir = 0;	
 };

@@ -31,7 +31,10 @@ getTarget	KEYWORD2
 getTargetDeg	KEYWORD2
 setAutoDetach	KEYWORD2
 setMaxAngle	KEYWORD2
+setDirection	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
 #######################################
+NORMAL	LITERAL1
+REVERSE	LITERAL1
