@@ -167,6 +167,20 @@ boolean Encoder::isHold() {
 	return (SW_state);
 }
 
+void Encoder::resetStates() {
+	encState = 0;
+	flags.isTurn_f = false;
+	flags.isFastR_f = false;
+	flags.isFastL_f = false;
+	flags.isPress_f = false;
+	flags.isRelease_f = false;
+	flags.isRelease_f = false;
+	flags.isHolded_f = false;
+	flags.isSingle_f = false;
+	flags.isDouble_f = false;
+
+}
+
 // ================= TICK =================
 void Encoder::tick(bool clk, bool dt, bool sw) {
 	extTick = true;

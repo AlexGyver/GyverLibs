@@ -34,6 +34,7 @@ isSingle	KEYWORD2
 isDouble	KEYWORD2
 isHolded	KEYWORD2
 isHold	KEYWORD2
+resetStates	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
