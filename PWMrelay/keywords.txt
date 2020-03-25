@@ -1,0 +1,23 @@
+#######################################
+# Syntax Coloring Map For PWMrelay
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+PWMrelay	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+tick	KEYWORD2
+setPWM	KEYWORD2
+getPWM	KEYWORD2
+setPeriod	KEYWORD2
+getPeriod	KEYWORD2
+setLevel	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
