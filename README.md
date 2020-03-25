@@ -553,7 +553,7 @@ parseFloat      | 1070    | 246       | 824
 ---
 
 <a id="GyverTimers"></a>
-### GyverTimers v1.1 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverTimers/GyverTimers.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/GyverTimers/)
+### GyverTimers v1.2 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverTimers/GyverTimers.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/GyverTimers/)
 Настройка и контроль прерываний по аппаратным таймерам:
 - Поддерживаются все три таймера на ATmega328 и шесть таймеров на ATmega2560;		
 - Настройка периода (мкс) и частоты (Гц) прерываний:
