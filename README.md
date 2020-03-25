@@ -18,6 +18,7 @@
 * [GyverWDT](#GyverWDT) - расширенный контроль за watchdog
 
 ### Алгоритмы
+* [PWMrelay](#PWMrelay) - сверхнизкочастотный ШИМ для релюшек
 * [GyverFilters](#GyverFilters) - набор фильтров значений
 * [GyverTimer](#GyverTimer) - простой таймер для организации кода
 * [GyverPID](#GyverPID) - библиотека ПИД регулятора
@@ -40,6 +41,32 @@
 * [microDS18B20](#microDS18B20) - микро библиотека для работы с датчиком температуры ds18b20
 * [GyverUART](#GyverUART) - облегчённый и ускоренный Serial
 * [minimLibs](#minimLibs) - набор классов для работы с железками
+
+---
+
+<a id="PWMrelay"></a>
+### PWMrelay v1.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/PWMrelay/PWMrelay.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/pwmrelay/)
+Библиотека для генерации сверхнизкочастотного ШИМа для релюшек
+- Встроенный таймер на миллис
+- Установка частоты, скважности и уровня реле
+
+#### Методы и функции библиотеки
+<details>
+<summary>РАЗВЕРНУТЬ</summary>
+<p>
+Смотри примеры в папке examples!
+
+```C
+PWMrelay(byte pin, bool dir, int period);   // пин, уровень реле HIGH/LOW, период
+void tick();                                // тик, вызывать как можно чаще, сам управляет реле
+void setPWM(byte duty);                     // установить величину ШИМ, 0-255. При значении 0 и 255 тик неактивен!
+byte getPWM();                              // возвращает величину ШИМ
+void setPeriod(int period);                 // установить период ШИМ в миллисек. (по умолч. 1000мс == 1с)
+int getPeriod();                            // получить период
+void setLevel(bool level);                  // установить установить уровень реле (HIGH/LOW)
+```
+</p>
+</details>
 
 ---
 
