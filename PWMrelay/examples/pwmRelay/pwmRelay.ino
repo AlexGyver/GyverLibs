@@ -1,4 +1,4 @@
-#include <PWMrelay.h>
+#include "PWMrelay.h"
 PWMrelay relay(13); // реле на 13 пине
 
 // или так
