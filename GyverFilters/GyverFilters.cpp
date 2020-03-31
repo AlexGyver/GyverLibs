@@ -165,11 +165,7 @@ uint16_t GMedian::filtered(uint16_t value) {
 
 // ***************************** GABfilter *****************************
 GABfilter::GABfilter(float delta, float sigma_process, float sigma_noise) {
-	dt = delta;
-	float lambda = (float)sigma_process * dt * dt / sigma_noise;
-	float r = (4 + lambda - (float)sqrt(8 * lambda + lambda * lambda)) / 4;
-	a = (float)1 - r * r;
-	b = (float)2 * (2 - a) - 4 * (float)sqrt(1 - a);
+	setParameters(delta, sigma_process, sigma_noise);
 }
 void GABfilter::setParameters(float delta, float sigma_process, float sigma_noise) {
 	dt = delta;
@@ -192,28 +188,24 @@ float GABfilter::filtered(float value) {
 
 // ***************************** GKalman *****************************
 #include <math.h>
-GKalman::GKalman(float mea_e, float est_e, float q)
-{
+GKalman::GKalman(float mea_e, float est_e, float q) {
 	GKalman::setParameters(mea_e, est_e, q);
 }
-GKalman::GKalman(float mea_e, float q)
-{
+GKalman::GKalman(float mea_e, float q) {
 	GKalman::setParameters(mea_e, mea_e, q);
 }
 
-void GKalman::setParameters(float mea_e, float est_e, float q)
-{
+void GKalman::setParameters(float mea_e, float est_e, float q) {
 	_err_measure = mea_e;
 	_err_estimate = est_e;
 	_q = q;
 }
-void GKalman::setParameters(float mea_e, float q)
-{
+void GKalman::setParameters(float mea_e, float q) {
 	GKalman::setParameters(mea_e, mea_e, q);
 }
 
-float GKalman::filtered(float value)
-{
+float GKalman::filtered(float value) {
+	float _kalman_gain, _current_estimate;
 	_kalman_gain = _err_estimate / (_err_estimate + _err_measure);
 	_current_estimate = _last_estimate + _kalman_gain * (value - _last_estimate);
 	_err_estimate =  (1.0 - _kalman_gain)*_err_estimate + fabs(_last_estimate-_current_estimate)*_q;
