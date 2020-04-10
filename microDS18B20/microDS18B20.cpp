@@ -1,7 +1,7 @@
 #include "microDS18B20.h"
 #include "microOneWire.h"
 /************************************** Таблица CRC *******************************************/
-#if (BME_CRC_USE_TABLE == true)
+#if (DS_CRC_USE_TABLE == true)
 static const uint8_t PROGMEM _crc_table[] = {
 	0x00, 0x5e, 0xbc, 0xe2, 0x61, 0x3f, 0xdd, 0x83, 0xc2, 0x9c, 0x7e, 0x20, 0xa3, 0xfd, 0x1f, 0x41, 
 	0x9d, 0xc3, 0x21, 0x7f, 0xfc, 0xa2, 0x40, 0x1e, 0x5f, 0x01, 0xe3, 0xbd, 0x3e, 0x60, 0x82, 0xdc, 
@@ -53,7 +53,7 @@ void MicroDS18B20::setResolution(uint8_t resolution) {				// Установка 
 void MicroDS18B20::readAddress(uint8_t *addressArray) {				// Чтение адреса датчика в массив
 	if (_ds_address_defined or oneWire_reset(_ds_pin)) return;		// Проверка присутствия
 	oneWire_write(0x33, _ds_pin);										// Запрос адреса
-#if (BME_CHECK_CRC == true)												// Если требуется проверка подлинности
+#if (DS_CHECK_CRC == true)												// Если требуется проверка подлинности
 	uint8_t _calculated_crc = 0;										// Переменная для CRC8
 	uint8_t _temp_address[8];											// Временный массив для адреса
 	for (uint8_t i = 0; i < 8; i++) {									// Прочитать 8 байт адреса
@@ -77,13 +77,13 @@ void MicroDS18B20::requestTemp(void) {						// Запрос температур
 }
 
 
-BME_TEMP_TYPE MicroDS18B20::getTemp(void) {						// Чтение температуры
+DS_TEMP_TYPE MicroDS18B20::getTemp(void) {						// Чтение температуры
 	uint8_t data[9];													// Временный массив для данных
 	uint8_t _calculated_crc = 0;										// Переменная для хранения CRC
 	if (oneWire_reset(_ds_pin)) return 0;								// Проверка присутствия
 	MicroDS18B20::addressRoutine();									// Процедура адресации
 	oneWire_write(0xBE, _ds_pin);										// Запросить температуру
-#if (BME_CHECK_CRC == true)												// Если требуется проверка подлинности
+#if (DS_CHECK_CRC == true)												// Если требуется проверка подлинности
 	for (uint8_t i = 0; i < 9; i++) {									// Считать RAM 
 		data[i] = oneWire_read(_ds_pin);								// Прочитать данные
 		_calculated_crc = MicroDS18B20::crc_update(_calculated_crc, data[i]); // Обновить значение CRC8
@@ -93,12 +93,12 @@ BME_TEMP_TYPE MicroDS18B20::getTemp(void) {						// Чтение темпера�
 	data[0] = oneWire_read(_ds_pin);									// Прочитать младший байт температуры
 	data[1] = oneWire_read(_ds_pin);									// Прочитать старший байт температуры
 #endif			
-	return (BME_TEMP_TYPE)((data[1] << 8) | data[0]) / 16;				// Рассчитать значение температуры
+	return (DS_TEMP_TYPE)((data[1] << 8) | data[0]) / 16;				// Рассчитать значение температуры
 }
 
 
 uint8_t MicroDS18B20::crc_update(uint8_t crc, uint8_t data) {		// Процедура обновления CRC
-#if (BME_CRC_USE_TABLE == true)											// Используем таблицу?
+#if (DS_CRC_USE_TABLE == true)											// Используем таблицу?
 	return pgm_read_byte(&_crc_table[crc ^ data]);					// Тогда берем готовое значение
 #else																// По - дедовски?
 	uint8_t i = 8;													// Используем полином CRC8 1-Wire
