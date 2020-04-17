@@ -2,7 +2,7 @@
 * Developed for AlexGyver https://github.com/AlexGyver/  by Egor 'Nich1con' Zaharov *
 * Distributed under a free license indicating the source                            *
 * BOSCH BME280 [I2C] Arduino library                                                * 
-* V1.2 from 02.03.2020                                                              *
+* V1.3 from 16.04.2020 исправлена ошибка при отриц. температуре                     *
 ************************************************************************************/
 
 #ifndef GyverBME280_h
@@ -185,7 +185,7 @@ void GyverBME280::setPressOversampling(uint8_t mode)
 
 int32_t GyverBME280::readTempInt(void) 
 {
-	uint32_t temp_raw = GyverBME280::readRegister24(0xFA);			// Read 24-bit value
+	int32_t temp_raw = GyverBME280::readRegister24(0xFA);			// Read 24-bit value
 	if (temp_raw == 0x800000) return 0;								// If the temperature module has been disabled return '0'
 
 	temp_raw >>= 4;													// Start temperature reading in integers
@@ -194,14 +194,15 @@ int32_t GyverBME280::readTempInt(void)
 	int32_t value_2 = (((((temp_raw >> 4) - ((int32_t)CalibrationData._T1)) * 
 	((temp_raw >> 4) - ((int32_t)CalibrationData._T1))) >> 12) * ((int32_t)CalibrationData._T3)) >> 14;
 
-	return (value_1 + value_2);										// Return temperature in integers
+	return ((int32_t)value_1 + value_2);							// Return temperature in integers
 }
 
 
 float GyverBME280::readTemperature(void) 
 {
-	float T = (GyverBME280::readTempInt() * 5 + 128) >> 8;			// Сonvert temperature from integer to float
-	return T / 100;													// Return temperature in float
+    int32_t temp_raw = GyverBME280::readTempInt();
+    float T = (temp_raw * 5 + 128) >> 8;
+    return T / 100;													// Return temperature in float
 }
 
 

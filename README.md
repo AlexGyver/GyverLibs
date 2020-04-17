@@ -294,7 +294,7 @@ minimLibs это набор классов, являющихся облегчё�
 ---
 
 <a id="microBME280"></a>
-### microBME280 v1.2 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microWire/microBME280.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/microlibs/)
+### microBME280 v1.3 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microWire/microBME280.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/microlibs/)
 Лёгкая библиотека для работы с датчиком BME280
 - Легче аналогов =)
 - Разработано by Egor 'Nich1con' Zaharov
