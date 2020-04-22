@@ -64,7 +64,7 @@ bool MicroDS3231::lostPower(void) { // возвращает true если 1 ян
 uint8_t MicroDS3231::readRegister(uint8_t addr) {
 	Wire.beginTransmission(0x68); 
 	Wire.write(addr);
-	Wire.endTransmission();
+	if (Wire.endTransmission() != 0) return 0;
 	Wire.requestFrom(0x68,1);
 	uint8_t data = Wire.read();
 	return data;
