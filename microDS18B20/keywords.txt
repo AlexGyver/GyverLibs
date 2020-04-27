@@ -13,6 +13,8 @@ microDS18B20	KEYWORD1
 #######################################
 setResolution	KEYWORD2
 readAddress	KEYWORD2
+setAddress	KEYWORD2
+setPin	KEYWORD2
 requestTemp	KEYWORD2
 getTemp	KEYWORD2
 

@@ -227,7 +227,7 @@ void Timer_0::disableISR(uint8_t source) {
 	TIMSK0 &= ~ (source ? (1 << OCIE0B) : (1 << OCIE0A));   // Disable timer interrupt , channel A or B
 }
 
-void Timer_1::disableISR(uint8_t source = CHANNEL_A) {    	// Disable timer interrupt , channel A , B or C
+void Timer_1::disableISR(uint8_t source) {    				// Disable timer interrupt , channel A , B or C
 	switch (source) {
 	case CHANNEL_A:
 		TIMSK1 &= ~ (1 << OCIE1A);

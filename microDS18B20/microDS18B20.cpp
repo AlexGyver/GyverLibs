@@ -22,30 +22,34 @@ static const uint8_t PROGMEM _crc_table[] = {
 };
 #endif
 
+MicroDS18B20::MicroDS18B20() {}
 
-MicroDS18B20::MicroDS18B20(uint8_t pin) {							// Создать обьект без адреса
-	_ds_pin = pin;													// Присвоить пин 				
-	_ds_address_defined = false;									// Пропускать адресацию
+MicroDS18B20::MicroDS18B20(uint8_t pin) {							// Создать обьект без адреса	
+	MicroDS18B20::setPin(pin);
+}
+
+MicroDS18B20::MicroDS18B20(uint8_t pin, uint8_t *address) {			// Создать обьект с адресом
+	MicroDS18B20::setPin(pin);
+	MicroDS18B20::setAddress(address);
+}
+
+void MicroDS18B20::setAddress(uint8_t *address) {
+	_ds_address = address;
+	_ds_address_defined = true;
+}
+
+void MicroDS18B20::setPin(uint8_t pin) {
+	_ds_pin = pin;													// Присвоить пин 	
 	pinMode(_ds_pin, INPUT);										// "Отпустить" линию
-	digitalWrite(_ds_pin, LOW);										// Рабочее состояние линии
+	digitalWrite(_ds_pin, LOW);										// Рабочее состояние линии	
 }
-
-
-MicroDS18B20::MicroDS18B20(uint8_t pin,const uint8_t *address) {	// Создать обьект с адресом
-	_ds_pin = pin;													// Присвоить пин 
-	_ds_address_defined = true;									    // Выполнять адресацию
-	_ds_address = address;									    	// Передать указателю массив с адресом
-	pinMode(_ds_pin, INPUT);								   	    // "Отпустить" линию
-	digitalWrite(_ds_pin, LOW);								  	    // Рабочее состояние линии
-}
-
 
 void MicroDS18B20::setResolution(uint8_t resolution) {				// Установка рабочего разрешения	
 	if (oneWire_reset(_ds_pin)) return;								// Сброс и проверка присутствия
 	MicroDS18B20::addressRoutine();									// Процедура адресации
-	oneWire_write(0x4E, _ds_pin);										// Запись RAM
-	oneWire_write(0xFF, _ds_pin);										// Максимум в верхний регистр тревоги
-	oneWire_write(0x00, _ds_pin);										// Минимум в верхний регистр тревоги
+	oneWire_write(0x4E, _ds_pin);									// Запись RAM
+	oneWire_write(0xFF, _ds_pin);									// Максимум в верхний регистр тревоги
+	oneWire_write(0x00, _ds_pin);									// Минимум в верхний регистр тревоги
 	oneWire_write(((constrain(resolution, 9, 12) - 9) << 5) | 0x1F, _ds_pin); // Запись конфигурации разрешения
 }
 

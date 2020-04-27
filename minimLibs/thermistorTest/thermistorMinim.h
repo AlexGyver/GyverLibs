@@ -26,7 +26,7 @@ thermistor::thermistor(byte pin, int resistance, int beta, int tempBase, int res
 
 float thermistor::computeTemp(int analog) {
   float temp;
-  temp = _resistBase / ((float)1023 / analog - 1);
+  temp = _resistBase / ((float)1024 / analog - 1);
   temp /= (float)_resistance;                        // (R/Ro)
   temp = log(temp) / _beta;            		// 1/B * ln(R/Ro)
   temp += (float)1.0 / (_tempBase + 273.15);  // + (1/To)

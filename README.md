@@ -383,7 +383,7 @@ uint8_t getMonth(void);         // получить месяц
 ---
 
 <a id="microDS18B20"></a>
-### microDS18B20 v2.1 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microDS18B20/microDS18B20.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/microlibs/)
+### microDS18B20 v2.2 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microDS18B20/microDS18B20.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/microlibs/)
 Ультра лёгкая библиотека для работы с датчиком температуры Dallas DS18B20
 - Разработано by Egor 'Nich1con' Zaharov
 #### Методы и функции библиотеки
@@ -580,7 +580,7 @@ parseFloat      | 1070    | 246       | 824
 ---
 
 <a id="GyverTimers"></a>
-### GyverTimers v1.2 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverTimers/GyverTimers.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/GyverTimers/)
+### GyverTimers v1.3 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverTimers/GyverTimers.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/GyverTimers/)
 Настройка и контроль прерываний по аппаратным таймерам:
 - Поддерживаются все три таймера на ATmega328 и шесть таймеров на ATmega2560;		
 - Настройка периода (мкс) и частоты (Гц) прерываний:
