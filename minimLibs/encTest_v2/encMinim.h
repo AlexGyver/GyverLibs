@@ -55,7 +55,7 @@ void encMinim::tick(bool hold) {
   uint32_t debounce = thisMls - _debTimer;
 
   // энк
-  _encState = 0;
+  //_encState = 0;
   _state = digitalRead(_clk) | digitalRead(_dt) << 1;
   if (_resetFlag && _state == 0b11) {
     if (_lastState == 0b10) _encState = (!_swState || hold) ? 3 : 1;

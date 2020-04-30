@@ -3,7 +3,7 @@
 */
 
 // пины энкодера
-#define SW 4
+#define SW 0
 #define DT 2
 #define CLK 3
 
