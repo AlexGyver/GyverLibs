@@ -62,6 +62,7 @@ void encMinim::tick(bool hold) {
     if (_lastState == 0b01) _encState = (!_swState || hold) ? 4 : 2;
     if (_encState != 0 && debounce < _ME_ENC_FAST) _fast = true;
     else _fast = false;
+	_debTimer = thisMls;
     _turnState = true;
     _resetFlag = 0;
   }
