@@ -178,7 +178,6 @@ void Encoder::resetStates() {
 	flags.isHolded_f = false;
 	flags.isSingle_f = false;
 	flags.isDouble_f = false;
-
 }
 
 // ================= TICK =================
@@ -275,22 +274,29 @@ void Encoder::tick() {
 #endif
 		) {			
 			encState = 0;
-			if (curState == 0b11) {
-				switch (prevState) {
-				case 0b10: encState = 1; break;
-				case 0b01: encState = 2; break;
-				}			
-			} else if (curState == 0b00 && !flags.enc_type) {
-				switch (prevState) {
-				case 0b01: encState = 1; break;
-				case 0b10: encState = 2; break;
+			if (flags.rst_flag) {
+				if (curState == 0b11) {
+					flags.rst_flag = 0;
+					encState = 3-prevState;
+					//switch (prevState) {
+					//case 0b10: encState = 1; break;
+					//case 0b01: encState = 2; break;
+					//}			
+				} else if (!flags.enc_type && curState == 0b00) {
+					flags.rst_flag = 0;
+					encState = prevState;
+					//switch (prevState) {						
+					//case 0b01: encState = 1; break;
+					//case 0b10: encState = 2; break;
+					//}
 				}
 			}
+			if (curState == 0b00) flags.rst_flag = 1;
 
 #elif defined(PRECISE_ALGORITHM)			
 			uint8_t curState = (extTick) ? (flags.extCLK | (flags.extDT << 1)) : (digitalRead(_CLK) | (digitalRead(_DT) << 1));
 
-			if (prevState != curState
+			if (curState != prevState
 #if (ENC_DEBOUNCE_TURN > 0)
 			&& (debounceDelta > ENC_DEBOUNCE_TURN)
 #endif
