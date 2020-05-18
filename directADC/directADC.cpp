@@ -124,6 +124,21 @@ void ADC_setReference(ADC_modes ref) {
 	sei();
 }
 
+void ADC_setResolution(uint8_t res)
+{
+	cli();
+	switch(res)
+	{
+		case 10:
+			ADMUX &= ~(1<<ADLAR); // right adjustment
+			break;
+		case 8:
+			ADMUX |= (1<<ADLAR); //left adjustment
+			break;
+	}
+	sei();
+}
+
 /* Включить режим автозапуска АЦП и выбрать его источник. Внимание! Запуск преобразования начинается по ФРОНТУ (RISING) события */
 void ADC_autoTriggerEnable(ADC_modes trig) {
 	cli();
@@ -185,8 +200,12 @@ void ADC_startConvert() { // ручной запуск преобразован�
 	sei();
 }
 
-unsigned int ADC_read() { // склеить и вернуть значение ацп
-	return ADCL | (ADCH << 8); 
+unsigned int ADC_read() { // вернуть значение АЦП
+	return ADC;
+}
+
+uint8_t ADC_read8(void) { // вернуть 8-битное значение АЦП
+	return ADCH;
 }
 
 boolean ADC_available() { // проверить готовность АЦП
@@ -200,7 +219,12 @@ boolean ADC_available() { // проверить готовность АЦП
 
 unsigned int ADC_readWhenAvailable() { // дождаться окончания текущего преобразования,склеить и вернуть результат
 	while (ADCSRA & (1 << ADSC));
-	return ADCL | (ADCH << 8);
+	return ADC; 
+}
+
+uint8_t ADC_read8WhenAvailable(void) {
+	while (ADCSRA & (1 << ADSC));
+	return ADCH;
 }
 
 ISR(ADC_vect){ // прерывание ацп
