@@ -16,13 +16,16 @@ ADC_disable	KEYWORD2
 ADC_autoTriggerEnable	KEYWORD2
 ADC_setPrescaler	KEYWORD2
 ADC_setReference	KEYWORD2
+ADC_setResolution	KEYWORD2
 ADC_autoTriggerDisable	KEYWORD2
 ADC_attachInterrupt	KEYWORD2
 ADC_detachInterrupt	KEYWORD2
 ADC_startConvert	KEYWORD2
 ADC_read	KEYWORD2
+ADC_read8	KEYWORD2
 ADC_available	KEYWORD2
 ADC_readWhenAvailable	KEYWORD2
+ADC_read8WhenAvailible	KEYWORD2
 ACOMP_attachInterrupt	KEYWORD2
 ACOMP_detachInterrupt	KEYWORD2
 ACOMP_enable	KEYWORD2
