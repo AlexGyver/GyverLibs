@@ -490,7 +490,7 @@ void resetStates();     // сбрасывает все is-флаги и счёт
 ---
 
 <a id="GyverEncoder "></a>
-### GyverEncoder v4.5 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverEncoder/GyverEncoder.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/encoder/)
+### GyverEncoder v4.6 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverEncoder/GyverEncoder.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/encoder/)
 Библиотека для отработки энкодера с Arduino. Возможности:
 - Отработка поворота с антидребезгом
 - Отработка нажатия кнопки с антидребезгом
@@ -540,7 +540,7 @@ boolean isHold();                        // возвращает true при у�
 ---
 
 <a id="GyverUART"></a>
-### GyverUART v1.6 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverUART/GyverUART.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyveruart/)
+### GyverUART v1.8 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverUART/GyverUART.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyveruart/)
 Лёгкая библиотека для работы с последовательным портом. Практически полный аналог стандартного Serial, но гораздо легче и быстрее (например, чтение быстрее в 2 раза). Данная библиотека вшита в моё ядро [GyverCore](https://github.com/AlexGyver/GyverCore), при его использовании дополнительно библиотеку подключать не нужно!
 
 Функция         | Arduino | GyverUART | Разница, байт 

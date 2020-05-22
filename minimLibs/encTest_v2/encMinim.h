@@ -1,8 +1,8 @@
 // мини-класс для работы с энкодером v2
 #pragma once
-#define _ME_ENC_FAST 30
-#define _ME_BUTTON_DEB 80
-#define _ME_BUTTON_HOLD 1000
+#define _ME_ENC_FAST 30       // таймаут быстрого поворота
+#define _ME_BUTTON_DEB 80     // дебаунс кнопки
+#define _ME_BUTTON_HOLD 1000  // таймаут удержания кнопки
 
 class encMinim
 {
@@ -17,22 +17,18 @@ class encMinim
     boolean isRightH();
     boolean isLeftH();
     boolean isFast();
-	
+
     // 0 - ничего, 1 - лево, 2 - право, 3 - правоНажат, 4 - левоНажат, 5 - клик, 6 - удержан
     byte getState();
-	
-	// сбросить state
-    void rst();
+
+    // сбросить state
+    void resetState();
 
   private:
     int8_t _clk, _dt, _sw;
-    boolean _type = false;
-    bool _fast = false;
-    boolean _swState, _swFlag, _turnState, _holdFlag;
+    boolean _swState, _swFlag, _turnState, _holdFlag, _fast, _resetFlag;
     byte _state, _lastState, _encState;
-    bool _resetFlag = false;
     uint32_t _debTimer;
-    // _encState: 0 - ничего, 1 - лево, 2 - право, 3 - правоНажат, 4 - левоНажат, 5 - клик, 6 - удержан
 };
 
 encMinim::encMinim(uint8_t clk, uint8_t dt, int8_t sw, boolean dir, boolean type) {
@@ -44,7 +40,6 @@ encMinim::encMinim(uint8_t clk, uint8_t dt, int8_t sw, boolean dir, boolean type
     _dt = clk;
   }
   _sw = sw;
-  _type = type;
   pinMode(_clk, INPUT);
   pinMode(_dt, INPUT);
   pinMode(_sw, INPUT_PULLUP); // для режима без кнопки
@@ -55,14 +50,13 @@ void encMinim::tick(bool hold) {
   uint32_t debounce = thisMls - _debTimer;
 
   // энк
-  //_encState = 0;
   _state = digitalRead(_clk) | digitalRead(_dt) << 1;
   if (_resetFlag && _state == 0b11) {
     if (_lastState == 0b10) _encState = (!_swState || hold) ? 3 : 1;
     if (_lastState == 0b01) _encState = (!_swState || hold) ? 4 : 2;
     if (_encState != 0 && debounce < _ME_ENC_FAST) _fast = true;
     else _fast = false;
-	_debTimer = thisMls;
+    _debTimer = thisMls;
     _turnState = true;
     _resetFlag = 0;
   }
@@ -83,29 +77,29 @@ void encMinim::tick(bool hold) {
     if (_encState != 0 && debounce < _ME_BUTTON_HOLD) {
       _holdFlag = true;
     }
-    if (_encState == 0 && debounce > _ME_BUTTON_HOLD) {
+    if (_encState == 0 && debounce >= _ME_BUTTON_HOLD) {
       _encState = 6;
       _holdFlag = true;
     }
   }
 
-  if (_swState && _swFlag && _holdFlag) {
+  if (_swState && _swFlag) {
+    if (_holdFlag) {
+      debounce = 0;
+    } else {
+      if (debounce > _ME_BUTTON_DEB) {
+        if (!_turnState) _encState = 5;
+      }
+    }
     _debTimer = thisMls;
-    debounce = 0;
     _swFlag = false;
-  }
-
-  if (_swState && _swFlag && !_holdFlag && debounce > _ME_BUTTON_DEB) {
-    _debTimer = thisMls;
-    _swFlag = false;
-    if (!_turnState) _encState = 5;
   }
 }
 
 byte encMinim::getState() {
   return _encState;
 }
-void encMinim::rst() {
+void encMinim::resetState() {
   _encState = 0;
 }
 boolean encMinim::isFast() {

@@ -23,5 +23,5 @@ void loop() {
   if (enc.isLeftH()) Serial.println("leftH");
   if (enc.isRightH()) Serial.println("rightH");
   if (enc.isClick()) Serial.println("click");
-  if (enc.isHolded()) Serial.println("hold");  
+  if (enc.isHolded()) Serial.println("hold");
 }

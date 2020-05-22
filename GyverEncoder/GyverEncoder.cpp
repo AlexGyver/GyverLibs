@@ -278,20 +278,12 @@ void Encoder::tick() {
 				if (curState == 0b11) {
 					flags.rst_flag = 0;
 					encState = 3-prevState;
-					//switch (prevState) {
-					//case 0b10: encState = 1; break;
-					//case 0b01: encState = 2; break;
-					//}			
-				} else if (!flags.enc_type && curState == 0b00) {
+				} else if (!flags.enc_type && (curState == 0b00)) {
 					flags.rst_flag = 0;
 					encState = prevState;
-					//switch (prevState) {						
-					//case 0b01: encState = 1; break;
-					//case 0b10: encState = 2; break;
-					//}
 				}
 			}
-			if (curState == 0b00) flags.rst_flag = 1;
+			if (curState == 0b00 || (!flags.enc_type && curState == 0b11)) flags.rst_flag = 1;
 
 #elif defined(PRECISE_ALGORITHM)			
 			uint8_t curState = (extTick) ? (flags.extCLK | (flags.extDT << 1)) : (digitalRead(_CLK) | (digitalRead(_DT) << 1));

@@ -194,13 +194,13 @@ String GyverUart::readStringUntil(char terminator) {
 // ====================== WRITE ===========================
 /*
 // прямая запись без буфера
-void GyverUart::write(byte data){	
+void GyverUart::writeBuffer(byte data){	
 	while (!(UCSR0A & (1<<UDRE0)));
 	UDR0 = data;
 }
 */
 
-void GyverUart::write(byte data) {
+void GyverUart::writeBuffer(byte data) {
 	uint8_t i = (unsigned int)(_UART_TX_BUFFER_HEAD + 1 >= UART_TX_BUFFER_SIZE) ? 0 : _UART_TX_BUFFER_HEAD + 1;
 	// ждать освобождения места в буфере
 	while ( (i + 1) == _UART_TX_BUFFER_TAIL);
@@ -229,15 +229,19 @@ ISR(USART_TX_vect) {
 	}
 }
 
-void GyverUart::println(void) {
-	write('\r');
+void GyverUart::write(byte data) {
+	writeBuffer(data);
 	startTransmission();
-	write('\n');
+}
+
+void GyverUart::println(void) {
+	writeBuffer('\r');
+	writeBuffer('\n');
 	startTransmission();
 }
 
 void GyverUart::print(char data) {
-	write(data);
+	writeBuffer(data);
 	startTransmission();
 }
 void GyverUart::println(char data) {
@@ -245,24 +249,23 @@ void GyverUart::println(char data) {
 	println();
 }
 
-void GyverUart::print(int8_t data, byte base)		{printHelper( (long) data, base);}
+void GyverUart::print(int8_t data, byte base)		{printHelper( (int32_t) data, base);}
 void GyverUart::print(uint8_t data, byte base)		{printHelper( (uint32_t) data, base);}
-void GyverUart::print(int16_t data, byte base)		{printHelper( (long) data, base);}
-void GyverUart::print(uint16_t data, byte base)	{printHelper( (uint32_t) data, base);}
-void GyverUart::print(int32_t data, byte base)		{printHelper( (long) data, base);}
-void GyverUart::print(uint32_t data, byte base)	{printHelper( (uint32_t) data, base);}
+void GyverUart::print(int16_t data, byte base)		{printHelper( (int32_t) data, base);}
+void GyverUart::print(uint16_t data, byte base)		{printHelper( (uint32_t) data, base);}
+void GyverUart::print(int32_t data, byte base)		{printHelper( (int32_t) data, base);}
+void GyverUart::print(uint32_t data, byte base)		{printHelper( (uint32_t) data, base);}
 
-void GyverUart::println(int8_t data, byte base)	{printHelper( (long) data, base); println();}
+void GyverUart::println(int8_t data, byte base)		{printHelper( (int32_t) data, base); println();}
 void GyverUart::println(uint8_t data, byte base)	{printHelper( (uint32_t) data, base); println();}
-void GyverUart::println(int16_t data, byte base)	{printHelper( (long) data, base); println();}
+void GyverUart::println(int16_t data, byte base)	{printHelper( (int32_t) data, base); println();}
 void GyverUart::println(uint16_t data, byte base)	{printHelper( (uint32_t) data, base); println();}
-void GyverUart::println(int32_t data, byte base)	{printHelper( (long) data, base); println();}
+void GyverUart::println(int32_t data, byte base)	{printHelper( (int32_t) data, base); println();}
 void GyverUart::println(uint32_t data, byte base)	{printHelper( (uint32_t) data, base); println();}
-
 
 void GyverUart::printHelper(int32_t data, byte base) {
 	if (data < 0) {
-		write(45);
+		writeBuffer(45);
 		data = -data;
 	}
 	printHelper((uint32_t) data, base);
@@ -297,18 +300,18 @@ void GyverUart::printBytes(uint32_t data) {
 		}
 	}	
 	for (int8_t i = amount; i >= 0; i--) {
-		write(bytes[i] + '0');
+		writeBuffer(bytes[i] + '0');
 	}
 }
 
 void GyverUart::print(double data, byte decimals) {
 	if (data < 0) {
-		write(45);
+		writeBuffer(45);
 		data = -data;
 	}
 	uint32_t integer = data;
 	printBytes(integer);
-	write(46);	// точка
+	writeBuffer(46);	// точка
 	data -= integer;
 	for (byte i = 0; i < decimals; i++) {	
 		data *= 10.0;

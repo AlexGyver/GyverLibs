@@ -8,6 +8,8 @@
 	Версия 1.4 - либа собрана в класс, добавлена readStringUntil
 	Версия 1.5 - добавлен буфер на отправку и flush
 	Версия 1.6 - ускорена запись и чтение
+	Версия 1.7 - чуть оптимизирован код
+	Версия 1.8 - пофикшен write (спасибо eugenebartosh)
 */
 
 #ifndef GyverUART_h
@@ -66,6 +68,7 @@ public:
 	void println(char data[]);	
 	
 private:
+	void writeBuffer(byte data);
 	void printHelper(int32_t data, byte base);
 	void printHelper(uint32_t data, byte base);
 	void printBytes(uint32_t data);
