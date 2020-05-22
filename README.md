@@ -677,7 +677,7 @@ BUILD_SEC	- секунда
 ---
 
 <a id="directADC"></a>
-### directADC v1.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/directADC/directADC.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/directadc/)
+### directADC v1.1 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/directADC/directADC.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/directadc/)
 Библиотека для расширенного (ручного) управления АЦП и компаратором ATmega328
 - Функции библиотеки позволяют получить доступ ко всем возможностям и режимам работы с АЦП и компаратором
 - Ничего не урезано и не упрощено, доступен весь описанный в даташите функционал
