@@ -11,7 +11,7 @@ int x_array[ARRAY_SIZE] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};  // ось x от 1 �
 int y_array[ARRAY_SIZE];    // значения по оси У будем брать с датчика
 
 #include <GyverFilters.h>
-GLinear test;
+GLinear<int> test;    // указываем тип данных в <>
 
 void setup() {
   Serial.begin(9600);

@@ -13,7 +13,7 @@ int x_array[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 int y_array[] = {1, 5, 2, 8, 3, 9, 10, 5, 15, 12};
 
 #include <GyverFilters.h>
-GLinear test;
+GLinear<int> test;    // указываем тип данных в <>
 
 void setup() {
   Serial.begin(9600);

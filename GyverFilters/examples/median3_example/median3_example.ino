@@ -3,7 +3,7 @@
 */
 
 #include "GyverFilters.h"
-GMedian3 testFilter;
+GMedian3<int> testFilter; 		// указываем тип данных в <>
 
 void setup() {
   Serial.begin(9600);
@@ -13,11 +13,9 @@ void loop() {
   int value = analogRead(0);
   // добавляем шум "выбросы"
   value += random(2) * random(2) * random(-1, 2) * random(50, 250);
-  Serial.print("$"); 
   Serial.print(value);
-  Serial.print(" ");  
+  Serial.print(',');  
   value = testFilter.filtered(value);
-  Serial.print(value);
-  Serial.println(";"); 
+  Serial.println(value);
   delay(80);
 }

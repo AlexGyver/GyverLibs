@@ -981,7 +981,7 @@ void setAutoDetach(boolean set);            // вкл/выкл автомати�
 ---
 
 <a id="GyverFilters"></a>
-### GyverFilters v1.8 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverFilters/GyverFilters.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverfilters/)
+### GyverFilters v2.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverFilters/GyverFilters.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverfilters/)
 Библиотека с некоторыми удобными фильтрами для Arduino:
 - GFilterRA - компактная альтернатива фильтра экспоненциальное бегущее среднее (Running Average)			
 - GMedian3 - быстрый медианный фильтр 3-го порядка (отсекает выбросы)
