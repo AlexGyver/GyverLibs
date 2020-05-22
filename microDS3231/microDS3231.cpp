@@ -1,6 +1,6 @@
 #include "microDS3231.h"
 #include <Arduino.h>
-#include <microWire.h>
+#include "microWire.h"
 #include "buildTime.h"
 
 // взято из RTClib

@@ -354,7 +354,7 @@ uint8_t receive_nack(void);
 ---
 
 <a id="microDS3231"></a>
-### microDS3231 v1.3 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microDS3231/microDS3231.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/microlibs/)
+### microDS3231 v1.4 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microDS3231/microDS3231.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/microlibs/)
 Ультра лёгкая библиотека для работы с RTC DS3231
 - Для работы нужна библиотека **microWire.h**
 - Разработано by Egor 'Nich1con' Zaharov
@@ -403,7 +403,7 @@ float getTemp(void);        // получить температуру
 ---
 
 <a id="microLiquidCrystal_I2C"></a>
-### microLiquidCrystal_I2C v1.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microLiquidCrystal_I2C/microLiquidCrystal_I2C.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/microlibs/)
+### microLiquidCrystal_I2C v1.1 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microLiquidCrystal_I2C/microLiquidCrystal_I2C.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/microlibs/)
 Библиотека для LCD дисплея с переходником на I2C, облегчена за счёт использования microWire
 - Для работы нужна библиотека **microWire.h**
 

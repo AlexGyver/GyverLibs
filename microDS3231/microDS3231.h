@@ -5,14 +5,12 @@
 	- Совместимость с microWire 2.0
 	v1.2 - добавлены ограничения на вводимые в setTime числа. Также нельзя ввести 29 февраля увы =)
 	v1.3 - пофикшено зависание, когда модуль отключен но опрашивается
+	v1.4 - незначительный фикс
 */
 
-#ifndef microDS3231_h
-#define microDS3231_h
+#pragma once
 #include <Arduino.h>
-#include <microWire.h>
-
-const boolean COMPILE_TIME = true;
+const bool COMPILE_TIME = true;
 
 class MicroDS3231 {
 public:
@@ -30,5 +28,3 @@ public:
 	uint8_t readRegister(uint8_t addr);
 private:
 };
-
-#endif

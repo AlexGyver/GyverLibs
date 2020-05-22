@@ -132,6 +132,13 @@ boolean Encoder::isRelease() {
 		return true;
 	} else return false;
 }
+boolean Encoder::isReleaseHold() {
+	if (flags.enc_tick_mode) Encoder::tick();
+	if (flags.isReleaseHold_f) {
+		flags.isReleaseHold_f = false;
+		return true;
+	} else return false;
+}
 boolean Encoder::isClick() {
 	if (flags.enc_tick_mode) Encoder::tick();
 	if (flags.isRelease_f) {
@@ -174,7 +181,7 @@ void Encoder::resetStates() {
 	flags.isFastL_f = false;
 	flags.isPress_f = false;
 	flags.isRelease_f = false;
-	flags.isRelease_f = false;
+	flags.isReleaseHold_f = false;
 	flags.isHolded_f = false;
 	flags.isSingle_f = false;
 	flags.isDouble_f = false;
@@ -211,8 +218,9 @@ void Encoder::tick() {
 		if (!SW_state && flags.butt_flag && (debounceDelta > ENC_DEBOUNCE_BUTTON)) {
 			if (!flags.turn_flag && !flags.hold_flag) {  // если кнопка отпущена и ручка не поворачивалась
 				flags.turn_flag = false;
-				flags.isRelease_f = true;
+				flags.isRelease_f = true;				
 			}
+			if (debounceDelta > ENC_HOLD_TIMEOUT) flags.isReleaseHold_f = true;
 			flags.butt_flag = false;
 			debounce_timer = thisMls;
 			debounceDelta = 0;
@@ -234,12 +242,11 @@ void Encoder::tick() {
 		}
 		if (flags.butt_flag && debounceDelta > ENC_HOLD_TIMEOUT && !flags.turn_flag) {
 			if (SW_state) {
-				flags.hold_flag = true;
-				flags.isRelease_f = false;
+				flags.hold_flag = true;				
 				flags.doubleAllow = false;
 			} else {
 				flags.butt_flag = false;
-				flags.hold_flag = false;
+				flags.hold_flag = false;				
 				debounce_timer = thisMls;
 				debounceDelta = 0;
 			}	

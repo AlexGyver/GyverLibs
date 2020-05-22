@@ -34,7 +34,7 @@
 	- 4.3: Исправлено ложное isSingle		
 	- 4.4: Добавлен метод resetStates, сбрасывает все is-флаги и счётчики
 	- 4.5: Улучшен алгоритм BINARY_ALGORITHM (спасибо Ярославу Курусу)
-	- 4.6: BINARY_ALGORITHM пофикшен для TYPE1
+	- 4.6: BINARY_ALGORITHM пофикшен для TYPE1, добавлена isReleaseHold
 */
 // ========= КОНСТАНТЫ ==========
 #define ENC_NO_BUTTON -1	// константа для работы без пина
@@ -79,6 +79,7 @@ typedef struct
 	bool isTurn_f: 1;
 	bool isPress_f: 1;
 	bool isRelease_f: 1;
+	bool isReleaseHold_f: 1;
 	bool isHolded_f: 1;
 	bool isFastR_f: 1;
 	bool isFastL_f: 1;
@@ -129,6 +130,7 @@ public:
 	
 	boolean isPress();						// возвращает true при нажатии кнопки, сама сбрасывается в false
 	boolean isRelease();					// возвращает true при отпускании кнопки, сама сбрасывается в false
+	boolean isReleaseHold();				// возвращает true при отпускании кнопки после удержания, сама сбрасывается в false
 	boolean isClick();						// возвращает true при нажатии и отпускании кнопки, сама сбрасывается в false
 	boolean isHolded();						// возвращает true при удержании кнопки, сама сбрасывается в false
 	boolean isHold();						// возвращает true при удержании кнопки, НЕ СБРАСЫВАЕТСЯ

@@ -29,6 +29,7 @@ isFastL	KEYWORD2
 
 isPress	KEYWORD2
 isRelease	KEYWORD2
+isReleaseHold	KEYWORD2
 isClick	KEYWORD2
 isSingle	KEYWORD2
 isDouble	KEYWORD2
