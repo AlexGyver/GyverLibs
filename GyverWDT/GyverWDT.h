@@ -3,10 +3,10 @@
 * Support MCU's : AVR ATmega328p/32U4/2560 & ATtiny85/84/167 					   *												  
 * Distributed under a free license indicating the source						   * 														  
 * Version 2.0 from 03.11.19														   *
+* Version 2.1 from 23.03.20 - внёс реализацию в класс							   *
 ***********************************************************************************/ 
 
-#ifndef GyverWDT_h
-#define GyverWDT_h
+#pragma once
 #include <Arduino.h>
 
 #if defined(__AVR_ATtiny85__) || defined(__AVR_ATtiny167__)
@@ -37,48 +37,40 @@
 #define WDT_PRESCALER_512	0x08	// (4096 ± 409.6) ms
 #define WDT_PRESCALER_1024	0x09	// (8192 ± 819.2) ms
 
-// ========================================================= CLASS ========================================================= //
-
 class GyverWDT {
 
 public:
-	void reset(void);                               // сброс
-	void disable(void);                             // отключить WDT
-	void enable(uint8_t mode, uint8_t prescaler);   // включить WDT с настройками
+	// сброс
+	void reset() {                              
+		asm volatile ("WDR");
+	}
+	
+	// отключить WDT
+	void disable() {                            
+		uint8_t sregCopy = SREG;				// Save global interrupt settings
+		cli();									// Disable global interrupts
+		WDTCSR = ((1 << WDCE) | (1 << WDE));	// Allow changing settings
+		WDTCSR = 0x00;							// Reset all watchdog settings
+		SREG = sregCopy;						// Restore global interrupt settings
+	}
+	
+	// включить WDT с настройками:
 	// mode:
 	// RESET_MODE - сброс при зависании (при тайм-ауте WDT)
 	// INTERRUPT_MODE - прерывание при зависании (при тайм-ауте WDT)
 	// INTERRUPT_RESET_MODE - первый таймаут - прерывание, второй - сброс
 	// prescaler:
 	// WDT_PRESCALER_2, WDT_PRESCALER_4... WDT_PRESCALER_1024
-	
+	void enable(uint8_t mode, uint8_t prescaler) {  
+		uint8_t sregCopy , wdtRegister;													// Local variables of a function
+		wdtRegister = mode | ((prescaler > 7) ? 0x20 | (prescaler - 8) : prescaler);	// Creating new watchdog settings
+		sregCopy = SREG;																// Save global interrupt settings
+		cli();																			// Disable global interrupts
+		WDTCSR = ((1 << WDCE) | (1 << WDE));											// Allow changing settings
+		WDTCSR = wdtRegister;															// Setting new watchdog settings
+		SREG = sregCopy;																// Restore global interrupt settings
+	}	
 private:
-
 };
 
-// ========================================================= SOURCE CODE ==================================================== //
-
-void GyverWDT::enable(uint8_t mode, uint8_t prescaler) {						// Enable watchdog with selected options
-	uint8_t sregCopy , wdtRegister;												// Local variables of a function
-	wdtRegister = mode | ((prescaler > 7) ? 0x20 | (prescaler - 8) : prescaler);	// Creating new watchdog settings
-	sregCopy = SREG;																// Save global interrupt settings
-	cli();																		// Disable global interrupts
-	WDTCSR = ((1 << WDCE) | (1 << WDE));											// Allow changing settings
-	WDTCSR = wdtRegister;															// Setting new watchdog settings
-	SREG = sregCopy;																// Restore global interrupt settings
-}
-
-void GyverWDT::disable(void) {				// Complete shutdown of watchdog
-	uint8_t sregCopy = SREG;					// Save global interrupt settings
-	cli();									// Disable global interrupts
-	WDTCSR = ((1 << WDCE) | (1 << WDE));		// Allow changing settings
-	WDTCSR = 0x00;							// Reset all watchdog settings
-	SREG = sregCopy;							// Restore global interrupt settings
-}
-
-void GyverWDT::reset(void) { 	// Reset watchdog counter (avoid watchdog time-out)
-	asm volatile ("WDR");			// Watchdog assembly reset instruction  
-}
-
 extern GyverWDT Watchdog;
-#endif

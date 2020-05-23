@@ -5,7 +5,6 @@
 #######################################
 # Datatypes (KEYWORD1)
 #######################################
-
 GyverPID	KEYWORD1
 
 #######################################
@@ -37,3 +36,4 @@ REVERSE	LITERAL1
 ON_ERROR	LITERAL1
 ON_RATE	LITERAL1
 PID_INTEGER	LITERAL1
+PID_INTEGRAL_WINDOW	LITERAL1

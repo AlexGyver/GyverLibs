@@ -294,7 +294,7 @@ minimLibs это набор классов, являющихся облегчё�
 ---
 
 <a id="microBME280"></a>
-### microBME280 v1.3 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microWire/microBME280.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/microlibs/)
+### microBME280 v1.4 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microWire/microBME280.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/microlibs/)
 Лёгкая библиотека для работы с датчиком BME280
 - Легче аналогов =)
 - Разработано by Egor 'Nich1con' Zaharov
@@ -911,7 +911,7 @@ void PWM_TMR1_10BIT();	// Установить таймер 1 (ШИМ на D9 и
 ---
 
 <a id="GyverWDT"></a>
-### GyverWDT v2.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverWDT/GyverWDT.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverwdt/)
+### GyverWDT v2.1 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverWDT/GyverWDT.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverwdt/)
 Библиотека для расширенной и удобной работы с watchdog
 - Перезагрузка по прерыванию
 - Вызов обычных прерываний
@@ -1386,7 +1386,7 @@ void twistByte(uint8_t bit0, uint8_t bit1, uint8_t bit2, uint8_t bit3, int delay
 ---
 
 <a id="GyverPID"></a>
-### GyverPID v2.2 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverPID/GyverPID.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverpid/)
+### GyverPID v2.4 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverPID/GyverPID.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverpid/)
 Библиотека классического PID регулятора для Arduino
 - Время одного расчёта около 70 мкс
 - Режим работы по величине или по её изменению (для интегрирующих процессов)

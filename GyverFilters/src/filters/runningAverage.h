@@ -1,7 +1,7 @@
 #pragma once
 #include <Arduino.h>
 
-// компактная альтернатива фильтра экспоненциальное бегущее среднее
+// экспоненциальное бегущее среднее
 class GFilterRA
 {
 public:
@@ -22,46 +22,3 @@ private:
 	uint32_t _filterTimer = 0;
 	uint16_t _filterInterval = 0;
 };
-
-// ***************************** GFilterRA *****************************
-GFilterRA::GFilterRA() {}
-
-GFilterRA::GFilterRA(float coef, uint16_t interval) {
-	_coef = coef;
-	_filterInterval = interval;
-}
-
-GFilterRA::GFilterRA(float coef) {
-	_coef = coef;
-}
-
-void GFilterRA::setCoef(float coef) {
-	_coef = coef;
-}
-void GFilterRA::setStep(uint16_t interval) {
-	_filterInterval = interval;
-}
-
-float GFilterRA::filteredTime(int16_t value) {
-	if (millis() - _filterTimer >= _filterInterval) {
-		_filterTimer = millis();
-		return GFilterRA::filtered(value);
-	}
-}
-
-float GFilterRA::filteredTime(float value) {
-	if (millis() - _filterTimer >= _filterInterval) {
-		_filterTimer = millis();
-		return GFilterRA::filtered(value);
-	}
-}
-
-float GFilterRA::filtered(int16_t value) {
-	_lastValue += (float)(value - _lastValue) * _coef;
-	return _lastValue;
-}
-
-float GFilterRA::filtered(float value) {
-	_lastValue += (float)(value - _lastValue) * _coef;
-	return _lastValue;
-}
