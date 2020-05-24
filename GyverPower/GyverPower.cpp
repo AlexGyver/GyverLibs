@@ -45,8 +45,9 @@ uint16_t GyverPower::getMaxTimeout(void){
 	WDTCSR |= (1 << WDCE) | (1 << WDE); 	// разрешаем вмешательство
 	WDTCSR = 0x61; 							// таймаут ~ 8 c
 	asm ("wdr"); 							// сбросили пса
+	_wdtFlag = false;
 	uint16_t startTime = millis(); 			// засекли время	
-	while (!(WDTCSR & (1 << WDIF))); 		// ждем таймаута	
+	while (!_wdtFlag); 						// ждем таймаута	
 	uint16_t ms = millis() - startTime;
 	WDTCSR |= (1 << WDCE) | (1 << WDE); 	// разрешаем вмешательство
 	WDTCSR = 0; 							// выкл wdt 

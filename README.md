@@ -177,7 +177,7 @@ PURPLE
 ---
 
 <a id="GyverPower"></a>
-### GyverPower v1.1 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverPower/GyverPower.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverpower/)
+### GyverPower v1.2 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverPower/GyverPower.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverpower/)
 GyverPower - библиотека для расширенного управления энергопотреблением микроконтроллера
 - Управление системным клоком
 - Включение/выключение периферии:
