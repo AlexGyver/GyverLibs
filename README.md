@@ -200,6 +200,7 @@ GyverPower - библиотека для расширенного управле
 	- Atmega2560/32u4/328
 	- Attiny85/84/167
 - Разработано by Egor 'Nich1con' Zaharov
+- Версия 1.1 несовместима с 1.0! См. примеры (добавлен класс)
 #### Методы и функции библиотеки
 <details>
 <summary>РАЗВЕРНУТЬ</summary>
@@ -207,16 +208,18 @@ GyverPower - библиотека для расширенного управле
 Смотри примеры в папке examples!
 
 ```C
-void hardwareEnable(uint16_t data);         // Включение указанной периферии (см. ниже "Константы периферии")
-void hardwareDisable(uint16_t data);        // Выключение указанной периферии (см. ниже "Константы периферии")
-void setSystemPrescaler(uint8_t prescaler); // Установка делителя системной частоты (см. ниже "Константы делителя")
-void bodInSleep(bool en);                   // Brown-out detector в режиме сна [вкл-выкл] [true - false]
-void setSleepMode(uint8_t mode);            // Установка текущего режима сна (см. ниже "Режимы сна")
-void autoCalibrate(void);                   // автоматическая калибровка таймера сна, выполняется 2 секунды
-uint16_t getMaxTimeout(void);               // возвращает реальный период 8с, выполняется 8 секунд
-void calibrate(uint16_t ms);                // калибровка тайм-аутов watchdog для sleepDelay [ввести макс период из getMaxTimeout]
-void sleep(uint8_t period);                 // Переход мк в режим сна (см. ниже "Периоды сна")
-uint8_t sleepDelay(uint32_t ms);            // сон на произвольный период (до 52 суток)
+void hardwareEnable(uint16_t data);				// включение указанной периферии (см. ниже "Константы периферии")
+void hardwareDisable(uint16_t data);			// выключение указанной периферии (см. ниже "Константы периферии")
+void setSystemPrescaler(prescalers_t prescaler);// установка делителя системной частоты (см. ниже "Константы делителя")
+void bodInSleep(bool en);						// Brown-out detector в режиме сна (true вкл - false выкл) по умолч. отключен!
+void setSleepMode(sleepmodes_t mode);			// установка текущего режима сна (см. ниже "Режимы сна")
+void autoCalibrate(void);						// автоматическая калибровка таймера сна, выполняется 2 секунды
+uint16_t getMaxTimeout(void);					// возвращает реальный период "8 секунд", выполняется ~8 секунд
+void calibrate(uint16_t ms);					// ручная калибровка тайм-аутов watchdog для sleepDelay (ввести макс период из getMaxTimeout)
+void sleep(sleepprds_t period);					// сон на фиксированный период (см. ниже "Периоды сна")
+uint8_t sleepDelay(uint32_t ms);				// сон на произвольный период в миллисекундах (до 52 суток), возвращает остаток времени для коррекции таймеров
+void correctMillis(bool state);					// корректировать миллис на время сна sleepDelay() (по умолчанию включено)
+void wakeUp(void);								// помогает выйти из sleepDelay прерыванием (вызывать в будящем прерывании)	
 
 /* ======== РЕЖИМЫ СНА ========
 IDLE_SLEEP          - Легкий сон , отключается только CPU и Flash
