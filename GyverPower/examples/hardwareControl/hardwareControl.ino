@@ -8,6 +8,9 @@ void setup() {
   
   // отключили АЦП, таймеры 1 и 0
   power.hardwareDisable(PWR_ADC | PWR_TIMER1 | PWR_TIMER0);
+  
+  // включили ADC обратно
+  power.hardwareEnable(PWR_ADC);
 }
 
 void loop() {
