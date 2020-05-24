@@ -29,10 +29,16 @@ void isr() {
 void loop() {
   Serial.println("go sleep");
   delay(300);
+  
+  // правильно будет вот тут включать прерывание
+  // attachInterrupt(1, isr, FALLING);
 
   // спим 12 секунд, но можем проснуться по кнопке
   power.sleepDelay(12000);
   // тут проснулись по кнопке или через указанный период
+  
+  // а вот тут сразу отключать
+  // detachInterrupt(1);
 
   Serial.println("wake up!");
   delay(300);
