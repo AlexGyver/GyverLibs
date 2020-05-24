@@ -21,7 +21,7 @@ void loop() {
   static uint32_t tmr;
   // наш таймер на миллис2
   if (millis2() - tmr >= 1000) {
-    tmr = millis2();
+    tmr += 1000;
     Serial.print("time: ");
     Serial.println(millis2());
     delay2(50);

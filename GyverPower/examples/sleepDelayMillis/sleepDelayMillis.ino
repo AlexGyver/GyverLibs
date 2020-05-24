@@ -25,7 +25,7 @@ void loop() {
   // таймер на миллис на 3 секунды для теста
   static uint32_t tmr;
   if (millis() - tmr >= 3000) {
-    tmr = millis();
+    tmr += 3000;
     Serial.println("kek");
     delay(50);
   }
