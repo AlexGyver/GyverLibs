@@ -221,60 +221,67 @@ uint8_t sleepDelay(uint32_t ms);				// сон на произвольный пе
 void correctMillis(bool state);					// корректировать миллис на время сна sleepDelay() (по умолчанию включено)
 void wakeUp(void);								// помогает выйти из sleepDelay прерыванием (вызывать в будящем прерывании)	
 
-/* ======== РЕЖИМЫ СНА ========
-IDLE_SLEEP          - Легкий сон , отключается только CPU и Flash
-ADC_SLEEP           - Легкий сон , автоматически начинает преобразование при уходе в сон, отключается CPU и system clock
-POWERDOWN_SLEEP     - Наиболее глубокий сон, отключается все, кроме WDT и внешних прерываний,относительно долгий выход из сна
-STANDBY_SLEEP       - Глубокий сон, аналог power down, но system clock остается активен, быстрый выход из сна , большее потребление
-POWERSAVE_SLEEP     - Глубокий сон, аналог power down, но timer 2 остается активным, можно использовать для счета времени
-EXTSTANDBY_SLEEP    - Глубокий сон, аналог standby, но timer 2 остается активным, можно использовать для счета времени
+/* 
+	РЕЖИМЫ СНА для setSleepMode()
+	
+	IDLE_SLEEP			- Легкий сон, отключается только клок CPU и Flash, просыпается от любых прерываний
+	ADC_SLEEP			- Легкий сон, отключается CPU и system clock, АЦП начинает преобразование при уходе в сон (см. пример ADCinSleep)	
+	POWERDOWN_SLEEP		- Наиболее глубокий сон, отключается всё кроме WDT и внешних прерываний, просыпается от аппаратных (обычных + PCINT) или WDT за 1000 тактов (62 мкс)
+	STANDBY_SLEEP		- Глубокий сон, идентичен POWERDOWN_SLEEP + system clock активен, пробуждение за 6 тактов (0.4 мкс)
+	POWERSAVE_SLEEP		- Глубокий сон, идентичен POWERDOWN_SLEEP + timer 2 активен (+ можно проснуться от его прерываний), можно использовать для счета времени (см. пример powersaveMillis)
+	EXTSTANDBY_SLEEP	- Глубокий сон, идентичен POWERSAVE_SLEEP + system clock активен, пробуждение за 6 тактов (0.4 мкс)
 */
 
-/* ======= ПЕРИОДЫ СНА =======
-SLEEP_16MS
-SLEEP_32MS
-SLEEP_64MS
-SLEEP_128MS
-SLEEP_256MS
-SLEEP_512MS
-SLEEP_1024MS
-SLEEP_2048MS
-SLEEP_4096MS
-SLEEP_8192MS
-
-SLEEP_FOREVER
+/* 
+	ПЕРИОДЫ СНА для sleep()
+	
+	SLEEP_16MS
+	SLEEP_32MS
+	SLEEP_64MS
+	SLEEP_128MS
+	SLEEP_256MS
+	SLEEP_512MS
+	SLEEP_1024MS
+	SLEEP_2048MS
+	SLEEP_4096MS
+	SLEEP_8192MS
+	SLEEP_FOREVER	- вечный сон без таймера
 */
 
-/* ==== КОНСТАНТЫ ДЕЛИТЕЛЯ ====
-PRESCALER_1
-PRESCALER_2
-PRESCALER_4
-PRESCALER_8
-PRESCALER_16
-PRESCALER_32
-PRESCALER_64
-PRESCALER_128
-PRESCALER_256
+/* 
+	КОНСТАНТЫ ДЕЛИТЕЛЯ для setSystemPrescaler()
+	
+	PRESCALER_1
+	PRESCALER_2
+	PRESCALER_4
+	PRESCALER_8
+	PRESCALER_16
+	PRESCALER_32
+	PRESCALER_64
+	PRESCALER_128
+	PRESCALER_256
 */
 
-/* ==== КОНСТАНТЫ ПЕРИФЕРИИ ====
-PWR_ALL     - всё
-PWR_USB     - usb
-PWR_TIMER5  - таймер 5
-PWR_TIMER4  - таймер 4
-PWR_TIMER3  - таймер 3
-PWR_TIMER2  - таймер 2
-PWR_TIMER0  - таймер 1
-PWR_TIMER1  - таймер 0
-PWR_UART3   - Serial3
-PWR_UART2   - Serial2
-PWR_UART1   - Serial1
-PWR_UART0   - Serial
-PWR_I2C     - Wire
-PWR_SPI     - Spi
-PWR_ADC     - АЦП
-PWR_USI     - Wire + Spi (ATtinyXX)
-PWR_USI     - USART LIN (ATtinyXX)
+/* 
+	КОНСТАНТЫ ПЕРИФЕРИИ для hardwareDisable() и hardwareEnable()
+	
+	PWR_ALL		- всё железо
+	PWR_ADC		- АЦП и компаратор
+	PWR_TIMER1	- Таймер 0
+	PWR_TIMER0	- Таймер 1
+	PWR_TIMER2	- Таймер 2
+	PWR_TIMER3	- Таймер 3
+	PWR_TIMER4	- Таймер 4
+	PWR_TIMER5	- Таймер 5	
+	PWR_UART0	- Serial 0
+	PWR_UART1	- Serial 1
+	PWR_UART2	- Serial 2
+	PWR_UART3	- Serial 3
+	PWR_I2C		- Wire
+	PWR_SPI		- SPI
+	PWR_USB		- USB	
+	PWR_USI		- Wire + Spi (ATtinyXX)
+	PWR_LIN		- USART LIN (ATtinyXX)
 */
 ```
 </p>
