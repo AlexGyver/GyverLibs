@@ -5,7 +5,8 @@
 #######################################
 # Datatypes (KEYWORD1)
 #######################################
-GyverPower	KEYWORD2
+power	KEYWORD1
+GyverPower	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
@@ -20,6 +21,8 @@ getMaxTimeout	KEYWORD2
 calibrate	KEYWORD2
 sleep	KEYWORD2
 sleepDelay	KEYWORD2
+correctMillis	KEYWORD2
+wakeUp	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

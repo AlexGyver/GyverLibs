@@ -177,10 +177,9 @@ PURPLE
 ---
 
 <a id="GyverPower"></a>
-### GyverPower v1.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverPower/GyverPower.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverpower/)
+### GyverPower v1.1 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverPower/GyverPower.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverpower/)
 GyverPower - библиотека для расширенного управления энергопотреблением микроконтроллера
 - Управление системным клоком
-	- Функции времени (millis/delay) корректируются под выбранный клок
 - Включение/выключение периферии:
 	- BOD
 	- Таймеры
@@ -196,6 +195,7 @@ GyverPower - библиотека для расширенного управле
 	- EXTSTANDBY_SLEEP	- аналог standby, но timer 2 остается активным, можно использовать для счета времени
 - Сон на любой период
 	- Калибровка таймера для точных периодов сна
+	- Коррекция миллис на время сна
 - Поддерживаемые МК
 	- Atmega2560/32u4/328
 	- Attiny85/84/167
