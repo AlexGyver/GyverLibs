@@ -16,7 +16,7 @@ void GyverUart::begin(uint32_t baudrate){
 	UBRR0H = highByte(speed);
 	UBRR0L = lowByte(speed);
 	UCSR0A = (1 << U2X0);
-	UCSR0B = ((1<<TXEN0) | (1<<RXEN0) | (1<<RXCIE0) | (1<<TXCIE0));
+	UCSR0B = ((1<<TXEN0) | (1<<RXEN0) | (1<<RXCIE0));
 	UCSR0C = ((1<<UCSZ01) | (1<<UCSZ00));
 	_UART_RX_BUFFER_HEAD = _UART_RX_BUFFER_TAIL = 0;
 	_UART_TX_BUFFER_HEAD = _UART_TX_BUFFER_TAIL = 0;
@@ -201,12 +201,15 @@ void GyverUart::writeBuffer(byte data){
 */
 
 void GyverUart::writeBuffer(byte data) {
-	uint8_t i = (unsigned int)(_UART_TX_BUFFER_HEAD + 1 >= UART_TX_BUFFER_SIZE) ? 0 : _UART_TX_BUFFER_HEAD + 1;
+	uint8_t i;
+	if (((unsigned int)_UART_TX_BUFFER_HEAD + 1 >= (unsigned int)UART_TX_BUFFER_SIZE)) i = 0;
+	else i = _UART_TX_BUFFER_HEAD + 1;
 	// ждать освобождения места в буфере
 	while ( (i + 1) == _UART_TX_BUFFER_TAIL);
 	
 	// Не сохранять новые данные если нет места
-	if (i != _UART_TX_BUFFER_TAIL) {
+	if (i != _UART_TX_BUFFER_TAIL) 
+	{
 		_UART_TX_BUFFER[_UART_TX_BUFFER_HEAD] = data;
 		_UART_TX_BUFFER_HEAD = i;
 	}
@@ -215,18 +218,16 @@ void GyverUart::writeBuffer(byte data) {
 void GyverUart::startTransmission() {
 	while (!(UCSR0A & (1<<UDRE0)));
 	if (_UART_TX_BUFFER_HEAD != _UART_TX_BUFFER_TAIL) {
-		unsigned char c = _UART_TX_BUFFER[_UART_TX_BUFFER_TAIL];
+		UDR0 = _UART_TX_BUFFER[_UART_TX_BUFFER_TAIL];
 		if (++_UART_TX_BUFFER_TAIL >= UART_TX_BUFFER_SIZE) _UART_TX_BUFFER_TAIL = 0;  // хвост двигаем
-		UDR0 = c;
+		if (_UART_TX_BUFFER_HEAD != _UART_TX_BUFFER_TAIL) UCSR0B |= (1<<UDRIE0);      // чтобы небыло прерывания если буфер состоит из 1 байта
 	}
 }
 
-ISR(USART_TX_vect) {
-	if (_UART_TX_BUFFER_HEAD != _UART_TX_BUFFER_TAIL) {
-		unsigned char c = _UART_TX_BUFFER[_UART_TX_BUFFER_TAIL];
+ISR(USART_UDRE_vect){
+		UDR0 = _UART_TX_BUFFER[_UART_TX_BUFFER_TAIL];
 		if (++_UART_TX_BUFFER_TAIL >= UART_TX_BUFFER_SIZE) _UART_TX_BUFFER_TAIL = 0;  // хвост двигаем
-		UDR0 = c;
-	}
+		if (_UART_TX_BUFFER_HEAD == _UART_TX_BUFFER_TAIL) UCSR0B &=~ (1<<UDRIE0);
 }
 
 void GyverUart::write(byte data) {
