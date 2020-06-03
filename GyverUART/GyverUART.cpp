@@ -36,10 +36,11 @@ void GyverUart::end(){
 
 // =========================== READ ============================
 ISR(USARTx_RX_vect) {
-	uint8_t c = UDR0;
+	uint8_t c;
 	uint8_t i;
-	if (!(UCSR0A & (1<<UPE0))) // Не сохранять новые данные если parity error
-	{
+	if (UCSR0A & (1<<UPE0)){c = UDR0;} // Не сохранять новые данные если parity error
+	else{
+		c = UDR0;
 		if (_UART_RX_BUFFER_HEAD + 1 == UART_RX_BUFFER_SIZE){i=0;}
 		else {i = _UART_RX_BUFFER_HEAD + 1;}
 		// Не сохранять новые данные если нет места
@@ -209,8 +210,7 @@ void GyverUart::writeBuffer(byte data){
 	UDR0 = data;
 }
 */
-//Program TestGiverUART size: 2 826 bytes (used 20% of a 14 336 byte maximum) (1,15 secs)
-//Minimum Memory Usage: 132 bytes (13% of a 1024 byte maximum)
+
 void GyverUart::writeBuffer(byte data) {
 	int8_t i;
 	if (_UART_TX_BUFFER_HEAD + 1 == UART_TX_BUFFER_SIZE){i=0;}
