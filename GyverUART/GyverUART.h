@@ -10,6 +10,7 @@
 	Версия 1.6 - ускорена запись и чтение
 	Версия 1.7 - чуть оптимизирован код
 	Версия 1.8 - пофикшен write (спасибо eugenebartosh)
+	Версия 1.9 - пофикшен write + оптимизация + поддержка USART0 atmega2560 (by Siliverst)
 */
 
 #ifndef GyverUART_h
@@ -54,7 +55,7 @@ public:
 	void print(uint32_t data, byte base = DEC);
 	void print(double data, byte decimals = 2);
 	void print(String data);
-	void print(char data[]);
+	void print(const char data[]);
 
 	void println(char data);
 	void println(int8_t data, byte base = DEC);
@@ -65,14 +66,13 @@ public:
 	void println(uint32_t data, byte base = DEC);
 	void println(double data, byte decimals = 2);
 	void println(String data);
-	void println(char data[]);	
+	void println(const char data[]);	
 	
 private:
 	void writeBuffer(byte data);
 	void printHelper(int32_t data, byte base);
 	void printHelper(uint32_t data, byte base);
 	void printBytes(uint32_t data);
-	void startTransmission();
 };
 
 extern GyverUart uart;

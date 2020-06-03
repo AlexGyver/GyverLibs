@@ -10,6 +10,14 @@ static volatile char _UART_TX_BUFFER[UART_TX_BUFFER_SIZE];
 static volatile uint8_t _UART_TX_BUFFER_HEAD;
 static volatile uint8_t _UART_TX_BUFFER_TAIL;
 
+#if defined(__AVR_ATmega2560__)
+#define	USARTx_RX_vect		USART0_RX_vect
+#define	USARTx_UDRE_vect	USART0_UDRE_vect
+#else
+#define	USARTx_RX_vect		USART_RX_vect
+#define	USARTx_UDRE_vect	USART_UDRE_vect
+#endif
+
 // =========================== INIT ========================
 void GyverUart::begin(uint32_t baudrate){
 	uint16_t speed = (F_CPU / (8L * baudrate)) - 1;
@@ -27,11 +35,13 @@ void GyverUart::end(){
 }
 
 // =========================== READ ============================
-ISR(USART_RX_vect) {
-	if (bit_is_set(UCSR0A, UPE0)) UDR0; // Не сохранять новые данные если parity error
+ISR(USARTx_RX_vect) {
+	uint8_t i,c;
+	if (UCSR0A & (1<<UPE0)) c = UDR0; // Не сохранять новые данные если parity error
 	else {
-		unsigned char c = UDR0;
-		uint8_t i = (unsigned int)(_UART_RX_BUFFER_HEAD + 1 >= UART_RX_BUFFER_SIZE) ? 0 : _UART_RX_BUFFER_HEAD + 1;
+		c = UDR0;
+		i = (uint16_t)_UART_RX_BUFFER_HEAD + 1;
+		if (i >= UART_RX_BUFFER_SIZE) i=0;
 		// Не сохранять новые данные если нет места
 		if (i != _UART_RX_BUFFER_TAIL) {
 			_UART_RX_BUFFER[_UART_RX_BUFFER_HEAD] = c;
@@ -42,7 +52,7 @@ ISR(USART_RX_vect) {
 
 char GyverUart::read() {
 	if (_UART_RX_BUFFER_HEAD == _UART_RX_BUFFER_TAIL) return -1;
-	unsigned char c = _UART_RX_BUFFER[_UART_RX_BUFFER_TAIL];
+	uint8_t c = _UART_RX_BUFFER[_UART_RX_BUFFER_TAIL];
 	if (++_UART_RX_BUFFER_TAIL >= UART_RX_BUFFER_SIZE) _UART_RX_BUFFER_TAIL = 0;  // хвост двигаем
 	return c;
 }
@@ -56,7 +66,7 @@ void GyverUart::flush() {
 }
 
 uint8_t GyverUart::available() {
-	return ((unsigned int)(UART_RX_BUFFER_SIZE + _UART_RX_BUFFER_HEAD - _UART_RX_BUFFER_TAIL)) % UART_RX_BUFFER_SIZE;
+	return ((uint16_t)(UART_RX_BUFFER_SIZE + _UART_RX_BUFFER_HEAD - _UART_RX_BUFFER_TAIL)) % UART_RX_BUFFER_SIZE;
 }
 
 boolean GyverUart::availableForWrite() {return 1;}
@@ -201,49 +211,36 @@ void GyverUart::writeBuffer(byte data){
 */
 
 void GyverUart::writeBuffer(byte data) {
-	uint8_t i;
-	if (((unsigned int)_UART_TX_BUFFER_HEAD + 1 >= (unsigned int)UART_TX_BUFFER_SIZE)) i = 0;
-	else i = _UART_TX_BUFFER_HEAD + 1;
+	uint8_t i = (uint16_t)_UART_TX_BUFFER_HEAD + 1;
+	if (i >= UART_TX_BUFFER_SIZE) i=0;
 	// ждать освобождения места в буфере
-	while ( (i + 1) == _UART_TX_BUFFER_TAIL);
-	
+	while (i == _UART_TX_BUFFER_TAIL);
 	// Не сохранять новые данные если нет места
 	if (i != _UART_TX_BUFFER_TAIL) 
 	{
 		_UART_TX_BUFFER[_UART_TX_BUFFER_HEAD] = data;
 		_UART_TX_BUFFER_HEAD = i;
+		UCSR0B |= (1<<UDRIE0);
 	}
 }
 
-void GyverUart::startTransmission() {
-	while (!(UCSR0A & (1<<UDRE0)));
-	if (_UART_TX_BUFFER_HEAD != _UART_TX_BUFFER_TAIL) {
-		UDR0 = _UART_TX_BUFFER[_UART_TX_BUFFER_TAIL];
-		if (++_UART_TX_BUFFER_TAIL >= UART_TX_BUFFER_SIZE) _UART_TX_BUFFER_TAIL = 0;  // хвост двигаем
-		if (_UART_TX_BUFFER_HEAD != _UART_TX_BUFFER_TAIL) UCSR0B |= (1<<UDRIE0);      // чтобы небыло прерывания если буфер состоит из 1 байта
-	}
-}
-
-ISR(USART_UDRE_vect){
-		UDR0 = _UART_TX_BUFFER[_UART_TX_BUFFER_TAIL];
-		if (++_UART_TX_BUFFER_TAIL >= UART_TX_BUFFER_SIZE) _UART_TX_BUFFER_TAIL = 0;  // хвост двигаем
-		if (_UART_TX_BUFFER_HEAD == _UART_TX_BUFFER_TAIL) UCSR0B &=~ (1<<UDRIE0);
+ISR(USARTx_UDRE_vect) {
+	UDR0 = _UART_TX_BUFFER[_UART_TX_BUFFER_TAIL];
+	if (++_UART_TX_BUFFER_TAIL >= UART_TX_BUFFER_SIZE) _UART_TX_BUFFER_TAIL = 0;  // хвост двигаем
+	if (_UART_TX_BUFFER_HEAD == _UART_TX_BUFFER_TAIL) UCSR0B &=~ (1<<UDRIE0);
 }
 
 void GyverUart::write(byte data) {
 	writeBuffer(data);
-	startTransmission();
 }
 
 void GyverUart::println(void) {
 	writeBuffer('\r');
 	writeBuffer('\n');
-	startTransmission();
 }
 
 void GyverUart::print(char data) {
 	writeBuffer(data);
-	startTransmission();
 }
 void GyverUart::println(char data) {
 	print(data);
@@ -338,14 +335,14 @@ void GyverUart::println(String data) {
 	println();
 }
 
-void GyverUart::print(char data[]) {
+void GyverUart::print(const char data[]) {
 	byte i = 0;
 	while (data[i] != '\0') {
 		print(data[i]);
 		i++;
 	}
 }
-void GyverUart::println(char data[]) {
+void GyverUart::println(const char data[]) {
 	print(data);
 	println();
 }
