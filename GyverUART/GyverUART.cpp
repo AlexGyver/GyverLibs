@@ -36,8 +36,7 @@ void GyverUart::end(){
 
 // =========================== READ ============================
 ISR(USARTx_RX_vect) {
-	uint8_t c;
-	uint8_t i;
+	uint8_t c,i;
 	if (UCSR0A & (1<<UPE0)){c = UDR0;} // Не сохранять новые данные если parity error
 	else{
 		c = UDR0;
@@ -212,7 +211,7 @@ void GyverUart::writeBuffer(byte data){
 */
 
 void GyverUart::writeBuffer(byte data) {
-	int8_t i;
+	uint8_t i;
 	if (_UART_TX_BUFFER_HEAD + 1 == UART_TX_BUFFER_SIZE){i=0;}
 	else {i = _UART_TX_BUFFER_HEAD + 1;}
 	// ждать освобождения места в буфере
