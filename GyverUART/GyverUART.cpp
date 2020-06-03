@@ -36,12 +36,11 @@ void GyverUart::end(){
 
 // =========================== READ ============================
 ISR(USARTx_RX_vect) {
-	uint8_t i,c;
+	uint8_t c = UDR0;
 	if (UCSR0A & (1<<UPE0)) c = UDR0; // Не сохранять новые данные если parity error
 	else {
-		c = UDR0;
-		i = (uint16_t)_UART_RX_BUFFER_HEAD + 1;
-		if (i >= UART_RX_BUFFER_SIZE) i=0;
+		uint16_t i = _UART_RX_BUFFER_HEAD + 1;
+		if (i >= UART_RX_BUFFER_SIZE) {i=0;}
 		// Не сохранять новые данные если нет места
 		if (i != _UART_RX_BUFFER_TAIL) {
 			_UART_RX_BUFFER[_UART_RX_BUFFER_HEAD] = c;
@@ -51,9 +50,9 @@ ISR(USARTx_RX_vect) {
 }
 
 char GyverUart::read() {
-	if (_UART_RX_BUFFER_HEAD == _UART_RX_BUFFER_TAIL) return -1;
+	if (_UART_RX_BUFFER_HEAD == _UART_RX_BUFFER_TAIL) {return -1;}
 	uint8_t c = _UART_RX_BUFFER[_UART_RX_BUFFER_TAIL];
-	if (++_UART_RX_BUFFER_TAIL >= UART_RX_BUFFER_SIZE) _UART_RX_BUFFER_TAIL = 0;  // хвост двигаем
+	if (++_UART_RX_BUFFER_TAIL >= UART_RX_BUFFER_SIZE) {_UART_RX_BUFFER_TAIL = 0;}  // хвост двигаем
 	return c;
 }
 
@@ -66,7 +65,7 @@ void GyverUart::flush() {
 }
 
 uint8_t GyverUart::available() {
-	return ((uint16_t)(UART_RX_BUFFER_SIZE + _UART_RX_BUFFER_HEAD - _UART_RX_BUFFER_TAIL)) % UART_RX_BUFFER_SIZE;
+	return ((uint16_t)(UART_RX_BUFFER_SIZE + _UART_RX_BUFFER_HEAD - _UART_RX_BUFFER_TAIL)% UART_RX_BUFFER_SIZE);
 }
 
 boolean GyverUart::availableForWrite() {return 1;}
@@ -89,7 +88,7 @@ int32_t GyverUart::parseInt() {
 		if (available()) {
 			timeoutTime = millis();
 			char newByte = read();
-			if (newByte == '-') negative = true;
+			if (newByte == '-') {negative = true;}
 			else {
 				value += (newByte - '0');
 				value *= 10L;
@@ -168,7 +167,7 @@ float GyverUart::parseFloat() {
 		}
 	}
 	whole /= 10L;
-	for (byte i = 0; i <= fractSize; i++) fract /= 10;
+	for (byte i = 0; i <= fractSize; i++) {fract /= 10;}
 	whole += fract;
 	return (!negative) ? whole : -whole;
 }
@@ -211,8 +210,8 @@ void GyverUart::writeBuffer(byte data){
 */
 
 void GyverUart::writeBuffer(byte data) {
-	uint8_t i = (uint16_t)_UART_TX_BUFFER_HEAD + 1;
-	if (i >= UART_TX_BUFFER_SIZE) i=0;
+	uint16_t i = _UART_TX_BUFFER_HEAD + 1;
+	if (i >= UART_TX_BUFFER_SIZE) {i=0;}
 	// ждать освобождения места в буфере
 	while (i == _UART_TX_BUFFER_TAIL);
 	// Не сохранять новые данные если нет места
@@ -226,8 +225,8 @@ void GyverUart::writeBuffer(byte data) {
 
 ISR(USARTx_UDRE_vect) {
 	UDR0 = _UART_TX_BUFFER[_UART_TX_BUFFER_TAIL];
-	if (++_UART_TX_BUFFER_TAIL >= UART_TX_BUFFER_SIZE) _UART_TX_BUFFER_TAIL = 0;  // хвост двигаем
-	if (_UART_TX_BUFFER_HEAD == _UART_TX_BUFFER_TAIL) UCSR0B &=~ (1<<UDRIE0);
+	if (++_UART_TX_BUFFER_TAIL >= UART_TX_BUFFER_SIZE) {_UART_TX_BUFFER_TAIL = 0;}  // хвост двигаем
+	if (_UART_TX_BUFFER_HEAD == _UART_TX_BUFFER_TAIL) {UCSR0B &=~ (1<<UDRIE0);}
 }
 
 void GyverUart::write(byte data) {
