@@ -8,14 +8,18 @@ ServoSmooth::ServoSmooth(int maxAngle) {
 
 // ====== WRITE ======
 void ServoSmooth::writeUs(int val) {
-	_servo.writeMicroseconds(_dir ? (_max - val) : val);
+	_servo.writeMicroseconds(_dir ? (_max + _min - val) : val);	
 }
 void ServoSmooth::write(uint16_t angle) {
 	writeUs(map(angle, 0, _maxAngle, _min, _max));
+	_newPos = (map(angle, 0, _maxAngle, _min, _max));
+	_servoCurrentPos = (map(angle, 0, _maxAngle, _min, _max));
 }
 
 void ServoSmooth::writeMicroseconds(uint16_t angle) {
 	writeUs(angle);
+	_newPos = angle;
+	_servoCurrentPos = angle;
 }
 
 // ====== ATTACH ======
