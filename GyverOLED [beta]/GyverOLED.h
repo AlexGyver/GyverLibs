@@ -245,7 +245,7 @@ GyverOLED::GyverOLED(byte address){
 // ======================= INIT =======================
 void GyverOLED::init(uint8_t oledType, int freq = 400) {
 	Wire.begin();
-	Wire.setClock(freq);
+	Wire.setClock(freq * 1000ul);
 	Wire.beginTransmission(_address);
 	Wire.write(OLED_COMMAND_MODE);
 	for (uint8_t i = 0; i < 14; i++) Wire.write(pgm_read_byte(&_oled_init[i]));
