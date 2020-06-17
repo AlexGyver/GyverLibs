@@ -1,11 +1,15 @@
+// *** imageProcessor ***
+// Software for converting images into bitmaps for OLEDs and other displays
+// AlexGyver, 2020, https://alexgyver.ru/
+
 // constants
-int maxWidth = 1000;
-int maxHeight = 1000;
 int nodeOffset = 5;        // мин. расстояние до следующего узла
 int offsetWidth = 230;     // оффсет панели управления
 int maxLines = 5000;       // макс. количество линий
 int lastNodeWIndow = 10;   // окно последних повторяющихся узлов
 int nailLength = 2;        // "длина" одного гвоздя для расчёта
+int maxWidth = 650;
+int maxHeight = 650;
 
 // P5
 // http://www.sojamo.de/libraries/controlP5/reference/index.html
