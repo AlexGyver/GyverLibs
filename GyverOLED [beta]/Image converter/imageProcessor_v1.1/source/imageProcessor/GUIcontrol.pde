@@ -273,7 +273,7 @@ void help_en() {
 }
 
 void about() {
-  link("http://alexgyver.ru/");
+  link("https://github.com/AlexGyver/imageProcessor");
 }
 
 void showHelp() {

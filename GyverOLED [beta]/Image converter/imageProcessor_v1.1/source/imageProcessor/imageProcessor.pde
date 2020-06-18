@@ -1,8 +1,8 @@
 // *** imageProcessor ***
 // Software for converting images into bitmaps for OLEDs and other displays
-// AlexGyver, 2020, https://alexgyver.ru/
+// AlexGyver, 2020, https://alexgyver.ru/, https://github.com/AlexGyver/imageProcessor
 // v1.0 - поехали
-// v1.1 - добавил другие варианты вывода, инверсию и флип по Х и У, расширенный help
+// v1.1 - исправил ошибки, добавил другие варианты вывода, инверсию и флип по Х и У, расширенный help
 
 // constants
 int nodeOffset = 5;        // мин. расстояние до следующего узла
