@@ -20,11 +20,6 @@ ControlP5 cp5;
 Slider2D sliderXY, sliderBC;
 Slider sizeSlider;
 
-// JAVA
-import processing.serial.*;
-import java.util.*;
-Serial myPort;
-
 // clipboard
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
