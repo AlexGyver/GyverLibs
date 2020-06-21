@@ -3,7 +3,7 @@ extern volatile unsigned long timer0_millis;
 static volatile bool _wdtFlag = false;
 
 void GyverPower::hardwareEnable(uint16_t data) {
-#if defined(__AVR_ATmega2560__) || (__AVR_ATmega32U4__)
+#if defined(__AVR_ATmega2560__) || defined(__AVR_ATmega32U4__)
 	PRR1 &= ~ highByte(data); 		// загрузили данные в регистр
 	PRR0 &= ~ lowByte(data);
 #else
@@ -20,7 +20,7 @@ void GyverPower::hardwareDisable(uint16_t data) {
 		ADCSRA &= ~ (1 << ADEN); 		// выкл ацп
 		ACSR |= (1 << ACD); 			// выкл компаратор
 	}
-#if defined(__AVR_ATmega2560__) || (__AVR_ATmega32U4__)
+#if defined(__AVR_ATmega2560__) || defined(__AVR_ATmega32U4__)
 	PRR1 |= highByte(data); 			// загрузили данные в регистр
 	PRR0 |= lowByte(data);
 #else
@@ -124,14 +124,14 @@ void GyverPower::sleep(sleepprds_t period) {
 	}
 
 	/* процедура выхода из сна*/
-#if defined(__AVR_ATtiny85__) ||  defined(__AVR_ATtiny84__)
+#if defined(__AVR_ATtiny85__) || defined(__AVR_ATtiny84__)
 	MCUCR = MCUCR & 0xC7; 	// откл сон
 #else
 	SMCR = 0; 				// откл сон
 #endif
 
 	/* восстановление настроек АЦП */
-#if defined(__AVR_ATmega2560__) || (__AVR_ATmega32U4__)
+#if defined(__AVR_ATmega2560__) || defined(__AVR_ATmega32U4__)
 	if (!(PRR0 & (1 << PRADC))) { 		// если ацп не выключен принудительно
 		ADCSRA |= (1 << ADEN); 			// вкл после сна
 		ACSR &= ~ (1 << ACD);
