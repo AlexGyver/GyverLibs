@@ -3,6 +3,7 @@
 // AlexGyver, 2020, https://alexgyver.ru/, https://github.com/AlexGyver/imageProcessor
 // v1.0 - поехали
 // v1.1 - исправил ошибки, добавил другие варианты вывода, инверсию и флип по Х и У, расширенный help
+// v1.2 - изменена логика перемещения изображения, добавлено перемещение удерживанием колеса мыши и масштаба - вращением
 
 // constants
 int nodeOffset = 5;        // мин. расстояние до следующего узла
@@ -31,6 +32,8 @@ PGraphics brushLayer, hiddenLayer;
 int sizeX, sizeY;
 int imageWidth = 100;
 int imageXoffs = 0, imageYoffs = 0;
+int imageXadd = 0, imageYadd = 0;
+int imageXresult = 0, imageYresult = 0;
 String imagePath;
 int centerX;
 int centerY;
@@ -65,8 +68,12 @@ boolean progmem = true, invert = false, flipX = false, flipY = false;
 int saveMode = 0;
 String saveLines;
 boolean langulage = false;  // 0 рус, 1 англ
+boolean mouseState = false;
+int draggedX, draggedY;
+int draggedXadd, draggedYadd;
 
 void setup() {  
+  surface.setTitle("imageProcessor v1.2");
   size(1200, 700);
   frameRate(60);
   smooth();
@@ -77,7 +84,6 @@ void setup() {
   imageWidth = image.width;
 
   GUIinit();
-  sizeSlider.setValue(image.width);
   centerX = offsetWidth+150;
   centerY = height/2;
   rectX = (offsetWidth + width) / 2;

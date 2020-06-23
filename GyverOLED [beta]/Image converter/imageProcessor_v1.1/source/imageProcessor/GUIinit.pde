@@ -9,13 +9,24 @@ void GUIinit() {
 
   cp5.addButton("save_image").setCaptionLabel("SAVE  IMAGE").setPosition(120, 10).setSize(100, 25);
 
-  sizeSlider = cp5.addSlider("img_width").setCaptionLabel("IMG  SIZE").setPosition(10, 40).setSize(210, 25).setRange(2, 1000).setValue(100).setNumberOfTickMarks(998-1).showTickMarks(false);
+  sizeSlider = cp5.addSlider("img_width").setCaptionLabel("IMG  SIZE").setPosition(10, 40).setSize(210, 25).setRange(2, 1000).setValue(64).setNumberOfTickMarks(998-1).showTickMarks(false);
   cp5.getController("img_width").getCaptionLabel().setPaddingX(-40);
 
-  sizeSlider = cp5.addSlider("img_rotate").setCaptionLabel("ROTATE").setPosition(10, 70).setSize(210, 25).setRange(0, 360).setValue(0);
+  cp5.addSlider("img_rotate").setCaptionLabel("ROTATE").setPosition(10, 70).setSize(210, 25).setRange(0, 360).setValue(0);
   cp5.getController("img_rotate").getCaptionLabel().setPaddingX(-35);
 
-  sliderXY = cp5.addSlider2D("image_pos").setPosition(10, 100).setSize(100, 100).setMinMax(-100, -100, 100, 100).setValue(0, 0);
+  sliderXY = cp5.addSlider2D("image_pos").setPosition(10, 100).setSize(100, 100).setMinMax(-20, -20, 20, 20).setValue(0, 0);
+  cp5.getController("image_pos").onRelease(new CallbackListener() {
+    public void controlEvent(CallbackEvent ev) {
+      sliderXY.setValue(0, 0);
+      imageXresult += imageXadd;
+      imageYresult += imageYadd;
+      imageXadd = 0;
+      imageYadd = 0;
+    }
+  }
+  );
+
 
   sliderBC = cp5.addSlider2D("br_contr").setPosition(120, 100).setSize(100, 100).setMinMax(-128, 0.0, 128, 5.0).setValue(0, 1);  
 

@@ -10,15 +10,51 @@ PImage filtered(PImage image) {
   return image;
 }
 
+void mouseWheel(MouseEvent event) {
+  if (mouseX > offsetWidth) {
+    imageWidth -= event.getCount();
+    imageWidth = constrain(imageWidth, 2, 1000);
+    cp5.getController("img_width").setValue(imageWidth);
+    changeFlag = true;
+  }
+}
+
 // вывод изображения
 void drawImage() {
+  if (mousePressed && mouseButton == CENTER) {
+    if (mouseX > offsetWidth) {
+      if (!mouseState) {
+        mouseState = true;  // фиксируем нажатие
+        draggedX = mouseX;
+        draggedY = mouseY;
+      } else {
+        draggedXadd = (mouseX - draggedX)/5;
+        draggedYadd = (mouseY - draggedY)/5;
+      }
+    }
+    changeFlag = true;
+  } else {
+    if (mouseState) {
+      mouseState = false;  // фиксируем отпускание      
+      imageXresult += draggedXadd;
+      imageYresult += draggedYadd;
+      draggedXadd = 0;
+      draggedYadd = 0;
+    }
+  }
+
   if (changeFlag) {
     image = loadImage(imagePath);
     image = filtered(image);
     brightnessValue = sliderBC.getArrayValue()[0];
-    contrastValue = sliderBC.getArrayValue()[1]; 
-    imageXoffs = int(sliderXY.getArrayValue()[0]);
-    imageYoffs = int(sliderXY.getArrayValue()[1]);
+    contrastValue = sliderBC.getArrayValue()[1];
+
+    imageXadd = int(sliderXY.getArrayValue()[0]);
+    imageYadd = int(sliderXY.getArrayValue()[1]);
+
+    imageXoffs = imageXresult+imageXadd+draggedXadd;
+    imageYoffs = imageYresult+imageYadd+draggedYadd;
+
     imgX = centerX - image.width/2 + imageXoffs;
     imgY = centerY - image.height/2 + imageYoffs; 
     changeFlag = false;

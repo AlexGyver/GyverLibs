@@ -14,7 +14,7 @@ void fileSelected(File selection) {
     image = loadImage(imagePath);
     imageWidth = 256;
     image.resize(imageWidth, 0);    
-    sizeSlider.setValue(image.width);
+    sizeSlider.setValue(128);
     cp5.getController("img_rotate").setValue(0);
     sliderXY.setValue(0, 0);
     sliderBC.setValue(0, 1);
@@ -169,6 +169,7 @@ void generateBitmap() {
     // 1 pix/byte, BW
     saveLines = "const uint8_t bitmap_"+resultWidth+"x"+resultHeight+"[]" + (progmem ? " PROGMEM" : "") + " = {\n";
     for (int y = 0; y < resultHeight; y++) {
+      saveLines += "\t";
       for (int x = 0; x < resultWidth; x++) {
         saveLines += getPixBW(x, y) + ", ";
       }
@@ -180,6 +181,7 @@ void generateBitmap() {
     // ==== 1 pix/byte, Gray ====
     saveLines = "const uint8_t bitmap_"+resultWidth+"x"+resultHeight+"[]" + (progmem ? " PROGMEM" : "") + " = {\n";
     for (int y = 0; y < resultHeight; y++) {
+      saveLines += "\t";
       for (int x = 0; x < resultWidth; x++) {
         saveLines += "0x" + hex(getPixGray(x, y), 2) + ", ";
       }
@@ -191,6 +193,7 @@ void generateBitmap() {
     // ==== rgb16 ====
     saveLines = "const uint16_t bitmap_"+resultWidth+"x"+resultHeight+"[]" + (progmem ? " PROGMEM" : "") + " = {\n";
     for (int y = 0; y < resultHeight; y++) {
+      saveLines += "\t";
       for (int x = 0; x < resultWidth; x++) {
         saveLines += "0x" + hex(getPixRGB32(x, y), 4) + ", ";
       }
@@ -202,6 +205,7 @@ void generateBitmap() {
     // ==== rgb32 ====
     saveLines = "const uint32_t bitmap_"+resultWidth+"x"+resultHeight+"[]" + (progmem ? " PROGMEM" : "") + " = {\n";
     for (int y = 0; y < resultHeight; y++) {
+      saveLines += "\t";
       for (int x = 0; x < resultWidth; x++) {
         saveLines += "0x" + hex(getPixRGB32(x, y), 6) + ", ";
       }
@@ -285,7 +289,7 @@ void showHelp() {
   textPos[3] = 130;
   textPos[4] = 150; 
   textPos[5] = 260;
-  textPos[6] = 310; 
+  textPos[6] = 310;
   textPos[7] = 360;
   textPos[8] = 410; 
   textPos[9] = 480;
