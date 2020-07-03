@@ -174,6 +174,20 @@ void GyverPower::wakeUp(void) {
 	wakeFlag = true;
 }
 
+void adjustInternalClock(int8_t adj) {
+	static uint8_t currentCal;
+	static bool startup = false;
+	if (!startup) {
+		startup = true;
+		currentCal = OSCCAL;
+	}
+	uint8_t oldSreg = SREG;
+	currentCal = constrain(currentCal + adj, 0, 255);
+	cli();
+	OSCCAL = currentCal;
+	SREG = oldSreg;
+}
+
 ISR(WDT_vect) {							// просыпаемся тут
 	_wdtFlag = true;					// для калибровки
 	WDTCSR |= (1 << WDCE) | (1 << WDE); // разрешаем вмешательство

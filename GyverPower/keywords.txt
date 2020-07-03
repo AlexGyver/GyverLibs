@@ -23,6 +23,7 @@ sleep	KEYWORD2
 sleepDelay	KEYWORD2
 correctMillis	KEYWORD2
 wakeUp	KEYWORD2
+adjustInternalClock	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

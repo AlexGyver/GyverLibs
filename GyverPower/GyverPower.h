@@ -34,6 +34,7 @@
 	
 	v1.2 - фикс калибровки
 	v1.3 - фикс для 32U4
+	v1.4 - добавлен adjustInternalClock
 */
 
 // =============== ФУНКЦИИ ===============
@@ -51,6 +52,7 @@ public:
 	uint8_t sleepDelay(uint32_t ms);				// сон на произвольный период в миллисекундах (до 52 суток), возвращает остаток времени для коррекции таймеров
 	void correctMillis(bool state);					// корректировать миллис на время сна sleepDelay() (по умолчанию включено)
 	void wakeUp(void);								// помогает выйти из sleepDelay прерыванием (вызывать в будящем прерывании)	
+	void adjustInternalClock(int8_t adj);     		// подстройка частоты внутреннего генератора (число -120...+120)
 
 private:
 	volatile bool wakeFlag = false;
