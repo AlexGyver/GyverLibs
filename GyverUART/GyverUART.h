@@ -1,36 +1,42 @@
 ﻿/*
 	Лёгкая библиотека для работы с последовательным портом
 	Практически полный аналог Serial, но гораздо легче
-	Данная версия встроена в ядро GyverCore!!!
+	Данная vвстроена в ядро GyverCore!!!
 	Отдельное спасибо Egor 'Nich1con' Zaharov за помощь с регистрами
-	Версия 1.2 - добавлен циклический буфер
-	Версия 1.3 - поправлен вывод float и добавлен вывод с базисом
-	Версия 1.4 - либа собрана в класс, добавлена readStringUntil
-	Версия 1.5 - добавлен буфер на отправку и flush
-	Версия 1.6 - ускорена запись и чтение
-	Версия 1.7 - чуть оптимизирован код
-	Версия 1.8 - пофикшен write (спасибо eugenebartosh)
-	Версия 1.9 - пофикшен write + оптимизация + поддержка USART0 atmega2560 (by Siliverst)
+	v1.2 - добавлен циклический буфер
+	v1.3 - поправлен вывод float и добавлен вывод с базисом
+	v1.4 - либа собрана в класс, добавлена readStringUntil
+	v1.5 - добавлен буфер на отправку и flush
+	v1.6 - ускорена запись и чтение
+	v1.7 - чуть оптимизирован код
+	v1.8 - пофикшен write (спасибо eugenebartosh)
+	v1.9 - пофикшен write + оптимизация + поддержка USART0 atmega2560 (by Siliverst)
+	v1.10 - вывод переведён на Print.h. Размер стал чуть больше, но будет меньше при работе с другими либами на Print.h
 */
 
-#ifndef GyverUART_h
-#define GyverUART_h
+#define USE_PRINT_H		// закомментируй, чтобы использовать gyver-вывод
 
+#pragma once
 #include "Arduino.h"
 #include <avr/io.h>
 
+#ifdef USE_PRINT_H
+#include "Print.h"
+class GyverUart : public Print {
+#else
+	
 #define DEC 10
 #define HEX 16
 #define OCT 8
 #define BIN 2
 
 class GyverUart {
+#endif
 public:
 	void begin(uint32_t baudrate = 9600);
 	void end();
 
-	uint8_t available();
-	boolean availableForWrite();
+	uint8_t available();	
 	char read();
 	char peek();
 	void clear();
@@ -42,9 +48,13 @@ public:
 	String readString();
 	String readStringUntil(char terminator);
 	boolean parsePacket(int *intArray);
-
+	
+#ifdef USE_PRINT_H
+	virtual size_t write(uint8_t);
+#else
+	boolean availableForWrite();
 	void write(byte data);
-	void println(void);
+	void println();
 
 	void print(char data);
 	void print(int8_t data, byte base = DEC);
@@ -66,15 +76,15 @@ public:
 	void println(uint32_t data, byte base = DEC);
 	void println(double data, byte decimals = 2);
 	void println(String data);
-	void println(const char data[]);	
-	
+	void println(const char data[]);
+#endif
 private:
 	void writeBuffer(byte data);
+#ifndef USE_PRINT_H
 	void printHelper(int32_t data, byte base);
 	void printHelper(uint32_t data, byte base);
 	void printBytes(uint32_t data);
+#endif
 };
 
 extern GyverUart uart;
-
-#endif

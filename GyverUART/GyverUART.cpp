@@ -1,4 +1,5 @@
 ﻿#include "GyverUART.h"
+
 #define UART_RX_BUFFER_SIZE 64
 static volatile char _UART_RX_BUFFER[UART_RX_BUFFER_SIZE];
 static volatile uint8_t _UART_RX_BUFFER_HEAD;
@@ -68,8 +69,6 @@ void GyverUart::flush() {
 uint8_t GyverUart::available() {
 	return ((uint16_t)(UART_RX_BUFFER_SIZE + _UART_RX_BUFFER_HEAD - _UART_RX_BUFFER_TAIL)% UART_RX_BUFFER_SIZE);
 }
-
-boolean GyverUart::availableForWrite() {return 1;}
 
 void GyverUart::clear() {
 	_UART_RX_BUFFER_HEAD = _UART_RX_BUFFER_TAIL = 0;
@@ -202,6 +201,7 @@ String GyverUart::readStringUntil(char terminator) {
 }
 
 // ====================== WRITE ===========================
+
 /*
 // прямая запись без буфера
 void GyverUart::writeBuffer(byte data){	
@@ -231,9 +231,15 @@ ISR(USARTx_UDRE_vect) {
 	if (_UART_TX_BUFFER_HEAD == _UART_TX_BUFFER_TAIL) {UCSR0B &=~ (1<<UDRIE0);}
 }
 
-void GyverUart::write(byte data) {
+#ifdef USE_PRINT_H
+size_t GyverUart::write(uint8_t data) {
 	writeBuffer(data);
+	return 1;
 }
+
+#else
+	
+boolean GyverUart::availableForWrite() {return 1;}
 
 void GyverUart::println(void) {
 	writeBuffer('\r');
@@ -288,7 +294,7 @@ void GyverUart::printHelper(uint32_t data, byte base) {
 
 
 void GyverUart::printBytes(uint32_t data) {
-	int8_t bytes[10];
+	byte bytes[10];
 	byte amount;
 	for (byte i = 0; i < 10; i++) {
 		bytes[i] = data % 10;
@@ -347,3 +353,4 @@ void GyverUart::println(const char data[]) {
 	print(data);
 	println();
 }
+#endif
