@@ -1,6 +1,7 @@
 #pragma once
 #include <Arduino.h>
 #include <Servo.h>
+#include "smoothUtil.h"
 
 /*	
 	ServoSmooth - библиотека для плавного управления сервоприводами
@@ -22,27 +23,28 @@
 	v1.8 - улучшена стабильность
 	v1.9 - добавлена настройка макс. угла серво
 	v1.10 - исправлен баг когда текущая позиция совпадает с позицией таргета
+	
 	v2.0 - упрощён алгоритм
 	v2.1 - добавлена смена направления
 	v2.2 - фикс движения в инверсии (спасибо VICLER) и функций write (спасибо CheDima)
 	
-	2019 by AlexGyver
+	v3.0 
+	- Добавлен полностью новый, более плавный алгоритм
+	- Почищен мусор
+	- Добавлена поддержка PCA9685
+	- "Плавность" вынесена в базовый класс для упрощения добавления поддержки новых библиотек серво
+	
+	Документация: https://alexgyver.ru/servosmooth/
+	2020 by AlexGyver
 */
 
-#define SS_SERVO_PERIOD 20		// период работы tick(), мс
-#define SS_DEADZONE 10			// мёртвая зона
-#define NORMAL 0
-#define REVERSE 1
-
-class ServoSmooth {
-public:
-	ServoSmooth(int maxAngle = 180);			// конструктор с передачей макс угла
-	void write(uint16_t angle);					// аналог метода из библиотеки Servo
-	void writeMicroseconds(uint16_t angle);		// аналог метода из библиотеки Servo
-	void attach();								// подключает к выбранному в attach(pin) пину
-	void attach(uint8_t pin, int target = 0);	// аналог метода из библиотеки Servo
-	void attach(uint8_t pin, int min, int max, int target = 0);	// аналог метода из библиотеки Servo. min по умолч. 500, max 2400. target - положение (в углах или мкс, на которые серво повернётся при подключении)
-	void detach();								// аналог метода из библиотеки Servo
+/*
+	// =========== НАСЛЕДУЕМЫЕ МЕТОДЫ ==========
+	void write(uint16_t angle);					// повернуть на угол. Аналог метода из библиотеки Servo
+	void writeMicroseconds(uint16_t angle);		// повернуть на импульс. Аналог метода из библиотеки Servo
+	void attach();	
+	void attach(int pin, int target);			// аттач+установка позиции
+	void attach(int pin, int min, int max, int target = 0);	// аналог метода из библиотеки Servo. min по умолч. 500, max 2400. target - положение (в углах или мкс, на которые серво повернётся при подключении)
 	void start();								// attach + разрешает работу tick
 	void stop();								// detach + запрещает работу tick
 	
@@ -53,39 +55,29 @@ public:
 	boolean tickManual();						// метод, управляющий сервой, без встроенного таймера.
 	// Возвращает true, когда целевая позиция достигнута
 	
-	void setSpeed(int speed);					// установка максимальной скорости (условные единицы, 0 - 200)
-	void setAccel(float accel);					// установка ускорения (0.05 - 1). При значении 1 ускорение максимальное
-	void setTarget(int target);					// установка целевой позиции в мкс (500 - 2400)
+	void setSpeed(int speed);					// установка максимальной скорости (0 - 200)
+	void setAccel(float accel);					// установка ускорения (0.1 - 10)
+	void setTarget(int target);					// установка целевой позиции в мкс (~500 - 2400 серво, ~150-600 драйвер PCA9685)
 	void setTargetDeg(int target);				// установка целевой позиции в градусах (0-макс. угол). Зависит от min и max
 	void setAutoDetach(boolean set);			// вкл/выкл автоматического отключения (detach) при достижении угла. По умолч. вкл
-	void setCurrent(int target);				// установка текущей позиции в мкс (500 - 2400)
+	void setCurrent(int target);				// установка текущей позиции в мкс (~500 - 2400 серво, ~150-600 драйвер PCA9685)
 	void setCurrentDeg(int target);				// установка текущей позиции в градусах (0-макс. угол). Зависит от min и max
 	void setMaxAngle(int maxAngle);				// установка макс. угла привода
-	int getCurrent();							// получение текущей позиции в мкс (500 - 2400)
+	int getCurrent();							// получение текущей позиции в мкс (~500 - 2400 серво, ~150-600 драйвер PCA9685)
 	int getCurrentDeg();						// получение текущей позиции в градусах (0-макс. угол). Зависит от min и max
-	int getTarget();							// получение целевой позиции в мкс (500 - 2400)
+	int getTarget();							// получение целевой позиции в мкс (~500 - 2400 серво, ~150-600 драйвер PCA9685)
 	int getTargetDeg();							// получение целевой позиции в градусах (0-макс. угол). Зависит от min и max
 	
 	void setDirection(bool _dir);				// смена направления поворота
-	
-	Servo _servo;		
-	
+*/
+
+class ServoSmooth : public Smooth {
+public:
+	ServoSmooth(int maxAngle = 180);
+	using Smooth::attach;
+	void attach(int pin);	
+	void detach();
+	void sendToDriver(uint16_t val);	
+	Servo _servo;			
 private:
-	void writeUs(int val);
-	int _maxAngle = 180;
-	int _servoCurrentPos = 0;
-	int _servoTargetPos = 0;
-	float _newPos = 0;
-	int _min = 500;
-	int _max = 2400;
-	uint32_t _prevServoTime = 0;		
-	int8_t _pin;
-	int _servoMaxSpeed = 50;		
-	int _newSpeed = 0;		
-	float _k = 0.1;
-	boolean _tickFlag = true;
-	boolean _servoState = true;
-	boolean _autoDetach = true;
-	byte _timeoutCounter = 0;	
-	bool _dir = 0;	
 };

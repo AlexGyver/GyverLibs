@@ -1,19 +1,25 @@
 /*
-   Данный код плавно двигает туда-сюда одной сервой (на пине 5)
+   Данный код плавно двигает туда-сюда одной сервой
+   Используется драйвер PCA9685 
    Документация: https://alexgyver.ru/servosmooth/
 */
 
-#include <ServoSmooth.h>
-ServoSmooth servo;
+#include <ServoDriverSmooth.h>
+ServoDriverSmooth servo;
+//ServoDriverSmooth servo(0x40);      // с указанием адреса драйвера
+//ServoDriverSmooth servo(0x40, 270); // с указанием адреса и макс. угла
 
 uint32_t tmr;
 boolean flag;
 
 void setup() {
   Serial.begin(9600);
-  servo.attach(5);        // подключить
+  servo.begin();
+  Serial.println("setup");
+  servo.attach(0);        // подключить
   servo.setSpeed(130);     // ограничить скорость
   servo.setAccel(0.5);   // установить ускорение (разгон и торможение)
+  Serial.println("end setup");
 }
 
 void loop() {

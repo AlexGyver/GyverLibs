@@ -1,5 +1,6 @@
 /*
- * Данный скетч крутит 4 сервопривода с разными скоростями и ускорением
+	Данный скетч крутит 4 сервопривода с разными скоростями и ускорениями
+	Документация: https://alexgyver.ru/servosmooth/
  */
 
 #define AMOUNT 4  // кол-во серво
@@ -23,8 +24,8 @@ void setup() {
   servos[3].attach(5);
 
   // настраиваем макс. скорости и ускорения
-  // скор. по умолч. 50
-  // ускорение по умолч. 0.1
+  // скор. по умолч. 100
+  // ускорение по умолч. 0.5
   servos[0].setSpeed(20);
   servos[1].setAccel(0.2);
   servos[2].setSpeed(100);
@@ -33,14 +34,14 @@ void setup() {
 
 void loop() {
   // каждые 20 мс
-  if (millis() - servoTimer >= 20) {
-    servoTimer = millis();
+  if (millis() - servoTimer >= 20) {	// взводим таймер на 20 мс (как в библиотеке)
+    servoTimer += 20;
     for (byte i = 0; i < AMOUNT; i++) {
       servos[i].tickManual();   // двигаем все сервы. Такой вариант эффективнее отдельных тиков
     }
   }
 
-  // каждые 2 секунды
+  // каждые 2 секунды меняем положение
   if (millis() - turnTimer >= 2000) {
     turnTimer = millis();
     flag = !flag;

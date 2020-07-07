@@ -1,24 +1,28 @@
 /*
-   Данный код плавно управляет одной сервой (на пине 2)
+   Данный код плавно управляет одной сервой   
    при помощи потенциометра (на пине А0).
+   Используется драйвер PCA9685
    Откройте порт по последовательному соединению для наблюдения за положением серво
    Документация: https://alexgyver.ru/servosmooth/
 */
 
-#include <ServoSmooth.h>
-ServoSmooth servo;
+#include <ServoDriverSmooth.h>
+ServoDriverSmooth servo;
+//ServoDriverSmooth servo(0x40);      // с указанием адреса драйвера
+//ServoDriverSmooth servo(0x40, 270); // с указанием адреса и макс. угла
 
 uint32_t myTimer;
 
 void setup() {
   Serial.begin(9600);
-  servo.attach(A1, 600, 2400);  // 600 и 2400 - длины импульсов, при которых
+  servo.attach(0, 150, 550);  // 150 и 600 - длины импульсов, при которых
   // серво поворачивается максимально в одну и другую сторону, зависят от самой серво
   // и обычно даже указываются продавцом. Мы их тут указываем для того, чтобы
   // метод setTargetDeg() корректно отрабатывал диапазон поворота сервы
+  // для драйвера диапазон в районе 150-600! Не как у обычной серво
 
-  servo.setSpeed(90);   // ограничить скорость
-  servo.setAccel(0.1);  // установить ускорение (разгон и торможение)
+  servo.setSpeed(120);    // ограничить скорость
+  servo.setAccel(0.5);    // установить ускорение (разгон и торможение)
 }
 
 void loop() {
@@ -30,9 +34,9 @@ void loop() {
 
   if (millis() - myTimer >= 40) {
     myTimer = millis();
-    int newPos = map(analogRead(A2), 0, 1023, 500, 2400); // берём с потенцометра значение 500-2400 (импульс)
-    servo.setTarget(newPos);               // и отправляем на серво
-    Serial.println(String(newPos) + " " + String(servo.getCurrent())/* + " " + String(state)*/);
+    int newPos = map(analogRead(0), 0, 1023, 0, 180); // берём с потенцометра значение 0-180
+    servo.setTargetDeg(newPos);                       // и отправляем на серво
+    Serial.println(String(newPos) + " " + String(servo.getCurrentDeg())/* + " " + String(state)*/);
 	// state показывает сотояние сервы (0 - движется, 1 - приехали и отключились)
   }
 }
