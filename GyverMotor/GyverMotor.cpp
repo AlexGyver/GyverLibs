@@ -1,108 +1,108 @@
 #include "GyverMotor.h"
 #include <Arduino.h>
 
-GMotor::GMotor(uint8_t dig_pin, uint8_t pwm_pin) {
-	_dig_pin = dig_pin;
-	_pwm_pin = pwm_pin;
+GMotor::GMotor(driverType type, int8_t param1 = NC, int8_t param2 = NC, int8_t param3 = NC, int8_t param4 = NC) {
+	_type = type;
+	switch (_type) {
+	case DRIVER2WIRE:
+		_digA = param1;
+		_pwmC = param2;
+		if (param3 != NC) _level = !param3;
+		break;
+	case DRIVER3WIRE:
+		_digA = param1;
+		_digB = param2;
+		_pwmC = param3;		
+		if (param4 != NC) _level = !param4;
+		break;
+	case RELAY2WIRE:
+		_digA = param1;
+		_digB = param2;
+		if (param3 != NC) _level = !param3;
+		break;		
+	}
+
+	if (_digA != NC) pinMode(_digA, OUTPUT);
+	if (_digB != NC) pinMode(_digB, OUTPUT);
+	if (_pwmC != NC) pinMode(_pwmC, OUTPUT);
 	
-	pinMode(_dig_pin, OUTPUT);
-	pinMode(_pwm_pin, OUTPUT);
-	digitalWrite(_dig_pin, 0);
-	digitalWrite(_pwm_pin, 0);
+	setMode(STOP);
 }
 
-void GMotor::setDirection(uint8_t direction) {
-	_reverse = direction;
-}
+void GMotor::setSpeed(int16_t duty) {
+	if (_mode < 2) {
+		_duty = duty;
+		// фикс зашкала analogWrite(пин, 255) для 10 бит
+		// также фикс для типичных драйверов на N ключах,
+		// которым нельзя давать "100% ШИМ"
+		if (abs(_duty) == 255) _duty = (_duty > 0) ? 254 : -254;
+		if (_resolution && abs(_duty) == 1023) _duty = (_duty > 0) ? 1022 : -1022;
 
-void GMotor::setSpeed(uint8_t duty) {
-	_duty = duty;
-	if (_mode == FORWARD)
-		if (_reverse) runFrw();
-		else runBkw();
-	else if (_mode == BACKWARD)
-		if (_reverse) runBkw();
-		else runFrw();
-}
-
-void GMotor::setSpeed10bit(uint16_t duty) {
-	_duty = duty;
-	if (_mode == FORWARD)
-		if (_reverse) runFrw10bit();
-		else runBkw10bit();
-	else if (_mode == BACKWARD)
-		if (_reverse) runBkw10bit();
-		else runFrw10bit();
-}
-
-void GMotor::runFrw() {
-	digitalWrite(_dig_pin, 0);
-	analogWrite(_pwm_pin, _duty);
-}
-void GMotor::runBkw() {
-	digitalWrite(_dig_pin, 1);
-	analogWrite(_pwm_pin, 255 - _duty);
-}
-
-void GMotor::runFrw10bit() {
-	digitalWrite(_dig_pin, 0);
-	analogWrite(_pwm_pin, _duty);
-}
-void GMotor::runBkw10bit() {
-	digitalWrite(_dig_pin, 1);
-	analogWrite(_pwm_pin, 1023 - _duty);
-}
-
-void GMotor::setMode(uint8_t mode) {
-	_mode = mode;
-	if (mode == STOP) {
-		digitalWrite(_dig_pin, 0);
-		digitalWrite(_pwm_pin, 0);
+		if (duty > 0) {
+			run(_mode ^ _direction, _duty);
+		} else if (duty < 0) {
+			run(BACKWARD ^ _direction, -_duty);
+		} else {  // == 0
+			run(STOP, 0);
+		}
 	}
 }
 
-void PWM10bit() {
-	// установка 9 и 10 пинов в режим 10 бит
-	TCCR1A = TCCR1A & 0xe0 | 3;
+void GMotor::run(workMode mode, int16_t duty) {
+	if (_deadtime > 0 && _lastMode != mode) {
+		_lastMode = mode;
+		setPins(_level, _level, 0);
+		delayMicroseconds(_deadtime);
+	}
+	switch (mode) {
+	case FORWARD:	setPins(_level, !_level, duty); break;		
+	case BACKWARD:	setPins(!_level, _level, (_type == DRIVER2WIRE) ? (_resolution ? (1022 - duty) : (254 - duty)) : (duty)); break;		
+	case STOP:		setPins(_level, _level, _level * (_resolution ? 1023 : 255)); break;		
+	case BRAKE:		setPins(!_level, !_level, !_level * (_resolution ? 1023 : 255)); break;		
+	}
 }
 
-void PWMfrequency(uint8_t pin, uint16_t mode) {
-  byte prescale;
-  if (pin == 5 || pin == 6) {
-    switch (mode) {
-      case 1: prescale = 0b001; break;
-      case 2: prescale = 0b010; break;
-      case 3: prescale = 0b011; break;
-      case 4: prescale = 0b100; break;
-      case 5: prescale = 0b101; break;
-      default: return;
-    }
-  } else if (pin == 9 || pin == 10) {
-	  switch (mode) {
-      case 1: prescale = 0x09; break;
-      case 2: prescale = 0x0a; break;
-      case 3: prescale = 0x0b; break;
-      case 4: prescale = 0x0c; break;
-      case 5: prescale = 0x0d; break;
-      default: return;
-    }
-  } else if (pin == 3 || pin == 11) {
-    switch (mode) {
-      case 1: prescale = 0b001; break;
-      case 2: prescale = 0b010; break;
-      case 3: prescale = 0b011; break;
-      case 4: prescale = 0b100; break;
-      case 5: prescale = 0b101; break;
-      case 6: prescale = 0b110; break;
-      case 7: prescale = 0b111; break;
-      default: return;
-    }
-  }
-  if (pin == 5 || pin == 6) {
-    TCCR0B = TCCR0B & 0b11111000 | prescale;
-  } else if (pin == 9 || pin == 10) {
-    TCCR1B = TCCR1B & 0b11111000 | prescale;
-  } else if (pin == 3 || pin == 11) {
-    TCCR2B = TCCR2B & 0b11111000 | prescale;
-  }
+void GMotor::setPins(bool a, bool b, int c) {
+	if (_digA != NC) digitalWrite(_digA, a);
+	if (_digB != NC) digitalWrite(_digB, b);
+	if (_pwmC != NC) analogWrite(_pwmC, c);
+}
+
+void GMotor::smoothTick(int16_t duty) {
+	if (millis() - _tmr >= 50) {
+		_tmr += 50;
+		if (abs(_duty - duty) > _speed)
+			_duty += (_duty < duty) ? _speed : -_speed;
+		else _duty = duty;
+		setSpeed(_duty);
+	}
+}
+
+void GMotor::setMode(workMode mode) {
+	_mode = mode;
+	run(mode, _duty);
+}
+
+void GMotor::setSmoothSpeed(uint8_t speed) {
+	_speed = speed;
+}
+
+void GMotor::setDirection(dir direction) {
+	_direction = direction;
+}
+
+void GMotor::set8bitMode() {
+	_resolution = 0;
+}
+
+void GMotor::set10bitMode() {
+	_resolution = 1;
+}
+
+void GMotor::setDeadtime(uint16_t deadtime) {
+	_deadtime = deadtime;
+}
+
+void GMotor::setLevel(int8_t level) {
+	_level = !level;
 }

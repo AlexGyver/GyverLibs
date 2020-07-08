@@ -1,10 +1,10 @@
 /*
-  Пример управления мотором при помощи драйвера полного моста и потенциометра
-  на ШИМ 10 бит
+	Пример управления двумя моторами
 */
-
 #include "GyverMotor.h"
-GMotor motor(DRIVER2WIRE, 2, 3, HIGH);
+GMotor motor1(DRIVER2WIRE, 2, 3, HIGH);
+GMotor motor2(DRIVER2WIRE, 4, 11, HIGH);
+// используем оба ШИМа таймера 2 (пины 3 и 11)
 
 // варианты инициализации в зависимости от типа драйвера:
 // GMotor motor(DRIVER2WIRE, dig_pin, PWM_pin, (LOW / HIGH) )
@@ -21,26 +21,24 @@ GMotor motor(DRIVER2WIRE, 2, 3, HIGH);
 */
 
 void setup() {
-  // разгоняем ШИМ на пинах 9 и 10 (atmega328) до 16 кГц 10 бит
-  // читай тут: https://alexgyver.ru/lessons/pwm-overclock/
-  TCCR1A = 0b00000011;  // 10bit
-  TCCR1B = 0b00001101;  // x1024 fast pwm
-
-  // активируем 10-битный режим библиотеки
-  motor.set10bitMode();
-
   // ключ на старт!
-  motor.setMode(FORWARD);
+  motor1.setMode(FORWARD);
+  motor2.setMode(FORWARD);
 }
 
 void loop() {
   // потенциометр на А0
-  // преобразуем значение в -1023.. 1023
-  int val = 1023 - analogRead(0) * 2;
+  // преобразуем значение в -255.. 255
+  int val_1 = 255 - analogRead(0) / 2;
 
-  motor.setSpeed(val);
+  // потенциометр на А1
+  // преобразуем значение в -255.. 255
+  int val_2 = 255 - analogRead(1) / 2;
+
+  motor1.setSpeed(val_1);
+  motor2.setSpeed(val_2);
   // в данном случае мотор будет остановлен в среднем положении рукоятки
   // и разгоняться в противоположные скорости в крайних её положениях
-
+  
   delay(10);  // задержка просто для "стабильности"
 }

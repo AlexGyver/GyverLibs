@@ -1,46 +1,43 @@
 /*
-	Пример управления мотором при помощи драйвера полного моста
-	и потенциометра. На всём диапазоне потенциометра:
-	от 0 до мёртвой зоны (512 - deadzone) крутим в одну сторону
-	в мёртвой зоне не крутим вообще
-	от мёртвой зоны (512 + deadzone) до 1023 крутим в другую сторону
-	Управление производится хардварным ШИМ пином на настраиваемой частоте
+  Пример управления мотором при помощи драйвера полного моста и потенциометра
+  на разогнанном ШИМе
 */
 
-#define DEADZONE 60 	// "мёртвая зона" потенциометра
-#define IN1 2
-#define IN2 3			// IN2 обязательно должен быть ШИМ пином!!!
-#define POT 0     	 	// сюда подключен потенциометр
-
 #include "GyverMotor.h"
-GMotor motor1(IN1, IN2);
+GMotor motor(DRIVER2WIRE, 2, 3, HIGH);
 
-int left_min = 512 - DEADZONE;   // расчёт границ мёртвой зоны
-int right_min = 512 + DEADZONE;  // расчёт границ мёртвой зоны
+// варианты инициализации в зависимости от типа драйвера:
+// GMotor motor(DRIVER2WIRE, dig_pin, PWM_pin, (LOW / HIGH) )
+// GMotor motor(DRIVER3WIRE, dig_pin_A, dig_pin_B, PWM_pin, (LOW/HIGH) )
+// GMotor motor(RELAY2WIRE, dig_pin_A, dig_pin_B, (LOW/HIGH) )
+/*
+  DRIVER2WIRE - двухпроводной драйвер (направление + ШИМ)
+  DRIVER3WIRE - трёхпроводной драйвер (два пина направления + ШИМ)
+  RELAY2WIRE - реле в качестве драйвера (два пина направления)
+
+  dig_pin, dig_pin_A, dig_pin_B - любой цифровой пин МК
+  PWM_pin - любой ШИМ пин МК
+  LOW / HIGH - уровень драйвера. Если при увеличении скорости мотор наоборот тормозит - смени уровень
+*/
 
 void setup() {
-  motor1.setDirection(REVERSE);
-  
-  // изменение частоты ШИМа на 3 пине. Таблицу частот смотрите в библиотеке GyverHacks.h"
-  // пины 5 и 6   8 bit mode: 1 (62 500 Гц), 2 (7 812 Гц), 3 (976 Гц), 4 (244 Гц), 5 (61 Гц). ВЛИЯЕТ НА РАБОТУ millis() и delay()
-  // пины 9 и 10  8 bit   mode: 1 (62 500 Гц), 2 (7 812 Гц), 3 (976 Гц), 4 (244 Гц), 5 (61 Гц). ВЛИЯЕТ НА РАБОТУ servo
-  // пины 3 и 11  8 bit mode: 1 (31 250 Гц), 2 (3 906 Гц), 3 (976 Гц), 4 (488 Гц), 5 (244 Гц), 6 (122 Гц), 7 (30 Гц). ВЛИЯЕТ НА РАБОТУ tone()
-  PWMfrequency(IN2, 1);
+  // разгоняем ШИМ на пинах 3 и 11 (atmega328) до 31 кГц
+  // читай тут: https://alexgyver.ru/lessons/pwm-overclock/
+  TCCR2B = 0b00000001;  // x1
+  TCCR2A = 0b00000001;  // phase correct
+
+  // ключ на старт!
+  motor.setMode(FORWARD);
 }
 
 void loop() {
-  int potent = analogRead(POT);                    // читаем с потенциометра
+  // потенциометр на А0
+  // преобразуем значение в -255.. 255
+  int val = 255 - analogRead(0) / 2;
 
-  if (potent > left_min && potent < right_min) {  // если мы в "мёртвой" зоне
-    motor1.setMode(STOP);
-  } else if (potent > right_min) {   // если мы вышли из мёртвой зоны справа
-    motor1.setMode(FORWARD);
-    byte duty = map(potent, right_min, 1023, 0, 255);
-    motor1.setSpeed(duty);
-  } else if (potent < left_min) {   // если мы вышли из мёртвой зоны слева
-    motor1.setMode(BACKWARD);
-    byte duty = map(potent, left_min, 0, 0, 255);
-    motor1.setSpeed(duty);
-  }
+  motor.setSpeed(val);
+  // в данном случае мотор будет остановлен в среднем положении рукоятки
+  // и разгоняться в противоположные скорости в крайних её положениях
 
+  delay(10);  // задержка просто для "стабильности"
 }

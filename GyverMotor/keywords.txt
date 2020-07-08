@@ -14,15 +14,29 @@ GyverMotor	KEYWORD1
 #######################################
 
 setSpeed	KEYWORD2
-setSpeed10bit	KEYWORD2
 setMode	KEYWORD2
 setDirection	KEYWORD2
+set8bitMode	KEYWORD2
+set10bitMode	KEYWORD2
+setDeadtime	KEYWORD2
+setLevel	KEYWORD2
+run	KEYWORD2
 
-PWM10bit	KEYWORD2
-PWMfrequency	KEYWORD2
+smoothTick	KEYWORD2
+setSmoothSpeed	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+DRIVER2WIRE	LITERAL1
+DRIVER3WIRE	LITERAL1
+RELAY2WIRE	LITERAL1
+
+NORMAL	LITERAL1
+REVERSE	LITERAL1
 
 FORWARD	LITERAL1
 BACKWARD	LITERAL1
 STOP	LITERAL1
-NORM	LITERAL1
-REVERSE	LITERAL1
+BRAKE	LITERAL1

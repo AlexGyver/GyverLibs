@@ -1195,11 +1195,14 @@ float getTemp();		// получить примерную температуру 
 ---
 
 <a id="GyverMotor"></a>
-### GyverMotor v1.2 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverMotor/GyverMotor.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyvermotor/)
+### GyverMotor v2.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverMotor/GyverMotor.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyvermotor/)
 Библиотека для удобного управления моторчиками через драйвер полного моста для Arduino
 - Контроль скорости и направления вращения
-- Встроенный инструмент для настройки частоты ШИМ
 - Работа с 10 битным ШИМом
+- Программный deadtime
+- Отрицательные скорости
+- Поддержка двух типов драйверов и реле
+- Плавный пуск и изменение скорости
 #### Методы и функции библиотеки
 <details>
 <summary>РАЗВЕРНУТЬ</summary>
@@ -1207,36 +1210,50 @@ float getTemp();		// получить примерную температуру 
 Смотри примеры в папке examples!
 
 ```C
-void PWM10bit();
-// установка пинов 9 и 10 в режим 10 бит (управляется сигнало 0-1023)
+GMotor(driverType type, int8_t param1 = NC, int8_t param2 = NC, int8_t param3 = NC, int8_t param4 = NC);
+// три варианта создания объекта в зависимости от драйвера:
+// GMotor motor(DRIVER2WIRE, dig_pin, PWM_pin, (LOW/HIGH) )
+// GMotor motor(DRIVER3WIRE, dig_pin_A, dig_pin_B, PWM_pin, (LOW/HIGH) )
+// GMotor motor(RELAY2WIRE, dig_pin_A, dig_pin_B, (LOW/HIGH) )
 	
-void PWMfrequency(uint8_t pin, uint16_t mode);
-// установка частоты ШИМ на пине
-// пины 5 и 6 	8 bit	mode: 1 (62 500 Гц), 2 (7 812 Гц), 3 (976 Гц), 4 (244 Гц), 5 (61 Гц). ВЛИЯЕТ НА РАБОТУ millis() и delay()
-// пины 9 и 10 	8 bit 	mode: 1 (62 500 Гц), 2 (7 812 Гц), 3 (976 Гц), 4 (244 Гц), 5 (61 Гц). ВЛИЯЕТ НА РАБОТУ servo
-// пины 9 и 10 	10 bit 	mode: 1 (15 625 Гц), 2 (1 953 Гц), 3 (244 Гц), 4 (61 Гц),  5 (15 Гц). ВЛИЯЕТ НА РАБОТУ servo
-// пины 3 и 11 	8 bit	mode: 1 (31 250 Гц), 2 (3 906 Гц), 3 (976 Гц), 4 (488 Гц), 5 (244 Гц), 6 (122 Гц), 7 (30 Гц). ВЛИЯЕТ НА РАБОТУ tone()
-
-
-GMotor(uint8_t dig_pin, uint8_t pwm_pin);	
-// создаём объект. 
-// dig_pin - пин направления, любой пин
-// pwm_pin - ШИМ пин (у NANO/UNO/MINI это 3, 5, 6, 9, 10, 11)
+// установка скорости 0-255 (8 бит) и 0-1023 (10 бит)
+void setSpeed(int16_t duty);			
 	
-void setSpeed(uint8_t duty);           // установка скорости (0-255)
-	
-void setSpeed10bit(uint16_t duty);     // установка скорости в режиме 10 бит (0-1023) для пинов 9 и 10
-	
-void setMode(uint8_t mode);
-// режим работы мотора:
+// сменить режим работы мотора:	
 // FORWARD - вперёд
 // BACKWARD - назад
-// STOP - остановить												
-												
-void setDirection(boolean direction);
-// направление вращения (один раз настроить в setup вместо переподключения мотора)
+// STOP - остановить
+// BRAKE - активное торможение
+void setMode(workMode mode);
+	
+// направление вращения	
 // NORM - обычное
 // REVERSE - обратное
+void setDirection(dir direction);
+	
+// установить выход в 8 бит
+void set8bitMode();		
+
+// установить выход в 10 бит
+void set10bitMode();					
+	
+// установить deadtime (в микросекундах). По умолч 0
+void setDeadtime(uint16_t deadtime);	
+	
+// установить уровень драйвера (по умолч. HIGH)
+void setLevel(int8_t level);			
+	
+// плавное изменение к указанной скорости
+void smoothTick(int16_t duty);
+	
+// скорость изменения скорости
+void setSmoothSpeed(uint8_t speed);
+	
+// дать прямую команду мотору (без смены режима)
+void run(workMode mode, int16_t duty);	
+
+// внутренняя переменная скважности для отладки
+int16_t _duty = 0;
 ```
 </p>
 </details>
