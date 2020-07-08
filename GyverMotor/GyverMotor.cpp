@@ -38,9 +38,9 @@ void GMotor::setSpeed(int16_t duty) {
 		if (abs(_duty) == 255) _duty = (_duty > 0) ? 254 : -254;
 		if (_resolution && abs(_duty) == 1023) _duty = (_duty > 0) ? 1022 : -1022;
 
-		if (duty > 0) {
+		if (duty > _minDuty) {
 			run(_mode ^ _direction, _duty);
-		} else if (duty < 0) {
+		} else if (duty < -_minDuty) {
 			run(BACKWARD ^ _direction, -_duty);
 		} else {  // == 0
 			run(STOP, 0);
@@ -76,6 +76,10 @@ void GMotor::smoothTick(int16_t duty) {
 		else _duty = duty;
 		setSpeed(_duty);
 	}
+}
+
+void GMotor::setMinDuty(int duty) {
+	_minDuty = duty;
 }
 
 void GMotor::setMode(workMode mode) {

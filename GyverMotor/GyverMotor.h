@@ -60,6 +60,9 @@ public:
 	// REVERSE - обратное
 	void setDirection(dir direction);
 	
+	// установить минимальную скважность (при которой мотор начинает крутиться)
+	void setMinDuty(int duty);
+	
 	// установить выход в 8 бит
 	void set8bitMode();		
 
@@ -86,6 +89,7 @@ public:
 	
 private:
 	void setPins(bool a, bool b, int c);
+	int _minDuty = 0;
 	int8_t _digA = NC, _digB = NC, _pwmC = NC;
 	bool _direction = false;
 	int8_t _resolution = 0, _level = HIGH;

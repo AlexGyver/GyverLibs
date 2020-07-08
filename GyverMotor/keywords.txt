@@ -20,6 +20,7 @@ set8bitMode	KEYWORD2
 set10bitMode	KEYWORD2
 setDeadtime	KEYWORD2
 setLevel	KEYWORD2
+setMinDuty	KEYWORD2
 run	KEYWORD2
 
 smoothTick	KEYWORD2
