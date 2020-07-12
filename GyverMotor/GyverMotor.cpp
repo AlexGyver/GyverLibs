@@ -14,7 +14,7 @@ GMotor::GMotor(driverType type, int8_t param1 = NC, int8_t param2 = NC, int8_t p
 		_digB = param2;
 		_pwmC = param3;		
 		if (param4 != NC) _level = !param4;
-		break;
+		break;	
 	case RELAY2WIRE:
 		_digA = param1;
 		_digB = param2;
@@ -31,34 +31,36 @@ GMotor::GMotor(driverType type, int8_t param1 = NC, int8_t param2 = NC, int8_t p
 
 void GMotor::setSpeed(int16_t duty) {
 	if (_mode < 2) {
-		_duty = duty;
-		// фикс зашкала analogWrite(пин, 255) для 10 бит
-		// также фикс для типичных драйверов на N ключах,
+		// -254..254 8 бит, -1023..1023 16 бит
+		// фикс для типичных драйверов на N ключах,
 		// которым нельзя давать "100% ШИМ"
-		if (abs(_duty) == 255) _duty = (_duty > 0) ? 254 : -254;
-		if (_resolution && abs(_duty) == 1023) _duty = (_duty > 0) ? 1022 : -1022;
+		_duty = constrain(duty, -_maxDuty, _maxDuty);
+		
+		// фикс зашкала analogWrite(пин, 255) для 10 бит
+		if (_resolution && abs(_duty) == 255) _duty++;
 
-		if (duty > _minDuty) {
-			run(_mode ^ _direction, _duty);
-		} else if (duty < -_minDuty) {
-			run(BACKWARD ^ _direction, -_duty);
+		if (_duty > _minDuty) {
+			run(_mode, _duty);
+		} else if (_duty < -_minDuty) {
+			run(BACKWARD, -_duty);
 		} else {  // == 0
 			run(STOP, 0);
 		}
 	}
 }
 
-void GMotor::run(workMode mode, int16_t duty) {
+void GMotor::run(workMode mode, int16_t duty = 0) {
 	if (_deadtime > 0 && _lastMode != mode) {
 		_lastMode = mode;
 		setPins(_level, _level, 0);
 		delayMicroseconds(_deadtime);
 	}
+	if (_direction && mode < 2) mode = 1 - mode;
 	switch (mode) {
-	case FORWARD:	setPins(_level, !_level, duty); break;		
-	case BACKWARD:	setPins(!_level, _level, (_type == DRIVER2WIRE) ? (_resolution ? (1022 - duty) : (254 - duty)) : (duty)); break;		
-	case STOP:		setPins(_level, _level, _level * (_resolution ? 1023 : 255)); break;		
-	case BRAKE:		setPins(!_level, !_level, !_level * (_resolution ? 1023 : 255)); break;		
+	case FORWARD:	setPins(_level, !_level, duty); _state = 1; break;		
+	case BACKWARD:	setPins(!_level, _level, (_type == DRIVER2WIRE) ? (_maxDuty - duty) : (duty)); _state = -1; break;		
+	case STOP:		setPins(_level, _level, _level * 255); _state = 0; break;		
+	case BRAKE:		setPins(!_level, !_level, !_level * 255); _state = 0; break;		
 	}
 }
 
@@ -69,20 +71,23 @@ void GMotor::setPins(bool a, bool b, int c) {
 }
 
 void GMotor::smoothTick(int16_t duty) {
-	if (millis() - _tmr >= 50) {
-		_tmr += 50;
-		if (abs(_duty - duty) > _speed)
-			_duty += (_duty < duty) ? _speed : -_speed;
+	if (millis() - _tmr >= _SMOOTH_PRD) {
+		_tmr += _SMOOTH_PRD;
+		if (abs(_duty - duty) > _speed) _duty += (_duty < duty) ? _speed : -_speed;
 		else _duty = duty;
 		setSpeed(_duty);
 	}
+}
+
+int GMotor::getState() {
+	return _state;
 }
 
 void GMotor::setMinDuty(int duty) {
 	_minDuty = duty;
 }
 
-void GMotor::setMode(workMode mode) {
+void GMotor::setMode(workMode mode) {	
 	_mode = mode;
 	run(mode, _duty);
 }
@@ -97,10 +102,12 @@ void GMotor::setDirection(dir direction) {
 
 void GMotor::set8bitMode() {
 	_resolution = 0;
+	_maxDuty = 254;
 }
 
 void GMotor::set10bitMode() {
 	_resolution = 1;
+	_maxDuty = 1022;
 }
 
 void GMotor::setDeadtime(uint16_t deadtime) {

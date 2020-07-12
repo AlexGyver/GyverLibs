@@ -12,10 +12,13 @@
 		- Отрицательные скорости
 		- Поддержка двух типов драйверов и реле
 		- Плавный пуск и изменение скорости
+	- Версия 2.1: небольшие фиксы и добавления
 		
 	Документация: https://alexgyver.ru/gyvermotor/
 	AlexGyver, 2020
 */
+
+#define _SMOOTH_PRD 50	// таймер smoothTick, мс
 
 enum driverType {
 	DRIVER2WIRE,
@@ -33,6 +36,7 @@ enum workMode {
 	BACKWARD,
 	STOP,
 	BRAKE,
+	AUTO = 0,
 };
 
 static const int8_t NC = -1;	// not connected
@@ -53,6 +57,7 @@ public:
 	// BACKWARD - назад
 	// STOP - остановить
 	// BRAKE - активное торможение
+	// AUTO - подчиняется setSpeed (-255.. 255)
 	void setMode(workMode mode);
 	
 	// направление вращения	
@@ -75,27 +80,30 @@ public:
 	// установить уровень драйвера (по умолч. HIGH)
 	void setLevel(int8_t level);			
 	
-	// плавное изменение к указанной скорости
+	// плавное изменение к указанной скорости (к значению ШИМ)
 	void smoothTick(int16_t duty);
 	
 	// скорость изменения скорости
-	void setSmoothSpeed(uint8_t speed);
+	void setSmoothSpeed(uint8_t speed);	
 	
-	// дать прямую команду мотору (без смены режима)
-	void run(workMode mode, int16_t duty);	
+	// возвращает -1 при вращении BACKWARD, 1 при FORWARD и 0 при остановке и торможении
+	int getState();
 
 	// внутренняя переменная скважности для отладки
 	int16_t _duty = 0;
 	
-private:
-	void setPins(bool a, bool b, int c);
-	int _minDuty = 0;
+protected:
+	void setPins(bool a, bool b, int c);	
+	void run(workMode mode, int16_t duty = 0);		// дать прямую команду мотору (без смены режима)
+	
+	int _minDuty = 0, _state = 0;;
 	int8_t _digA = NC, _digB = NC, _pwmC = NC;
 	bool _direction = false;
 	int8_t _resolution = 0, _level = HIGH;
+	int _maxDuty = 254;
 	workMode _mode = 0, _lastMode = 0;
-	driverType _type = 0;	
+	driverType _type;
 	uint16_t _deadtime = 0;
-	uint8_t _speed = 0;
+	uint8_t _speed = 20;
 	uint32_t _tmr = 0;
 };

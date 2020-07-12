@@ -1195,7 +1195,7 @@ float getTemp();		// получить примерную температуру 
 ---
 
 <a id="GyverMotor"></a>
-### GyverMotor v2.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverMotor/GyverMotor.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyvermotor/)
+### GyverMotor v2.1 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverMotor/GyverMotor.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyvermotor/)
 Библиотека для удобного управления моторчиками через драйвер полного моста для Arduino
 - Контроль скорости и направления вращения
 - Работа с 10 битным ШИМом
