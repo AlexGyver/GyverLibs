@@ -284,10 +284,18 @@ void Encoder::tick() {
 			if (flags.rst_flag) {
 				if (curState == 0b11) {
 					flags.rst_flag = 0;
-					encState = 3-prevState;
+					//encState = 3-prevState;
+					switch (prevState) {
+					case 0b10: encState = 1; break;		// 2 - 1
+					case 0b01: encState = 2; break;		// 1 - 2
+					}
 				} else if (!flags.enc_type && (curState == 0b00)) {
 					flags.rst_flag = 0;
-					encState = prevState;
+					//encState = prevState;
+					switch (prevState) {
+					case 0b01: encState = 1; break;
+					case 0b10: encState = 2; break;
+					}
 				}
 			}
 			if (curState == 0b00 || (!flags.enc_type && curState == 0b11)) flags.rst_flag = 1;
