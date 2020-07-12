@@ -1224,6 +1224,7 @@ void setSpeed(int16_t duty);
 // BACKWARD - назад
 // STOP - остановить
 // BRAKE - активное торможение
+// AUTO - подчиняется setSpeed (-255.. 255) и 0-1023 (10 бит)
 void setMode(workMode mode);
 	
 // направление вращения	
@@ -1248,9 +1249,6 @@ void smoothTick(int16_t duty);
 	
 // скорость изменения скорости
 void setSmoothSpeed(uint8_t speed);
-	
-// дать прямую команду мотору (без смены режима)
-void run(workMode mode, int16_t duty);	
 
 // внутренняя переменная скважности для отладки
 int16_t _duty = 0;
