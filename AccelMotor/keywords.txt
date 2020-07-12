@@ -1,0 +1,49 @@
+#######################################
+# Syntax Coloring Map For AccelMotor
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+AccelMotor	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+tick	KEYWORD2
+setRatio	KEYWORD2
+setDt	KEYWORD2
+setCurrent	KEYWORD2
+getCurrent	KEYWORD2
+getCurrentDeg	KEYWORD2
+setTarget	KEYWORD2
+setTargetDeg	KEYWORD2
+getTarget	KEYWORD2
+getTargetDeg	KEYWORD2
+setMaxSpeed	KEYWORD2
+setMaxSpeedDeg	KEYWORD2
+setAcceleration	KEYWORD2
+setAccelerationDeg	KEYWORD2
+setTargetSpeed	KEYWORD2
+setTargetSpeedDeg	KEYWORD2
+getTargetSpeed	KEYWORD2
+getTargetSpeedDeg	KEYWORD2
+getSpeed	KEYWORD2
+getSpeedDeg	KEYWORD2
+getDuty	KEYWORD2
+setRunMode	KEYWORD2
+setStopZone	KEYWORD2
+isBlocked	KEYWORD2
+kp	KEYWORD2
+ki	KEYWORD2
+kd	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+IDLE_RUN	LITERAL1
+ACCEL_POS	LITERAL1
+PID_POS	LITERAL1
+ACCEL_SPEED	LITERAL1
+PID_SPEED	LITERAL1
