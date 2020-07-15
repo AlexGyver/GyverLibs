@@ -4,6 +4,9 @@
 #include "smoothUtil.h"
 #include <Wire.h>
 
+#define _DRIVER_DEADZONE 1			// мёртвая зона (по микросекундам)
+#define _DRIVER_DEADZONE_SP 1		// мёртвая зона (по скорости)
+
 // полное описание библиотеки смотри в ServoSmooth.h
 
 class ServoDriverSmooth : public Smooth {

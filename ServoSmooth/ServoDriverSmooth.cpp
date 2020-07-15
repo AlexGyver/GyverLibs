@@ -5,6 +5,8 @@ ServoDriverSmooth::ServoDriverSmooth(uint8_t addr, int maxAngle) {
 	_servo._i2caddr = addr;	
 	_min = 150;
 	_max = 600;
+	SS_DEADZONE = _DRIVER_DEADZONE;
+	SS_DEADZONE_SP = _DRIVER_DEADZONE_SP;
 }
 
 void ServoDriverSmooth::sendToDriver(uint16_t val) {
