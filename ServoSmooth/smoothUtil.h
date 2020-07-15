@@ -30,7 +30,7 @@ public:
 	// Возвращает true, когда целевая позиция достигнута
 	
 	void setSpeed(int speed);					// установка максимальной скорости (больше 0), градусов / с
-	void setAccel(int accel);					// установка ускорения (1 - 50), условные величины
+	void setAccel(float accel);					// установка ускорения (0.1-1), условные величины
 	void setTarget(int target);					// установка целевой позиции в мкс (~500 - 2400 серво, ~150-600 драйвер PCA9685)
 	void setTargetDeg(int target);				// установка целевой позиции в градусах (0-макс. угол). Зависит от min и max
 	void setAutoDetach(boolean set);			// вкл/выкл автоматического отключения (detach) при достижении угла. По умолч. вкл
@@ -56,8 +56,8 @@ protected:
 	float _delta = SS_SERVO_PERIOD / 1000.0;
 	uint32_t _prevServoTime = 0;		
 	int8_t _pin;
-	int16_t _servoMaxSpeed = 100;			
-	uint16_t _acceleration = 2;
+	int16_t _servoMaxSpeed = 1400;			
+	uint16_t _acceleration = 1000;
 	bool _tickFlag = true;
 	bool _servoState = true;
 	bool _autoDetach = true;

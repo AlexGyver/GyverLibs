@@ -14,7 +14,7 @@ void setup() {
   Serial.begin(9600);
   servo.attach(5);      // подключить
   servo.setSpeed(130);  // ограничить скорость
-  servo.setAccel(3);    // установить ускорение (разгон и торможение)
+  servo.setAccel(0.3);    // установить ускорение (разгон и торможение)
   servo.setTargetDeg(100);
   //servo.setDirection(REVERSE);
   servo.write(180);

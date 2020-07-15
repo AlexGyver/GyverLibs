@@ -25,11 +25,11 @@ void setup() {
 
   // настраиваем макс. скорости и ускорения
   // скор. по умолч. 100 град/с
-  // ускорение по умолч. 2
+  // ускорение по умолч. 0.2
   servos[0].setSpeed(180);
-  servos[1].setAccel(1);
+  servos[1].setAccel(0.1);
   servos[2].setSpeed(90);
-  servos[3].setAccel(10);
+  servos[3].setAccel(0.5);
 }
 
 void loop() {

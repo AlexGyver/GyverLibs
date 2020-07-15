@@ -63,8 +63,8 @@ void Smooth::setSpeed(int speed) {
 	_servoMaxSpeed = (long)speed*_max/_maxAngle;	// ~ перевод из градусов в секунду в тики
 }
 
-void Smooth::setAccel(int accel) {
-	_acceleration = (long)accel*_max/3;			// для совместимости со старыми скетчами
+void Smooth::setAccel(float accel) {
+	_acceleration = (float)accel*_max*2;	// для совместимости со старыми скетчами (уск. 0.1-1)
 }
 
 void Smooth::setTarget(int target) {

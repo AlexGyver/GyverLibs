@@ -13,7 +13,7 @@ void setup() {
   Serial.begin(9600);
   servo.attach(5);        // подключить
   servo.setSpeed(130);    // ограничить скорость
-  servo.setAccel(1);   	  // установить ускорение (разгон и торможение)
+  servo.setAccel(0.1);   	  // установить ускорение (разгон и торможение)
 }
 
 void loop() {
