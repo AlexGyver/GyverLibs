@@ -10,10 +10,13 @@ void Smooth::writeUs(int val) {
 void Smooth::write(uint16_t angle) {
 	writeUs(map(angle, 0, _maxAngle, _min, _max));
 	_servoCurrentPos = (map(angle, 0, _maxAngle, _min, _max));
+	_servoTargetPos = _servoCurrentPos;
 }
 
 void Smooth::writeMicroseconds(uint16_t val) {
 	sendToDriver(val);
+	_servoCurrentPos = val;
+	_servoTargetPos = _servoCurrentPos;
 }
 
 void Smooth::sendToDriver(uint16_t val) {
@@ -36,7 +39,7 @@ void Smooth::attach() {
 void Smooth::attach(int pin, int target) {
 	_pin = pin;
 	attach(_pin);
-	if (target <= _maxAngle) target = map(target, 0, _maxAngle, _min, _max);	
+	if (target <= _maxAngle) target = map(target, 0, _maxAngle, _min, _max);	// если в градусах!
 	writeUs(target);
 	_servoTargetPos = target;
 	_servoCurrentPos = target;
@@ -56,6 +59,16 @@ void Smooth::start() {
 void Smooth::stop() {
 	detach();
 	_tickFlag = false;
+}
+
+void Smooth::smoothStart() {
+	for (byte i = 0; i < 10; i++) {
+		detach();
+		delay(75);
+		attach();
+		writeUs(_servoCurrentPos);
+		delay(25);
+	}	
 }
 
 // ====== SET ======

@@ -16,7 +16,7 @@ public:
 	void writeMicroseconds(uint16_t angle);		// повернуть на импульс. Аналог метода из библиотеки Servo
 	void attach();
 	virtual void attach(int pin);				// аналог метода из библиотеки Servo	
-	void attach(int pin, int target);			// аттач+установка позиции
+	void attach(int pin, int target);			// аттач + установка позиции (в градусах ИЛИ в микросекундах, программа сама поймёт)
 	void attach(int pin, int min, int max, int target = 0);	// аналог метода из библиотеки Servo. min по умолч. 500, max 2400. target - положение (в углах или мкс, на которые серво повернётся при подключении)
 	virtual void detach();						// аналог метода из библиотеки Servo
 	void start();								// attach + разрешает работу tick
@@ -43,20 +43,21 @@ public:
 	int getTargetDeg();							// получение целевой позиции в градусах (0-макс. угол). Зависит от min и max
 	
 	void setDirection(bool _dir);				// смена направления поворота
-	float _speed = 0;
+	void smoothStart();							// вызывать сразу после attach(пин, таргет). Смягчает движение серво из неизвестной позиции к стартовой. БЛОКИРУЮЩАЯ НА 1С!
+	
 protected:
 	void writeUs(int val);
+	float _speed = 0, _lastSpeed = 0;
 	byte timeoutCounter = 0;
 	int _maxAngle = 180;
-	int _servoCurrentPos = 0;
-	int _servoTargetPos = 0;
+	int _servoCurrentPos = 600;	// если не вызван аттач(пин, таргет)
+	int _servoTargetPos = 600;
 	int _min = 500;
 	int _max = 2400;
-	float _lastSpeed;
 	float _delta = SS_SERVO_PERIOD / 1000.0;
 	uint32_t _prevServoTime = 0;		
 	int8_t _pin;
-	int16_t _servoMaxSpeed = 1400;			
+	int16_t _servoMaxSpeed = 1400;
 	uint16_t _acceleration = 1000;
 	bool _tickFlag = true;
 	bool _servoState = true;

@@ -33,6 +33,7 @@ getTargetDeg	KEYWORD2
 setAutoDetach	KEYWORD2
 setMaxAngle	KEYWORD2
 setDirection	KEYWORD2
+smoothStart	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

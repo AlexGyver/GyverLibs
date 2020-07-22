@@ -1,5 +1,7 @@
 #include "ServoDriverSmooth.h"
 
+bool ServoDriverSmooth::_startFlag = false;
+
 ServoDriverSmooth::ServoDriverSmooth(uint8_t addr, int maxAngle) {	
 	_maxAngle = maxAngle;
 	_servo._i2caddr = addr;	
