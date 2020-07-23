@@ -128,7 +128,7 @@ void Smooth::setDirection(bool dir) {
 // ====== TICK ======
 boolean Smooth::tick() {
 	if (millis() - _prevServoTime >= SS_SERVO_PERIOD) {
-		_prevServoTime += SS_SERVO_PERIOD;
+		_prevServoTime = millis();
 		Smooth::tickManual();
 	}
 	return !_servoState;
