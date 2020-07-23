@@ -77,7 +77,7 @@ void Smooth::setSpeed(int speed) {
 }
 
 void Smooth::setAccel(float accel) {
-	_acceleration = (float)accel*_max*2;	// для совместимости со старыми скетчами (уск. 0.1-1)
+	_acceleration = (float)accel*_max*3;	// для совместимости со старыми скетчами (уск. 0.1-1)
 }
 
 void Smooth::setTarget(int target) {
@@ -137,9 +137,13 @@ boolean Smooth::tick() {
 boolean Smooth::tickManual() {	
 	if (_tickFlag) {
 		int err = _servoTargetPos - _servoCurrentPos;
-		if (abs(err) > SS_DEADZONE && abs(_lastSpeed - _speed) < SS_DEADZONE_SP) {				// условие остановки
-			bool thisDir = ((float)_speed * _speed / _acceleration / 2.0 >= abs(err));  	// пора тормозить
-			_speed += (float)_acceleration * _delta * (thisDir ? -_sign(_speed) : _sign(err));
+		if (abs(err) > SS_DEADZONE && abs(_lastSpeed - _speed) < SS_DEADZONE_SP) {			// условие остановки
+			if (_acceleration != 0) {
+				bool thisDir = ((float)_speed * _speed / _acceleration / 2.0 >= abs(err));  	// пора тормозить
+				_speed += (float)_acceleration * _delta * (thisDir ? -_sign(_speed) : _sign(err));
+			} else {
+				_speed = err/_delta;
+			}
 			_speed = constrain(_speed, -_servoMaxSpeed, _servoMaxSpeed);
 			_servoCurrentPos += _speed * _delta;
 			if (_autoDetach && !_servoState) {
