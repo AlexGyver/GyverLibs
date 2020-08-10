@@ -7,6 +7,7 @@
 * [GyverButton](#GyverButton) - расширенный контроль кнопкой
 * [GyverEncoder](#GyverEncoder) - расширенный контроль с энкодером
 * [GyverMotor](#GyverMotor) - управление драйверами моторов
+* [GyverStepper](#GyverStepper) - управление шаговыми моторами
 * [AccelMotor](#AccelMotor) - управление мотором с обратной связью
 * [GyverRGB](#GyverRGB) - управление RGB светодиодами и лентами
 * [GyverTM1637](#GyverTM1637) - управление дисплеем на TM1637
@@ -1261,6 +1262,129 @@ void setSmoothSpeed(uint8_t speed);
 
 // внутренняя переменная скважности для отладки
 int16_t _duty = 0;
+```
+</p>
+</details>
+
+---
+
+<a id="GyverStepper"></a>
+### GyverMotor v1.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverStepper/GyverStepper.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverstepper/)
+GyverStepper - производительная библиотека для управления шаговыми моторами
+- Поддержка 4х пинового (шаг и полушаг) и STEP-DIR драйверов
+- Автоматическое отключение питания при достижении цели
+- Режимы работы:
+	- Вращение с заданной скоростью
+	- Следование к позиции с ускорением и ограничением скорости
+	- Следование к позиции с заданной скоростью (без ускорения)
+- Быстрый алгоритм управления шагами
+- Два алгоритма плавного движения
+	- Мой планировщик обеспечивает максимальную производительность: скорость до 30'000 шагов/сек с ускорением (активен по умолчанию)
+	- Модифицированный планировщик из AccelStepper: максимальную плавность и скорость до 7'000 шагов/сек с ускорением (для активации пропиши дефайн SMOOTH_ALGORITHM)
+#### Методы и функции библиотеки
+<details>
+<summary>РАЗВЕРНУТЬ</summary>
+<p>
+Смотри примеры в папке examples!
+
+```C
+// Примечание: далее по тексту под "по умолчанию" имеется в виду "даже если не вызывать функцию"
+
+// Создание объекта
+// steps - шагов на один оборот вала (для расчётов с градусами)
+// step, dir, pin1, pin2, pin3, pin4 - любые GPIO
+// en - пин отключения драйвера, любой GPIO
+GStepper<STEPPER2WIRE> stepper(steps, step, dir);						// драйвер step-dir
+GStepper<STEPPER2WIRE> stepper(steps, step, dir, en);					// драйвер step-dir + пин enable
+GStepper<STEPPER4WIRE> stepper(steps, pin1, pin2, pin3, pin4);			// драйвер 4 пин
+GStepper<STEPPER4WIRE> stepper(steps, pin1, pin2, pin3, pin4, en);		// драйвер 4 пин + enable
+GStepper<STEPPER4WIRE_HALF> stepper(steps, pin1, pin2, pin3, pin4);		// драйвер 4 пин полушаг
+GStepper<STEPPER4WIRE_HALF> stepper(steps, pin1, pin2, pin3, pin4, en);	// драйвер 4 пин полушаг + enable
+
+// Здесь происходит движение мотора, вызывать как можно чаще!
+// Имеет встроенный таймер
+// Возвращает true, если мотор движется к цели или крутится по KEEP_SPEED
+bool tick();
+
+// Инвертировать направление мотора - true (по умолч. false)
+void reverse(bool dir);
+
+// инвертировать поведение EN пина - true (по умолч. false)
+void invertEn(bool rev);
+
+// Установка режима работы, mode:
+// FOLLOW_POS - следование к позиции setTarget(...)
+// KEEP_SPEED - удержание скорости setSpeed(...)
+void setRunMode(GS_runMode mode);
+
+// Установка текущей позиции мотора в шагах и градусах
+void setCurrent(long pos);
+void setCurrentDeg(float pos);
+
+// Чтение текущей позиции мотора в шагах и градусах
+long getCurrent();
+float getCurrentDeg();
+
+// установка целевой позиции в шагах и градусах (для режима FOLLOW_POS)
+// type - ABSOLUTE или RELATIVE, по умолчанию стоит ABSOLUTE
+void setTarget(long pos);
+void setTarget(long pos, GS_posType type);
+void setTargetDeg(float pos);
+void setTargetDeg(float pos, GS_posType type);
+
+// Получение целевой позиции в шагах и градусах
+long getTarget();
+float getTargetDeg();
+
+// Установка максимальной скорости (по модулю) в шагах/секунду и градусах/секунду (для режима FOLLOW_POS)
+// по умолч. 300
+void setMaxSpeed(int speed);
+void setMaxSpeedDeg(float speed);
+
+// Установка ускорения в шагах и градусах в секунду (для режима FOLLOW_POS).
+// При значении 0 ускорение отключается и мотор работает 
+// по профилю постоянной максимальной скорости setMaxSpeed().
+// По умолч. 300
+void setAcceleration(int accel);
+void setAccelerationDeg(float accel);
+
+// Автоотключение EN при достижении позиции - true (по умолч. false).
+void autoPower(bool mode);
+
+// Плавная остановка с заданным ускорением от текущего положения. 
+// Режим будет переключен на FOLLOW_POS
+// Установленная максимальная скорость будет изменена!!!
+void stop();
+
+// Жёсткая остановка
+void brake();
+
+// Жёсткая остановка + сброс позиции в 0 (для концевиков)
+void reset();
+
+// Установка целевой скорости в шагах/секунду и градусах/секунду (для режима KEEP_SPEED)
+void setSpeed(int speed);
+void setSpeedDeg(float speed);
+
+// Получение целевой скорости в шагах/секунду и градусах/секунду (для режима KEEP_SPEED)
+int getSpeed();
+float getSpeedDeg();
+
+// Включить мотор (пин EN)
+void enable();
+
+// Выключить мотор (пин EN)
+void disable();
+
+// Возвращает то же самое, что tick, т.е. крутится мотор или нет
+bool getState();
+
+// Возвращает минимальный период тика мотора в микросекундах при настроенной setMaxSpeed() скорости.
+// Можно использовать для настройки прерываний таймера, в обработчике которого будет лежать tick() (см. пример timerISR)
+uint16_t getMinPeriod();
+
+// Текущий период "тика" для отладки и всего такого
+uint16_t stepTime;
 ```
 </p>
 </details>

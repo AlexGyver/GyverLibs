@@ -1,0 +1,54 @@
+#######################################
+# Syntax Coloring Map For GyverStepper
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+GyverStepper	KEYWORD1
+GStepper	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+tick	KEYWORD2
+reverse	KEYWORD2
+invertEn	KEYWORD2
+setCurrent	KEYWORD2
+setCurrentDeg	KEYWORD2
+getCurrent	KEYWORD2
+getCurrentDeg	KEYWORD2
+setTarget	KEYWORD2
+setTargetDeg	KEYWORD2
+getTarget	KEYWORD2
+getTargetDeg	KEYWORD2
+setMaxSpeed	KEYWORD2
+setMaxSpeedDeg	KEYWORD2
+setAcceleration	KEYWORD2
+setAccelerationDeg	KEYWORD2
+autoPower	KEYWORD2
+stop	KEYWORD2
+brake	KEYWORD2
+reset	KEYWORD2
+setSpeed	KEYWORD2
+setSpeedDeg	KEYWORD2
+getSpeed	KEYWORD2
+getSpeedDeg	KEYWORD2
+setRunMode	KEYWORD2
+enable	KEYWORD2
+disable	KEYWORD2
+getState	KEYWORD2
+getMinPeriod	KEYWORD2
+stepTime	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+ABSOLUTE	LITERAL1
+RELATIVE	LITERAL1
+FOLLOW_POS	LITERAL1
+KEEP_SPEED	LITERAL1
+STEPPER2WIRE	LITERAL1
+STEPPER4WIRE	LITERAL1
+STEPPER4WIRE_HALF	LITERAL1
+SMOOTH_ALGORITHM	LITERAL1
