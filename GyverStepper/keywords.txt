@@ -44,6 +44,8 @@ stepTime	KEYWORD2
 #######################################
 # Constants (LITERAL1)
 #######################################
+SMOOTH	LITERAL1
+NO_SMOOTH	LITERAL1
 ABSOLUTE	LITERAL1
 RELATIVE	LITERAL1
 FOLLOW_POS	LITERAL1
