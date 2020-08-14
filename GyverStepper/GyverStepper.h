@@ -18,6 +18,7 @@
 	
 	v1.0
 	v1.1 - добавлена возможность плавного управления скоростью в KEEP_SPEED (см. пример accelDeccelButton)
+	v1.2 - добавлена поддержка ESP8266
 		
 	Документация: https://alexgyver.ru/gyverstepper/
 	Алгоритм из AccelStepper: https://www.airspayce.com/mikem/arduino/AccelStepper/
@@ -376,15 +377,24 @@ public:
 
 private:
 	void configurePin(int num, int8_t pin) {
+#ifdef __AVR__
 		_port_reg[num] = portOutputRegister(digitalPinToPort(pin));
 		_ddr_reg[num] = portModeRegister(digitalPinToPort(pin));
 		_bit_mask[num] = digitalPinToBitMask(pin);
-		*_ddr_reg[num] |= _bit_mask[num];	// OUTPUT		
+		*_ddr_reg[num] |= _bit_mask[num];	// OUTPUT
+#else
+		_pins[num] = pin;
+		pinMode(_pins[num], OUTPUT);
+#endif
 	}
 
 	void setPin(int num, bool state) {
+#ifdef __AVR__
 		if (state) *_port_reg[num] |= _bit_mask[num];
-		else *_port_reg[num] &= ~ _bit_mask[num];		
+		else *_port_reg[num] &= ~ _bit_mask[num];
+#else
+		digitalWrite(_pins[num], state);
+#endif				
 	}
 
 	void step() {
@@ -486,6 +496,7 @@ private:
 	uint32_t _plannerTime = 0;		
 	int _plannerPrd = 15000;
 #endif
+
 	float _accelTime = 0;	
 	int _smoothPlannerPrd = 15000;
 	uint32_t _smoothPlannerTime = 0;
@@ -536,7 +547,11 @@ private:
 
 	GS_runMode _curMode = FOLLOW_POS;
 
+#ifdef __AVR__
 	volatile uint8_t *_port_reg[_DRV == 0 ? 2 : 4];
 	volatile uint8_t *_ddr_reg[_DRV == 0 ? 2 : 4];
 	volatile uint8_t _bit_mask[_DRV == 0 ? 2 : 4];
+#else
+	uint8_t _pins[_DRV == 0 ? 2 : 4];
+#endif
 };
