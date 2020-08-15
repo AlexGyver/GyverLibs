@@ -1,30 +1,30 @@
 #include "GyverMotor.h"
 #include <Arduino.h>
 
-GMotor::GMotor(driverType type, int8_t param1 = NC, int8_t param2 = NC, int8_t param3 = NC, int8_t param4 = NC) {
+GMotor::GMotor(GM_driverType type, int8_t param1, int8_t param2, int8_t param3, int8_t param4) {
 	_type = type;
 	switch (_type) {
 	case DRIVER2WIRE:
 		_digA = param1;
 		_pwmC = param2;
-		if (param3 != NC) _level = !param3;
+		if (param3 != _GM_NC) _level = !param3;
 		break;
 	case DRIVER3WIRE:
 		_digA = param1;
 		_digB = param2;
-		_pwmC = param3;		
-		if (param4 != NC) _level = !param4;
+		_pwmC = param3;	
+		if (param4 != _GM_NC) _level = !param4;
 		break;	
 	case RELAY2WIRE:
 		_digA = param1;
 		_digB = param2;
-		if (param3 != NC) _level = !param3;
+		if (param3 != _GM_NC) _level = !param3;
 		break;		
 	}
 
-	if (_digA != NC) pinMode(_digA, OUTPUT);
-	if (_digB != NC) pinMode(_digB, OUTPUT);
-	if (_pwmC != NC) pinMode(_pwmC, OUTPUT);
+	if (_digA != _GM_NC) pinMode(_digA, OUTPUT);
+	if (_digB != _GM_NC) pinMode(_digB, OUTPUT);
+	if (_pwmC != _GM_NC) pinMode(_pwmC, OUTPUT);
 	
 	setMode(STOP);
 }
@@ -49,13 +49,21 @@ void GMotor::setSpeed(int16_t duty) {
 	}
 }
 
-void GMotor::run(workMode mode, int16_t duty = 0) {
+void GMotor::run(GM_workMode mode, int16_t duty) {
 	if (_deadtime > 0 && _lastMode != mode) {
 		_lastMode = mode;
 		setPins(_level, _level, 0);
 		delayMicroseconds(_deadtime);
 	}
-	if (_direction && mode < 2) mode = 1 - mode;
+#if defined(__AVR__)
+	if (_direction && mode < 2) mode = 1 - mode;	// инверт вот такой
+#else
+	if (_direction) {
+		if (mode == FORWARD) mode = BACKWARD;
+		else if (mode == BACKWARD) mode = FORWARD;
+	}	
+#endif
+	
 	switch (mode) {
 	case FORWARD:	setPins(_level, !_level, duty); _state = 1; break;		
 	case BACKWARD:	setPins(!_level, _level, (_type == DRIVER2WIRE) ? (_maxDuty - duty) : (duty)); _state = -1; break;		
@@ -65,9 +73,9 @@ void GMotor::run(workMode mode, int16_t duty = 0) {
 }
 
 void GMotor::setPins(bool a, bool b, int c) {
-	if (_digA != NC) digitalWrite(_digA, a);
-	if (_digB != NC) digitalWrite(_digB, b);
-	if (_pwmC != NC) analogWrite(_pwmC, c);
+	if (_digA != _GM_NC) digitalWrite(_digA, a);
+	if (_digB != _GM_NC) digitalWrite(_digB, b);
+	if (_pwmC != _GM_NC) analogWrite(_pwmC, c);
 }
 
 void GMotor::smoothTick(int16_t duty) {
@@ -87,7 +95,7 @@ void GMotor::setMinDuty(int duty) {
 	_minDuty = duty;
 }
 
-void GMotor::setMode(workMode mode) {	
+void GMotor::setMode(GM_workMode mode) {	
 	_mode = mode;
 	run(mode, _duty);
 }
@@ -96,7 +104,7 @@ void GMotor::setSmoothSpeed(uint8_t speed) {
 	_speed = speed;
 }
 
-void GMotor::setDirection(dir direction) {
+void GMotor::setDirection(GM_dir direction) {
 	_direction = direction;
 }
 
