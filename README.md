@@ -428,7 +428,7 @@ float getTemp(void);        // получить температуру
 ---
 
 <a id="GyverButton"></a>
-### GyverButton v3.4 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverButton/GyverButton.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverbutton/)
+### GyverButton v3.5 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverButton/GyverButton.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverbutton/)
 Библиотека для многофункциональной отработки нажатия кнопок с Arduino. Возможности:
 - Работа с нормально замкнутыми и нормально разомкнутыми кнопками
 - Работа с подключением PULL_UP и PULL_DOWN
@@ -496,7 +496,7 @@ void resetStates();     // сбрасывает все is-флаги и счёт
 ---
 
 <a id="GyverEncoder "></a>
-### GyverEncoder v4.7 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverEncoder/GyverEncoder.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/encoder/)
+### GyverEncoder v4.8 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverEncoder/GyverEncoder.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/encoder/)
 Библиотека для отработки энкодера с Arduino. Возможности:
 - Отработка поворота с антидребезгом
 - Отработка нажатия кнопки с антидребезгом
@@ -1205,7 +1205,7 @@ float getTemp();		// получить примерную температуру 
 ---
 
 <a id="GyverMotor"></a>
-### GyverMotor v2.1 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverMotor/GyverMotor.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyvermotor/)
+### GyverMotor v2.2 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverMotor/GyverMotor.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyvermotor/)
 Библиотека для удобного управления моторчиками через драйвер полного моста для Arduino
 - Контроль скорости и направления вращения
 - Работа с 10 битным ШИМом

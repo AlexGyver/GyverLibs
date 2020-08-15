@@ -21,7 +21,14 @@
 	Версия 3.2: Добавлен метод getHoldClicks() - вернуть количество кликов, предшествующее удерживанию	
 	Версия 3.3: Мелкие исправления
 	Версия 3.4: Добавлен метод resetStates(), сбрасывающий состояния и счётчики
+	Версия 3.5: увелична производительность для AVR Arduino
 */
+
+#if defined(__AVR__)
+#define _buttonRead() (*_pin_reg & _bit_mask)
+#else
+#define _buttonRead() digitalRead(_PIN)
+#endif
 
 #pragma pack(push,1)
 typedef struct {		
@@ -109,4 +116,8 @@ class GButton {
 	uint32_t btn_timer = 0;	
 	bool btn_state = false;
 	bool btn_flag = false;
+#if defined(__AVR__)
+	volatile uint8_t *_pin_reg;
+	volatile uint8_t _bit_mask;
+#endif
 };

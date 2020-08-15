@@ -33,6 +33,10 @@ void GButton::setType(bool type) {
 	if (!flags.noPin) {
 		if (type) pinMode(_PIN, INPUT);
 		else pinMode(_PIN, INPUT_PULLUP);
+#if defined(__AVR__)
+		_pin_reg = portInputRegister(digitalPinToPort(_PIN));
+		_bit_mask = digitalPinToBitMask(_PIN);
+#endif
 	}	
 }
 void GButton::setDirection(bool dir) {
@@ -150,7 +154,7 @@ void GButton::tick(boolean state) {
 
 void GButton::tick() {	
 	// читаем пин
-	if (!flags.mode && !flags.noPin) btn_state = !digitalRead(_PIN) ^ (flags.inv_state ^ flags.type);
+	if (!flags.mode && !flags.noPin) btn_state = !_buttonRead() ^ (flags.inv_state ^ flags.type);
 	
 	uint32_t thisMls = millis();
 	
