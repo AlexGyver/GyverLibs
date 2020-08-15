@@ -25,7 +25,7 @@
 */
 
 #if defined(__AVR__)
-#define _buttonRead() (*_pin_reg & _bit_mask)
+#define _buttonRead() bool(*_pin_reg & _bit_mask)
 #else
 #define _buttonRead() digitalRead(_PIN)
 #endif

@@ -27,15 +27,26 @@ Encoder::Encoder(uint8_t clk, uint8_t dt, int8_t sw, bool type) {
 	}	
 	flags.enc_type = type;
 	
+#if defined(__AVR__)
+	_pin_reg_CLK = portInputRegister(digitalPinToPort(_CLK));
+	_bit_mask_CLK = digitalPinToBitMask(_CLK);
+	_pin_reg_DT = portInputRegister(digitalPinToPort(_DT));
+	_bit_mask_DT = digitalPinToBitMask(_DT);
+	if (sw != -1) {
+		_pin_reg_SW = portInputRegister(digitalPinToPort(_SW));
+		_bit_mask_SW = digitalPinToBitMask(_SW);
+	}
+#endif
+	
 	pinMode(_CLK, (DEFAULT_ENC_PULL ? INPUT : INPUT_PULLUP));
 	pinMode(_DT, (DEFAULT_ENC_PULL ? INPUT : INPUT_PULLUP));	
 	if (flags.use_button) pinMode(_SW, (DEFAULT_BTN_PULL ? INPUT : INPUT_PULLUP));	
 	flags.invBtn = (DEFAULT_BTN_PULL == HIGH_PULL) ? true : false;
 
 #if defined(FAST_ALGORITHM)
-	prevState = digitalRead(_CLK);
+	prevState = _readCLK();
 #else
-	prevState = digitalRead(_CLK) | (digitalRead(_DT) << 1);
+	prevState = _readCLK() | (_readDT() << 1);
 #endif
 }
 
@@ -203,7 +214,7 @@ void Encoder::tick() {
 
 #ifdef ENC_WITH_BUTTON
 	if (flags.use_button) {
-		if (!extTick) SW_state = digitalRead(_SW) ^ flags.invBtn;	// читаем состояние кнопки SW
+		if (!extTick) SW_state = _readSW() ^ flags.invBtn;	// читаем состояние кнопки SW
 		else SW_state = flags.extSW;
 		
 		if (SW_state && !flags.butt_flag && (debounceDelta > ENC_DEBOUNCE_BUTTON)) {
@@ -255,7 +266,7 @@ void Encoder::tick() {
 #endif
 
 #if defined(FAST_ALGORITHM)
-	uint8_t curState = (extTick) ? (flags.extCLK) : (digitalRead(_CLK));
+	uint8_t curState = (extTick) ? (flags.extCLK) : (_readCLK());
 	
 	if (curState != prevState
 #if (ENC_DEBOUNCE_TURN > 0)
@@ -265,7 +276,7 @@ void Encoder::tick() {
 		encState = 0;
 		turnFlag = !turnFlag;
 		if (turnFlag || !flags.enc_type) {
-			if (( (extTick) ? (flags.extDT) : digitalRead(_DT) ) != prevState) {
+			if (( (extTick) ? (flags.extDT) : _readDT() ) != prevState) {
 				encState = 1;
 			} else {
 				encState = 2;
@@ -273,7 +284,7 @@ void Encoder::tick() {
 		}
 
 #elif defined(BINARY_ALGORITHM)		
-		uint8_t curState = (extTick) ? (flags.extCLK | (flags.extDT << 1)) : (digitalRead(_CLK) | (digitalRead(_DT) << 1));
+		uint8_t curState = (extTick) ? (flags.extCLK | (flags.extDT << 1)) : (_readCLK() | (_readDT() << 1));
 		
 		if (curState != prevState
 #if (ENC_DEBOUNCE_TURN > 0)
@@ -301,7 +312,7 @@ void Encoder::tick() {
 			if (curState == 0b00 || (!flags.enc_type && curState == 0b11)) flags.rst_flag = 1;
 
 #elif defined(PRECISE_ALGORITHM)			
-			uint8_t curState = (extTick) ? (flags.extCLK | (flags.extDT << 1)) : (digitalRead(_CLK) | (digitalRead(_DT) << 1));
+			uint8_t curState = (extTick) ? (flags.extCLK | (flags.extDT << 1)) : (_readCLK() | (_readDT() << 1));
 
 			if (curState != prevState
 #if (ENC_DEBOUNCE_TURN > 0)

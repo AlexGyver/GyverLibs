@@ -36,6 +36,7 @@
 	- 4.5: Улучшен алгоритм BINARY_ALGORITHM (спасибо Ярославу Курусу)
 	- 4.6: BINARY_ALGORITHM пофикшен для TYPE1, добавлена isReleaseHold
 	- 4.7: Исправлен случайный нажатый поворот в BINARY_ALGORITHM
+	- 4.8: увеличена производительность для AVR Arduino
 */
 // ========= КОНСТАНТЫ ==========
 #define ENC_NO_BUTTON -1	// константа для работы без пина
@@ -70,6 +71,16 @@
 #define ENC_DEBOUNCE_BUTTON 80
 #define ENC_HOLD_TIMEOUT 700
 #define ENC_DOUBLE_TIMEOUT 300
+
+#if defined(__AVR__)
+#define _readCLK() bool(*_pin_reg_CLK & _bit_mask_CLK)
+#define _readDT() bool(*_pin_reg_DT & _bit_mask_DT)
+#define _readSW() bool(*_pin_reg_SW & _bit_mask_SW)
+#else
+#define _readCLK() digitalRead(_CLK)
+#define _readDT() digitalRead(_DT)
+#define _readSW() digitalRead(_SW)
+#endif
 
 #pragma pack(push,1)
 typedef struct
@@ -148,4 +159,12 @@ private:
 	uint32_t debounce_timer = 0, fast_timer = 0;
 	uint8_t _CLK = 0, _DT = 0, _SW = 0;
 	bool turnFlag = false, extTick = false, SW_state = false;
+#if defined(__AVR__)
+	volatile uint8_t *_pin_reg_CLK;
+	volatile uint8_t _bit_mask_CLK;
+	volatile uint8_t *_pin_reg_DT;
+	volatile uint8_t _bit_mask_DT;
+	volatile uint8_t *_pin_reg_SW;
+	volatile uint8_t _bit_mask_SW;
+#endif
 };
