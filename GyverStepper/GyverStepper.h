@@ -19,6 +19,7 @@
 	v1.0
 	v1.1 - добавлена возможность плавного управления скоростью в KEEP_SPEED (см. пример accelDeccelButton)
 	v1.2 - добавлена поддержка ESP8266
+	v1.3 - изменена логика работы setTarget(, RELATIVE)
 		
 	Документация: https://alexgyver.ru/gyverstepper/
 	Алгоритм из AccelStepper: https://www.airspayce.com/mikem/arduino/AccelStepper/
@@ -65,6 +66,7 @@ float getCurrentDeg();
 
 // установка целевой позиции в шагах и градусах (для режима FOLLOW_POS)
 // type - ABSOLUTE или RELATIVE, по умолчанию стоит ABSOLUTE
+// RELATIVE считается от текущей позиции мотора
 void setTarget(long pos);
 void setTarget(long pos, GS_posType type);
 void setTargetDeg(float pos);
@@ -245,7 +247,7 @@ public:
 
 	// установка и получение целевой позиции в шагах и градусах
 	void setTarget(long pos, GS_posType type = ABSOLUTE) {
-		_target = type ? (_target + pos) : pos;		
+		_target = type ? (_current + pos) : pos;		
 		if (_target != _current) {
 			recalculateSpeed(); 
 			_workState = true; 
