@@ -1,6 +1,9 @@
 #pragma once
 #include <Arduino.h>
 
+#ifdef __AVR__
+#include <util/delay.h>
+#endif
 /*
 	GyverStepper - производительная библиотека для управления шаговыми моторами
 	- Поддержка 4х пинового (шаг и полушаг) и STEP-DIR драйверов
@@ -20,6 +23,7 @@
 	v1.1 - добавлена возможность плавного управления скоростью в KEEP_SPEED (см. пример accelDeccelButton)
 	v1.2 - добавлена поддержка ESP8266
 	v1.3 - изменена логика работы setTarget(, RELATIVE)
+	v1.4 - добавлена задержка для STEP, настроить можно дефайном DRIVER_STEP_TIME
 		
 	Документация: https://alexgyver.ru/gyverstepper/
 	Алгоритм из AccelStepper: https://www.airspayce.com/mikem/arduino/AccelStepper/
@@ -135,6 +139,10 @@ uint16_t stepTime;
 // мин. скорость для FOLLOW_POS
 #define _MIN_STEPPER_SPEED 20
 
+#ifndef DRIVER_STEP_TIME
+#define DRIVER_STEP_TIME 4
+#endif
+
 enum GS_driverType {
 	STEPPER2WIRE,
 	STEPPER4WIRE,
@@ -222,6 +230,11 @@ public:
 				// ~4 us
 				setPin(1, (_dir > 0 ? _globDir : !_globDir) );
 				setPin(0, 1);	// HIGH
+#ifdef __AVR__
+				_delay_us(DRIVER_STEP_TIME);
+#else
+				delayMicroseconds(DRIVER_STEP_TIME);
+#endif
 				setPin(0, 0);	// LOW
 			} else {
 				// ~5.7 us	
