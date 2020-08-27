@@ -24,6 +24,7 @@
 	v1.2 - добавлена поддержка ESP8266
 	v1.3 - изменена логика работы setTarget(, RELATIVE)
 	v1.4 - добавлена задержка для STEP, настроить можно дефайном DRIVER_STEP_TIME
+	v1.5 - пофикшен баг для плат есп
 		
 	Документация: https://alexgyver.ru/gyverstepper/
 	Алгоритм из AccelStepper: https://www.airspayce.com/mikem/arduino/AccelStepper/
@@ -342,7 +343,7 @@ public:
 		if (smooth) {	// плавный старт		
 			if (_accelSpeed == _speed) return;	// скорости совпадают? Выходим
 			_smoothStart = true;
-			_smoothPlannerPrd = map(max(abs(speed), abs(_accelSpeed)), 1000, 20000, 15000, 1000);
+			_smoothPlannerPrd = map(max(abs(speed), abs((int)_accelSpeed)), 1000, 20000, 15000, 1000);
 			_smoothPlannerPrd = constrain(_smoothPlannerPrd, 15000, 1000);	
 		} else {		// резкий старт
 			if (speed == 0) {brake(); return;}	// скорость 0? Отключаемся и выходим
