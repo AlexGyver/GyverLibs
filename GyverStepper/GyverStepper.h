@@ -343,7 +343,16 @@ public:
 		if (smooth) {	// плавный старт		
 			if (_accelSpeed == _speed) return;	// скорости совпадают? Выходим
 			_smoothStart = true;
+#ifdef __AVR__
 			_smoothPlannerPrd = map(max(abs(speed), abs((int)_accelSpeed)), 1000, 20000, 15000, 1000);
+#else
+			// горячий привет тупому компилятору ESP8266 и индусам, которые его настраивали
+			int speed1 = abs(speed);
+			int speed2 = abs((int)_accelSpeed);
+			int maxSpeed = max(speed1, speed2);
+			_smoothPlannerPrd = map(maxSpeed, 1000, 20000, 15000, 1000);
+#endif
+			
 			_smoothPlannerPrd = constrain(_smoothPlannerPrd, 15000, 1000);	
 		} else {		// резкий старт
 			if (speed == 0) {brake(); return;}	// скорость 0? Отключаемся и выходим
