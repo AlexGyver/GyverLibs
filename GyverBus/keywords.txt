@@ -1,0 +1,73 @@
+#######################################
+# Syntax Coloring Map For GyverBus
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+GyverBus	KEYWORD1
+GBus	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+tick	KEYWORD2
+getStatus	KEYWORD2
+gotData	KEYWORD2
+getTXaddress	KEYWORD2
+isBusy	KEYWORD2
+sendData	KEYWORD2
+readData	KEYWORD2
+sendRaw	KEYWORD2
+sendRequest	KEYWORD2
+gotRequest	KEYWORD2
+gotRaw	KEYWORD2
+rawSize	KEYWORD2
+
+sendAck	KEYWORD2
+gotAck	KEYWORD2
+sendRequestAck	KEYWORD2
+
+GBUS_is_busy	KEYWORD2
+GBUS_send_raw	KEYWORD2
+GBUS_send_crc	KEYWORD2
+GBUS_send_no_crc	KEYWORD2
+GBUS_read_raw	KEYWORD2
+GBUS_read_crc	KEYWORD2
+GBUS_read_no_crc	KEYWORD2
+GBUS_send_request	KEYWORD2
+GBUS_read_request	KEYWORD2
+GBUS_send_ack	KEYWORD2
+GBUS_read_ack	KEYWORD2
+GBUS_send_request_ack	KEYWORD2
+
+GBUS_crc_update	KEYWORD2
+packDataBytes	KEYWORD2
+unpackDataBytes	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+GBUS_IDLE	LITERAL1
+TRANSMITTING	LITERAL1
+TX_OVERFLOW	LITERAL1
+TX_COMPLETE	LITERAL1
+RECEIVING	LITERAL1
+RX_ERROR	LITERAL1
+RX_ABORT	LITERAL1
+RX_OVERFLOW	LITERAL1
+RX_ADDRESS_ERROR	LITERAL1
+RX_CRC_ERROR	LITERAL1
+RX_REQUEST	LITERAL1
+RX_COMPLETE	LITERAL1
+RX_ACK	LITERAL1
+
+ACK_ERROR	LITERAL1
+ACK_ONLY	LITERAL1
+ACK_DATA	LITERAL1
+
+GBUS_RX	LITERAL1
+GBUS_TX	LITERAL1
+GBUS_FULL	LITERAL1
+GBUS_NO_CRC	LITERAL1
+GBUS_CRC	LITERAL1
