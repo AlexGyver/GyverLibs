@@ -49,6 +49,7 @@
 ---
 
 <a id="GyverBus"></a>
+![Logo](/logos/busLogo.png)
 ### GyverBus v1.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverBus/GyverBus.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverbus/)
 GyverBus - библиотека для общения по протоколу GBUS
 - Очень простой, надёжный, устойчивый к помехам и задержкам, но медленный интерфейс связи на базе UART
@@ -185,6 +186,7 @@ byte GBUS_send_request_ack(byte pin, byte to, byte from, byte tries, int timeout
 ---
 
 <a id="PWMrelay"></a>
+![Logo](/logos/pwmrelay.png)
 ### PWMrelay v1.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/PWMrelay/PWMrelay.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/pwmrelay/)
 Библиотека для генерации сверхнизкочастотного ШИМа для релюшек
 - Встроенный таймер на миллис
@@ -211,6 +213,7 @@ void setLevel(bool level);                  // установить устано
 ---
 
 <a id="microLED"></a>
+![Logo](/logos/microLED.png)
 ### microLED v2.3 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microLED/microLED.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/microled/)
 microLED - ультра-лёгкая библиотека для работы с адресной лентой/матрицей
 - Основная фишка: сжатие цвета, код занимает в разы меньше места в SRAM по сравнению с аналогами (FastLED, NeoPixel и др.)
@@ -317,6 +320,7 @@ PURPLE
 ---
 
 <a id="GyverPower"></a>
+![Logo](/logos/power.png)
 ### GyverPower v1.4 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverPower/GyverPower.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverpower/)
 GyverPower - библиотека для расширенного управления энергопотреблением микроконтроллера
 - Управление системным клоком
@@ -438,6 +442,7 @@ minimLibs это набор классов, являющихся облегчё�
 ---
 
 <a id="microBME280"></a>
+![Logo](/logos/bme280.png)
 ### microBME280 v1.4 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microWire/microBME280.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/microlibs/)
 Лёгкая библиотека для работы с датчиком BME280
 - Легче аналогов =)
@@ -469,6 +474,7 @@ void setPressOversampling(uint8_t mode);	// Set oversampling or disable pressure
 ---
 
 <a id="microWire"></a>
+![Logo](/logos/wirelogo.png)
 ### microWire v2.1 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microWire/microWire.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/microlibs/)
 Лёгкая библиотека с минимальным набором инстурментов для работы с модулями по шине I2C
 - Не является полноценным аналогом библиотеки Wire!!!
@@ -498,6 +504,7 @@ uint8_t receive_nack(void);
 ---
 
 <a id="microDS3231"></a>
+![Logo](/logos/ds3231logo.png)
 ### microDS3231 v1.4 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microDS3231/microDS3231.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/microlibs/)
 Ультра лёгкая библиотека для работы с RTC DS3231
 - Для работы нужна библиотека **microWire.h**
@@ -527,6 +534,7 @@ uint8_t getMonth(void);         // получить месяц
 ---
 
 <a id="microDS18B20"></a>
+![Logo](/logos/ds18b20Logo.png)
 ### microDS18B20 v2.2 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microDS18B20/microDS18B20.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/microlibs/)
 Ультра лёгкая библиотека для работы с датчиком температуры Dallas DS18B20
 - Разработано by Egor 'Nich1con' Zaharov
@@ -547,6 +555,7 @@ float getTemp(void);        // получить температуру
 ---
 
 <a id="microLiquidCrystal_I2C"></a>
+![Logo](/logos/lcdLogo.png)
 ### microLiquidCrystal_I2C v1.1 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microLiquidCrystal_I2C/microLiquidCrystal_I2C.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/microlibs/)
 Библиотека для LCD дисплея с переходником на I2C, облегчена за счёт использования microWire
 - Для работы нужна библиотека **microWire.h**
@@ -566,6 +575,7 @@ float getTemp(void);        // получить температуру
 ---
 
 <a id="GyverButton"></a>
+![Logo](/logos/btnLogo.png)
 ### GyverButton v3.5 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverButton/GyverButton.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverbutton/)
 Библиотека для многофункциональной отработки нажатия кнопок с Arduino. Возможности:
 - Работа с нормально замкнутыми и нормально разомкнутыми кнопками
@@ -634,6 +644,7 @@ void resetStates();     // сбрасывает все is-флаги и счёт
 ---
 
 <a id="GyverEncoder "></a>
+![Logo](/logos/encLogo.png)
 ### GyverEncoder v4.8 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverEncoder/GyverEncoder.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/encoder/)
 Библиотека для отработки энкодера с Arduino. Возможности:
 - Отработка поворота с антидребезгом
@@ -684,6 +695,7 @@ boolean isHold();                        // возвращает true при у�
 ---
 
 <a id="GyverUART"></a>
+![Logo](/logos/uartLogo.png)
 ### GyverUART v1.10 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverUART/GyverUART.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyveruart/)
 Лёгкая библиотека для работы с последовательным портом. Практически полный аналог стандартного Serial, но гораздо легче и быстрее (например, чтение быстрее в 2 раза). Данная библиотека вшита в моё ядро [GyverCore](https://github.com/AlexGyver/GyverCore), при его использовании дополнительно библиотеку подключать не нужно!
 
@@ -726,6 +738,7 @@ parseFloat      | 1108    | 366       | 742
 ---
 
 <a id="GyverTimers"></a>
+![Logo](/logos/timerslogo.png)
 ### GyverTimers v1.3 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverTimers/GyverTimers.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/GyverTimers/)
 Настройка и контроль прерываний по аппаратным таймерам:
 - Поддерживаются все три таймера на ATmega328 и шесть таймеров на ATmega2560;		
@@ -770,6 +783,7 @@ ISR(TIMERn_A) {
 ---
 
 <a id="GyverTimer012"></a>
+![Logo](/logos/gtimer012.png)
 ### GyverTimer012 v1.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverTimer012/GyverTimer012.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyvertimer012/)
 **Библиотека устарела. Используйте GyverTimers**  
 Лёгкая библиотека для управления всеми тремя таймерами ATmega328
@@ -798,6 +812,7 @@ void timerN_restart(void);              // перезапустить
 ---
 
 <a id="buildTime"></a>
+![Logo](/logos/buildLogo.png)
 ### buildTime v1.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/buildTime/buildTime.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/buildtime/)
 Лёгкая библиотека для получения даты и времени компиляции скетча
 - Написана на "дефайнах", очень лёгкая и быстрая
@@ -823,6 +838,7 @@ BUILD_SEC	- секунда
 ---
 
 <a id="directADC"></a>
+![Logo](/logos/adclogo.png)
 ### directADC v1.1 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/directADC/directADC.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/directadc/)
 Библиотека для расширенного (ручного) управления АЦП и компаратором ATmega328
 - Функции библиотеки позволяют получить доступ ко всем возможностям и режимам работы с АЦП и компаратором
@@ -862,6 +878,7 @@ void ACOMP_setNegativeInput(ADC_modes in);  // Настроить куда по�
 ---
 
 <a id="directTimers"></a>
+![Logo](/logos/direcrtimersLogo.png)
 ### directTimers v1.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/directTimers/directTimers.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/directtimers/)
 Библиотека для расширенного (ручного) управления таймерами ATmega328
 - Функции библиотеки позволяют получить доступ ко всем возможностям и режимам работы с таймерами/счётчиками + прерывания watchdog
@@ -898,6 +915,7 @@ void WDT_detachInterrupt(void);
 ---
 
 <a id="GyverPWM"></a>
+![Logo](/logos/pwmLogo.png)
 ### GyverPWM v1.34 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverPWM/GyverPWM.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverpwm/)
 Библиотека для расширенной генерации ШИМ на Arduino UNO/NANO/MINI (ATmega328p)
 - Генерация ШИМ любой частоты от 250 Гц до 200 кГц на пинах D3, D5, D9 и D10
@@ -1057,6 +1075,7 @@ void PWM_TMR1_10BIT();	// Установить таймер 1 (ШИМ на D9 и
 ---
 
 <a id="GyverWDT"></a>
+![Logo](/logos/wdtLogo.png)
 ### GyverWDT v2.1 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverWDT/GyverWDT.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverwdt/)
 Библиотека для расширенной и удобной работы с watchdog
 - Перезагрузка по прерыванию
@@ -1085,6 +1104,7 @@ void enable(uint8_t mode, uint8_t prescaler);   // включить WDT с на�
 ---
 
 <a id="ServoSmooth"></a>
+![Logo](/logos/servoLogo.png)
 ### ServoSmooth v3.4 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/ServoSmooth/ServoSmooth.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/servosmooth/)
 Библиотека для плавного управления сервоприводами
 - Является дополнением к стандартной библиотеке Servo
@@ -1136,6 +1156,7 @@ int getTargetDeg();							// получение целевой позиции в
 ---
 
 <a id="GyverFilters"></a>
+![Logo](/logos/filLogo.png)
 ### GyverFilters v2.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverFilters/GyverFilters.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverfilters/)
 Библиотека с некоторыми удобными фильтрами для Arduino:
 - GFilterRA - компактная альтернатива фильтра экспоненциальное бегущее среднее (Running Average)			
@@ -1207,6 +1228,7 @@ float getDelta();	// получить аппроксимированное из�
 ---
 
 <a id="GyverTimer"></a>
+![Logo](/logos/gtimer.png)
 ### GyverTimer v3.2 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverTimer/GyverTimer.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyvertimer/)
 GTimer - полноценный таймер на базе системных millis() / micros(), обеспечивающий удобную мультизадачность и работу с временем
 - Миллисекундный и микросекундный таймер
@@ -1242,6 +1264,7 @@ void resume();                          // продолжить (без сбро
 ---
 
 <a id="GyverHacks"></a>
+![Logo](/logos/hacksLogo.png)
 ### GyverHacks v2.10 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverHacks/GyverHacks.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverhacks/)
 Библиотека с некоторыми удобными хаками для Arduino UNO/NANO/MINI (atmega328):
 - Быстрые аналоги стандартных функций чтения/записи (v2.8 исправлен баг)
@@ -1343,6 +1366,7 @@ float getTemp();		// получить примерную температуру 
 ---
 
 <a id="GyverMotor"></a>
+![Logo](/logos/motorLogo.png)
 ### GyverMotor v2.2 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverMotor/GyverMotor.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyvermotor/)
 Библиотека для удобного управления моторчиками через драйвер полного моста для Arduino
 - Контроль скорости и направления вращения
@@ -1407,6 +1431,7 @@ int16_t _duty = 0;
 ---
 
 <a id="GyverStepper"></a>
+![Logo](/logos/stepperLogo.png)
 ### GyverMotor v1.4 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverStepper/GyverStepper.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverstepper/)
 GyverStepper - производительная библиотека для управления шаговыми моторами
 - Поддержка 4х пинового (шаг и полушаг) и STEP-DIR драйверов
@@ -1530,6 +1555,7 @@ uint16_t stepTime;
 ---
 
 <a id="AccelMotor"></a>
+![Logo](/logos/accelMotor.png)
 ### AccelMotor v1.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/AccelMotor/AccelMotor.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/accelmotor/)
 Библиотека для управления моторчиками через драйвер моста для Arduino с обратной связью
 - Наследует все фишки из библиотеки GyverMotor (поддержка разных драйверов и режимов)
@@ -1627,6 +1653,7 @@ void setStopZone(int zone);
 ---
 
 <a id="GyverRGB"></a>
+![Logo](/logos/rgbLogo.png)
 ### GyverRGB v1.16 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverRGB/GyverRGB.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverrgb-lib/)
 Библиотека для удобного управления RGB светодиодами и лентами для Arduino
 - 1530 значений для colorWheel
@@ -1713,6 +1740,7 @@ void fadeTo(uint8_t new_r, uint8_t new_g, uint8_t new_b, uint16_t fadeTime);
 ---
 
 <a id="GyverTM1637"></a>
+![Logo](/logos/tm1637.png)
 ### GyverTM1637 v1.4 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverTM1637/GyverTM1637.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/tm1637_display/)
 Бибилотека для 7 сегментного дисплея на чипе TM1637 с кучей приколюх
 - Вывод цифр массивом или прицельно
@@ -1776,6 +1804,7 @@ void twistByte(uint8_t bit0, uint8_t bit1, uint8_t bit2, uint8_t bit3, int delay
 ---
 
 <a id="GyverPID"></a>
+![Logo](/logos/pidLogo.png)
 ### GyverPID v2.4 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverPID/GyverPID.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverpid/)
 Библиотека классического PID регулятора для Arduino
 - Время одного расчёта около 70 мкс
@@ -1818,6 +1847,7 @@ void tune(float new_kp, float new_ki, float new_kd);		// перенастрой�
 ---
 
 <a id="GyverRelay"></a>
+![Logo](/logos/relayLogo.png)
 ### GyverRelay v2.1 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverRelay/GyverRelay.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverrelay/)
 Библиотека классического релейного регулятора для Arduino
 - Обратная связь по скорости изменения величины
@@ -1860,6 +1890,7 @@ int16_t sampleTime = 1000;          // время итерации, мс (по �
 ---
 
 <a id="GyverRTOS"></a>
+![Logo](/logos/rtoslogo.png)
 ### GyverRTOS v1.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverRTOS/GyverRTOS.zip)
 Система реального времени для Arduino: максимальное энергосбережение и мультизадачность
 - Во время сна функция millis() не работает, вместо неё используется переменная mainTimer, которая автоматически увеличивается при каждом пробуждении на время сна (SLEEP_PERIOD) В ХОЛОСТОМ РЕЖИМЕ
