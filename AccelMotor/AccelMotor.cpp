@@ -4,15 +4,27 @@
 bool AccelMotor::tick(long pos) {
 	_currentPos = pos;
 	if (millis() - _tmr2 > _dt) {
-		_tmr2 += _dt;
+		_dts = (millis() - _tmr2) / 1000.0;
+		_tmr2 = millis();
 		_curSpeed = (long)(_currentPos - _lastPos) / _dts;	// ищем скорость в тиках/секунду
 		_curSpeed = filter(_curSpeed);  // медиана + RA
 		_lastPos = _currentPos;
-		
 		switch (_runMode) {		
 		case ACCEL_POS:
 			{
 				long err = _targetPos - controlPos;												// "ошибка" позиции
+				if (err != 0) {
+					if (_accel != 0) {
+						bool thisDir = (controlSpeed * controlSpeed / _accel / 2.0 >= abs(err));  // пора тормозить
+						controlSpeed += _accel * _dts * (thisDir ? -_sign(controlSpeed) : _sign(err));
+					} else {
+						controlSpeed = err / _dts;	// профиль постоянной скорости
+					}
+					controlSpeed = constrain(controlSpeed, -_maxSpeed, _maxSpeed);
+					controlPos += controlSpeed * _dts;
+				}
+				/*
+				// старый алгоритм
 				if (err != 0) {
 					float accelDt = _accel * _dts;
 					float accel = accelDt;
@@ -32,6 +44,7 @@ bool AccelMotor::tick(long pos) {
 					_lastSpeed = controlSpeed;	
 					
 				}
+				*/
 				PIDcontrol(controlPos, _currentPos, true);
 			}
 			break;
@@ -39,19 +52,19 @@ bool AccelMotor::tick(long pos) {
 			PIDcontrol(_targetPos, _currentPos, true);
 			break;
 		case ACCEL_SPEED:
-			{
+			{				
 				int err = _targetSpeed - _curSpeed;						// ошибка скорости
-				float reducer = min(abs(err) / _accel, 1.0);			// уменьшает ускорение, если шаг будет дальше чем установка
-				_dutyF += (float)_sign(err) * _accel * _dts * reducer;	// ускоряем/замедляем
+				//float reducer = min(abs(err) / _accel*10.0, 1.0);		// уменьшает ускорение, если шаг будет дальше чем установка
+				_dutyF += (float)_sign(err) * _accel/10 * _dts;			// ускоряем/замедляем
 				_dutyF = constrain(_dutyF, -_maxDuty, _maxDuty);		// ограничитель 8/10 бит
-				setSpeed(_dutyF);
+				setSpeed(_dutyF);				
 			}			
 			break;
 		case PID_SPEED:			
 			PIDcontrol(_targetSpeed, _curSpeed, false);			
 			break;
 		}		
-	}
+	}	
 	if (_runMode > 1) return (getState() != 0);
 	else return (getState() != 0 || abs(_targetPos - _currentPos) > _stopzone);
 }
@@ -90,7 +103,7 @@ void AccelMotor::setDt(int dt) {
 void AccelMotor::setCurrent(long pos) {	
 	_currentPos = pos;
 }
-void AccelMotor::setRunMode(runMode mode) {
+void AccelMotor::setRunMode(AM_runMode mode) {
 	_runMode = mode;
 	if (mode == ACCEL_POS) controlPos = _currentPos;		// костыль!
 }
@@ -157,11 +170,11 @@ void AccelMotor::setMaxSpeed(int speed) {
 void AccelMotor::setMaxSpeedDeg(int speed) {
 	_maxSpeed = (long)speed * _ratio / 360;
 }
-void AccelMotor::setAcceleration(float accel) {
+void AccelMotor::setAcceleration(int accel) {
 	_accel = accel;
 }
-void AccelMotor::setAccelerationDeg(float accel) {
-	_accel = (float)accel * _ratio / 360.0;
+void AccelMotor::setAccelerationDeg(int accel) {
+	_accel = accel * _ratio / 360.0;
 }
 
 // ==== filter ====

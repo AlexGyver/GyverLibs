@@ -35,8 +35,8 @@ void setup() {
   //motor.setMaxSpeed(400); // в тиках/сек
 
   // установка ускорения для режима ACCEL_POS
-  motor.setAccelerationDeg(10);  // в градусах/сек/сек
-  //motor.setAcceleration(10);  // в тиках
+  motor.setAccelerationDeg(300);  // в градусах/сек/сек
+  //motor.setAcceleration(300);  // в тиках
 
   // минимальный (по модулю) ШИМ сигнал (при котором мотор трогается)
   motor.setMinDuty(50);

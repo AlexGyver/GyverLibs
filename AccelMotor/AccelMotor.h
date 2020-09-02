@@ -2,7 +2,7 @@
 #include <Arduino.h>
 #include <GyverMotor.h>
 
-// БЕТА! ЭТО БЕТА! beta 0.0000 кек
+// v1.1
 
 /*
 	Библиотека для расширенного управления и стабилизации мотора с энкодером
@@ -17,7 +17,7 @@
 	- Все функции работают в градусах и "тиках" энкодера
 */
 
-enum runMode {	
+enum AM_runMode {	
 	ACCEL_POS,
 	PID_POS,
 	ACCEL_SPEED,
@@ -59,8 +59,8 @@ public:
 	void setMaxSpeedDeg(int speed);
 	
 	// установка ускорения тиках энкодера и градусах в секунду
-	void setAcceleration(float accel);
-	void setAccelerationDeg(float accel);
+	void setAcceleration(int accel);
+	void setAccelerationDeg(int accel);
 	
 	// установка и получение целевой скорости в тиках энкодера/секунду и градусах/секунду
 	void setTargetSpeed(int speed);
@@ -81,7 +81,7 @@ public:
 	// PID_POS - tick() работает в режиме резкого следования к целевому углу
 	// ACCEL_SPEED - tick() работает в режиме плавного поддержания скорости (с заданным ускорением)
 	// PID_SPEED - tick() работает в режиме поддержания скорости по ПИД регулятору
-	void setRunMode(runMode mode);
+	void setRunMode(AM_runMode mode);
 	
 	// возвращает true, если вал мотора заблокирован, а сигнал подаётся
 	bool isBlocked();
@@ -114,16 +114,16 @@ private:
 	float _dts = 0.02;
 	long _lastPos = 0, _currentPos = 0, _targetPos = 0;
 	int _curSpeed = 0;
-	int _maxSpeed = 0, _targetSpeed = 0;
+	int _maxSpeed = 300, _targetSpeed = 0;
 	float _ratio = 1;
 	uint32_t _tmr2 = 0;
-	float _accel = 1;
+	int _accel = 300;
 	float _dutyF = 0;
 	long controlPos = 0;
 	float controlSpeed = 0;
 	int _stopzone = 8;
 	long _prevInput = 0;
-	runMode _runMode = IDLE_RUN;
+	AM_runMode _runMode = IDLE_RUN;
 };
 
 /*
