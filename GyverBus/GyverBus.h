@@ -15,6 +15,8 @@
 	- Поддерживаются все Arduino-совместимые платы
 	- Сама библиотека предоставляет возможности по отладке (коды ошибок)
 		- В примерах есть компактные варианты чтения и отправки данных, влезет даже в ATtiny
+		
+	- Версия 1.1: добавлена waitAck() и исправлена ошибочка
 */
 
 /*
@@ -61,13 +63,25 @@
 	sendAck(адрес) - отправляет ack (ответ на запрос) по адресу
 	gotAck() - вернёт true, если на наш адрес пришёл ack (ответ на запрос). Сам сбрасывается в false. Адрес отправителя можно узнать в getTXaddress()	
 	
+	waitAck(адрес, кол-во попыток, таймаут) - ждёт ответа с указанного адреса. Если не дожидается за таймаут - отправляет ещё реквест
+	И так далее пока не выйдет количество попыток.
+	ФУНКЦИЯ НЕ БЛОКИРУЮЩАЯ
+	Коды возврата:
+	0 [ACK_IDLE] - функция работает вхолостую
+	1 [ACK_WAIT] - ждём ответа
+	2 [ACK_ERROR] - не дождались ответа
+	3 [ACK_ONLY] - получен ack
+	4 [ACK_DATA] - получена дата
+	Смотри примеры wait_ack
+	
 	sendRequestAck(адрес, кол-во попыток, таймаут) - отправляет реквест на адрес. 
 	Ждёт ответ (ack или data), если не дожидается в теч. таймаута - отправляет ещё раз.
-	Если количество попыток превышено - возвращает ACK_ERROR (0 ноль).
-	Если принят ack - возвращает ACK_ONLY (1 единица)
-	Если принята дата - возвращает ACK_DATA (2 два)
+	Коды возврата:
+	2 [ACK_ERROR] - не дождались ответа
+	3 [ACK_ONLY] - получен ack
+	4 [ACK_DATA] - получена дата
 	ФУНКЦИЯ БЛОКИРУЮЩАЯ
-	Смотри примеры call_response_tx_ack и call_response_rx_ack
+	Смотри примеры call_response_ack
 	
 	sendRaw(байтовый массив, размер) - отправит сырые байты (без протокола) по шине. Смотри примеры в папке raw	
 	gotRaw() - вернёт true, были приняты какие-то данные (приём завершён успешно). Сам сбрасывается в false.
@@ -80,7 +94,7 @@
 	Интерфейс: UART. start бит 0, stop бит 1. Кодирование даты: HIGH - 0x1, LOW - 0x0
 	
 	1  _______     ___        ___     ______     ___     .........._________
-		      |___|   |______|   |___|      |___|   |___|                    конец передачи
+			  |___|   |______|   |___|      |___|   |___|                    конец передачи
 	0         start 0   1   2  3   4   5  6   7 stop start         stop     
 	
 	Протокол: 
@@ -100,9 +114,12 @@
 #define GBUS_FULL 2
 #define GBUS_NO_CRC 0
 #define GBUS_CRC 1
-#define ACK_ERROR 0
-#define ACK_ONLY 1
-#define ACK_DATA 2
+
+#define ACK_IDLE 0
+#define ACK_WAIT 1
+#define ACK_ERROR 2
+#define ACK_ONLY 3
+#define ACK_DATA 4
 
 // ЗАМЕТКИ
 // Отключение DEBUG_CODES экономит ~160 байт Flash
@@ -250,7 +267,7 @@ public:
 								}
 								if (_byteCount < buffer[0]) {			// передача прервана
 									_rxstage = RX_FINISH;
-									_set_status_code(RX_ABORTED);
+									_set_status_code(RX_ABORT);
 									return _status;
 								}
 								if (_CRC) {
@@ -362,7 +379,40 @@ public:
 			_txstage = TX_START;  	// флаг на передачу
 			_role = GBUS_TX;		// теперь ты отправитель
 			_txSize = 3;			// отправляем 3 байта
+			if (_ackStage == ACK_IDLE) {
+				_ackTimer = millis();
+				_ackTries = 0;
+				_ackStage = ACK_WAIT;
+			}
 		}
+	}
+	
+	byte waitAck(byte addr, byte tries, int timeout) {
+		switch (_ackStage) {
+		case ACK_IDLE:
+			break;
+			
+		case ACK_WAIT:
+			if (gotData()) {
+				_ackStage = ACK_IDLE;
+				return ACK_DATA;
+			}
+			if (gotAck()) {
+				_ackStage = ACK_IDLE;
+				return ACK_ONLY;
+			}
+			if (millis() - _ackTimer >= timeout) {
+				_ackTimer = millis();
+				_ackTries++;
+				if (_ackTries >= tries) {
+					_ackStage = ACK_IDLE;
+					return ACK_ERROR;
+				}
+				sendRequest(addr);	
+			}
+			break;
+		}
+		return _ackStage;
 	}
 	
 	bool gotRequest() {
@@ -394,13 +444,13 @@ public:
 			while (tick() == GBUS_IDLE);	// ждём таймаут
 			while (tick() != TX_COMPLETE);	// ждём отправку
 			byte thisTry = 0;
-			uint32_t tmr = GBUS_TIME();
+			uint32_t tmr = millis();
 			while (1) {
 				tick();								// принимаем или отправляем
 				if (gotData()) return ACK_DATA;		// приняли дату
 				if (gotAck()) return ACK_ONLY;		// приняли ответ
-				if (GBUS_TIME() - tmr >= timeout) {	// таймаут
-					tmr = GBUS_TIME();
+				if (millis() - tmr >= timeout) {	// таймаут
+					tmr = millis();
 					thisTry++;
 					if (thisTry >= tries) return ACK_ERROR;	// превышено количество попыток
 					sendRequest(addr);				// снова шлём запрос
@@ -473,6 +523,7 @@ private:
 	byte _txAddress;
 	byte _addr;
 	byte _bufOffset = _CRC ? 4 : 3;
+	byte _crc = 0;
 	
 	byte _role = GBUS_RX;
 	TX_stage _txstage = TX_IDLE;
@@ -489,7 +540,10 @@ private:
 	bool _ackFlag = false;
 	bool _rawFlag = false;
 	byte _rawSize = 0;
-	byte _crc = 0;
+	
+	uint32_t _ackTimer;
+	byte _ackTries = 0;
+	byte _ackStage = 0;
 };
 
 // =============== УТИЛИТЫ ===============
