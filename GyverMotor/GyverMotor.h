@@ -15,6 +15,7 @@
 	- Версия 2.1: небольшие фиксы и добавления
 	- Версия 2.2: оптимизация
 	- Версия 2.3: добавлена поддержка esp (исправлены ошибки)
+	- Версия 2.4: совместимость с другими библами
 		
 	Документация: https://alexgyver.ru/gyvermotor/
 	AlexGyver, 2020
@@ -28,10 +29,8 @@ enum GM_driverType {
 	RELAY2WIRE,
 };
 
-enum GM_dir {
-	NORMAL,
-	REVERSE,
-};
+#define NORMAL 0
+#define REVERSE 1
 
 enum GM_workMode {
 	FORWARD,
@@ -65,7 +64,7 @@ public:
 	// направление вращения	
 	// NORM - обычное
 	// REVERSE - обратное
-	void setDirection(GM_dir direction);
+	void setDirection(bool direction);
 	
 	// установить минимальную скважность (при которой мотор начинает крутиться)
 	void setMinDuty(int duty);

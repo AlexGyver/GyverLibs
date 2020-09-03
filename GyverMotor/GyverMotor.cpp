@@ -104,7 +104,7 @@ void GMotor::setSmoothSpeed(uint8_t speed) {
 	_speed = speed;
 }
 
-void GMotor::setDirection(GM_dir direction) {
+void GMotor::setDirection(bool direction) {
 	_direction = direction;
 }
 

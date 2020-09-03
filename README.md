@@ -182,7 +182,6 @@ byte GBUS_send_request_ack(byte pin, byte to, byte from, byte tries, int timeout
 </p>
 </details>
 
-
 ---
 
 <a id="PWMrelay"></a>
@@ -1367,7 +1366,7 @@ float getTemp();		// получить примерную температуру 
 
 <a id="GyverMotor"></a>
 ![Logo](/logos/motorLogo.png)
-### GyverMotor v2.2 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverMotor/GyverMotor.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyvermotor/)
+### GyverMotor v2.4 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverMotor/GyverMotor.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyvermotor/)
 Библиотека для удобного управления моторчиками через драйвер полного моста для Arduino
 - Контроль скорости и направления вращения
 - Работа с 10 битным ШИМом
@@ -1432,7 +1431,7 @@ int16_t _duty = 0;
 
 <a id="GyverStepper"></a>
 ![Logo](/logos/stepperLogo.png)
-### GyverMotor v1.4 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverStepper/GyverStepper.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverstepper/)
+### GyverStepper v1.5 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverStepper/GyverStepper.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverstepper/)
 GyverStepper - производительная библиотека для управления шаговыми моторами
 - Поддержка 4х пинового (шаг и полушаг) и STEP-DIR драйверов
 - Автоматическое отключение питания при достижении цели
@@ -1556,7 +1555,7 @@ uint16_t stepTime;
 
 <a id="AccelMotor"></a>
 ![Logo](/logos/accelMotor.png)
-### AccelMotor v1.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/AccelMotor/AccelMotor.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/accelmotor/)
+### AccelMotor v1.2 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/AccelMotor/AccelMotor.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/accelmotor/)
 Библиотека для управления моторчиками через драйвер моста для Arduino с обратной связью
 - Наследует все фишки из библиотеки GyverMotor (поддержка разных драйверов и режимов)
 - Режим поддержания скорости с обратной связью
