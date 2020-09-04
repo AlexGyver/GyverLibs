@@ -50,7 +50,7 @@
 
 <a id="GyverBus"></a>
 ![Logo](/logos/busLogo.png)
-### GyverBus v1.1 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverBus/GyverBus.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverbus/)
+### GyverBus v1.2 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverBus/GyverBus.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverbus/)
 GyverBus - библиотека для общения по протоколу GBUS
 - Очень простой, надёжный, устойчивый к помехам и задержкам, но медленный интерфейс связи на базе UART
 - Двухсторонняя связь по одному проводу

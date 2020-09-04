@@ -17,6 +17,7 @@
 		- В примерах есть компактные варианты чтения и отправки данных, влезет даже в ATtiny
 		
 	- Версия 1.1: добавлена waitAck() и исправлена ошибочка
+	- Версия 1.2: улучшена стабильность, функции оптимизированы, уменьшен вес
 */
 
 /*
@@ -105,8 +106,10 @@
 */
 
 // НАСТРОЙКИ
-#define GBUS_SPEED  300		// скорость (BAUD)
-#define DEBUG_CODES			// закомментируй, чтобы сэкономить 160 байт =)
+#define GBUS_SPEED  300			// скорость (baud)
+#define DEBUG_CODES				// закомментируй, чтобы сэкономить 160 байт =)
+#define DELAY_OFFSET_WRITE 8	// коррекция задержки записи, мкс
+#define DELAY_OFFSET_READ  5	// коррекция задержки чтения, мкс
 
 // КОНСТАНТЫ
 #define GBUS_RX 0
@@ -136,6 +139,8 @@
 #define GBUS_DELAY(x) delay(x)
 #define GBUS_BIT    (1000UL / GBUS_SPEED)
 #define GBUS_TIME millis
+#define DELAY_OFFSET_WRITE 0
+#define DELAY_OFFSET_READ  0
 #endif
 
 #define GBUS_BIT_2  (GBUS_BIT >> 1)
@@ -197,7 +202,7 @@ public:
 
 	GBUSstatus tick() {				
 		if (_role == GBUS_RX) {								// приёмник
-			if (_ROLE == GBUS_RX || _ROLE == GBUS_FULL) {		// компилятор вырежет при выбранной роли
+			if (_ROLE == GBUS_RX || _ROLE == GBUS_FULL) {	// компилятор вырежет при выбранной роли
 				byte bit = digitalRead(_PIN);
 				switch(_rxstage) {
 				case RX_IDLE:
@@ -220,7 +225,7 @@ public:
 							_requestFlag = false;
 							_rawFlag = false;
 							_rawSize = 0;
-							_tmr = GBUS_TIME();
+							_tmr += GBUS_BIT_2;
 						} else {
 							_rxstage = RX_FINISH;
 							_set_status_code(RX_ERROR);
@@ -243,12 +248,13 @@ public:
 							}
 							if (_CRC) GBUS_crc_update(_crc, buffer[_byteCount]);
 							_byteCount++;							// счётчик собранных байтов
-						} else if (_bitCount == 9) {				// старт бит (low)
+						} else if (_bitCount == 9) {				// старт бит (ожидаем low)
+							_bitCount = -1;          				// костыль
 							if (bit) {             					// не дождались нового старт бита. Конец приёма?
 								_rawFlag = true;
 								_rawSize = _byteCount;
 								_txAddress = buffer[2];
-								if (buffer[1] != _addr) {				// адрес не совпал
+								if (buffer[1] != _addr) {					// адрес не совпал
 									_rxstage = RX_FINISH;
 									_set_status_code(RX_ADDRESS_ERROR);
 									return _status;
@@ -265,13 +271,13 @@ public:
 									_ackFlag = true;
 									return _status;
 								}
-								if (_byteCount < buffer[0]) {			// передача прервана
+								if (_byteCount < buffer[0]) {				// передача прервана
 									_rxstage = RX_FINISH;
 									_set_status_code(RX_ABORT);
 									return _status;
 								}
 								if (_CRC) {
-									if (_crc != 0) {				// не совпал CRC
+									if (_crc != 0) {						// не совпал CRC
 										_rxstage = RX_FINISH;
 										_set_status_code(RX_CRC_ERROR);
 										return _status;
@@ -285,13 +291,14 @@ public:
 								return _status;
 							}
 							if (_byteCount > 2) {					// мин. размер пакета
-								if (_byteCount > _bufSize ||   		// буфер переполнен или
-										_byteCount >= buffer[0]) {	// пакет переполнен. Завершаем
+								if (_byteCount > _bufSize) {   		// буфер переполнен, завершаем									
 									_rxstage = RX_FINISH;
 									_set_status_code(RX_OVERFLOW);
 								}
+								if (_byteCount >= buffer[0]) {		// пакет переполнен (ну и *** с ним)									
+									_set_status_code(RX_OVERFLOW);
+								}
 							}							
-							_bitCount = -1;          				// костыль
 						}
 						_bitCount++;								// следующий бит
 					}
@@ -303,7 +310,7 @@ public:
 					break;
 				}
 			}				
-		} else {											// передатчик	
+		} else {												// передатчик	
 			if (_ROLE == GBUS_TX || _ROLE == GBUS_FULL) {		// компилятор вырежет при выбранной роли
 				switch(_txstage) {
 				case TX_IDLE:					
@@ -315,34 +322,29 @@ public:
 						_bitCount = -1;
 						_byteCount = 0;
 						_set_status_code(TRANSMITTING);
-						_tmr = GBUS_TIME() - GBUS_BIT;
+						_tmr = GBUS_TIME()/* - GBUS_BIT*/;
 					}
 					break;
 					
 				case TX_SENDING:
-					if (GBUS_TIME() - _tmr >= GBUS_BIT) {
-						_tmr += GBUS_BIT;
-						if (_bitCount == -1) {
-							pinMode(_PIN, OUTPUT);
-							digitalWrite(_PIN, 0);
-						}
-						else if (_bitCount < 8) {
-							bool bit = (buffer[_byteCount] >> _bitCount) & 1;
-							digitalWrite(_PIN, bit);
-							pinMode(_PIN, !bit);
-						}
-						else if (_bitCount == 8) {
-							digitalWrite(_PIN, 1);
+					if (GBUS_TIME() - _tmr >= GBUS_BIT) {						
+						bool bit;
+						if (_bitCount < 0) bit = 0;						
+						else if (_bitCount < 8) bit = (buffer[_byteCount] >> _bitCount) & 1;						
+						else {
+							bit = 1;							
 							_byteCount++;
 							if (_byteCount == _txSize) {
-								pinMode(_PIN, INPUT_PULLUP);
 								_txstage = TX_FINISH;
-								_set_status_code(TX_COMPLETE);								
+								_set_status_code(TX_COMPLETE);
 								_lastPulse = millis();
-							}							
+							}
 							_bitCount = -2;
 						}
+						pinMode(_PIN, !bit);
+						digitalWrite(_PIN, bit);						
 						_bitCount++;
+						_tmr += GBUS_BIT;
 					}
 					break;
 					

@@ -9,17 +9,17 @@ bool GBUS_is_busy(byte pin);
 // Отправить сырые данные (пин, дата, размер)
 // Формат посылки GBUS [суммарное количество байт, адрес получателя, адрес отправителя, ...байты даты..., CRC]
 // Функция блокирующая на всё время отправки
-// 640 байт (Arduino Nano), 150 байт ATtiny13 (microCore)
+// 640 байт (Arduino Nano), 88 байт ATtiny13 (microCore)
 void GBUS_send_raw(byte pin, byte* data, byte size);
 
 // Отправить данные с CRC (пин, адрес получателя, адрес отправителя, дата, размер)
 // Функция блокирующая на всё время отправки
-// 740 байт (Arduino Nano), 230 байт ATtiny13 (microCore)
+// 740 байт (Arduino Nano), 160 байт ATtiny13 (microCore)
 void GBUS_send_crc(byte pin, byte to, byte from, byte* data, byte size);
 
 // Отправить данные без CRC (пин, адрес получателя, адрес отправителя, дата, размер)
 // Функция блокирующая на всё время отправки
-// 700 байт (Arduino Nano), 200 байт ATtiny13 (microCore)
+// 700 байт (Arduino Nano), 130 байт ATtiny13 (microCore)
 void GBUS_send_no_crc(byte pin, byte to, byte from, byte* data, byte size);
 
 // Прочитать сырые данные (пин, дата, размер)
@@ -103,13 +103,13 @@ bool GBUS_is_busy(byte pin) {
 // ********************* ЧТЕНИЕ **************************
 // *******************************************************
 byte GBUS_read_raw(byte pin, byte* buf, byte size) {
-	int8_t bitCount = 0;			// счётчик битов
-	byte byteCount = 0;				// счётчик байтов
 	if (!digitalRead(pin)) {    	// проверяем старт бит (low)
-		GBUS_DELAY(GBUS_BIT_2);			// ждём половину времени
+		GBUS_DELAY(GBUS_BIT_2-DELAY_OFFSET_READ);		// ждём половину времени
 		if (!digitalRead(pin)) { 	// если всё ещё старт бит (low)
-			while (1) {
-				GBUS_DELAY(GBUS_BIT);								// ждём бит
+			int8_t bitCount = 0;	// счётчик битов
+			byte byteCount = 0;		// счётчик байтов
+			while (1) {				
+				GBUS_DELAY(GBUS_BIT-DELAY_OFFSET_READ);			// ждём бит
 				byte bit = digitalRead(pin);					// читаем
 				if (bitCount < 8) {								// передача битов даты
 					bitWrite(buf[byteCount], bitCount, bit);  	// пишем в буфер
@@ -173,22 +173,18 @@ byte GBUS_read_ack(byte pin, byte addr) {
 // *******************************************************
 // ******************** ОТПРАВКА *************************
 // *******************************************************
-void GBUS_send_raw(byte pin, byte* buf, byte size) {	
+void GBUS_send_raw(byte pin, byte* buf, byte size) {
 	for (byte bytes = 0; bytes < size; bytes++) {
-		pinMode(pin, OUTPUT);						// старт бит
-		digitalWrite(pin, 0);			
-		GBUS_DELAY(GBUS_BIT);
-		for (byte bits = 0; bits < 8; bits++) {
-			bool bit = (buf[bytes] >> bits) & 1;	// биты
+		for (int8_t bits = -1; bits < 9; bits++) {
+			bool bit = 0;
+			if (bits < 0) bit = 0;
+			else if (bits < 8) bit = (buf[bytes] >> bits) & 1;
+			else bit = 1;
 			pinMode(pin, !bit);
-			digitalWrite(pin, bit);			
-			GBUS_DELAY(GBUS_BIT);
+			digitalWrite(pin, bit);
+			GBUS_DELAY(GBUS_BIT-DELAY_OFFSET_WRITE);
 		}
-		pinMode(pin, INPUT);						// стоп бит
-		digitalWrite(pin, 1);
-		GBUS_DELAY(GBUS_BIT);
 	}
-	// тут пин уже автоматом INPUT_PULLUP
 }
 
 // *******************************************************
