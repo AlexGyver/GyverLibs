@@ -172,6 +172,9 @@ enum GBUSstatus {
 #endif
 
 void GBUS_crc_update(uint8_t &crc, uint8_t data);
+byte GBUS_crc_bytes(byte *data, byte size);
+template <typename T> void packDataBytes(byte *buffer, T &data);
+template <typename T> void unpackDataBytes(byte *buffer, T &data);
 
 template <byte _PIN, byte _ROLE = GBUS_FULL, byte _CRC = GBUS_CRC>
 class GBus {
@@ -595,4 +598,10 @@ void GBUS_crc_update(uint8_t &crc, uint8_t data) {
 		data >>= 1;
 	}
 #endif
+}
+
+byte GBUS_crc_bytes(byte *data, byte size) {
+	byte crc = 0;
+	for (byte i = 0; i < size; i++) GBUS_crc_update(crc, data[i]);
+	return crc;
 }

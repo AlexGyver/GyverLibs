@@ -43,6 +43,7 @@ GBUS_read_ack	KEYWORD2
 GBUS_send_request_ack	KEYWORD2
 
 GBUS_crc_update	KEYWORD2
+GBUS_crc_bytes	KEYWORD2
 packDataBytes	KEYWORD2
 unpackDataBytes	KEYWORD2
 
