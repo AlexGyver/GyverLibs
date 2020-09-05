@@ -1,4 +1,4 @@
-// принимаем и распаковываем отправленные в примере packData_mini_send_crc данные
+// принимаем и распаковываем отправленные в примере packData_mini_send данные
 
 #include "GBUSmini.h"  // мини-библиотека с лёгкими функциями
 
@@ -22,7 +22,7 @@ void setup() {
 }
 
 void loop() {
-  if (GBUS_read_crc(RX_PIN, RX_ADDR, buffer, sizeof(buffer))) {
+  if (GBUS_read(RX_PIN, RX_ADDR, buffer, sizeof(buffer))) {
     // если успешно приняли, распаковываем
     unpackDataBytes(buffer, rxData);
     

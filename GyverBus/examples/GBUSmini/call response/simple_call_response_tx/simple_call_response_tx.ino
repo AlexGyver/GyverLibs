@@ -19,7 +19,7 @@ void loop() {
     GBUS_send_request(TX_PIN, RX_ADDR, TX_ADDR);
   }
 
-  if (GBUS_read_crc(TX_PIN, TX_ADDR, buf, sizeof(buf))) {
+  if (GBUS_read(TX_PIN, TX_ADDR, buf, sizeof(buf))) {
     // склеиваем байты обратно в инт
     int val = buf[0] | (buf[1] << 8);
     Serial.print("received ");

@@ -1,5 +1,5 @@
 // пакуем данные любого типа (например, структура) в буфер и отправляем
-// принимаем и распаковываем в примере packData_mini_read_crc
+// принимаем и распаковываем в примере packData_mini_read
 
 #include "GBUSmini.h"	// мини-библиотека с лёгкими функциями
 
@@ -31,6 +31,6 @@ void setup() {
 
 void loop() {
   // пин, адрес получателя, адрес отправителя, дата, размер
-  GBUS_send_crc(TX_PIN, RX_ADDR, TX_ADDR, buffer, sizeof(buffer));
+  GBUS_send(TX_PIN, RX_ADDR, TX_ADDR, buffer, sizeof(buffer));
   delay(2000);
 }

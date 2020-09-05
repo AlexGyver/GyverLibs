@@ -1,5 +1,7 @@
 #pragma once
 #include <GyverBus.h>
+//#define GBUS_MINI_NO_CRC	// раскомментируй или добавь в скетч, чтобы отключить CRC. Уменьшает размер функций на 30 байт для тини13
+
 // ******* ЛЁГКИЕ ФУНКЦИИ ОТПРАВКИ И ЧТЕНИЯ GBUS *******
 // Все функции (кроме GBUS_is_busy) блокируют выполнение кода на время приёма/отправки
 
@@ -15,12 +17,7 @@ void GBUS_send_raw(byte pin, byte* data, byte size);
 // Отправить данные с CRC (пин, адрес получателя, адрес отправителя, дата, размер)
 // Функция блокирующая на всё время отправки
 // 740 байт (Arduino Nano), 160 байт ATtiny13 (microCore)
-void GBUS_send_crc(byte pin, byte to, byte from, byte* data, byte size);
-
-// Отправить данные без CRC (пин, адрес получателя, адрес отправителя, дата, размер)
-// Функция блокирующая на всё время отправки
-// 700 байт (Arduino Nano), 130 байт ATtiny13 (microCore)
-void GBUS_send_no_crc(byte pin, byte to, byte from, byte* data, byte size);
+void GBUS_send(byte pin, byte to, byte from, byte* data, byte size);
 
 // Прочитать сырые данные (пин, дата, размер)
 // Вызывать как можно чаще, чтобы не пропустить. Функция блокирующая на всё время приёма.
@@ -32,13 +29,7 @@ byte GBUS_read_raw(byte pin, byte* buf, byte size);
 // Вызывать как можно чаще, чтобы не пропустить. Функция блокирующая на всё время приёма
 // Возвращает адрес отправителя при успешном завершении приёма. При ошибке возвращает 0
 // 650 байт (Arduino Nano), 330 байт ATtiny13 (microCore)
-byte GBUS_read_crc(byte pin, byte addr, byte* buf, byte size);
-
-// Прочитать данные без CRC (пин, наш адрес, дата, размер)
-// Вызывать как можно чаще, чтобы не пропустить. Функция блокирующая на всё время приёма
-// Возвращает адрес отправителя при успешном завершении приёма. При ошибке возвращает 0
-// 622 байт (Arduino Nano), 300 байт ATtiny13 (microCore)
-byte GBUS_read_no_crc(byte pin, byte addr, byte* buf, byte size);
+byte GBUS_read(byte pin, byte addr, byte* buf, byte size);
 
 // Отправить запрос (пин, адрес получателя, адрес отправителя)
 // Функция блокирующая на всё время отправки
@@ -70,6 +61,12 @@ byte GBUS_send_request_ack(byte pin, byte to, byte from, byte tries, int timeout
 // *******************************************************
 // ********************** СЕРВИС *************************
 // *******************************************************
+#ifndef GBUS_MINI_NO_CRC
+#define GBUS_OFFSET 4
+#else
+#define GBUS_OFFSET 3
+#endif
+
 byte GBUS_send_request_ack(byte pin, byte to, byte from, byte tries, int timeout) {
 	GBUS_send_request(pin, to, from);
 	byte thisTry = 0;
@@ -104,7 +101,7 @@ bool GBUS_is_busy(byte pin) {
 // *******************************************************
 byte GBUS_read_raw(byte pin, byte* buf, byte size) {
 	if (!digitalRead(pin)) {    	// проверяем старт бит (low)
-		GBUS_DELAY(GBUS_BIT_2-DELAY_OFFSET_READ);		// ждём половину времени
+		GBUS_DELAY(GBUS_BIT_2);		// ждём половину времени
 		if (!digitalRead(pin)) { 	// если всё ещё старт бит (low)
 			int8_t bitCount = 0;	// счётчик битов
 			byte byteCount = 0;		// счётчик байтов
@@ -114,8 +111,8 @@ byte GBUS_read_raw(byte pin, byte* buf, byte size) {
 				if (bitCount < 8) {								// передача битов даты
 					bitWrite(buf[byteCount], bitCount, bit);  	// пишем в буфер
 				} else if (bitCount == 8) {						// стоп бит (high)
-					byteCount++;								// счётчик собранных байтов
 					if (!bit) return 0;                   		// ошибка стоп бита. Завершаем
+					byteCount++;								// счётчик собранных байтов					
 				} else if (bitCount == 9) {						// старт бит (low)					
 					if (bit) return byteCount;                	// не дождались старт бита. Конец приёма, возврат количества
 					if (byteCount >= size) return 0;        	// буфер переполнен. Завершаем
@@ -128,44 +125,44 @@ byte GBUS_read_raw(byte pin, byte* buf, byte size) {
 	return 0;
 }
 
+
 // *******************************************************
-byte GBUS_read_no_crc(byte pin, byte addr, byte* buf, byte size) {
-	byte buf2[size + 3];											// буфер на приём
-	byte bytes = GBUS_read_raw(pin, buf2, (size + 3));				// принимаем, получаем количество байт посылки
+byte GBUS_read(byte pin, byte addr, byte* buf, byte size) {
+	byte buf2[size + GBUS_OFFSET];									// буфер на приём
+	byte bytes = GBUS_read_raw(pin, buf2, (size + GBUS_OFFSET));	// принимаем, получаем количество байт посылки
 	if (buf2[0] == bytes && buf2[1] == addr) {						// если совпало количество байт и адрес
-		for (byte i = 0; i < bytes - 3; i++) buf[i] = buf2[i + 3];	// переписываем в буфер в скетче
+#ifndef GBUS_MINI_NO_CRC
+		if (GBUS_crc_bytes(buf2, bytes) != 0) return 0;
+#endif
+		for (byte i = 0; i < bytes - GBUS_OFFSET; i++) buf[i] = buf2[i + 3];	// переписываем в буфер в скетче
 		return buf2[2];												// возвращаем адрес
 	}
 	return 0;														// иначе возвращаем ошибку
 }
 
 // *******************************************************
-byte GBUS_read_crc(byte pin, byte addr, byte* buf, byte size) {
-	byte buf2[size + 4];											// буфер на приём
-	byte bytes = GBUS_read_raw(pin, buf2, (size + 4));				// принимаем, получаем количество байт посылки
-	if (buf2[0] == bytes && buf2[1] == addr) {						// если совпало количество байт и адрес
-		byte crc = 0;
-		for (byte i = 0; i < bytes; i++) GBUS_crc_update(crc, buf2[i]);	// crc
-		if (crc != 0) return 0;										// данные повреждены
-		for (byte i = 0; i < bytes - 4; i++) buf[i] = buf2[i + 3];	// переписываем в буфер в скетче
-		return buf2[2];												// возвращаем адрес
-	}
-	return 0;														// иначе возвращаем ошибку
-}
-
-// *******************************************************
-// структура буфера: [0, адрес получателя, адрес отправителя]
+// структура буфера: [0, адрес получателя, адрес отправителя, CRC]
 byte GBUS_read_request(byte pin, byte addr) {
-	byte buf[3];	
-	if (GBUS_read_raw(pin, buf, 3) == 3 && buf[1] == addr && buf[0] == 0) return buf[2];
+	byte buf[GBUS_OFFSET];	
+	if (GBUS_read_raw(pin, buf, GBUS_OFFSET) == GBUS_OFFSET 
+			&& buf[1] == addr
+#ifndef GBUS_MINI_NO_CRC
+			&& GBUS_crc_bytes(buf, GBUS_OFFSET) == 0
+#endif
+			&& buf[0] == 0) return buf[2];
 	else return 0;
 }
 
 // *******************************************************
-// структура буфера: [1, адрес получателя, адрес отправителя]
+// структура буфера: [1, адрес получателя, адрес отправителя, CRC]
 byte GBUS_read_ack(byte pin, byte addr) {
-	byte buf[3];	
-	if (GBUS_read_raw(pin, buf, 3) == 3 && buf[1] == addr && buf[0] == 1) return buf[2];
+	byte buf[GBUS_OFFSET];	
+	if (GBUS_read_raw(pin, buf, GBUS_OFFSET) == GBUS_OFFSET 
+			&& buf[1] == addr 
+#ifndef GBUS_MINI_NO_CRC
+			&& GBUS_crc_bytes(buf, GBUS_OFFSET) == 0
+#endif
+			&& buf[0] == 1) return buf[2];
 	else return 0;
 }
 
@@ -188,36 +185,33 @@ void GBUS_send_raw(byte pin, byte* buf, byte size) {
 }
 
 // *******************************************************
-void GBUS_send_no_crc(byte pin, byte to, byte from, byte* data, byte size) {
-	byte buf[size + 3];
-	buf[0] = size + 3;
-	buf[1] = to;
-	buf[2] = from;
-	for (byte i = 0; i < size; i++) buf[3 + i] = data[i];
-	GBUS_send_raw(pin, buf, sizeof(buf));
-}
-
-// *******************************************************
-void GBUS_send_crc(byte pin, byte to, byte from, byte* data, byte size) {
-	byte buf[size + 4];
+void GBUS_send(byte pin, byte to, byte from, byte* data, byte size) {
+	byte buf[size + GBUS_OFFSET];
 	byte crc = 0;
-	buf[0] = size + 4;
+	buf[0] = size + GBUS_OFFSET;
 	buf[1] = to;
 	buf[2] = from;
-	for (byte i = 0; i < size; i++) buf[3 + i] = data[i];
-	for (byte i = 0; i < size + 3; i++) GBUS_crc_update(crc, buf[i]);
-	buf[size + 3] = crc;
-	GBUS_send_raw(pin, buf, sizeof(buf));
+	for (byte i = 0; i < size; i++) buf[i + 3] = data[i];
+#ifndef GBUS_MINI_NO_CRC
+	buf[size + 3] = GBUS_crc_bytes(buf, size + 3);
+#endif
+	GBUS_send_raw(pin, buf, size+GBUS_OFFSET);
 }
 
 // *******************************************************
 void GBUS_send_request(byte pin, byte to, byte from) {
-	byte buf[3] = {0, to, from};
-	GBUS_send_raw(pin, buf, sizeof(buf));
+	byte buf[GBUS_OFFSET] = {0, to, from};
+#ifndef GBUS_MINI_NO_CRC
+	buf[3] = GBUS_crc_bytes(buf, 3);
+#endif
+	GBUS_send_raw(pin, buf, GBUS_OFFSET);
 }
 
 // *******************************************************
 void GBUS_send_ack(byte pin, byte to, byte from) {
-	byte buf[3] = {1, to, from};
-	GBUS_send_raw(pin, buf, sizeof(buf));
+	byte buf[GBUS_OFFSET] = {1, to, from};
+#ifndef GBUS_MINI_NO_CRC
+	buf[3] = GBUS_crc_bytes(buf, 3);
+#endif
+	GBUS_send_raw(pin, buf, GBUS_OFFSET);
 }

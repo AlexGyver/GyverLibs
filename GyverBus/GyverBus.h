@@ -18,6 +18,7 @@
 		
 	- Версия 1.1: добавлена waitAck() и исправлена ошибочка
 	- Версия 1.2: улучшена стабильность, функции оптимизированы, уменьшен вес
+	- Версия 1.3: добавлен CRC в запрос и ответ
 */
 
 /*
@@ -99,10 +100,10 @@
 	0         start 0   1   2  3   4   5  6   7 stop start         stop     
 	
 	Протокол: 
-	Дата + CRC [суммарное количество байт, адрес получателя, адрес отправителя, ...байты даты..., crc]
-	Дата без CRC [суммарное количество байт, адрес получателя, адрес отправителя, ...байты даты...]
-	Запрос (request) [0, адрес получателя, адрес отправителя]
-	Подтверждение (ack) [1, адрес получателя, адрес отправителя]
+	Дата [суммарное количество байт, адрес получателя, адрес отправителя, ...байты даты..., CRC]
+	Запрос (request) [0, адрес получателя, адрес отправителя, CRC]
+	Подтверждение (ack) [1, адрес получателя, адрес отправителя, CRC]
+	CRC может не передаваться 
 */
 
 // НАСТРОЙКИ
@@ -257,18 +258,25 @@ public:
 								_rawFlag = true;
 								_rawSize = _byteCount;
 								_txAddress = buffer[2];
+								if (_CRC) {
+									if (_crc != 0) {						// не совпал CRC
+										_rxstage = RX_FINISH;
+										_set_status_code(RX_CRC_ERROR);
+										return _status;
+									}
+								}
 								if (buffer[1] != _addr) {					// адрес не совпал
 									_rxstage = RX_FINISH;
 									_set_status_code(RX_ADDRESS_ERROR);
 									return _status;
 								}
-								if (_byteCount == 3 && buffer[0] == 0) {	// реквест									
+								if (_byteCount == _bufOffset && buffer[0] == 0) {	// реквест									
 									_rxstage = RX_FINISH;
 									_set_status_code(RX_REQUEST);
 									_requestFlag = true;
 									return _status;
 								}
-								if (_byteCount == 3 && buffer[0] == 1) {	// подтверждение									
+								if (_byteCount == _bufOffset && buffer[0] == 1) {	// подтверждение									
 									_rxstage = RX_FINISH;
 									_set_status_code(RX_ACK);
 									_ackFlag = true;
@@ -278,14 +286,7 @@ public:
 									_rxstage = RX_FINISH;
 									_set_status_code(RX_ABORT);
 									return _status;
-								}
-								if (_CRC) {
-									if (_crc != 0) {						// не совпал CRC
-										_rxstage = RX_FINISH;
-										_set_status_code(RX_CRC_ERROR);
-										return _status;
-									}
-								}
+								}								
 								
 								// данные приняты
 								_readFlag = true;
@@ -376,14 +377,18 @@ public:
 		return !(GBUS_TIME() - _lastPulse > GBUS_BUSY_TIMEOUT);
 	}
 	
+	// REQUEST
 	void sendRequest(byte addr) {
 		if (_ROLE == GBUS_TX || _ROLE == GBUS_FULL) {
 			buffer[0] = 0;  		// размер даты (0-запрос)
 			buffer[1] = addr;       // адрес приёмника
-			buffer[2] = _addr;		// адрес передатчика (наш)			
+			buffer[2] = _addr;		// адрес передатчика (наш)
+			
+			if (_CRC) buffer[3] = GBUS_crc_bytes(buffer, 3);
+			
 			_txstage = TX_START;  	// флаг на передачу
 			_role = GBUS_TX;		// теперь ты отправитель
-			_txSize = 3;			// отправляем 3 байта
+			_txSize = _bufOffset;	// отправляем _bufOffset байта
 			if (_ackStage == ACK_IDLE) {
 				_ackTimer = millis();
 				_ackTries = 0;
@@ -426,14 +431,16 @@ public:
 		return temp;
 	}
 	
+	// ACK
 	void sendAck(byte addr) {
 		if (_ROLE == GBUS_TX || _ROLE == GBUS_FULL) {
 			buffer[0] = 1;  		// размер даты (1-ack)
 			buffer[1] = addr;       // адрес приёмника
-			buffer[2] = _addr;		// адрес передатчика (наш)			
+			buffer[2] = _addr;		// адрес передатчика (наш)
+			if (_CRC) buffer[3] = GBUS_crc_bytes(buffer, 3);
 			_txstage = TX_START;  	// флаг на передачу
 			_role = GBUS_TX;		// теперь ты отправитель
-			_txSize = 3;			// отправляем 3 байта
+			_txSize = _bufOffset;	// отправляем _bufOffset байт
 		}
 	}
 	
@@ -465,6 +472,7 @@ public:
 		return ACK_ERROR;
 	}
 	
+	// RAW
 	void sendRaw(byte* data, byte size) {
 		if (_ROLE == GBUS_TX || _ROLE == GBUS_FULL) {
 			byte i = 0;
@@ -474,13 +482,16 @@ public:
 			_role = GBUS_TX;		// теперь мы отправитель
 		}
 	}
+	
 	bool gotRaw() {
 		bool temp = _rawFlag;
 		_rawFlag = false;
 		return temp;
 	}
+	
 	byte rawSize() {return _rawSize;}
-
+	
+	// send-read
 	template <typename T>
 	void sendData(byte addr, T &data) {
 		if (_ROLE == GBUS_TX || _ROLE == GBUS_FULL) {
@@ -498,11 +509,8 @@ public:
 			}		
 			
 			// crc
-			if (_CRC) {
-				_crc = 0;
-				for (byte i = 0; i < sizeof(T) + 3; i++) GBUS_crc_update(_crc, buffer[i]);
-				buffer[sizeof(T) + 3] = _crc;
-			}
+			if (_CRC) buffer[sizeof(T) + 3] = GBUS_crc_bytes(buffer, sizeof(T) + 3);
+			
 			_txSize = sizeof(T) + _bufOffset;
 			_txstage = TX_START;  	// флаг на начало передачи
 			_role = GBUS_TX;		// теперь мы отправитель
@@ -515,8 +523,9 @@ public:
 		for (uint16_t i = 0; i < sizeof(T); i++) {
 			*ptr++ = buffer[i + 3];
 		}
-	}	
+	}
 	
+	// buffer
 	byte *buffer;
 	
 private:

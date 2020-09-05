@@ -1,4 +1,7 @@
-// простой пример приёма сырых данных и их разбор вручную
+// пример приёма данных
+// отключаем CRC
+#define GBUS_MINI_NO_CRC
+
 #include "GBUSmini.h"  // мини-библиотека с лёгкими функциями
 
 #define RX_PIN 4    // пин
@@ -14,7 +17,7 @@ void setup() {
 
 void loop() {
   // ждём приём, ловим адрес
-  byte txaddr = GBUS_read_no_crc(RX_PIN, RX_ADDR, data, sizeof(data));
+  byte txaddr = GBUS_read(RX_PIN, RX_ADDR, data, sizeof(data));
   if (txaddr) {
     // если успешно приняли
     for (byte i = 0; i < sizeof(data); i++) {

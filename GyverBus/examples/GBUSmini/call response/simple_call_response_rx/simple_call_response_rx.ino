@@ -27,6 +27,6 @@ void loop() {
     // отправляем обратно (по txaddr)
     // с нашего адреса (RX_ADDR)
     // c контролем целостности данных
-    GBUS_send_crc(RX_PIN, txaddr, RX_ADDR, buf, sizeof(buf));
+    GBUS_send(RX_PIN, txaddr, RX_ADDR, buf, sizeof(buf));
   }
 }

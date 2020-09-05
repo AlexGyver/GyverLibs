@@ -14,11 +14,11 @@ void loop() {
   // тупо ждём, пока линия освободится
   while(GBUS_is_busy(BUS_PIN));
 
-  GBUS_send_no_crc(BUS_PIN, RX_ADDR, TX_ADDR, data, sizeof(data));
+  GBUS_send(BUS_PIN, RX_ADDR, TX_ADDR, data, sizeof(data));
   data[0]++;
   delay(2000);
 
   // либо используем так
-  // if (!GBUS_is_busy(BUS_PIN)) GBUS_send_no_crc(BUS_PIN, RX_ADDR, TX_ADDR, data, sizeof(data));
+  // if (!GBUS_is_busy(BUS_PIN)) GBUS_send(BUS_PIN, RX_ADDR, TX_ADDR, data, sizeof(data));
   // т.е. если линия свободна - отправить
 }

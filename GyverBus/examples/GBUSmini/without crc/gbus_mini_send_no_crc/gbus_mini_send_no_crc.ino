@@ -1,4 +1,7 @@
-// простая функция отправки по GBUS с контролем целостности данных
+// простая функция отправки по GBUS без контроля целостности данных
+// отключаем CRC
+#define GBUS_MINI_NO_CRC
+
 #include "GBUSmini.h"	// мини-библиотека с лёгкими функциями
 
 #define TX_PIN 4    // пин
@@ -15,6 +18,6 @@ byte data[] = {12, 34, 56};
 
 void loop() {
   // пин, адрес получателя, адрес отправителя, дата, размер
-  GBUS_send_no_crc(TX_PIN, RX_ADDR, TX_ADDR, data, sizeof(data));
+  GBUS_send(TX_PIN, RX_ADDR, TX_ADDR, data, sizeof(data));
   delay(1000);
 }
