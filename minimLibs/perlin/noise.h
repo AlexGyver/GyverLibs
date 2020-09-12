@@ -2,6 +2,8 @@
 #include <Arduino.h>
 #include "math8.h"
 
+// вытащил шум Перлина из FastLED
+
 /// 16 bit, fixed point implementation of perlin's Simplex Noise.  Coordinates are
 /// 16.16 fixed point values, 32 bit integers with integral coordinates in the high 16
 /// bits and fractional in the low 16 bits, and the function takes 1d, 2d, and 3d coordinate
