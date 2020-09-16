@@ -8,6 +8,9 @@
 	v1.4 - незначительный фикс
 */
 
+#ifndef _microDS3231_lib_H
+#define _microDS3231_lib_H
+
 #pragma once
 #include <Arduino.h>
 const bool COMPILE_TIME = true;
@@ -28,3 +31,5 @@ public:
 	uint8_t readRegister(uint8_t addr);
 private:
 };
+
+#endif // _microDS3231_lib_H

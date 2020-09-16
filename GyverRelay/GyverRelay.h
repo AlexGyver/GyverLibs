@@ -1,3 +1,6 @@
+#ifndef _GyverRelay_lib_H
+#define _GyverRelay_lib_H
+
 #pragma once
 #include <Arduino.h>
 
@@ -42,3 +45,5 @@ private:
 	float prevInput = 0.0;
 	boolean _direction = false;
 };
+
+#endif // _GyverRelay_lib_H

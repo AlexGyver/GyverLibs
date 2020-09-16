@@ -81,6 +81,9 @@ Timer5	| 16 бит		| 0.11 Гц - 1 МГц	| 9 000 000 - 1 мкс	| CHANNEL_A	| 
 	outputState(канал, состояние) - сменить состояние канала: HIGH / LOW
 */
 
+#ifndef _GyverTimers_lib_H
+#define _GyverTimers_lib_H
+
 #pragma once
 #include <Arduino.h>
 
@@ -369,3 +372,5 @@ extern Timer_3 Timer3;
 extern Timer_4 Timer4;
 extern Timer_5 Timer5;
 #endif
+
+#endif // _GyverTimers_lib_H

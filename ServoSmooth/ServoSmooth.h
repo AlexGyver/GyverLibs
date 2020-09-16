@@ -1,3 +1,6 @@
+#ifndef _ServoSmooth_lib_H
+#define _ServoSmooth_lib_H
+
 #pragma once
 #include <Arduino.h>
 #include <Servo.h>
@@ -90,3 +93,5 @@ public:
 	Servo _servo;			
 private:
 };
+
+#endif // _ServoSmooth_lib_H

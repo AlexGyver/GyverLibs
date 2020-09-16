@@ -1,3 +1,6 @@
+#ifndef _GyverPID_lib_H
+#define _GyverPID_lib_H
+
 #pragma once
 
 /*
@@ -121,3 +124,5 @@ private:
 	int t = 0;	
 #endif
 };
+
+#endif // _GyverPID_lib_H

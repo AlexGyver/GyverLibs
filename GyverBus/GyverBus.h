@@ -1,3 +1,6 @@
+#ifndef _GyverBus_lib_H
+#define _GyverBus_lib_H
+
 #pragma once
 #include <Arduino.h>
 
@@ -614,3 +617,5 @@ byte GBUS_crc_bytes(byte *data, byte size) {
 	for (byte i = 0; i < size; i++) GBUS_crc_update(crc, data[i]);
 	return crc;
 }
+
+#endif //_GyverBus_lib_H

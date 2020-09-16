@@ -1,3 +1,6 @@
+#ifndef _PWMRelay_lib_H
+#define _PWMRelay_lib_H
+
 #pragma once
 #include <Arduino.h>
 /*
@@ -69,3 +72,5 @@ int PWMrelay::getPeriod() {
 void PWMrelay::setLevel(bool level) {
 	_dir = level;
 }
+
+#endif // _PWMRelay_lib_H

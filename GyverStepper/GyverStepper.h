@@ -1,3 +1,6 @@
+#ifndef _GyverStepper_lib_H
+#define _GyverStepper_lib_H
+
 #pragma once
 #include <Arduino.h>
 
@@ -580,3 +583,5 @@ private:
 	uint8_t _pins[_DRV == 0 ? 2 : 4];
 #endif
 };
+
+#endif // _GyverStepper_lib_H

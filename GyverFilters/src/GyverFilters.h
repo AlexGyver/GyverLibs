@@ -1,3 +1,6 @@
+#ifndef _GyverFilters_H
+#define _GyverFilters_H
+
 #pragma once
 #include <filters/alfaBeta.h>
 #include <filters/kalman.h>
@@ -24,3 +27,5 @@
 		- Улучшен linear
 		- Смотрите примеры! Использование этих фильтров чуть изменилось
 */
+
+#endif // _GyverFilters_H

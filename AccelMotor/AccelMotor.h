@@ -1,3 +1,6 @@
+#ifndef _AccelMotor_lib_H
+#define _AccelMotor_lib_H
+
 #pragma once
 #include <Arduino.h>
 #include <GyverMotor.h>
@@ -177,3 +180,5 @@ private:
 	// возвращает -1 при вращении BACKWARD, 1 при FORWARD и 0 при остановке и торможении
 	int getState();
 */
+
+#endif // _AccelMotor_lib_H

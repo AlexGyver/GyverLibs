@@ -1,3 +1,6 @@
+#ifndef _GyverTimer_lib_H
+#define _GyverTimer_lib_H
+
 #pragma once
 #include <Arduino.h>
 
@@ -107,3 +110,5 @@ class GTimer_us {
 	boolean _mode = true;
 	boolean _state = true;
 };
+
+#endif // _GyverTimer_lib_H

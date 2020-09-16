@@ -36,6 +36,9 @@
 	- Исправлены мелкие ошибки, улучшена стабильность
 */
 
+#ifndef _microLED_lib_H
+#define _microLED_lib_H
+
 #pragma once
 #include "ws2812_send.h"
 
@@ -531,3 +534,5 @@ LEDdata mWHEEL(int color) {
 LEDdata mCOLOR(COLORS color) {
 	return mHEX(color);
 }
+
+#endif // _microLED_lib_H

@@ -1,3 +1,6 @@
+#ifndef _GyverButton_lib_H
+#define _GyverButton_lib_H
+
 #pragma once
 #include <Arduino.h>
 
@@ -121,3 +124,5 @@ class GButton {
 	volatile uint8_t _bit_mask;
 #endif
 };
+
+#endif //_GyverButton_lib_H

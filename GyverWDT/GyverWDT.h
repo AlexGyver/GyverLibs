@@ -6,6 +6,9 @@
 * Version 2.1 from 23.03.20 - внёс реализацию в класс							   *
 ***********************************************************************************/ 
 
+#ifndef _GyverWDT_lib_H
+#define _GyverWDT_lib_H
+
 #pragma once
 #include <Arduino.h>
 
@@ -74,3 +77,5 @@ private:
 };
 
 extern GyverWDT Watchdog;
+
+#endif // _GyverWDT_lib_H

@@ -1,3 +1,6 @@
+#ifndef _GyverPower_lib_H
+#define _GyverPower_lib_H
+
 #pragma once
 #include <Arduino.h>
 #include "powerConstants.h"
@@ -127,3 +130,6 @@ extern GyverPower power;
 	PWR_USI		- Wire + Spi (ATtinyXX)
 	PWR_LIN		- USART LIN (ATtinyXX)
 */
+
+
+#endif // _GyverPower_lib_H

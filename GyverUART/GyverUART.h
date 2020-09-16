@@ -14,6 +14,10 @@
 	v1.10 - вывод переведён на Print.h. Размер стал чуть больше, но будет меньше при работе с другими либами на Print.h
 */
 
+
+#ifndef _GyverUART_lib_H
+#define _GyverUART_lib_H
+
 #define USE_PRINT_H		// закомментируй, чтобы использовать gyver-вывод
 
 #pragma once
@@ -88,3 +92,5 @@ private:
 };
 
 extern GyverUart uart;
+
+#endif // _GyverUART_lib_H

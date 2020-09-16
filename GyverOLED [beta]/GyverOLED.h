@@ -42,6 +42,9 @@
 	"Ядро" библиотеки сделано по мотивам статьи с сайта http://www.technoblogy.com/
 */
 
+#ifndef _GyverOLED_lib_H
+#define _GyverOLED_lib_H
+
 #pragma once
 
 #if defined(USE_MICRO_WIRE)
@@ -977,3 +980,5 @@ int GyverOLED::_stretch (int x) {
 	x = (x << 1 | x) & 0x5555;
 	return x | x << 1;
 }
+
+#endif // _GyverOLED_lib_H

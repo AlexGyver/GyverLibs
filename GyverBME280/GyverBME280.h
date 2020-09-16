@@ -6,6 +6,9 @@
 * V1.4 from 23.05.2020 разбил на h и cpp						                    *
 ************************************************************************************/
 
+#ifndef _GyverBME280_lib_H
+#define _GyverBME280_lib_H
+
 #pragma once
 
 #include <Arduino.h>
@@ -102,3 +105,5 @@ private:
 
 float pressureToMmHg(float pressure);		// Convert [Pa] to [mm Hg]  
 float pressureToAltitude(float pressure);	// Convert pressure to altitude
+
+#endif // _GyverBME280_lib_H

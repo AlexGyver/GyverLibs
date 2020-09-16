@@ -1,3 +1,6 @@
+#ifndef _GyverMotor_lib_H
+#define _GyverMotor_lib_H
+
 #pragma once
 #include <Arduino.h>
 
@@ -108,3 +111,5 @@ protected:
 	uint8_t _speed = 20;
 	uint32_t _tmr = 0;
 };
+
+#endif // _GyverMotor_lib_H
