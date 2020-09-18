@@ -59,6 +59,8 @@ void Smooth::start() {
 void Smooth::stop() {
 	detach();
 	_tickFlag = false;
+	_speed = 0;
+	_lastSpeed = 0;
 }
 
 void Smooth::smoothStart() {
@@ -99,10 +101,10 @@ void Smooth::setCurrentDeg(int target) {
 }
 
 int Smooth::getCurrent() {
-	return (int)_servoCurrentPos;
+	return round(_servoCurrentPos);
 }
 int Smooth::getCurrentDeg() {
-	return (map((int)_servoCurrentPos, _min, _max, 0, _maxAngle));
+	return (map(round(_servoCurrentPos), _min, _max, 0, _maxAngle));
 }
 
 int Smooth::getTarget() {
@@ -148,12 +150,12 @@ boolean Smooth::tickManual() {
 			_servoCurrentPos += _speed * _delta;
 			if (_autoDetach && !_servoState) {
 				_servoState = true;
-				attach(_pin);
+				attach(_pin);Serial.println("att");
 				timeoutCounter = 0;
 			}
 			writeUs(_servoCurrentPos);
 		} else {
-			_servoCurrentPos = _servoTargetPos;
+			//_servoCurrentPos = _servoTargetPos;
 			_speed = 0;			
 			if (_servoState) {
 				writeUs(_servoCurrentPos);
@@ -161,7 +163,7 @@ boolean Smooth::tickManual() {
 			}
 			if (timeoutCounter > SS_DEADTIME && _autoDetach && _servoState) {			
 				_servoState = false;
-				detach();
+				detach();Serial.println("det");
 			}
 		}
 		_lastSpeed = _speed;
