@@ -1104,7 +1104,7 @@ void enable(uint8_t mode, uint8_t prescaler);   // включить WDT с на�
 
 <a id="ServoSmooth"></a>
 ![Logo](/logos/servoLogo.png)
-### ServoSmooth v3.4 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/ServoSmooth/ServoSmooth.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/servosmooth/)
+### ServoSmooth v3.5 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/ServoSmooth/ServoSmooth.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/servosmooth/)
 Библиотека для плавного управления сервоприводами
 - Является дополнением к стандартной библиотеке Servo
 - Также работает с расширителем серво PCA9685
@@ -1804,7 +1804,7 @@ void twistByte(uint8_t bit0, uint8_t bit1, uint8_t bit2, uint8_t bit3, int delay
 
 <a id="GyverPID"></a>
 ![Logo](/logos/pidLogo.png)
-### GyverPID v2.4 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverPID/GyverPID.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverpid/)
+### GyverPID v3.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverPID/GyverPID.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverpid/)
 Библиотека классического PID регулятора для Arduino
 - Время одного расчёта около 70 мкс
 - Режим работы по величине или по её изменению (для интегрирующих процессов)

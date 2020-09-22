@@ -19,7 +19,7 @@ public:
 		a = a - (long)sumX * sumY;
 		a = (float)a / (arrSize * sumX2 - sumX * sumX);
 		b = (float)(sumY - (float)a * sumX) / arrSize;
-		delta = a * arrSize;					// расчёт изменения
+		delta = a * (x_array[arrSize-1] - x_array[0]);			// расчёт изменения
 	}
 	float getA() {return a;}			// получить коэффициент А
 	float getB() {return b;}			// получить коэффициент В
@@ -28,3 +28,22 @@ public:
 private:	
 	float a, b, delta;
 };
+
+/*
+Сам алгоритм выглядит так:
+void loop() {
+  sumX = 0;
+  sumY = 0;
+  sumX2 = 0;
+  sumXY = 0;
+  for (int i = 0; i < steps; i++) {
+    sumX += X[i];
+    sumY += Y[i];
+    sumX2 += X[i] * X[i];
+    sumXY += X[i] * Y[i];
+  }
+  a = (steps * sumXY - sumX * sumY) / (steps * sumX2 - sumX * sumX);
+  b = (sumY - a * sumX) / steps;
+  int delta = steps * a;
+}
+*/

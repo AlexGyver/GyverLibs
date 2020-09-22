@@ -182,10 +182,13 @@ void GRGB::setRGB(uint8_t new_r, uint8_t new_g, uint8_t new_b) {
 }
 
 void GRGB::setHEX(colors color) {
-	uint32_t color32 = color;
-	_r = (color32 >> 16) & 0xff;
-	_g = (color32 >> 8) & 0xff;
-	_b = color32 & 0xff;
+	setHEX((uint32_t)color);
+}
+
+void GRGB::setHEX(uint32_t color) {
+	_r = (color >> 16) & 0xff;
+	_g = (color >> 8) & 0xff;
+	_b = color & 0xff;
 	GRGB::setRGB();
 }
 
