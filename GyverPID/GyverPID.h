@@ -2,6 +2,7 @@
 
 /*
 	GyverPID - библиотека классического PID регулятора для Arduino
+	Документация: https://alexgyver.ru/gyverpid/
 	- Время одного расчёта около 70 мкс
 	- Режим работы по величине или по её изменению (для интегрирующих процессов)
 	- Возвращает результат по встроенному таймеру или в ручном режиме
@@ -14,6 +15,9 @@
 	Версия 2.2 - оптимизация вычислений
 	Версия 2.3 - добавлен режим PID_INTEGRAL_WINDOW
 	Версия 2.4 - реализация внесена в класс
+	Версия 3.0
+		- Добавлен режим оптимизации интегральной составляющей (см. доку)
+		- Добавлены автоматические калибровщики коэффициентов (см. примеры и доку)
 */
 
 #include <Arduino.h>
@@ -83,7 +87,8 @@ public:
 		}
 		output = (float)Kp * (_mode ? delta_input : error); // пропорциональая составляющая
 		output += (float)delta_input * Kd / _dt_s;			// дифференциальная составляющая
-		
+
+// режим интегрального окна
 #if (PID_INTEGRAL_WINDOW > 0)
 		// режим интегрального окна
 		if (++t >= PID_INTEGRAL_WINDOW) t = 0; 	// перемотка t
@@ -93,9 +98,14 @@ public:
 #else
 		// обычное суммирование инт. составляющей
 		integral += (float)error * _dt_s;		// интегральная составляющая
+#endif	
+
+// режим ограничения интегральной суммы
+#ifdef PID_OPTIMIZED_I
+		output = constrain(output, _minOut, _maxOut);
+		if (Ki != 0) integral = constrain(integral, (_minOut - output) / Ki, (_maxOut - output) / Ki);
 #endif
-		
-		output += integral * Ki;							// прибавляем	
+		output += integral * Ki;							// прибавляем
 		output = constrain(output, _minOut, _maxOut);		// ограничиваем
 		return output;
 	}

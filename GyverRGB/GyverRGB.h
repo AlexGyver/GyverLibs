@@ -8,6 +8,7 @@
 
 /*	
 	Библиотека для удобного управления RGB светодиодами и лентами
+	Документация: https://alexgyver.ru/gyverrgb-lib/
 	- 1530 значений для colorWheel
 	- Работа в пространстве RGB
 	- Работа в пространстве HSV
@@ -36,6 +37,9 @@
 	
 	Версия 1.16 от 15.12.2019
 	- Исправлен баг в fadeTo
+	
+	Версия 1.17 от 11.03.2020
+	- Добавлена перегруженная setHEX
 */
 
 
@@ -90,7 +94,8 @@ class GRGB
 	void constantBrightTick(int minVolts, int vcc);		// корректировка под напряжение питания
 	void gammaTick(int vcc);							// корректировка красного цвета при падении напряжения питания
 													
-	void setHEX(colors color);						// установка цвета в формате HEX (вида 0x808080 )
+	void setHEX(colors color);							// установка цвета из предустановленных
+	void setHEX(uint32_t color);						// установка цвета в формате HEX (вида 0x808080 )
 	void setRGB(uint8_t r, uint8_t g, uint8_t b);		// установка цвета в пространстве RGB (каждый цвет 0-255)
 	void setHSV(uint8_t h, uint8_t s, uint8_t v);		// установка цвета в пространстве HSV (каждая велиична 0-255)
 	void setHSV_fast(uint8_t h, uint8_t s, uint8_t v);	// более быстрый, но менее красивый вариант предыдущей функции

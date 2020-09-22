@@ -1,11 +1,10 @@
 #pragma once
 #include <Arduino.h>
 
-#ifdef __AVR__
-#include <util/delay.h>
-#endif
+
 /*
 	GyverStepper - производительная библиотека для управления шаговыми моторами
+	Документация: https://alexgyver.ru/gyverstepper/
 	- Поддержка 4х пинового (шаг и полушаг) и STEP-DIR драйверов
 	- Автоматическое отключение питания при достижении цели
 	- Режимы работы:
@@ -25,8 +24,7 @@
 	v1.3 - изменена логика работы setTarget(, RELATIVE)
 	v1.4 - добавлена задержка для STEP, настроить можно дефайном DRIVER_STEP_TIME
 	v1.5 - пофикшен баг для плат есп
-		
-	Документация: https://alexgyver.ru/gyverstepper/
+	
 	Алгоритм из AccelStepper: https://www.airspayce.com/mikem/arduino/AccelStepper/
 	AlexGyver, 2020
 */
@@ -142,6 +140,10 @@ uint16_t stepTime;
 
 #ifndef DRIVER_STEP_TIME
 #define DRIVER_STEP_TIME 4
+#endif
+
+#ifdef __AVR__
+#include <util/delay.h>
 #endif
 
 enum GS_driverType {
