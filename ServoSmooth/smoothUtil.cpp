@@ -46,9 +46,9 @@ void Smooth::attach(int pin, int target) {
 }
 
 void Smooth::attach(int pin, int min, int max, int target) {
-	attach(pin, target);
 	_min = min;
 	_max = max;
+	attach(pin, target);
 }
 
 void Smooth::start() {
@@ -150,7 +150,7 @@ boolean Smooth::tickManual() {
 			_servoCurrentPos += _speed * _delta;
 			if (_autoDetach && !_servoState) {
 				_servoState = true;
-				attach(_pin);Serial.println("att");
+				attach(_pin);
 				timeoutCounter = 0;
 			}
 			writeUs(_servoCurrentPos);
@@ -163,7 +163,7 @@ boolean Smooth::tickManual() {
 			}
 			if (timeoutCounter > SS_DEADTIME && _autoDetach && _servoState) {			
 				_servoState = false;
-				detach();Serial.println("det");
+				detach();
 			}
 		}
 		_lastSpeed = _speed;
