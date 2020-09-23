@@ -8,12 +8,15 @@ void Smooth::writeUs(int val) {
 	sendToDriver(_dir ? (_max + _min - val) : val);
 }
 void Smooth::write(uint16_t angle) {
-	writeUs(map(angle, 0, _maxAngle, _min, _max));
-	_servoCurrentPos = (map(angle, 0, _maxAngle, _min, _max));
+	angle = constrain(0, _maxAngle);
+	angle = map(angle, 0, _maxAngle, _min, _max);
+	writeUs(angle);
+	_servoCurrentPos = angle;
 	_servoTargetPos = _servoCurrentPos;
 }
 
 void Smooth::writeMicroseconds(uint16_t val) {
+	val = constrain(_min, _max);
 	sendToDriver(val);
 	_servoCurrentPos = val;
 	_servoTargetPos = _servoCurrentPos;
