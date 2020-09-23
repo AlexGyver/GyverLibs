@@ -4,24 +4,25 @@
 static int _sign(int x) {return ((x) > 0 ? 1 : -1);}
 
 // ====== WRITE ======
+// отправить на драйвер с учётом направления
 void Smooth::writeUs(int val) {
 	sendToDriver(_dir ? (_max + _min - val) : val);
 }
+
+// жёстко повернуть на угол (опираясь на min и max)
 void Smooth::write(uint16_t angle) {
-	angle = constrain(0, _maxAngle);
 	angle = map(angle, 0, _maxAngle, _min, _max);
-	writeUs(angle);
-	_servoCurrentPos = angle;
-	_servoTargetPos = _servoCurrentPos;
+	writeMicroseconds(angle);
 }
 
+// жёстко повернуть на импульс (без ограничений)
 void Smooth::writeMicroseconds(uint16_t val) {
-	val = constrain(_min, _max);
-	sendToDriver(val);
+	writeUs(val);
 	_servoCurrentPos = val;
-	_servoTargetPos = _servoCurrentPos;
+	_servoTargetPos = val;
 }
 
+// отправить значение на драйвер
 void Smooth::sendToDriver(uint16_t val) {
 	// пустышка, заменить производным
 }
@@ -42,10 +43,8 @@ void Smooth::attach() {
 void Smooth::attach(int pin, int target) {
 	_pin = pin;
 	attach(_pin);
-	if (target <= _maxAngle) target = map(target, 0, _maxAngle, _min, _max);	// если в градусах!
-	writeUs(target);
-	_servoTargetPos = target;
-	_servoCurrentPos = target;
+	if (target <= _maxAngle) write(target);		// если в градусах
+	else writeMicroseconds(target);
 }
 
 void Smooth::attach(int pin, int min, int max, int target) {
@@ -78,11 +77,11 @@ void Smooth::smoothStart() {
 
 // ====== SET ======
 void Smooth::setSpeed(int speed) {
-	_servoMaxSpeed = (long)speed*_max/_maxAngle;	// ~ перевод из градусов в секунду в тики
+	_servoMaxSpeed = (long)speed * _max / _maxAngle;	// ~ перевод из градусов в секунду в тики
 }
 
 void Smooth::setAccel(float accel) {
-	_acceleration = (float)accel*_max*3;	// для совместимости со старыми скетчами (уск. 0.1-1)
+	_acceleration = (float)accel * _max * 3;	// для совместимости со старыми скетчами (уск. 0.1-1)
 }
 
 void Smooth::setTarget(int target) {
