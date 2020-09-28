@@ -51,6 +51,7 @@
 <a id="minimLibs"></a>
 ### minimLibs [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/minimLibs/minimLibs.zip)
 minimLibs это мини-библиотеки, которые не входят в основной список библиотек, но не менее полезны. Лежат в папке со своими примерами.
+- **analogKeyboard** - простая библиотека для работы с аналоговыми клавиатурами (можно использовать совместно с GyverButton)
 - **bitPack** - удобное хранение однобитных флагов
 - **button** - мини-версия GyverButton для работы с кнопкой
 - **crc8test** - проверка целостности данных CRC8 по алгоритму Dallas
@@ -580,7 +581,7 @@ float getTemp(void);        // получить температуру
 
 <a id="GyverButton"></a>
 ![Logo](/logos/btnLogo.png)
-### GyverButton v3.5 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverButton/GyverButton.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverbutton/)
+### GyverButton v3.6 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverButton/GyverButton.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverbutton/)
 Библиотека для многофункциональной отработки нажатия кнопок с Arduino. Возможности:
 - Работа с нормально замкнутыми и нормально разомкнутыми кнопками
 - Работа с подключением PULL_UP и PULL_DOWN
