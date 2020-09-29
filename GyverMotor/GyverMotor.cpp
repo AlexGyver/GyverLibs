@@ -81,7 +81,7 @@ void GMotor::setPins(bool a, bool b, int c) {
 
 void GMotor::smoothTick(int16_t duty) {
 	if (millis() - _tmr >= _SMOOTH_PRD) {
-		_tmr += _SMOOTH_PRD;
+		_tmr = millis();
 		if (abs(_duty - duty) > _speed) _duty += (_duty < duty) ? _speed : -_speed;
 		else _duty = duty;
 		setSpeed(_duty);
