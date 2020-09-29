@@ -4,6 +4,7 @@
 GMotor::GMotor(GM_driverType type, int8_t param1, int8_t param2, int8_t param3, int8_t param4) {
 	_type = type;
 	switch (_type) {
+	case DRIVER2WIRE_NO_INVERT:	
 	case DRIVER2WIRE:
 		_digA = param1;
 		_pwmC = param2;
@@ -61,7 +62,7 @@ void GMotor::run(GM_workMode mode, int16_t duty) {
 	if (_direction) {
 		if (mode == FORWARD) mode = BACKWARD;
 		else if (mode == BACKWARD) mode = FORWARD;
-	}	
+	}
 #endif
 	
 	switch (mode) {

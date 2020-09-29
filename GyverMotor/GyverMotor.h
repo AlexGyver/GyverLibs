@@ -17,6 +17,7 @@
 	- Версия 2.2: оптимизация
 	- Версия 2.3: добавлена поддержка esp (исправлены ошибки)
 	- Версия 2.4: совместимость с другими библами
+	- Версия 2.5: добавлен тип DRIVER2WIRE_NO_INVERT
 		
 	Документация: https://alexgyver.ru/gyvermotor/
 	AlexGyver, 2020
@@ -25,9 +26,10 @@
 #define _SMOOTH_PRD 50	// таймер smoothTick, мс
 
 enum GM_driverType {
-	DRIVER2WIRE,
-	DRIVER3WIRE,
-	RELAY2WIRE,
+	DRIVER2WIRE_NO_INVERT,	// двухпроводной драйвер, в котором при смене направления не нужна инверсия ШИМ
+	DRIVER2WIRE,			// двухпроводной драйвер (направление + ШИМ)
+	DRIVER3WIRE,			// трёхпроводной драйвер (два пина направления + ШИМ)
+	RELAY2WIRE,				// реле в качестве драйвера (два пина направления)
 };
 
 #define NORMAL 0

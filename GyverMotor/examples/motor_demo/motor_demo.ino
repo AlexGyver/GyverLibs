@@ -10,6 +10,7 @@ GMotor motor(DRIVER2WIRE, 2, 3, HIGH);
 // GMotor motor(RELAY2WIRE, dig_pin_A, dig_pin_B, (LOW/HIGH) )
 /*
   DRIVER2WIRE - двухпроводной драйвер (направление + ШИМ)
+  DRIVER2WIRE_NO_INVERT - двухпроводной драйвер, в котором при смене направления не нужна инверсия ШИМ
   DRIVER3WIRE - трёхпроводной драйвер (два пина направления + ШИМ)
   RELAY2WIRE - реле в качестве драйвера (два пина направления)
 

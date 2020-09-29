@@ -30,7 +30,7 @@ setSmoothSpeed	KEYWORD2
 #######################################
 # Constants (LITERAL1)
 #######################################
-
+DRIVER2WIRE_NO_INVERT	LITERAL1
 DRIVER2WIRE	LITERAL1
 DRIVER3WIRE	LITERAL1
 RELAY2WIRE	LITERAL1
