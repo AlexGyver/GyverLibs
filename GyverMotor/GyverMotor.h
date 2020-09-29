@@ -18,6 +18,7 @@
 	- Версия 2.3: добавлена поддержка esp (исправлены ошибки)
 	- Версия 2.4: совместимость с другими библами
 	- Версия 2.5: добавлен тип DRIVER2WIRE_NO_INVERT
+	- Версия 3.0: переделана логика minDuty, добавлен режим для ШИМ любой битности
 		
 	Документация: https://alexgyver.ru/gyvermotor/
 	AlexGyver, 2020
@@ -39,7 +40,7 @@ enum GM_workMode {
 	FORWARD,
 	BACKWARD,
 	STOP,
-	BRAKE,
+	BRAKE,	// не работает, убран в 3.0
 	AUTO = 0,
 };
 
@@ -60,7 +61,6 @@ public:
 	// FORWARD - вперёд
 	// BACKWARD - назад
 	// STOP - остановить
-	// BRAKE - активное торможение
 	// AUTO - подчиняется setSpeed (-255.. 255)
 	void setMode(GM_workMode mode);
 	
@@ -72,11 +72,8 @@ public:
 	// установить минимальную скважность (при которой мотор начинает крутиться)
 	void setMinDuty(int duty);
 	
-	// установить выход в 8 бит
-	void set8bitMode();		
-
-	// установить выход в 10 бит
-	void set10bitMode();					
+	// установить разрешение ШИМ в битах
+	void setResolution(byte bit);
 	
 	// установить deadtime (в микросекундах). По умолч 0
 	void setDeadtime(uint16_t deadtime);	
@@ -96,18 +93,26 @@ public:
 	// внутренняя переменная скважности для отладки
 	int16_t _duty = 0;
 	
+	// свовместимость со старыми версиями
+	// установить выход в 8 бит
+	void set8bitMode();		
+
+	// установить выход в 10 бит
+	void set10bitMode();
+	
 protected:
 	void setPins(bool a, bool b, int c);	
 	void run(GM_workMode mode, int16_t duty = 0);		// дать прямую команду мотору (без смены режима)
-	
+	int16_t _dutyS = 0;
 	int _minDuty = 0, _state = 0;;
 	int8_t _digA = _GM_NC, _digB = _GM_NC, _pwmC = _GM_NC;
 	bool _direction = false;
-	int8_t _resolution = 0, _level = HIGH;
+	int8_t _level = HIGH;
 	int _maxDuty = 254;
 	GM_workMode _mode = FORWARD, _lastMode = FORWARD;
 	GM_driverType _type;
 	uint16_t _deadtime = 0;
 	uint8_t _speed = 20;
 	uint32_t _tmr = 0;
+	float _k;
 };
