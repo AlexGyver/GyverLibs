@@ -1810,7 +1810,7 @@ void twistByte(uint8_t bit0, uint8_t bit1, uint8_t bit2, uint8_t bit3, int delay
 
 <a id="GyverPID"></a>
 ![Logo](/logos/pidLogo.png)
-### GyverPID v3.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverPID/GyverPID.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverpid/)
+### GyverPID v3.1 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverPID/GyverPID.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverpid/)
 Библиотека классического PID регулятора для Arduino
 - Время одного расчёта около 70 мкс
 - Режим работы по величине или по её изменению (для интегрирующих процессов)

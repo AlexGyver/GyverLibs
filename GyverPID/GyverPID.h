@@ -18,6 +18,7 @@
 	Версия 3.0
 		- Добавлен режим оптимизации интегральной составляющей (см. доку)
 		- Добавлены автоматические калибровщики коэффициентов (см. примеры и доку)
+	Версия 3.1 - исправлен режиме ON_RATE, добавлено автоограничение инт. суммы
 */
 
 #include <Arduino.h>
@@ -36,7 +37,7 @@ typedef float datatype;
 class GyverPID {
 public:
 	// ==== datatype это float или int, в зависимости от выбранного (см. пример integer_calc) ====
-	GyverPID(){}	
+	GyverPID(){}
 	
 	// kp, ki, kd, dt
 	GyverPID(float new_kp, float new_ki, float new_kd, int16_t new_dt = 100) {
@@ -78,45 +79,46 @@ public:
 	
 	// возвращает новое значение при вызове (если используем свой таймер с периодом dt!)
 	datatype getResult() {
-		datatype error = setpoint - input;				// ошибка регулирования
-		datatype delta_input = prevInput - input;		// изменение входного сигнала
-		prevInput = input;
-		if (_direction) {
+		datatype error = setpoint - input;			// ошибка регулирования
+		datatype delta_input = prevInput - input;	// изменение входного сигнала за dt
+		prevInput = input;							// запомнили предыдущее
+		if (_direction) {							// смена направления
 			error = -error;
 			delta_input = -delta_input;
 		}
-		output = (float)Kp * (_mode ? delta_input : error); // пропорциональая составляющая
-		output += (float)delta_input * Kd / _dt_s;			// дифференциальная составляющая
+		output = _mode ? 0 : (error * Kp); 			// пропорциональая составляющая
+		output += delta_input * Kd / _dt_s;			// дифференциальная составляющая
 
-// режим интегрального окна
 #if (PID_INTEGRAL_WINDOW > 0)
-		// режим интегрального окна
-		if (++t >= PID_INTEGRAL_WINDOW) t = 0; 	// перемотка t
-		integral -= errors[t];     				// вычитаем старое	
-		errors[t] = (float)error * _dt_s;  		// запоминаем в массив
-		integral += errors[t];         			// прибавляем новое
-#else
-		// обычное суммирование инт. составляющей
-		integral += (float)error * _dt_s;		// интегральная составляющая
+		// ЭКСПЕРИМЕНТАЛЬНЫЙ РЕЖИМ ИНТЕГРАЛЬНОГО ОКНА
+		if (++t >= PID_INTEGRAL_WINDOW) t = 0; 		// перемотка t
+		integral -= errors[t];     					// вычитаем старое	
+		errors[t] = error * Ki * _dt_s;  			// запоминаем в массив
+		integral += errors[t];         				// прибавляем новое
+#else		
+		integral += error * Ki * _dt_s;				// обычное суммирование инт. суммы
 #endif	
 
-// режим ограничения интегральной суммы
 #ifdef PID_OPTIMIZED_I
+		// ЭКСПЕРИМЕНТАЛЬНЫЙ РЕЖИМ ОГРАНИЧЕНИЯ ИНТЕГРАЛЬНОЙ СУММЫ
 		output = constrain(output, _minOut, _maxOut);
-		if (Ki != 0) integral = constrain(integral, (_minOut - output) / Ki, (_maxOut - output) / Ki);
+		if (Ki != 0) integral = constrain(integral, (_minOut - output) / (Ki * _dt_s), (_maxOut - output) / (Ki * _dt_s));
 #endif
-		output += integral * Ki;							// прибавляем
-		output = constrain(output, _minOut, _maxOut);		// ограничиваем
+
+		if (_mode) integral += delta_input * Kp;			// режим пропорционально скорости
+		integral = constrain(integral, _minOut, _maxOut);	// ограничиваем инт. сумму
+		output += integral;									// интегральная составляющая
+		output = constrain(output, _minOut, _maxOut);		// ограничиваем выход
 		return output;
 	}
 	
-	datatype getResultTimer() { 						// возвращает новое значение не ранее, чем через dt миллисекунд (встроенный таймер с периодом dt)
+	// возвращает новое значение не ранее, чем через dt миллисекунд (встроенный таймер с периодом dt)
+	datatype getResultTimer() {
 		if (millis() - pidTimer >= _dt) {
 			pidTimer = millis();
-			return GyverPID::getResult();
-		} else {
-			return output;
+			GyverPID::getResult();
 		}
+		return output;
 	}
 	
 private:
