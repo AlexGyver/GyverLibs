@@ -1,0 +1,50 @@
+Open image / Save edited image
+Size (width) of source image
+Rotate
+XY position
+Brightness & contrast
+Grayscale / Invert / Dithering (for OLED) / Show frame
+Threshold
+Posterisation
+Brush mode / Size (LMB - white, RMB - black)
+Bitmap width (use mouse wheel for fine tuning)
+Bitmap height (use mouse wheel for fine tuning)
+Encoding (see hint on the right) / 1D or 2D bitmap
+PROGMEM / Color inversion / Flip Х / Flip Y
+Bitmap name / Save into bitmap.h / Copy to clipboard
+Help (press again to close) / About
+
+ENCODING MODES
+
+OLED, 8 pix/byte, BW
+- Bitmap for OLED
+- Vertical byte
+- 8 pixels in 1 byte
+- Black & White
+
+8 pix/byte, BW
+- Horizontal byte
+- 8 pixels in 1 byte
+- Black & White
+
+1 pix/byte, BW
+- Horizontal byte
+- 1 pixel in 1 byte
+- Black & White
+
+1 pix/byte, Gray
+- Horizontal byte
+- 1 pixel in 1 byte
+- Grayscale 8 bit (0-255)
+
+1 pix/int16 (RGB565)
+- Horizontal int16
+- 1 pixel in int16
+- RGB colors RGB565
+- RRRRRGGGGGGBBBBB
+
+1 pix/int32 (RGB888)
+- Horizontal int32
+- 1 pixel in int32
+- RGB colors RGB888
+- RRRRRRRRGGGGGGGGBBBBBBBB
