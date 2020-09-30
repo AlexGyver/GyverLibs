@@ -19,6 +19,7 @@
 	- Версия 2.4: совместимость с другими библами
 	- Версия 2.5: добавлен тип DRIVER2WIRE_NO_INVERT
 	- Версия 3.0: переделана логика minDuty, добавлен режим для ШИМ любой битности
+	- Версия 3.1: мелкие исправления
 		
 	Документация: https://alexgyver.ru/gyvermotor/
 	AlexGyver, 2020
@@ -40,7 +41,7 @@ enum GM_workMode {
 	FORWARD,
 	BACKWARD,
 	STOP,
-	BRAKE,	// не работает, убран в 3.0
+	BRAKE,
 	AUTO = 0,
 };
 
@@ -55,12 +56,13 @@ public:
 	// GMotor motor(RELAY2WIRE, dig_pin_A, dig_pin_B, (LOW/HIGH) )
 	
 	// установка скорости 0-255 (8 бит) и 0-1023 (10 бит)
-	void setSpeed(int16_t duty);			
+	void setSpeed(int16_t duty);
 	
 	// сменить режим работы мотора:	
 	// FORWARD - вперёд
 	// BACKWARD - назад
 	// STOP - остановить
+	// BRAKE - активный тормоз
 	// AUTO - подчиняется setSpeed (-255.. 255)
 	void setMode(GM_workMode mode);
 	
@@ -107,8 +109,8 @@ protected:
 	int _minDuty = 0, _state = 0;;
 	int8_t _digA = _GM_NC, _digB = _GM_NC, _pwmC = _GM_NC;
 	bool _direction = false;
-	int8_t _level = HIGH;
-	int _maxDuty = 254;
+	int8_t _level = LOW;	// логика инвертирована!
+	int _maxDuty = 255;
 	GM_workMode _mode = FORWARD, _lastMode = FORWARD;
 	GM_driverType _type;
 	uint16_t _deadtime = 0;

@@ -51,26 +51,24 @@ void GMotor::setSpeed(int16_t duty) {
 }
 
 void GMotor::run(GM_workMode mode, int16_t duty) {
+	// дедтайм
 	if (_deadtime > 0 && _lastMode != mode) {
 		_lastMode = mode;
-		setPins(_level, _level, 0);
+		setPins(_level, _level, 0);	// выключить всё
 		delayMicroseconds(_deadtime);
 	}
-#if defined(__AVR__)
-	if (_direction && mode < 2) mode = 1 - mode;	// инверт вот такой
-#else
-	// совместимость с есп
+
+	// инверт (совместимость с есп)
 	if (_direction) {
 		if (mode == FORWARD) mode = BACKWARD;
 		else if (mode == BACKWARD) mode = FORWARD;
 	}
-#endif	
+
 	switch (mode) {
 	case FORWARD:	setPins(_level, !_level, duty); _state = 1; break;		
-	case BACKWARD:	setPins(!_level, _level, (_type == DRIVER2WIRE) ? (_maxDuty - duty) : (duty)); _state = -1; break;		
-	case STOP:			
-	case BRAKE:		setPins(_level, _level, _level * 255); _state = 0; break;	
-	// 255 потому что ардуино сделает из analogWrite(пин, 255) - digitalWrite(пин, 1) или analogWrite(пин, 0) - digitalWrite(пин, 0)
+	case BACKWARD:	setPins(!_level, _level, (_type == DRIVER2WIRE) ? (_maxDuty - duty) : (duty)); _state = -1; break;
+	case BRAKE:		setPins(!_level, !_level, !_level * 255); _state = 0; break;	// при 0/255 analogWrite сделает 0/1
+	case STOP:		setPins(_level, _level, _level * 255); _state = 0; break;		
 	}
 }
 
@@ -94,13 +92,13 @@ int GMotor::getState() {
 }
 
 void GMotor::setResolution(byte bit) {
-	_maxDuty = (1 << bit) - 2;	// -1 для смещения и -1 для 99% ШИМ
+	_maxDuty = (1 << bit) - 1;	// -1 для смещения
 	setMinDuty(_minDuty);		// пересчитаем k
 }
 
 void GMotor::setMinDuty(int duty) {
 	_minDuty = duty;
-	_k = 1.0 - (float)_minDuty / (_maxDuty + 1);
+	_k = 1.0 - (float)_minDuty / _maxDuty;
 }
 
 void GMotor::setMode(GM_workMode mode) {	
