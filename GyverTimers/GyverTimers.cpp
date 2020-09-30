@@ -87,34 +87,28 @@ void Timer_5::outputState(uint8_t channel,bool state){
 
 ////////////////////////////// pause //////////////////////////////
 void Timer_0::pause(void) {
-	_timer0_clock = (TCCR0B & 0x07);    // Save timer clock settings
 	TCCR0B = (TCCR0B & 0xF8);       	// Clear timer clock bits
 }
 
 void Timer_1::pause(void) {
-	_timer1_clock = (TCCR1B & 0x07);    // Save timer clock settings
 	TCCR1B = (TCCR1B & 0xF8);       	// Clear timer clock bits
 }
 
 void Timer_2::pause(void) {
-	_timer2_clock = (TCCR2B & 0x07);    // Save timer clock settings
 	TCCR2B = (TCCR2B & 0xF8);       	// Clear timer clock bits
 }
 
 #if defined(__AVR_ATmega2560__)
 
 void Timer_3::pause(void) {
-	_timer3_clock = (TCCR3B & 0x07);    // Save timer clock settings
 	TCCR3B = (TCCR3B & 0xF8);       	// Clear timer clock bits
 }
 
 void Timer_4::pause(void) {
-	_timer4_clock = (TCCR4B & 0x07);    // Save timer clock settings
 	TCCR4B = (TCCR4B & 0xF8);       	// Clear timer clock bits
 }
 
 void Timer_5::pause(void) {
-	_timer5_clock = (TCCR5B & 0x07);    // Save timer clock settings
 	TCCR5B = (TCCR5B & 0xF8);       	// Clear timer clock bits
 }
 
@@ -672,8 +666,7 @@ void Timer_5::outputDisable(uint8_t channel) {
 
 
 ////////////////////////////// setPeriod //////////////////////////////
-uint32_t Timer_0::setPeriod(uint32_t _timer0_period)  {
-	
+uint32_t Timer_0::setPeriod(uint32_t _timer0_period)  {	
 	_timer0_period = constrain(_timer0_period, 1, 32258);
 
 	uint32_t _timer0_cycles = F_CPU / 1000000 * _timer0_period;  // Calculation of the number of timer cycles per period
@@ -700,14 +693,14 @@ uint32_t Timer_0::setPeriod(uint32_t _timer0_period)  {
 	uint8_t _timer0_top = (_timer0_cycles < 256UL * 1024 ? (_timer0_cycles / _timer0_divider) : 256UL) ;
 
 	TCCR0A = (TCCR0A & 0xF0)|(1 << WGM21);      // CTC - mode
-	TCCR0B = _timer0_prescaler;   // Set timer prescaler
-	OCR0A = _timer0_top - 1;      // Set timer top
-
+	TCCR0B = _timer0_prescaler;   		// Set timer prescaler
+	OCR0A = _timer0_top - 1;      		// Set timer top
+	_timer0_clock = (TCCR0B & 0x07);    // Save timer clock settings
+	
 	return (2000000UL / ((F_CPU / _timer0_divider) / _timer0_top));   // Return real timer period
 }
 
-uint32_t Timer_1::setPeriod(uint32_t _timer1_period)  {
-	
+uint32_t Timer_1::setPeriod(uint32_t _timer1_period)  {	
 	_timer1_period = constrain(_timer1_period, 1, 4000000);
 	
 	uint32_t _timer1_cycles = F_CPU / 1000000 * _timer1_period;  // Calculation of the number of timer cycles per period
@@ -738,13 +731,12 @@ uint32_t Timer_1::setPeriod(uint32_t _timer1_period)  {
 	TCCR1A = (TCCR1A & 0xF0);
 #endif
 	TCCR1B = ((1 << WGM13) | (1 << WGM12) | _timer1_prescaler);   // CTC mode + set prescaler
-	ICR1 = _timer1_top - 1;                     // Set timer top
-
+	ICR1 = _timer1_top - 1;             // Set timer top
+	_timer1_clock = (TCCR1B & 0x07);    // Save timer clock settings
 	return (2000000UL / ((F_CPU / _timer1_divider) / _timer1_top));   // Return real timer period
 }
 
-uint32_t Timer_2::setPeriod(uint32_t _timer2_period)  {
-	
+uint32_t Timer_2::setPeriod(uint32_t _timer2_period)  {	
 	_timer2_period = constrain(_timer2_period, 1, 32258);
 	
 	uint32_t _timer2_cycles = F_CPU / 1000000 * _timer2_period;  // Calculation of the number of timer cycles per period
@@ -777,16 +769,16 @@ uint32_t Timer_2::setPeriod(uint32_t _timer2_period)  {
 	uint8_t _timer2_top = (_timer2_cycles < 256UL * 1024 ? (_timer2_cycles / _timer2_divider) : 256UL);
 
 	TCCR2A = (TCCR2A & 0xF0)|(1 << WGM21);      // CTC - mode
-	TCCR2B = _timer2_prescaler;   // Set timer prescaler
-	OCR2A = _timer2_top - 1;      // Set timer top
-
+	TCCR2B = _timer2_prescaler;   		// Set timer prescaler
+	OCR2A = _timer2_top - 1;      		// Set timer top
+	_timer2_clock = (TCCR2B & 0x07);    // Save timer clock settings
+	
 	return (2000000UL / ((F_CPU / _timer2_divider) / _timer2_top));   // Return real timer period
 }
 
 #if defined(__AVR_ATmega2560__)
 
-uint32_t Timer_3::setPeriod(uint32_t _timer3_period)  {
-	
+uint32_t Timer_3::setPeriod(uint32_t _timer3_period)  {	
 	_timer3_period = constrain(_timer3_period, 1, 4000000);
 	
 	uint32_t _timer3_cycles = F_CPU / 1000000 * _timer3_period;  // Calculation of the number of timer cycles per period
@@ -814,13 +806,13 @@ uint32_t Timer_3::setPeriod(uint32_t _timer3_period)  {
 
 	TCCR3A = (TCCR3A & 0xFC);
 	TCCR3B = ((1 << WGM33) | (1 << WGM32) | _timer3_prescaler);   // CTC mode + set prescaler
-	ICR3 = _timer3_top - 1;                     // Set timer top
-
+	ICR3 = _timer3_top - 1;             // Set timer top
+	_timer3_clock = (TCCR3B & 0x07);    // Save timer clock settings
+	
 	return (2000000UL / ((F_CPU / _timer3_divider) / _timer3_top));   // Return real timer period
 }
 
-uint32_t Timer_4::setPeriod(uint32_t _timer4_period)  {
-	
+uint32_t Timer_4::setPeriod(uint32_t _timer4_period)  {	
 	_timer4_period = constrain(_timer4_period, 1, 4000000);
 	
 	uint32_t _timer4_cycles = F_CPU / 1000000 * _timer4_period;  // Calculation of the number of timer cycles per period
@@ -848,13 +840,13 @@ uint32_t Timer_4::setPeriod(uint32_t _timer4_period)  {
 
 	TCCR4A = (TCCR4A & 0xFC);
 	TCCR4B = ((1 << WGM43) | (1 << WGM42) | _timer4_prescaler);   // CTC mode + set prescaler
-	ICR4 = _timer4_top - 1;                     // Set timer top
-
+	ICR4 = _timer4_top - 1;             // Set timer top
+	_timer4_clock = (TCCR4B & 0x07);    // Save timer clock settings
+	
 	return (2000000UL / ((F_CPU / _timer4_divider) / _timer4_top));   // Return real timer period
 }
 
-uint32_t Timer_5::setPeriod(uint32_t _timer5_period)  {
-	
+uint32_t Timer_5::setPeriod(uint32_t _timer5_period)  {	
 	_timer5_period = constrain(_timer5_period, 1, 4000000);
 	
 	uint32_t _timer5_cycles = F_CPU / 1000000 * _timer5_period;  // Calculation of the number of timer cycles per period
@@ -882,8 +874,9 @@ uint32_t Timer_5::setPeriod(uint32_t _timer5_period)  {
 
 	TCCR5A = (TCCR5A & 0xFC);
 	TCCR5B = ((1 << WGM53) | (1 << WGM52) | _timer5_prescaler);   // CTC mode + set prescaler
-	ICR5 = _timer5_top - 1;                     // Set timer top
-
+	ICR5 = _timer5_top - 1;             // Set timer top
+	_timer5_clock = (TCCR5B & 0x07);    // Save timer clock settings
+	
 	return (2000000UL / ((F_CPU / _timer5_divider) / _timer5_top));   // Return real timer period
 }
 
