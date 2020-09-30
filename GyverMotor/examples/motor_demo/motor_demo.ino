@@ -33,7 +33,7 @@ void setup() {
   // смена режима работы мотора
   motor.setMode(FORWARD);   // вперёд
   motor.setMode(BACKWARD);  // назад
-  motor.setMode(BRAKE);  	// активный тормоз (setSpeed будет задавать силу торможения)
+  motor.setMode(BRAKE);  	// активный тормоз
   motor.setMode(STOP);      // стоп, холостой (мотор отключен)
 
   // смена уровня драйвера (аналогично при инициализации)
