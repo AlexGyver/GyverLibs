@@ -663,10 +663,10 @@ public:
 		for (byte i = 0; i < size; i++) {
 			if (++_x > _maxX) return;			
 			if (_shift == 0) {							// если вывод без сдвига на строку
-				writeData(data);						// выводим
+				writeData(data[i]);						// выводим
 			} else {									// со сдвигом
-				writeData(data << _shift);				// верхняя часть
-				writeData(data >> (8 - _shift), 1);		// нижняя часть со сдвигом на 1
+				writeData(data[i] << _shift);				// верхняя часть
+				writeData(data[i] >> (8 - _shift), 1);		// нижняя часть со сдвигом на 1
 			}			
 		}
 		if (!_BUFF) endData();
