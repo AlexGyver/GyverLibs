@@ -129,6 +129,10 @@ public:
 		}
 		return _status;
 	}
+	
+	GBUSstatus getStatus() {
+		return _status;
+	}
 
 	// асинхронное чтение потока байтов. Возвращает:
 	// -2: приём не идёт
