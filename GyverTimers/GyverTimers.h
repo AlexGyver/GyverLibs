@@ -9,6 +9,7 @@
 * v1.3 - поправлен незначительный баг												 *
 * v1.4 - исправлена таблица частот и периодов										 *
 * v1.5 - исправлен restart и resume			 										 *
+* v1.6 - phase shift вынесен отдельным методом 										 *
 *************************************************************************************/
 
 /*
@@ -87,7 +88,7 @@ Timer5	| 16 бит		| 0.25 Гц - 1 МГц	| 4 000 000.. 1 мкс	| CHANNEL_A	| 
 #pragma once
 #include <Arduino.h>
 
-/* ==========  Constants ========== */
+/* ==========  Константы ========== */
 #define CHANNEL_A 0x00
 #define CHANNEL_B 0x01
 #define CHANNEL_C 0x02
@@ -127,10 +128,10 @@ public:
 	float setFrequencyFloat(float _timer0_frequency);  	  // Set timer float frequency [Hz]
 	
 	GYVERTIMERS_INLINE
-	void enableISR(uint8_t source = CHANNEL_A, uint16_t phase = 0x00);          // Enable timer interrupt , channel A or B , set phase shift between interrupts
+	void enableISR(uint8_t source = CHANNEL_A);           // Enable timer interrupt , channel A or B 
 	
 	GYVERTIMERS_INLINE
-	void disableISR(uint8_t source = CHANNEL_A);             			  // Disable timer interrupt , channel A or B
+	void disableISR(uint8_t source = CHANNEL_A);          // Disable timer interrupt , channel A or B
 	
 	GYVERTIMERS_INLINE
 	void pause(void);                   				  // Disable timer clock , not cleaning the counter
@@ -156,6 +157,9 @@ public:
 	GYVERTIMERS_INLINE
 	void outputState(uint8_t channel,bool state);		  // Set High / Low on the timer output 
 	
+	GYVERTIMERS_INLINE
+	void phaseShift(uint8_t source, uint16_t phase);
+	
 private:
 	uint8_t _timer0_clock = 0x00;           			  // Variable to store timer clock settings
 };
@@ -167,10 +171,10 @@ public:
 	float setFrequencyFloat(float _timer1_frequency);     // Set timer float frequency [Hz]
 	
 	GYVERTIMERS_INLINE
-	void enableISR(uint8_t source = CHANNEL_A, uint16_t phase = 0x00);       // Enable timer interrupt , channel A or B , set phase shift between interrupts
+	void enableISR(uint8_t source = CHANNEL_A);       	  // Enable timer interrupt , channel A or B 
 	
 	GYVERTIMERS_INLINE
-	void disableISR(uint8_t source = CHANNEL_A);           			  // Disable timer interrupt , channel A or B
+	void disableISR(uint8_t source = CHANNEL_A);          // Disable timer interrupt , channel A or B
 	
 	GYVERTIMERS_INLINE
 	void pause(void);                   				  // Disable timer clock , not cleaning the counter
@@ -196,6 +200,9 @@ public:
 	GYVERTIMERS_INLINE
 	void outputState(uint8_t channel,bool state);		  // Set High / Low on the timer output  
 	
+	GYVERTIMERS_INLINE
+	void phaseShift(uint8_t source, uint16_t phase);
+	
 private:
 	uint8_t _timer1_clock = 0x00;             			  // Variable to store timer clock settings
 };
@@ -207,10 +214,10 @@ public:
 	float setFrequencyFloat(float _timer2_frequency);     // Set timer float frequency [Hz]
 	
 	GYVERTIMERS_INLINE
-	void enableISR(uint8_t source = CHANNEL_A, uint16_t phase = 0x00);      	  // Enable timer interrupt , channel A or B , set phase shift between interrupts
+	void enableISR(uint8_t source = CHANNEL_A);      	  // Enable timer interrupt , channel A or B 
 	
 	GYVERTIMERS_INLINE
-	void disableISR(uint8_t source = CHANNEL_A);             			  // Disable timer interrupt , channel A or B
+	void disableISR(uint8_t source = CHANNEL_A);          // Disable timer interrupt , channel A or B
 	
 	GYVERTIMERS_INLINE
 	void pause(void);                   				  // Disable timer clock , not cleaning the counter
@@ -236,6 +243,9 @@ public:
 	GYVERTIMERS_INLINE
 	void outputState(uint8_t channel,bool state);		  // Set High / Low on the timer output  
 	
+	GYVERTIMERS_INLINE
+	void phaseShift(uint8_t source, uint16_t phase);
+	
 private:
 	uint8_t _timer2_clock = 0x00;             			  // Variable to store timer clock settings	
 };
@@ -248,10 +258,10 @@ public:
 	float setFrequencyFloat(float _timer3_frequency);     // Set timer float frequency [Hz]
 	
 	GYVERTIMERS_INLINE
-	void enableISR(uint8_t source = CHANNEL_A, uint16_t phase = 0x00);       // Enable timer interrupt , channel A or B , set phase shift between interrupts
+	void enableISR(uint8_t source = CHANNEL_A);       	  // Enable timer interrupt , channel A or B
 	
 	GYVERTIMERS_INLINE
-	void disableISR(uint8_t source = CHANNEL_A);          			  // Disable timer interrupt , channel A or B
+	void disableISR(uint8_t source = CHANNEL_A);          // Disable timer interrupt , channel A or B
 	
 	GYVERTIMERS_INLINE
 	void pause(void);                  					  // Disable timer clock , not cleaning the counter
@@ -277,6 +287,9 @@ public:
 	GYVERTIMERS_INLINE
 	void outputState(uint8_t channel,bool state);		  // Set High / Low on the timer output 
 	
+	GYVERTIMERS_INLINE
+	void phaseShift(uint8_t source, uint16_t phase);
+	
 private:
 	uint8_t _timer3_clock = 0x00;             			  // Variable to store timer clock settings
 };
@@ -288,10 +301,10 @@ public:
 	float setFrequencyFloat(float _timer4_frequency);     // Set timer float frequency [Hz]
 	
 	GYVERTIMERS_INLINE
-	void enableISR(uint8_t source = CHANNEL_A, uint16_t phase = 0x00);       // Enable timer interrupt , channel A or B , set phase shift between interrupts
+	void enableISR(uint8_t source = CHANNEL_A);       	  // Enable timer interrupt , channel A or B
 	
 	GYVERTIMERS_INLINE
-	void disableISR(uint8_t source = CHANNEL_A);           			  // Disable timer interrupt , channel A or B
+	void disableISR(uint8_t source = CHANNEL_A);          // Disable timer interrupt , channel A or B
 	
 	GYVERTIMERS_INLINE
 	void pause(void);                  					  // Disable timer clock , not cleaning the counter
@@ -317,6 +330,9 @@ public:
 	GYVERTIMERS_INLINE
 	void outputState(uint8_t channel,bool state);		  // Set High / Low on the timer output 
 	
+	GYVERTIMERS_INLINE
+	void phaseShift(uint8_t source, uint16_t phase);
+	
 private:
 	uint8_t _timer4_clock = 0x00;            			  // Variable to store timer clock settings
 };
@@ -328,10 +344,10 @@ public:
 	float setFrequencyFloat(float _timer5_frequency);     // Set timer float frequency [Hz]
 	
 	GYVERTIMERS_INLINE
-	void enableISR(uint8_t source = CHANNEL_A, uint16_t phase = 0x00);       // Enable timer interrupt , channel A or B , set phase shift between interrupts
+	void enableISR(uint8_t source = CHANNEL_A);       	  // Enable timer interrupt , channel A or B
 	
 	GYVERTIMERS_INLINE
-	void disableISR(uint8_t source = CHANNEL_A);           			  // Disable timer interrupt , channel A or B
+	void disableISR(uint8_t source = CHANNEL_A);          // Disable timer interrupt , channel A or B
 	
 	GYVERTIMERS_INLINE
 	void pause(void);                  					  // Disable timer clock , not cleaning the counter
@@ -356,6 +372,9 @@ public:
 	
 	GYVERTIMERS_INLINE
 	void outputState(uint8_t channel,bool state);		  // Set High / Low on the timer output 
+	
+	GYVERTIMERS_INLINE
+	void phaseShift(uint8_t source, uint16_t phase);
 	
 private:
 	uint8_t _timer5_clock = 0x00;                		  // Variable to store timer clock settings

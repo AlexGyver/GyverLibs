@@ -9,8 +9,9 @@ void setup() {
   Serial.print("Real timer frequency is : ");        // Выведем реальную частоту, реальная может отличаться от заданой (ограничено разрешением таймера)
   Serial.println(Timer1.setFrequencyFloat(2.50));    // Частота прерываний - 2.5 гц , используй .setFrequency(...) для целых чисел
   delay(1000);
-  Timer1.enableISR(CHANNEL_A, 0);     // Первый канал - А, начальная фаза - 0 градусов
-  Timer1.enableISR(CHANNEL_B, 180);   // Второй канал - B, начальная фаза - 180 градусов
+  Timer1.enableISR(CHANNEL_A);        // Первый канал - А
+  Timer1.enableISR(CHANNEL_B);        // Второй канал - B  
+  Timer1.phaseShift(CHANNEL_B, 180);  // сдвинем фазу относительно первого
 }
 
 void loop() {}
