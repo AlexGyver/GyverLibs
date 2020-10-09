@@ -83,7 +83,7 @@
 
 // ============================ НАСТРОЙКИ ================================
 // таймаут отправки после предыдущей активности на линии, мкс
-// он же таймаут приёма (по умолч. стоит для минимальной скорости)
+// он же МАКСИМАЛЬНЫЙ таймаут приёма (в процессе работы пересчитывается)
 #define GBUS_BUSY_TIMEOUT 50000	
 
 // =======================================================================
@@ -111,9 +111,9 @@ public:
 		int state = readBytesAsync(buffer, _bufSize);
 		if (state <= 0) {
 			switch (state) {
-			case -2: _status = GBUS_IDLE;
-			case -1: _status = RX_OVERFLOW;
-			case 0: _status = RECEIVING;
+			case -2: _status = GBUS_IDLE; break;
+			case -1: _status = RX_OVERFLOW; break;
+			case 0: _status = RECEIVING; break;
 			}
 		} else {
 			// если принят пакет
@@ -130,9 +130,8 @@ public:
 		return _status;
 	}
 	
-	GBUSstatus getStatus() {
-		return _status;
-	}
+	GBUSstatus getStatus() {return _status;}
+	byte getTXaddress() {return _txAddress;}
 
 	// асинхронное чтение потока байтов. Возвращает:
 	// -2: приём не идёт
@@ -144,8 +143,10 @@ public:
 			if (!_parseFlag) {					// начало приёма			
 				_parseFlag = true;				// ключ на старт
 				_byteCount = 0;					// сбросили счетчик
+				_timeout = GBUS_BUSY_TIMEOUT;	// сбросили таймаут
 			}
-			buffer[_byteCount++] = port->read();// читаем			
+			buffer[_byteCount++] = port->read();// читаем
+			if (_byteCount == 2) _timeout = (micros() - _tmr) * 10;	// таймаут как время передачи 10 бит
 			if (_byteCount > size) {			// буфер переполнен			
 				_parseFlag = false;
 				return -1;
@@ -155,15 +156,12 @@ public:
 		}
 
 		// таймаут ожидания приёма
-		if (_parseFlag && micros() - _tmr >= GBUS_BUSY_TIMEOUT) {
+		if (_parseFlag && micros() - _tmr >= _timeout) {
 			_parseFlag = false;			// приём окончен
 			return _byteCount;
 		}
 		return -2;
 	}
-
-	byte getTXaddress() {return _txAddress;}
-
 
 	// ===== REQUEST =====
 	// отправить
@@ -296,6 +294,7 @@ private:
 	const int _bufSize;
 	uint32_t _tmr;
 	uint32_t _ackTimer;
+	long _timeout = GBUS_BUSY_TIMEOUT;
 	byte _txAddress;
 	byte _txSize = 0;
 	byte _byteCount = 0;

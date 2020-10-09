@@ -5,9 +5,7 @@
 // Наследует класс Print, то есть можно отправлять всё что угодно, как через обычный Serial
 // Улучшенная производительность для AVR Arduino
 
-#define SOFTUART_BUF_SIZE 64 		// Размер буфера на отправку, байт
-#define SOFTUART_TX_WAIT 50			// Таймаут ожидания наполнения буфера через write, мкс
-#define SOFTUART_BUSY_TIMEOUT 50000	// таймаут отправки после предыдущей активности на линии, мкс
+#define SOFTUART_TX_WAIT 50			// Таймаут ожидания наполнения буфера через write, мкс 
 
 /*
 	Интерфейс: UART. start бит 0, stop бит 1. Кодирование даты: HIGH - 0x1, LOW - 0x0
@@ -27,6 +25,7 @@
 	- скорость: скорость в бодах
 */
 // =============================================================================================
+#define SOFTUART_BUF_SIZE 64 		// Стандартный размер буфера на отправку, байт
 #include <Stream.h>
 
 // КОНСТАНТЫ
@@ -39,7 +38,7 @@ class softUART : public Stream {
 public:
 	using Print::write;
 	
-	softUART(long baud) {	
+	softUART(long baud, byte bufSize = SOFTUART_BUF_SIZE) : _bufSize(bufSize) {
 #if defined(__AVR__)
 		_port_reg = portOutputRegister(digitalPinToPort(_PIN));
 		_pin_reg = portInputRegister(digitalPinToPort(_PIN));
@@ -52,6 +51,12 @@ public:
 #endif
 		_bitTime = 1000000UL / baud;
 		_bitTime2 = (uint32_t)_bitTime >> 1;
+		_timeout = _bitTime * 10 * 10;	// таймаут как время передачи 10 байт
+		buffer = (byte *)malloc(_bufSize);
+	}
+	
+	~softUART() {
+		free(buffer);
 	}
 	
 	enum BUS_stage {
@@ -62,7 +67,7 @@ public:
 	};
 	
 	bool isBusy() {		
-		return !(micros() - _tmr > SOFTUART_BUSY_TIMEOUT);
+		return !(micros() - _tmr > _timeout);
 	}
 	
 	int tick() {return available();}
@@ -183,7 +188,7 @@ public:
 				_writeStart = true;
 				_txSize = 0;
 			}
-			if (_txSize < SOFTUART_BUF_SIZE) buffer[_txSize++] = byte;
+			if (_txSize < _bufSize) buffer[_txSize++] = byte;
 			_tmr = micros();
 			_role = GBUS_TX;
 		}
@@ -194,7 +199,8 @@ public:
 	
 private:
 	bool _writeStart = false;
-	byte buffer[(_ROLE == GBUS_TX || _ROLE == GBUS_FULL) ? SOFTUART_BUF_SIZE : 1];
+	const byte _bufSize = SOFTUART_BUF_SIZE;
+	byte *buffer; //byte buffer[(_ROLE == GBUS_TX || _ROLE == GBUS_FULL) ? SOFTUART_BUF_SIZE : 1];
 	int8_t _bitCount = 0;
 	byte _txSize = 0;
 	byte _byteCount = 0;
@@ -205,6 +211,7 @@ private:
 	BUS_stage _busStage = BUS_IDLE;
 	uint16_t _bitTime;
 	uint16_t _bitTime2;
+	long _timeout;
 	
 #if defined(__AVR__)
 	volatile uint8_t *_port_reg;
