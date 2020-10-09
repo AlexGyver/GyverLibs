@@ -52,11 +52,11 @@ public:
 		_bitTime = 1000000UL / baud;
 		_bitTime2 = (uint32_t)_bitTime >> 1;
 		_timeout = _bitTime * 10 * 10;	// таймаут как время передачи 10 байт
-		buffer = (byte *)malloc(_bufSize);
+		if (_ROLE == GBUS_TX || _ROLE == GBUS_FULL) buffer = (byte *)malloc(_bufSize);
 	}
 	
 	~softUART() {
-		free(buffer);
+		if (_ROLE == GBUS_TX || _ROLE == GBUS_FULL) free(buffer);
 	}
 	
 	enum BUS_stage {
