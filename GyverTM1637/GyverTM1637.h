@@ -64,7 +64,7 @@ public:
 	void twistByte(uint8_t bit0, uint8_t bit1, uint8_t bit2, uint8_t bit3, int delayms);	// скрутка посимвольно
 	
 private:
-	uint8_t lastData[4];
+	uint8_t lastData[4] {};
 	void update();
 	int  writeByte(int8_t wr_data);
 	void start(void);
@@ -73,10 +73,10 @@ private:
 	void sendByte(uint8_t BitAddr, int8_t sendData);
 	void sendArray(uint8_t sendData[]);
 
-	uint8_t Cmd_SetData;
-	uint8_t Cmd_SetAddr;
-	uint8_t Cmd_DispCtrl;
-	uint8_t PointData;
+	uint8_t Cmd_SetData = 0;
+	uint8_t Cmd_SetAddr = 0;
+	uint8_t Cmd_DispCtrl = 0;
+	uint8_t PointData = 0;
 
 	uint8_t Clkpin;
 	uint8_t Datapin;	

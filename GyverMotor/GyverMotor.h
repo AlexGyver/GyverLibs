@@ -116,5 +116,5 @@ protected:
 	uint16_t _deadtime = 0;
 	uint8_t _speed = 20;
 	uint32_t _tmr = 0;
-	float _k;
+	float _k = 0.0;
 };

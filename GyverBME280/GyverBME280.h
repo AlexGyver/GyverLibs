@@ -96,7 +96,7 @@ private:
 		int16_t _H4;
 		int16_t _H5;
 		int8_t _H6;
-	} CalibrationData;
+	} CalibrationData {};
 
 };
 
