@@ -10,8 +10,7 @@ void timer2_ISR(void (*isr)()) {
 
 void timer2_setPeriod(uint32_t time) {
 	int divisor;
-	long period;
-	byte divValue;    
+	byte divValue;
 
 	TCCR2A = 0;
 	TCCR2B = 0;
@@ -38,7 +37,10 @@ void timer2_setPeriod(uint32_t time) {
 	} else if (time > 4096 && time <= 16384) {
 		divisor = 1024;
 		divValue = 7;
-	} else TCCR2B = 1;
+	} else {
+		TCCR2B = 1;
+		return;
+	}
 
 	TCCR2B = (TCCR2B & B11111000) | divValue;			// применяем делитель
 	isr2_counter = 256 - (long)16 * time / divisor;		// OVF 

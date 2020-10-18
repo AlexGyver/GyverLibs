@@ -32,7 +32,10 @@ void timer0_setPeriod(uint32_t time) {
 	} else if (time > 4096 && time <= 16384) {
 		divisor = 128;
 		divValue = 5;
-	} else TCCR0B = 1;
+	} else {
+		TCCR0B = 1;
+		return;
+	}
 
 	TCCR0B = (TCCR0B & B11111000) | divValue;	// применяем делитель	
 	period = (long)16 * time / divisor - 1;		// COMPA
