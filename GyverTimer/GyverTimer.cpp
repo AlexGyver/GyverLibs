@@ -2,66 +2,85 @@
 #include "GyverTimer.h"
 
 // конструктор
-GTimer::GTimer(timerType type, uint32_t interval) {
-	setInterval(interval);		// запуск в режиме ИНТЕРВАЛА
-	_type = type;				// установка типа
+GTimer::GTimer(const timerType &type, const uint32_t &interval, const boolean &readyOnStart) {
+	flagWrite(GTBIT_TYPE, type); 					// установка типа
+	flagWrite(GTBIT_READYONSTART, readyOnStart); 	// установка флага на нулевой запуск
+	setInterval(interval);							// запуск в режиме ИНТЕРВАЛА
 }
 
 // запуск в режиме интервала
-void GTimer::setInterval(uint32_t interval) {
-	if (interval != 0) {				// защита от ввода 0
-		_interval = interval;			// установка
-		_mode = TIMER_INTERVAL;			// режим "интервал"
-		start();						// сброс и запуск	
-	} else stop();						// остановка, если время == 0
+void GTimer::setInterval(const uint32_t &interval) {
+	setTimeout(interval);							// задать интервал и запустить
+	flagWrite(GTBIT_MODE, TIMER_INTERVAL);			// режим "интервал"
+}
+// запуск в режиме таймаута
+void GTimer::setTimeout(const uint32_t &timeout) {
+	if (timeout != 0) {								// защита от ввода 0
+		_interval = timeout;						// установка
+		flagWrite(GTBIT_MODE, TIMER_TIMEOUT); 		// режим "таймаут"
+		start();									// сброс и запуск	
+	} else stop();									// остановка, если время == 0
+}
+// изменить режим на интервал, установить значение флага нулевой готовности и запустить
+void GTimer::setReadyOnStart(const bool &readyOnStart) {
+	flagWrite(GTBIT_READYONSTART, readyOnStart);	// выставляем флаг нулевой готовности
+	flagWrite(GTBIT_MODE, TIMER_INTERVAL); 			// режим "интервал"
+	start();										// сброс и запуск
 }
 
-// запуск в режиме таймаута
-void GTimer::setTimeout(uint32_t timeout) {
-	setInterval(timeout);		// задать интервал и запустить
-	_mode = TIMER_TIMEOUT;		// режим "таймаут"
+// возвращает значение интервала/таймаута
+uint32_t GTimer::getInterval() {
+	return _interval;
 }
 
 // остановить счёт
 void GTimer::stop() {
-	_state = false;
-	_resumeBuffer = ( (_type) ? millis() : micros() ) - _timer;		// запомнили "время остановки"
+	// TODO: здесь должна быть защита от остановки остановленного таймера
+	//       иначе в буфере будет только время последнего вызова stop()
+	flagClear(GTBIT_STATE);
+	_resumeBuffer = ( (flagRead(GTBIT_TYPE)) ? millis() : micros() ) - _timer; 	// запомнили "время остановки"
 }
 
 // продолжить счёт
 void GTimer::resume() {
+	if (flagRead(GTBIT_STATE)) return;				// защита от вызова, если таймер не остановлен
 	start();
-	_timer -= _resumeBuffer;	// восстановили время остановки
+	_timer -= _resumeBuffer;						// восстановили время остановки
 }
 
 // перезапустить счёт
 void GTimer::start() {
-	_state = true;
+	flagSet(GTBIT_STATE);
+	flagWrite(GTBIT_JUSTSTARTED, flagRead(GTBIT_READYONSTART)); 	// поднимаем флаг нулевой готовности
 	reset();
 }
 
 // сброс периода
 void GTimer::reset() {
-	_timer = (_type) ? millis() : micros();
+	_timer = flagRead(GTBIT_TYPE) ? millis() : micros();
 }
 
 // состояние
 boolean GTimer::isEnabled() {
-	return _state;
+	return flagRead(GTBIT_STATE);
 }
 
 // проверка таймера v2.0 (соблюдение интервалов, защита от пропуска и переполнения)
 boolean GTimer::isReady() {	
-	if (!_state) return false;							// если таймер остановлен
-	uint32_t thisTime = (_type) ? millis() : micros();	// текущее время
-	if (thisTime - _timer >= _interval) {				// проверка времени
-		if (_mode) {						// если режим интервалов
+	if (!flagRead(GTBIT_STATE)) return false;						// если таймер остановлен
+	if (flagRead(GTBIT_JUSTSTARTED) && flagRead(GTBIT_MODE)) { 		// если режим интервалов и включен нулевой запуск
+		flagWrite(GTBIT_JUSTSTARTED, 0);
+		return true;
+	}
+	uint32_t thisTime = (flagRead(GTBIT_TYPE)) ? millis() : micros(); // текущее время
+	if (thisTime - _timer >= _interval) { 							// проверка времени
+		if (flagRead(GTBIT_MODE)) {									// если режим интервалов
 			do {
 				_timer += _interval;
-				if (_timer < _interval) break;			// защита от переполнения uint32_t
-			} while (_timer < thisTime - _interval);	// защита от пропуска шага			
-		} else {							// если режим таймаута
-			_state = false;					// остановить таймер
+				if (_timer < _interval) break;						// защита от переполнения uint32_t
+			} while (_timer < thisTime - _interval);				// защита от пропуска шага			
+		} else {													// если режим таймаута
+			flagClear(GTBIT_STATE);									// остановить таймер
 		}
 		return true;
 	} else {
@@ -70,9 +89,12 @@ boolean GTimer::isReady() {
 }
 
 // сменить режим вручную
-void GTimer::setMode(boolean mode) {
-	_mode = mode;
+void GTimer::setMode(const boolean &mode) {
+	flagWrite(GTBIT_MODE, mode);
 }
+
+
+
 
 // ================== УСТАРЕЛО (но работает, для совместимости) ===================
 

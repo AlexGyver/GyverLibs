@@ -3,7 +3,6 @@
 
 /*
 	GTimer - полноценный таймер на базе системных millis() / micros()
-	Документация: https://alexgyver.ru/gyvertimer/
 	- Миллисекундный и микросекундный таймер
 	- Два режима работы:
 		- Режим интервала: таймер "срабатывает" каждый заданный интервал времени
@@ -40,32 +39,51 @@ enum timerType {
 // ============== GTimer (микросекундный и миллисекундный таймер) ================
 class GTimer {
   public:
-	GTimer(timerType type = MS, uint32_t interval = 0);	// объявление таймера с указанием типа и интервала (таймер не запущен, если не указывать)
-	void setInterval(uint32_t interval);	// установка интервала работы таймера (также запустит и сбросит таймер) - режим интервала
-	void setTimeout(uint32_t timeout);		// установка таймаута работы таймера (также запустит и сбросит таймер) - режим таймаута
-	boolean isReady();						// возвращает true, когда пришло время
-	boolean isEnabled();					// вернуть состояние таймера (остановлен/запущен)
-	void reset();							// сброс таймера на установленный период работы
-	void start();							// запустить/перезапустить (со сбросом счёта)
-	void stop();							// остановить таймер (без сброса счёта)	
-	void resume();							// продолжить (без сброса счёта)	
+	GTimer(const timerType &type = MS, const uint32_t &interval = 0, const boolean &readyOnStart = false);	// объявление таймера с указанием типа и интервала (таймер не запущен, если не указывать)
+	void setInterval(const uint32_t &interval);	// установка интервала работы таймера (также запустит и сбросит таймер) - режим интервала
+	void setTimeout(const uint32_t &timeout);	// установка таймаута работы таймера (также запустит и сбросит таймер) - режим таймаута
+	void setReadyOnStart(const boolean &readyOnStart);	// установка нулевой готовности таймера (поменяет на ИНТЕРВАЛ, запустит и сбросит таймер)
+	uint32_t getInterval();				// возвращает значение текущего интервала/таймаунта
+	boolean isReady();					// возвращает true, когда пришло время
+	boolean isEnabled();				// вернуть состояние таймера (остановлен/запущен)
+	void reset();						// сброс таймера на установленный период работы
+	void start();						// запустить/перезапустить (со сбросом счёта)
+	void stop();						// остановить таймер (без сброса счёта)	
+	void resume();						// продолжить (без сброса счёта)	
 	
 	// служебное
-	void setMode(boolean mode);				// установка режима работы вручную: AUTO или MANUAL (TIMER_INTERVAL / TIMER_TIMEOUT)
+	void setMode(const boolean &mode);	// установка режима работы вручную: AUTO или MANUAL (TIMER_INTERVAL / TIMER_TIMEOUT)
 	
   private:
 	uint32_t _timer = 0;
 	uint32_t _interval = 0;
 	uint32_t _resumeBuffer = 0;
-	boolean _mode = true;
-	boolean _state = false;
-	boolean _type = true;
+	// boolean _mode = true;				// AUTO или MANUAL
+	// boolean _state = false;				// запущен или остановлен
+	// boolean _type = true;				// MS или US
+	// boolean _readyOnStart = false;		// будет ли "готов" сразу же после запуска или нет
+	// boolean _justStarted = false;		// триггер на "готовность" сразу после старта
+	byte flags = 0b00010100;			// один байт для всех "булек". биты начиная со старшего отвечают за (X - не используется):
+										// значения: [X X X _justStarted _readyOnStart _type _state _mode>]
+										// индексы:  [7 6 5      4             3         2      1      0 >]
 };
 
-#define MANUAL 0
-#define AUTO 1
-#define TIMER_TIMEOUT 0
-#define TIMER_INTERVAL 1
+#define MANUAL 			0
+#define AUTO 			1
+#define TIMER_TIMEOUT 	0
+#define TIMER_INTERVAL 	1
+
+#define GTBIT_MODE 			0
+#define GTBIT_STATE 		1
+#define GTBIT_TYPE 			2
+#define GTBIT_READYONSTART 	3
+#define GTBIT_JUSTSTARTED 	4
+
+#define flagWrite(flag, val) bitWrite(flags, flag, val)
+#define flagRead(flag) bitRead(flags, flag)
+#define flagSet(flag) bitSet(flags, flag)
+#define flagClear(flag) bitClear(flags, flag)
+
 
 
 // ================================================================================
