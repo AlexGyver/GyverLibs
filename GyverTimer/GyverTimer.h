@@ -29,6 +29,10 @@
 	- 3.2
 		- Добавлен isEnabled
 		- Возможность не запускать таймер при создании
+	- 3.3
+		- Добавлен режим "сразу готов" (isReady == true сразу после запуска)
+		- Добавлен getInterval()
+		- Экономия памяти за счет перехода с boolean на биты
 */
 
 enum timerType {
@@ -79,10 +83,11 @@ class GTimer {
 #define GTBIT_READYONSTART 	3
 #define GTBIT_JUSTSTARTED 	4
 
-#define flagWrite(flag, val) bitWrite(flags, flag, val)
-#define flagRead(flag) bitRead(flags, flag)
-#define flagSet(flag) bitSet(flags, flag)
-#define flagClear(flag) bitClear(flags, flag)
+// Макросы для работы с флагами
+#define flagRead(flag) bitRead(flags, flag)				// получить значение флага
+#define flagSet(flag) bitSet(flags, flag)				// установить флаг в 1
+#define flagClear(flag) bitClear(flags, flag)			// установить флаг в 0
+#define flagWrite(flag, val) bitWrite(flags, flag, val)	// установить флаг в значение val
 
 
 
