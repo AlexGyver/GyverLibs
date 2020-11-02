@@ -1,3 +1,5 @@
+#ifndef FASTLED_VERSION		// запрещаем одновременный инклуд с фастледом
+
 #include "noise.h"
 #define P(x) pgm_read_byte_near(p + x)
 
@@ -457,3 +459,5 @@ uint8_t inoise8(uint16_t x) {
 	uint8_t ans = qadd8(n,n);     // 0..255
 	return ans;
 }
+
+#endif
