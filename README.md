@@ -580,7 +580,7 @@ float getTemp(void);        // получить температуру
 
 <a id="GyverButton"></a>
 ![Logo](/logos/btnLogo.png)
-### GyverButton v3.6 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverButton/GyverButton.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverbutton/)
+### GyverButton v3.7 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverButton/GyverButton.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverbutton/)
 Библиотека для многофункциональной отработки нажатия кнопок с Arduino. Возможности:
 - Работа с нормально замкнутыми и нормально разомкнутыми кнопками
 - Работа с подключением PULL_UP и PULL_DOWN

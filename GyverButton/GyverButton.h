@@ -22,6 +22,10 @@
 	Версия 3.4: Добавлен метод resetStates(), сбрасывающий состояния и счётчики
 	Версия 3.5: увелична производительность для AVR Arduino
 	Версия 3.6: добавлен отдельный класс для работы с аналоговыми клавиатурами, см пример analogKeyboardG
+	Версия 3.7: исправления от Dryundel: 
+	- Любой таймаут удержания
+	- Single, Double и Triple теперь не мешают hasClicks и getClicks и работают совместно
+	- isStep() тоже теперь ничего не мешает и он работает более корректно
 */
 
 #if defined(__AVR__)
@@ -46,6 +50,7 @@ typedef struct {
 	bool type: 1;
 	bool tickMode: 1;
 	bool noPin: 1;
+	bool counter_reset: 1;			//Добавлен
 } GyverButtonFlags;
 #pragma pack(pop)
 
