@@ -32,6 +32,7 @@ setDefault	KEYWORD2
 outputEnable	KEYWORD2
 outputDisable	KEYWORD2
 outputState	KEYWORD2
+phaseShift	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

@@ -6,6 +6,8 @@
 # Datatypes (KEYWORD1)
 #######################################
 GyverPID	KEYWORD1
+PIDtuner	KEYWORD1
+PIDtuner2	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
@@ -26,6 +28,21 @@ setMode	KEYWORD2
 setLimits	KEYWORD2
 setDt	KEYWORD2
 integral	KEYWORD2
+
+setParameters	KEYWORD2
+setInput	KEYWORD2
+compute	KEYWORD2
+getPI_p	KEYWORD2
+getPI_i	KEYWORD2
+getPID_p	KEYWORD2
+getPID_i	KEYWORD2
+getPID_d	KEYWORD2
+getOutput	KEYWORD2
+getAccuracy	KEYWORD2
+reset	KEYWORD2
+debugText	KEYWORD2
+debugPlot	KEYWORD2
+getState	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

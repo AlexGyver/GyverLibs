@@ -4,7 +4,7 @@
 */
 
 #include "GyverMotor.h"
-GMotor motor(DRIVER2WIRE, 2, 3, HIGH);
+GMotor motor(DRIVER2WIRE, 2, 9, HIGH);
 
 // варианты инициализации в зависимости от типа драйвера:
 // GMotor motor(DRIVER2WIRE, dig_pin, PWM_pin, (LOW / HIGH) )
@@ -24,10 +24,10 @@ void setup() {
   // разгоняем ШИМ на пинах 9 и 10 (atmega328) до 16 кГц 10 бит
   // читай тут: https://alexgyver.ru/lessons/pwm-overclock/
   TCCR1A = 0b00000011;  // 10bit
-  TCCR1B = 0b00001101;  // x1024 fast pwm
+  TCCR1B = 0b00001001;  // x1 fast pwm
 
   // активируем 10-битный режим библиотеки
-  motor.set10bitMode();
+  motor.setResolution(10);
 
   // ключ на старт!
   motor.setMode(FORWARD);

@@ -6,7 +6,10 @@
 * v1.0 from 18.02.2020 (Release)													 *
 * v1.1 - исправлена ошибка в расчёте периодов									 	 *
 * v1.2 - код разбит на h и cpp								 						 *
-* v1.3 - поправлен незначительный баг											 	 *
+* v1.3 - поправлен незначительный баг												 *
+* v1.4 - исправлена таблица частот и периодов										 *
+* v1.5 - исправлен restart и resume			 										 *
+* v1.6 - phase shift вынесен отдельным методом 										 *
 *************************************************************************************/
 
 /*
@@ -15,7 +18,7 @@
 	- Поддерживаются все три таймера на ATmega328 и шесть таймеров на ATmega2560;		
 	- Настройка периода (мкс) и частоты (Гц) прерываний:
 		- 8 бит таймеры: 31 Гц - 1 МГц (32 258 мкс - 1 мкс);
-		- 16 бит таймеры: 0.11 Гц - 1 МГц (9 000 000 мкс - 1 мкс);
+		- 16 бит таймеры: 0.25 Гц - 1 МГц (4 000 000 мкс - 1 мкс);
 	- Автоматическая корректировка настройки периода от частоты тактирования (F_CPU);
 	- Функция возвращает точный установившийся период/частоту для отладки (частота ограничена разрешением таймера);
 	- Поддержка многоканального режима работы: один таймер вызывает 2 (ATmega328) или
@@ -29,38 +32,38 @@
 ----------------------------------- Arduino NANO (ATmega328) ---------------------------------------
 Таймер	| Разрядность	| Частоты			| Периоды			| Выходы	| Пин Arduino	| Пин МК|
 --------|---------------|-------------------|-------------------|-----------|---------------|-------|
-Timer0	| 8 бит			| 31 Гц - 1 МГц		| 32 258 - 1 мкс	| CHANNEL_A	| D6			| PD6	|
+Timer0	| 8 бит			| 31 Гц - 1 МГц		| 32 258.. 1 мкс	| CHANNEL_A	| D6			| PD6	|
 		| 				| 					| 					| CHANNEL_B	| D5			| PD5	|
 --------|---------------|-------------------|-------------------|-----------|---------------|-------|
-Timer1	| 16 бит		| 0.11 Гц - 1 МГц	| 9 000 000 - 1 мкс	| CHANNEL_A	| D9			| PB1	|
+Timer1	| 16 бит		| 0.25 Гц - 1 МГц	| 4 000 000.. 1 мкс	| CHANNEL_A	| D9			| PB1	|
 		| 				| 					| 					| CHANNEL_B	| D10			| PB2	|
 --------|---------------|-------------------|-------------------|-----------|---------------|-------|
-Timer2	| 8 бит			| 31 Гц - 1 МГц		| 32 258 - 1 мкс	| CHANNEL_A	| D11			| PB3	|
+Timer2	| 8 бит			| 31 Гц - 1 МГц		| 32 258.. 1 мкс	| CHANNEL_A	| D11			| PB3	|
 		| 				| 					| 					| CHANNEL_B	| D3			| PD3	|
 ----------------------------------------------------------------------------------------------------
 						
 --------------------------------- Arduino MEGA (ATmega2560) ----------------------------------------
 Таймер	| Разрядность	| Частоты			| Периоды			| Выходы	| Пин Arduino	| Пин МК|
 --------|---------------|-------------------|-------------------|-----------|---------------|-------|
-Timer0	| 8 бит			| 31 Гц - 1 МГц		| 32 258 - 1 мкс	| CHANNEL_A	| 13			| PB7	|
+Timer0	| 8 бит			| 31 Гц - 1 МГц		| 32 258.. 1 мкс	| CHANNEL_A	| 13			| PB7	|
 		| 				| 					| 					| CHANNEL_B	| 4				| PG5	|
 --------|---------------|-------------------|-------------------|-----------|---------------|-------|
-Timer1	| 16 бит		| 0.11 Гц - 1 МГц	| 9 000 000 - 1 мкс	| CHANNEL_A	| 11			| PB5	|
+Timer1	| 16 бит		| 0.25 Гц - 1 МГц	| 4 000 000.. 1 мкс	| CHANNEL_A	| 11			| PB5	|
 		| 				| 					| 					| CHANNEL_B	| 12			| PB6	|
 		| 				| 					| 					| CHANNEL_C	| 13			| PB7	|
 --------|---------------|-------------------|-------------------|-----------|---------------|-------|
-Timer2	| 8 бит			| 31 Гц - 1 МГц		| 32 258 - 1 мкс	| CHANNEL_A	| 10			| PB4	|
+Timer2	| 8 бит			| 31 Гц - 1 МГц		| 32 258.. 1 мкс	| CHANNEL_A	| 10			| PB4	|
 		| 				| 					| 					| CHANNEL_B	| 9				| PH6	|
 --------|---------------|-------------------|-------------------|-----------|---------------|-------|
-Timer3	| 16 бит		| 0.11 Гц - 1 МГц	| 9 000 000 - 1 мкс	| CHANNEL_A	| 5				| PE3	|
+Timer3	| 16 бит		| 0.25 Гц - 1 МГц	| 4 000 000.. 1 мкс	| CHANNEL_A	| 5				| PE3	|
 		| 				| 					| 					| CHANNEL_B	| 2				| PE4	|
 		| 				| 					| 					| CHANNEL_C	| 3				| PE5	|
 --------|---------------|-------------------|-------------------|-----------|---------------|-------|
-Timer4	| 16 бит		| 0.11 Гц - 1 МГц	| 9 000 000 - 1 мкс	| CHANNEL_A	| 6				| PH3	|
+Timer4	| 16 бит		| 0.25 Гц - 1 МГц	| 4 000 000.. 1 мкс	| CHANNEL_A	| 6				| PH3	|
 		| 				| 					| 					| CHANNEL_B	| 7				| PH4	|
 		| 				| 					| 					| CHANNEL_C	| 8				| PH5	|
 --------|---------------|-------------------|-------------------|-----------|---------------|-------|
-Timer5	| 16 бит		| 0.11 Гц - 1 МГц	| 9 000 000 - 1 мкс	| CHANNEL_A	| 46			| PL3	|
+Timer5	| 16 бит		| 0.25 Гц - 1 МГц	| 4 000 000.. 1 мкс	| CHANNEL_A	| 46			| PL3	|
 		| 				| 					| 					| CHANNEL_B	| 45			| PL4	|
 		| 				| 					| 					| CHANNEL_C	| 44			| PL5	|
 ----------------------------------------------------------------------------------------------------
@@ -88,7 +91,7 @@ Timer5	| 16 бит		| 0.11 Гц - 1 МГц	| 9 000 000 - 1 мкс	| CHANNEL_A	| 
 #pragma once
 #include <Arduino.h>
 
-/* ==========  Constants ========== */
+/* ==========  Константы ========== */
 #define CHANNEL_A 0x00
 #define CHANNEL_B 0x01
 #define CHANNEL_C 0x02
@@ -128,10 +131,10 @@ public:
 	float setFrequencyFloat(float _timer0_frequency);  	  // Set timer float frequency [Hz]
 	
 	GYVERTIMERS_INLINE
-	void enableISR(uint8_t source = CHANNEL_A, uint16_t phase = 0x00);          // Enable timer interrupt , channel A or B , set phase shift between interrupts
+	void enableISR(uint8_t source = CHANNEL_A);           // Enable timer interrupt , channel A or B 
 	
 	GYVERTIMERS_INLINE
-	void disableISR(uint8_t source = CHANNEL_A);             			  // Disable timer interrupt , channel A or B
+	void disableISR(uint8_t source = CHANNEL_A);          // Disable timer interrupt , channel A or B
 	
 	GYVERTIMERS_INLINE
 	void pause(void);                   				  // Disable timer clock , not cleaning the counter
@@ -157,6 +160,9 @@ public:
 	GYVERTIMERS_INLINE
 	void outputState(uint8_t channel,bool state);		  // Set High / Low on the timer output 
 	
+	GYVERTIMERS_INLINE
+	void phaseShift(uint8_t source, uint16_t phase);
+	
 private:
 	uint8_t _timer0_clock = 0x00;           			  // Variable to store timer clock settings
 };
@@ -168,10 +174,10 @@ public:
 	float setFrequencyFloat(float _timer1_frequency);     // Set timer float frequency [Hz]
 	
 	GYVERTIMERS_INLINE
-	void enableISR(uint8_t source = CHANNEL_A, uint16_t phase = 0x00);       // Enable timer interrupt , channel A or B , set phase shift between interrupts
+	void enableISR(uint8_t source = CHANNEL_A);       	  // Enable timer interrupt , channel A or B 
 	
 	GYVERTIMERS_INLINE
-	void disableISR(uint8_t source = CHANNEL_A);           			  // Disable timer interrupt , channel A or B
+	void disableISR(uint8_t source = CHANNEL_A);          // Disable timer interrupt , channel A or B
 	
 	GYVERTIMERS_INLINE
 	void pause(void);                   				  // Disable timer clock , not cleaning the counter
@@ -197,6 +203,9 @@ public:
 	GYVERTIMERS_INLINE
 	void outputState(uint8_t channel,bool state);		  // Set High / Low on the timer output  
 	
+	GYVERTIMERS_INLINE
+	void phaseShift(uint8_t source, uint16_t phase);
+	
 private:
 	uint8_t _timer1_clock = 0x00;             			  // Variable to store timer clock settings
 };
@@ -208,10 +217,10 @@ public:
 	float setFrequencyFloat(float _timer2_frequency);     // Set timer float frequency [Hz]
 	
 	GYVERTIMERS_INLINE
-	void enableISR(uint8_t source = CHANNEL_A, uint16_t phase = 0x00);      	  // Enable timer interrupt , channel A or B , set phase shift between interrupts
+	void enableISR(uint8_t source = CHANNEL_A);      	  // Enable timer interrupt , channel A or B 
 	
 	GYVERTIMERS_INLINE
-	void disableISR(uint8_t source = CHANNEL_A);             			  // Disable timer interrupt , channel A or B
+	void disableISR(uint8_t source = CHANNEL_A);          // Disable timer interrupt , channel A or B
 	
 	GYVERTIMERS_INLINE
 	void pause(void);                   				  // Disable timer clock , not cleaning the counter
@@ -237,6 +246,9 @@ public:
 	GYVERTIMERS_INLINE
 	void outputState(uint8_t channel,bool state);		  // Set High / Low on the timer output  
 	
+	GYVERTIMERS_INLINE
+	void phaseShift(uint8_t source, uint16_t phase);
+	
 private:
 	uint8_t _timer2_clock = 0x00;             			  // Variable to store timer clock settings	
 };
@@ -249,10 +261,10 @@ public:
 	float setFrequencyFloat(float _timer3_frequency);     // Set timer float frequency [Hz]
 	
 	GYVERTIMERS_INLINE
-	void enableISR(uint8_t source = CHANNEL_A, uint16_t phase = 0x00);       // Enable timer interrupt , channel A or B , set phase shift between interrupts
+	void enableISR(uint8_t source = CHANNEL_A);       	  // Enable timer interrupt , channel A or B
 	
 	GYVERTIMERS_INLINE
-	void disableISR(uint8_t source = CHANNEL_A);          			  // Disable timer interrupt , channel A or B
+	void disableISR(uint8_t source = CHANNEL_A);          // Disable timer interrupt , channel A or B
 	
 	GYVERTIMERS_INLINE
 	void pause(void);                  					  // Disable timer clock , not cleaning the counter
@@ -278,6 +290,9 @@ public:
 	GYVERTIMERS_INLINE
 	void outputState(uint8_t channel,bool state);		  // Set High / Low on the timer output 
 	
+	GYVERTIMERS_INLINE
+	void phaseShift(uint8_t source, uint16_t phase);
+	
 private:
 	uint8_t _timer3_clock = 0x00;             			  // Variable to store timer clock settings
 };
@@ -289,10 +304,10 @@ public:
 	float setFrequencyFloat(float _timer4_frequency);     // Set timer float frequency [Hz]
 	
 	GYVERTIMERS_INLINE
-	void enableISR(uint8_t source = CHANNEL_A, uint16_t phase = 0x00);       // Enable timer interrupt , channel A or B , set phase shift between interrupts
+	void enableISR(uint8_t source = CHANNEL_A);       	  // Enable timer interrupt , channel A or B
 	
 	GYVERTIMERS_INLINE
-	void disableISR(uint8_t source = CHANNEL_A);           			  // Disable timer interrupt , channel A or B
+	void disableISR(uint8_t source = CHANNEL_A);          // Disable timer interrupt , channel A or B
 	
 	GYVERTIMERS_INLINE
 	void pause(void);                  					  // Disable timer clock , not cleaning the counter
@@ -318,6 +333,9 @@ public:
 	GYVERTIMERS_INLINE
 	void outputState(uint8_t channel,bool state);		  // Set High / Low on the timer output 
 	
+	GYVERTIMERS_INLINE
+	void phaseShift(uint8_t source, uint16_t phase);
+	
 private:
 	uint8_t _timer4_clock = 0x00;            			  // Variable to store timer clock settings
 };
@@ -329,10 +347,10 @@ public:
 	float setFrequencyFloat(float _timer5_frequency);     // Set timer float frequency [Hz]
 	
 	GYVERTIMERS_INLINE
-	void enableISR(uint8_t source = CHANNEL_A, uint16_t phase = 0x00);       // Enable timer interrupt , channel A or B , set phase shift between interrupts
+	void enableISR(uint8_t source = CHANNEL_A);       	  // Enable timer interrupt , channel A or B
 	
 	GYVERTIMERS_INLINE
-	void disableISR(uint8_t source = CHANNEL_A);           			  // Disable timer interrupt , channel A or B
+	void disableISR(uint8_t source = CHANNEL_A);          // Disable timer interrupt , channel A or B
 	
 	GYVERTIMERS_INLINE
 	void pause(void);                  					  // Disable timer clock , not cleaning the counter
@@ -357,6 +375,9 @@ public:
 	
 	GYVERTIMERS_INLINE
 	void outputState(uint8_t channel,bool state);		  // Set High / Low on the timer output 
+	
+	GYVERTIMERS_INLINE
+	void phaseShift(uint8_t source, uint16_t phase);
 	
 private:
 	uint8_t _timer5_clock = 0x00;                		  // Variable to store timer clock settings

@@ -1,8 +1,15 @@
 #pragma once
-#include <GyverBus.h>
-//#define GBUS_MINI_NO_CRC	// раскомментируй или добавь в скетч, чтобы отключить CRC. Уменьшает размер функций на 30 байт для тини13
 
-// ******* ЛЁГКИЕ ФУНКЦИИ ОТПРАВКИ И ЧТЕНИЯ GBUS *******
+// ==================== СТАНДАРТНЫЕ НАСТРОЙКИ ======================
+// могут быть изменены здесь, либо прямо в скетче при помощи дефайна ПЕРЕД ПОДКЛЮЧЕНИЕМ БИБЛИОТЕКИ
+// дефайны в скетч соответственно GBUS_SPEED, GBUS_OFFSET_WRITE, GBUS_OFFSET_READ
+#define GBUS_DEFAULT_SPEED	400		// скорость (baud)
+#define GBUS_DEFAULT_WRITE	8		// коррекция задержки записи, мкс
+#define GBUS_DEFAULT_READ	5		// коррекция задержки чтения, мкс
+#define GBUSMINI_BUSY_TIMEOUT 50	// таймаут отправки после предыдущей активности на линии, мс
+
+// ========== ЛЁГКИЕ ФУНКЦИИ ОТПРАВКИ И ЧТЕНИЯ GBUS ==========
+// По одному проводу
 // Все функции (кроме GBUS_is_busy) блокируют выполнение кода на время приёма/отправки
 
 // Возвращает true, если линия занята. Таймаут GBUS_BUSY_TIMEOUT мс
@@ -61,11 +68,20 @@ byte GBUS_send_request_ack(byte pin, byte to, byte from, byte tries, int timeout
 // *******************************************************
 // ********************** СЕРВИС *************************
 // *******************************************************
-#ifndef GBUS_MINI_NO_CRC
-#define GBUS_OFFSET 4
-#else
-#define GBUS_OFFSET 3
+#include "GyverBus.h"
+
+#if !defined(GBUS_SPEED)
+#define GBUS_SPEED GBUS_DEFAULT_SPEED
 #endif
+#if !defined(GBUS_OFFSET_WRITE)
+#define GBUS_OFFSET_WRITE GBUS_DEFAULT_WRITE
+#endif
+#if !defined(GBUS_OFFSET_READ)
+#define GBUS_OFFSET_READ GBUS_DEFAULT_READ
+#endif
+
+#define GBUS_BIT    (1000000UL / GBUS_SPEED)
+#define GBUS_BIT_2  (GBUS_BIT >> 1)
 
 byte GBUS_send_request_ack(byte pin, byte to, byte from, byte tries, int timeout) {
 	GBUS_send_request(pin, to, from);
@@ -88,7 +104,7 @@ byte GBUS_send_request_ack(byte pin, byte to, byte from, byte tries, int timeout
 bool GBUS_is_busy(byte pin) {
 	static uint32_t tmr;
 	if (digitalRead(pin)) {
-		if (millis() - tmr >= GBUS_BUSY_TIMEOUT) return false;
+		if (millis() - tmr >= GBUSMINI_BUSY_TIMEOUT) return false;
 		else return true;
 	} else {
 		tmr = millis();
@@ -101,12 +117,12 @@ bool GBUS_is_busy(byte pin) {
 // *******************************************************
 byte GBUS_read_raw(byte pin, byte* buf, byte size) {
 	if (!digitalRead(pin)) {    	// проверяем старт бит (low)
-		GBUS_DELAY(GBUS_BIT_2);		// ждём половину времени
+		delayMicroseconds(GBUS_BIT_2);		// ждём половину времени
 		if (!digitalRead(pin)) { 	// если всё ещё старт бит (low)
 			int8_t bitCount = 0;	// счётчик битов
 			byte byteCount = 0;		// счётчик байтов
 			while (1) {				
-				GBUS_DELAY(GBUS_BIT-DELAY_OFFSET_READ);			// ждём бит
+				delayMicroseconds(GBUS_BIT-GBUS_OFFSET_READ);	// ждём бит
 				byte bit = digitalRead(pin);					// читаем
 				if (bitCount < 8) {								// передача битов даты
 					bitWrite(buf[byteCount], bitCount, bit);  	// пишем в буфер
@@ -131,7 +147,7 @@ byte GBUS_read(byte pin, byte addr, byte* buf, byte size) {
 	byte buf2[size + GBUS_OFFSET];									// буфер на приём
 	byte bytes = GBUS_read_raw(pin, buf2, (size + GBUS_OFFSET));	// принимаем, получаем количество байт посылки
 	if (buf2[0] == bytes && buf2[1] == addr) {						// если совпало количество байт и адрес
-#ifndef GBUS_MINI_NO_CRC
+#if (GBUS_CRC == 1)
 		if (GBUS_crc_bytes(buf2, bytes) != 0) return 0;
 #endif
 		for (byte i = 0; i < bytes - GBUS_OFFSET; i++) buf[i] = buf2[i + 3];	// переписываем в буфер в скетче
@@ -146,7 +162,7 @@ byte GBUS_read_request(byte pin, byte addr) {
 	byte buf[GBUS_OFFSET];	
 	if (GBUS_read_raw(pin, buf, GBUS_OFFSET) == GBUS_OFFSET 
 			&& buf[1] == addr
-#ifndef GBUS_MINI_NO_CRC
+#if (GBUS_CRC == 1)
 			&& GBUS_crc_bytes(buf, GBUS_OFFSET) == 0
 #endif
 			&& buf[0] == 0) return buf[2];
@@ -159,7 +175,7 @@ byte GBUS_read_ack(byte pin, byte addr) {
 	byte buf[GBUS_OFFSET];	
 	if (GBUS_read_raw(pin, buf, GBUS_OFFSET) == GBUS_OFFSET 
 			&& buf[1] == addr 
-#ifndef GBUS_MINI_NO_CRC
+#if (GBUS_CRC == 1)
 			&& GBUS_crc_bytes(buf, GBUS_OFFSET) == 0
 #endif
 			&& buf[0] == 1) return buf[2];
@@ -179,7 +195,7 @@ void GBUS_send_raw(byte pin, byte* buf, byte size) {
 			else bit = 1;
 			pinMode(pin, !bit);
 			digitalWrite(pin, bit);
-			GBUS_DELAY(GBUS_BIT-DELAY_OFFSET_WRITE);
+			delayMicroseconds(GBUS_BIT-GBUS_OFFSET_WRITE);
 		}
 	}
 }
@@ -192,7 +208,7 @@ void GBUS_send(byte pin, byte to, byte from, byte* data, byte size) {
 	buf[1] = to;
 	buf[2] = from;
 	for (byte i = 0; i < size; i++) buf[i + 3] = data[i];
-#ifndef GBUS_MINI_NO_CRC
+#if (GBUS_CRC == 1)
 	buf[size + 3] = GBUS_crc_bytes(buf, size + 3);
 #endif
 	GBUS_send_raw(pin, buf, size+GBUS_OFFSET);
@@ -201,7 +217,7 @@ void GBUS_send(byte pin, byte to, byte from, byte* data, byte size) {
 // *******************************************************
 void GBUS_send_request(byte pin, byte to, byte from) {
 	byte buf[GBUS_OFFSET] = {0, to, from};
-#ifndef GBUS_MINI_NO_CRC
+#if (GBUS_CRC == 1)
 	buf[3] = GBUS_crc_bytes(buf, 3);
 #endif
 	GBUS_send_raw(pin, buf, GBUS_OFFSET);
@@ -210,7 +226,7 @@ void GBUS_send_request(byte pin, byte to, byte from) {
 // *******************************************************
 void GBUS_send_ack(byte pin, byte to, byte from) {
 	byte buf[GBUS_OFFSET] = {1, to, from};
-#ifndef GBUS_MINI_NO_CRC
+#if (GBUS_CRC == 1)
 	buf[3] = GBUS_crc_bytes(buf, 3);
 #endif
 	GBUS_send_raw(pin, buf, GBUS_OFFSET);

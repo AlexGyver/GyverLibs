@@ -4,21 +4,25 @@
 static int _sign(int x) {return ((x) > 0 ? 1 : -1);}
 
 // ====== WRITE ======
+// отправить на драйвер с учётом направления
 void Smooth::writeUs(int val) {
 	sendToDriver(_dir ? (_max + _min - val) : val);
 }
+
+// жёстко повернуть на угол (опираясь на min и max)
 void Smooth::write(uint16_t angle) {
-	writeUs(map(angle, 0, _maxAngle, _min, _max));
-	_servoCurrentPos = (map(angle, 0, _maxAngle, _min, _max));
-	_servoTargetPos = _servoCurrentPos;
+	angle = map(angle, 0, _maxAngle, _min, _max);
+	writeMicroseconds(angle);
 }
 
+// жёстко повернуть на импульс (без ограничений)
 void Smooth::writeMicroseconds(uint16_t val) {
-	sendToDriver(val);
+	writeUs(val);
 	_servoCurrentPos = val;
-	_servoTargetPos = _servoCurrentPos;
+	_servoTargetPos = val;
 }
 
+// отправить значение на драйвер
 void Smooth::sendToDriver(uint16_t val) {
 	// пустышка, заменить производным
 }
@@ -39,16 +43,14 @@ void Smooth::attach() {
 void Smooth::attach(int pin, int target) {
 	_pin = pin;
 	attach(_pin);
-	if (target <= _maxAngle) target = map(target, 0, _maxAngle, _min, _max);	// если в градусах!
-	writeUs(target);
-	_servoTargetPos = target;
-	_servoCurrentPos = target;
+	if (target <= _maxAngle) write(target);		// если в градусах
+	else writeMicroseconds(target);
 }
 
 void Smooth::attach(int pin, int min, int max, int target) {
-	attach(pin, target);
 	_min = min;
 	_max = max;
+	attach(pin, target);
 }
 
 void Smooth::start() {
@@ -75,11 +77,15 @@ void Smooth::smoothStart() {
 
 // ====== SET ======
 void Smooth::setSpeed(int speed) {
-	_servoMaxSpeed = (long)speed*_max/_maxAngle;	// ~ перевод из градусов в секунду в тики
+	_servoMaxSpeed = (long)speed * _max / _maxAngle;	// ~ перевод из градусов в секунду в тики
 }
 
-void Smooth::setAccel(float accel) {
-	_acceleration = (float)accel*_max*3;	// для совместимости со старыми скетчами (уск. 0.1-1)
+void Smooth::setAccel(double accel) {
+	_acceleration = (float)accel * _max * 3;			// для совместимости со старыми скетчами (уск. 0.1-1)
+}
+
+void Smooth::setAccel(int accel) {
+	_acceleration = (long)accel * (_max - _min) / _maxAngle;	// напрямую в градусах/сек/сек (перевод в тики)
 }
 
 void Smooth::setTarget(int target) {
@@ -150,7 +156,7 @@ boolean Smooth::tickManual() {
 			_servoCurrentPos += _speed * _delta;
 			if (_autoDetach && !_servoState) {
 				_servoState = true;
-				attach(_pin);Serial.println("att");
+				attach(_pin);
 				timeoutCounter = 0;
 			}
 			writeUs(_servoCurrentPos);
@@ -163,7 +169,7 @@ boolean Smooth::tickManual() {
 			}
 			if (timeoutCounter > SS_DEADTIME && _autoDetach && _servoState) {			
 				_servoState = false;
-				detach();Serial.println("det");
+				detach();
 			}
 		}
 		_lastSpeed = _speed;

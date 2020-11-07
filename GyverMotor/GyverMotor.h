@@ -1,7 +1,6 @@
 #ifndef _GyverMotor_lib_H
 #define _GyverMotor_lib_H
 
-#pragma once
 #include <Arduino.h>
 
 /*
@@ -20,6 +19,9 @@
 	- Версия 2.2: оптимизация
 	- Версия 2.3: добавлена поддержка esp (исправлены ошибки)
 	- Версия 2.4: совместимость с другими библами
+	- Версия 2.5: добавлен тип DRIVER2WIRE_NO_INVERT
+	- Версия 3.0: переделана логика minDuty, добавлен режим для ШИМ любой битности
+	- Версия 3.1: мелкие исправления
 		
 	Документация: https://alexgyver.ru/gyvermotor/
 	AlexGyver, 2020
@@ -28,9 +30,10 @@
 #define _SMOOTH_PRD 50	// таймер smoothTick, мс
 
 enum GM_driverType {
-	DRIVER2WIRE,
-	DRIVER3WIRE,
-	RELAY2WIRE,
+	DRIVER2WIRE_NO_INVERT,	// двухпроводной драйвер, в котором при смене направления не нужна инверсия ШИМ
+	DRIVER2WIRE,			// двухпроводной драйвер (направление + ШИМ)
+	DRIVER3WIRE,			// трёхпроводной драйвер (два пина направления + ШИМ)
+	RELAY2WIRE,				// реле в качестве драйвера (два пина направления)
 };
 
 #define NORMAL 0
@@ -55,13 +58,13 @@ public:
 	// GMotor motor(RELAY2WIRE, dig_pin_A, dig_pin_B, (LOW/HIGH) )
 	
 	// установка скорости 0-255 (8 бит) и 0-1023 (10 бит)
-	void setSpeed(int16_t duty);			
+	void setSpeed(int16_t duty);
 	
 	// сменить режим работы мотора:	
 	// FORWARD - вперёд
 	// BACKWARD - назад
 	// STOP - остановить
-	// BRAKE - активное торможение
+	// BRAKE - активный тормоз
 	// AUTO - подчиняется setSpeed (-255.. 255)
 	void setMode(GM_workMode mode);
 	
@@ -73,11 +76,8 @@ public:
 	// установить минимальную скважность (при которой мотор начинает крутиться)
 	void setMinDuty(int duty);
 	
-	// установить выход в 8 бит
-	void set8bitMode();		
-
-	// установить выход в 10 бит
-	void set10bitMode();					
+	// установить разрешение ШИМ в битах
+	void setResolution(byte bit);
 	
 	// установить deadtime (в микросекундах). По умолч 0
 	void setDeadtime(uint16_t deadtime);	
@@ -97,20 +97,27 @@ public:
 	// внутренняя переменная скважности для отладки
 	int16_t _duty = 0;
 	
+	// свовместимость со старыми версиями
+	// установить выход в 8 бит
+	void set8bitMode();		
+
+	// установить выход в 10 бит
+	void set10bitMode();
+	
 protected:
 	void setPins(bool a, bool b, int c);	
 	void run(GM_workMode mode, int16_t duty = 0);		// дать прямую команду мотору (без смены режима)
-	
+	int16_t _dutyS = 0;
 	int _minDuty = 0, _state = 0;;
 	int8_t _digA = _GM_NC, _digB = _GM_NC, _pwmC = _GM_NC;
 	bool _direction = false;
-	int8_t _resolution = 0, _level = HIGH;
-	int _maxDuty = 254;
+	int8_t _level = LOW;	// логика инвертирована!
+	int _maxDuty = 255;
 	GM_workMode _mode = FORWARD, _lastMode = FORWARD;
 	GM_driverType _type;
 	uint16_t _deadtime = 0;
 	uint8_t _speed = 20;
 	uint32_t _tmr = 0;
+  float _k;
 };
-
 #endif // _GyverMotor_lib_H

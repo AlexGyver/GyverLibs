@@ -16,8 +16,7 @@ GyverMotor	KEYWORD1
 setSpeed	KEYWORD2
 setMode	KEYWORD2
 setDirection	KEYWORD2
-set8bitMode	KEYWORD2
-set10bitMode	KEYWORD2
+setResolution	KEYWORD2
 setDeadtime	KEYWORD2
 setLevel	KEYWORD2
 setMinDuty	KEYWORD2
@@ -27,10 +26,13 @@ run	KEYWORD2
 smoothTick	KEYWORD2
 setSmoothSpeed	KEYWORD2
 
+set8bitMode	KEYWORD2
+set10bitMode	KEYWORD2
+
 #######################################
 # Constants (LITERAL1)
 #######################################
-
+DRIVER2WIRE_NO_INVERT	LITERAL1
 DRIVER2WIRE	LITERAL1
 DRIVER3WIRE	LITERAL1
 RELAY2WIRE	LITERAL1

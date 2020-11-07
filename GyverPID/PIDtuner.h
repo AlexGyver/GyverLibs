@@ -193,6 +193,10 @@ public:
 	byte getAccuracy() {
 		return (state == 3) ? accuracy : 0;
 	}
+	
+	byte getState() {
+		return state;
+	}
 
 	void reset() {
 		state = 0;

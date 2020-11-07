@@ -1,0 +1,62 @@
+#######################################
+# Syntax Coloring Map For GyverOLED
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+GyverOLED	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+init	KEYWORD2
+clear	KEYWORD2
+setContrast	KEYWORD2
+flipH	KEYWORD2
+flipV	KEYWORD2
+setScale	KEYWORD2
+invertText	KEYWORD2
+invertDisplay	KEYWORD2
+autoPrintln	KEYWORD2
+
+home	KEYWORD2
+setCursor	KEYWORD2
+setCursorXY	KEYWORD2
+
+dot	KEYWORD2
+line	KEYWORD2
+rect	KEYWORD2
+roundRect	KEYWORD2
+circle	KEYWORD2
+fill	KEYWORD2
+drawByte	KEYWORD2
+drawBitmap	KEYWORD2
+
+update	KEYWORD2
+createBuf	KEYWORD2
+sendBuf	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+SSD1306_128x32	LITERAL1
+SSD1306_128x64	LITERAL1
+SSH1106_128x64	LITERAL1
+
+OLED_BUFFER	LITERAL1
+OLED_NO_BUFFER	LITERAL1
+
+OLED_STROKE	LITERAL1
+OLED_FILL	LITERAL1
+OLED_CLEAR	LITERAL1
+OLED_INVERT	LITERAL1
+
+BUF_ADD	LITERAL1
+BUF_SUBTRACT	LITERAL1
+BUF_REPLACE	LITERAL1
+
+BITMAP_NORMAL	LITERAL1
+BITMAP_INVERT	LITERAL1
+
+USE_MICRO_WIRE	LITERAL1
