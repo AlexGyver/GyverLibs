@@ -536,7 +536,7 @@ void Timer_5::outputDisable(uint8_t channel) {
 
 // ========================== SET PERIOD ==========================
 uint32_t Timer_0::setPeriod(uint32_t _timer0_period)  {	
-	_timer0_period = constrain(_timer0_period, 1, 32258);
+	_timer0_period = constrain(_timer0_period, 1, MAX_PERIOD_8);
 
 	uint32_t _timer0_cycles = F_CPU / 1000000 * _timer0_period;  // Calculation of the number of timer cycles per period
 	uint8_t _timer0_prescaler = 0x00;
@@ -570,7 +570,7 @@ uint32_t Timer_0::setPeriod(uint32_t _timer0_period)  {
 }
 
 uint32_t Timer_1::setPeriod(uint32_t _timer1_period)  {	
-	_timer1_period = constrain(_timer1_period, 1, 4000000);
+	_timer1_period = constrain(_timer1_period, 1, MAX_PERIOD_16);
 	
 	uint32_t _timer1_cycles = F_CPU / 1000000 * _timer1_period;  // Calculation of the number of timer cycles per period
 	uint8_t _timer1_prescaler = 0x00;
@@ -606,7 +606,7 @@ uint32_t Timer_1::setPeriod(uint32_t _timer1_period)  {
 }
 
 uint32_t Timer_2::setPeriod(uint32_t _timer2_period)  {	
-	_timer2_period = constrain(_timer2_period, 1, 32258);
+	_timer2_period = constrain(_timer2_period, 1, MAX_PERIOD_8);
 	
 	uint32_t _timer2_cycles = F_CPU / 1000000 * _timer2_period;  // Calculation of the number of timer cycles per period
 	uint8_t _timer2_prescaler = 0x00;
@@ -648,7 +648,7 @@ uint32_t Timer_2::setPeriod(uint32_t _timer2_period)  {
 #if defined(__AVR_ATmega2560__)
 
 uint32_t Timer_3::setPeriod(uint32_t _timer3_period)  {	
-	_timer3_period = constrain(_timer3_period, 1, 4000000);
+	_timer3_period = constrain(_timer3_period, 1, MAX_PERIOD_16);
 	
 	uint32_t _timer3_cycles = F_CPU / 1000000 * _timer3_period;  // Calculation of the number of timer cycles per period
 	uint8_t _timer3_prescaler = 0x00;
@@ -682,7 +682,7 @@ uint32_t Timer_3::setPeriod(uint32_t _timer3_period)  {
 }
 
 uint32_t Timer_4::setPeriod(uint32_t _timer4_period)  {	
-	_timer4_period = constrain(_timer4_period, 1, 4000000);
+	_timer4_period = constrain(_timer4_period, 1, MAX_PERIOD_16);
 	
 	uint32_t _timer4_cycles = F_CPU / 1000000 * _timer4_period;  // Calculation of the number of timer cycles per period
 	uint8_t _timer4_prescaler = 0x00;
@@ -716,7 +716,7 @@ uint32_t Timer_4::setPeriod(uint32_t _timer4_period)  {
 }
 
 uint32_t Timer_5::setPeriod(uint32_t _timer5_period)  {	
-	_timer5_period = constrain(_timer5_period, 1, 4000000);
+	_timer5_period = constrain(_timer5_period, 1, MAX_PERIOD_16);
 	
 	uint32_t _timer5_cycles = F_CPU / 1000000 * _timer5_period;  // Calculation of the number of timer cycles per period
 	uint8_t _timer5_prescaler = 0x00;
