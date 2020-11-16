@@ -22,7 +22,7 @@ public:
 	int getRPM() {
 		if (ready) {	// если готовы новые данные
 			ready = false;
-			rpm = median3(6ul * _TACHO_TICKS_AMOUNT * 1000000 / tachoTime);
+			rpm = median3(60ul * _TACHO_TICKS_AMOUNT * 1000000 / tachoTime);
 		}
 		if (micros() - tachoTimer > _TACHO_TIMEOUT) rpm = 0;
 		return rpm;
