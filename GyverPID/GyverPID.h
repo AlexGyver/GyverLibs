@@ -19,6 +19,7 @@
 		- Добавлен режим оптимизации интегральной составляющей (см. доку)
 		- Добавлены автоматические калибровщики коэффициентов (см. примеры и доку)
 	Версия 3.1 - исправлен режиме ON_RATE, добавлено автоограничение инт. суммы
+	Версия 3.2 - чуть оптимизации, добавлена getResultNow
 */
 
 #include <Arduino.h>
@@ -116,9 +117,16 @@ public:
 	datatype getResultTimer() {
 		if (millis() - pidTimer >= _dt) {
 			pidTimer = millis();
-			GyverPID::getResult();
+			getResult();
 		}
 		return output;
+	}
+	
+	// посчитает выход по реальному прошедшему времени между вызовами функции
+	datatype getResultNow() {
+		setDt(millis() - pidTimer);
+		pidTimer = millis();
+		return getResult();
 	}
 	
 private:
