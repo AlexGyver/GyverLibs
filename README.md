@@ -15,6 +15,7 @@
 * [GyverTM1637](#GyverTM1637) - управление дисплеем на TM1637
 * [ServoSmooth](#ServoSmooth) - плавное управление сервоприводами
 * [GyverBus](#GyverBus) - связь Ардуинок по одному проводу
+* [Gyver433](#Gyver433) - лёгкая либа для радиомодулей SYN115 и SYN480R
 
 ### Периферия МК
 * [directADC](#directADC) - расширенный контроль АЦП и компаратора
@@ -67,6 +68,17 @@ minimLibs это мини-библиотеки, которые не входят
 - **thermistor** - библиотека для работы с NTC термистором
 - **timer_mini** - мини GyverTimer (таймер на millis())
 - **timer_mini2** - мини GyverTimer с алгоритмом второй версии
+
+---
+
+
+<a id="GyverBus"></a>
+![Logo](/logos/busLogo.png)
+### Gyver433 v1.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/Gyver433/Gyver433.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverbus/)
+Суперлёгкая библиотека для радиомодулей 433 МГц
+- Не использует прерывания и таймеры (кроме нулевого, читает micros())
+- Встроенный CRC контроль целостности
+- Ускоренный алгоритм IO для AVR Arduino
 
 ---
 
