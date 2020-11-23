@@ -72,7 +72,7 @@ minimLibs это мини-библиотеки, которые не входят
 ---
 
 
-<a id="GyverBus"></a>
+<a id="Gyver433"></a>
 ![Logo](/logos/busLogo.png)
 ### Gyver433 v1.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/Gyver433/Gyver433.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverbus/)
 Суперлёгкая библиотека для радиомодулей 433 МГц
