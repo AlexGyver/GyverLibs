@@ -47,7 +47,7 @@ void loop() {
   static int count = 0;
   count += 10;
   for (int i = 0; i < 50; i++)
-    strip.sendData(CRGBtoData(ColorFromPalette(fire_p, inoise8(i * 25, count), 255, LINEARBLEND)));
+    strip.send(CRGBtoData(ColorFromPalette(fire_p, inoise8(i * 25, count), 255, LINEARBLEND)));
   delay(30);
   }
 */

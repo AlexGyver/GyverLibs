@@ -47,7 +47,7 @@ void loop() {
     //strip.send(CRGBtoData(ColorFromPalette(RainbowStripeColors_p, count + i * 3, 255, LINEARBLEND)));
 
     // рандомный шум радугой
-    strip.sendData(CRGBtoData(ColorFromPalette(RainbowColors_p, inoise8(i * 20, count2), 255, LINEARBLEND)));
+    strip.send(CRGBtoData(ColorFromPalette(RainbowColors_p, inoise8(i * 20, count2), 255, LINEARBLEND)));
   }
   delay(40);
   }
