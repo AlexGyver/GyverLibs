@@ -154,10 +154,10 @@ boolean Smooth::tickManual() {
 			}
 			_speed = constrain(_speed, -_servoMaxSpeed, _servoMaxSpeed);
 			_servoCurrentPos += _speed * _delta;
-			if (_autoDetach && !_servoState) {
+			if (!_servoState) {
 				_servoState = true;
-				attach(_pin);
 				timeoutCounter = 0;
+				if (_autoDetach) attach(_pin);
 			}
 			writeUs(_servoCurrentPos);
 		} else {
@@ -167,9 +167,9 @@ boolean Smooth::tickManual() {
 				writeUs(_servoCurrentPos);
 				timeoutCounter++;
 			}
-			if (timeoutCounter > SS_DEADTIME && _autoDetach && _servoState) {			
+			if (timeoutCounter > SS_DEADTIME && _servoState) {			
 				_servoState = false;
-				detach();
+				if (_autoDetach) detach();
 			}
 		}
 		_lastSpeed = _speed;

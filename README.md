@@ -74,7 +74,7 @@ minimLibs это мини-библиотеки, которые не входят
 
 <a id="Gyver433"></a>
 ![Logo](/logos/busLogo.png)
-### Gyver433 v1.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/Gyver433/Gyver433.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverbus/)
+### Gyver433 v1.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/Gyver433/Gyver433.zip)
 Суперлёгкая библиотека для радиомодулей 433 МГц
 - Не использует прерывания и таймеры (кроме нулевого, читает micros())
 - Встроенный CRC контроль целостности
@@ -1122,7 +1122,7 @@ void enable(uint8_t mode, uint8_t prescaler);   // включить WDT с на�
 
 <a id="ServoSmooth"></a>
 ![Logo](/logos/servoLogo.png)
-### ServoSmooth v3.7 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/ServoSmooth/ServoSmooth.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/servosmooth/)
+### ServoSmooth v3.8 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/ServoSmooth/ServoSmooth.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/servosmooth/)
 Библиотека для плавного управления сервоприводами
 - Является дополнением к стандартной библиотеке Servo
 - Также работает с расширителем серво PCA9685
