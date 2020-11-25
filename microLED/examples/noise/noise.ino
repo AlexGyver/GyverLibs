@@ -4,7 +4,8 @@
 #define NUMLEDS 20      // кол-во светодиодов
 
 #include <microLED.h>
-microLED<NUMLEDS, STRIP_PIN, LED_WS2818, ORDER_GRB, CLI_AVER> strip;
+microLED<NUMLEDS, STRIP_PIN, MLED_NO_CLOCK, LED_WS2818, ORDER_GRB, CLI_AVER> strip;
+#include <FastLEDsupport.h>    // нужна для шума
 
 void setup() {
   strip.setBrightness(150);

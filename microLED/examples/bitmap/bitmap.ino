@@ -1,4 +1,4 @@
-#define COLOR_DEBTH 2
+#define STRIP_PIN 2     // пин ленты
 
 // для генерации битмапа используется программа imageProcessor
 // https://github.com/AlexGyver/imageProcessor
@@ -14,9 +14,9 @@ const uint16_t bitmap_8x8[] PROGMEM = {
   0xFF9D, 0x0000, 0x2D7F, 0x2D7F, 0x2D7F, 0x2D7F, 0x194A, 0x83B3, 
   0x0000, 0x0000, 0xAA86, 0x0000, 0x0000, 0x0000, 0x792A, 0x0000, 
 };
-
+#define COLOR_DEBTH 2
 #include <microLED.h>
-microLED<32 * 8, 2, LED_WS2812, ORDER_GRB, CLI_HIGH> matrix(32, 8, ZIGZAG, LEFT_TOP, DIR_DOWN);
+microLED<32 * 8, STRIP_PIN, MLED_NO_CLOCK, LED_WS2812, ORDER_GRB, CLI_HIGH> matrix(32, 8, ZIGZAG, LEFT_TOP, DIR_DOWN);
 
 void setup() {
   matrix.setBrightness(150);

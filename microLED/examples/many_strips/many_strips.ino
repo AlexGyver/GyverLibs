@@ -8,8 +8,8 @@
 #define COLOR_DEBTH 2   // цветовая глубина: 1, 2, 3 (в байтах)
 #include <microLED.h>
 
-microLED<NUMLEDS_1, LED1_PIN, LED_WS2818, ORDER_GRB, CLI_AVER> strip_1;
-microLED<NUMLEDS_2, LED2_PIN, LED_WS2818, ORDER_GRB, CLI_AVER> strip_2;
+microLED<NUMLEDS_1, LED1_PIN, MLED_NO_CLOCK, LED_WS2818, ORDER_GRB, CLI_AVER> strip_1;
+microLED<NUMLEDS_2, LED2_PIN, MLED_NO_CLOCK, LED_WS2818, ORDER_GRB, CLI_AVER> strip_2;
 
 void setup() {
   // управляем яркостью

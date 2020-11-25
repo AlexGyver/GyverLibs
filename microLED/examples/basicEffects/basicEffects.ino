@@ -6,7 +6,7 @@
 
 #define COLOR_DEBTH 3
 #include <microLED.h>   // подключаем библу
-microLED<NUMLEDS, STRIP_PIN, LED_WS2818, ORDER_GRB, CLI_AVER> strip;
+microLED<NUMLEDS, STRIP_PIN, MLED_NO_CLOCK, LED_WS2818, ORDER_GRB, CLI_AVER> strip;
 
 void setup() {
   strip.setBrightness(60);

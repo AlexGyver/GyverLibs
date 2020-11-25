@@ -5,7 +5,9 @@
 
 #include <microLED.h>
 // количество светодиодов указываем 0
-microLED<0, STRIP_PIN, LED_WS2818, ORDER_GRB, CLI_AVER> strip;
+microLED<0, STRIP_PIN, MLED_NO_CLOCK, LED_WS2818, ORDER_GRB, CLI_AVER> strip;
+
+#include <FastLEDsupport.h>    // нужна для шума
 
 void setup() {
   strip.setBrightness(150);

@@ -17,18 +17,24 @@
 #include <microLED.h>   // подключаем библу
 
 // ======= ИНИЦИАЛИЗАЦИЯ =======
-// <колво-ледов, пин, чип, порядок>
-// microLED<NUMLEDS, STRIP_PIN, LED_WS2818, ORDER_GRB> strip;
+// <колво-ледов, пин, клок пин, чип, порядок>
+// microLED<NUMLEDS, DATA_PIN, CLOCK_PIN, LED_WS2818, ORDER_GRB> strip;
+// CLOCK пин нужен только для SPI лент (например APA102)
+// для обычных WS лент указываем MLED_NO_CLOCK
+// по APA102 смотри отдельный гайд в примерах
 
 // различные китайские подделки могут иметь совместимость
 // с одним чипом, но другой порядок цветов!
 // поддерживаемые чипы лент и их официальный порядок цветов:
-// microLED<NUMLEDS, STRIP_PIN, LED_WS2811, ORDER_GBR> strip;
-// microLED<NUMLEDS, STRIP_PIN, LED_WS2812, ORDER_GRB> strip;
-// microLED<NUMLEDS, STRIP_PIN, LED_WS2813, ORDER_GRB> strip;
-// microLED<NUMLEDS, STRIP_PIN, LED_WS2815, ORDER_GRB> strip;
-// microLED<NUMLEDS, STRIP_PIN, LED_WS2818, ORDER_RGB> strip;
-// microLED<NUMLEDS, STRIP_PIN, LED_WS6812, ORDER_RGB> strip;
+// microLED<NUMLEDS, STRIP_PIN, MLED_NO_CLOCK, LED_WS2811, ORDER_GBR> strip;
+// microLED<NUMLEDS, STRIP_PIN, MLED_NO_CLOCK, LED_WS2812, ORDER_GRB> strip;
+// microLED<NUMLEDS, STRIP_PIN, MLED_NO_CLOCK, LED_WS2813, ORDER_GRB> strip;
+// microLED<NUMLEDS, STRIP_PIN, MLED_NO_CLOCK, LED_WS2815, ORDER_GRB> strip;
+// microLED<NUMLEDS, STRIP_PIN, MLED_NO_CLOCK, LED_WS2818, ORDER_RGB> strip;
+// microLED<NUMLEDS, STRIP_PIN, MLED_NO_CLOCK, LED_WS6812, ORDER_RGB> strip;
+// microLED<NUMLEDS, STRIP_PIN, CLOCK_PIN, LED_APA102, ORDER_BGR> strip;
+// microLED<NUMLEDS, MLED_NO_CLOCK, MLED_NO_CLOCK, LED_APA102_SPI, ORDER_BGR> strip;	// для аппаратного SPI
+
 
 // ======= ПРЕРЫВАНИЯ =======
 // для повышения надёжности передачи данных на ленту можно отключать прерывания.
@@ -47,11 +53,11 @@
 // неизбежно будут чуть отставать функции времени millis() и micros()
 // В библиотеке встроено обслуживание функций времени, для активации передаём SAVE_MILLIS
 // 6-ым аргументом при инициализации:
-// microLED<NUMLEDS, STRIP_PIN, LED_WS2818, ORDER_GRB, CLI_AVER, SAVE_MILLIS> strip;
+// microLED<NUMLEDS, STRIP_PIN, MLED_NO_CLOCK, LED_WS2818, ORDER_GRB, CLI_AVER, SAVE_MILLIS> strip;
 // это НЕЗНАЧИТЕЛЬНО замедлит вывод на ленту, но позволит миллису считать без отставания!
 
 // инициализирую ленту (выше был гайд!)
-microLED<NUMLEDS, STRIP_PIN, LED_WS2818, ORDER_GRB, CLI_AVER> strip;
+microLED<NUMLEDS, STRIP_PIN, MLED_NO_CLOCK, LED_WS2818, ORDER_GRB, CLI_AVER> strip;
 
 void setup() {
   // ===================== БАЗОВЫЕ ШТУКИ =====================

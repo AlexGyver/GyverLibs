@@ -5,9 +5,10 @@
 #define NUM_LEDS (M_WIDTH * M_HEIGHT) // для удобства запомним и количство ледов
 
 #include <microLED.h>
+#include <FastLEDsupport.h>    // нужна для шума
 
 // инициализация у матрицы такая же, как у ленты, но добавляются параметры в (скобках)
-microLED<NUM_LEDS, 2, LED_WS2812, ORDER_GRB, CLI_AVER> matrix(M_WIDTH, M_HEIGHT, ZIGZAG, LEFT_TOP, DIR_DOWN);
+microLED<NUM_LEDS, M_PIN, MLED_NO_CLOCK, LED_WS2812, ORDER_GRB, CLI_AVER> matrix(M_WIDTH, M_HEIGHT, ZIGZAG, LEFT_TOP, DIR_DOWN);
 // тип матрицы: ZIGZAG - зигзаг, PARALLEL - параллельная
 // угол подключения: LEFT_BOTTOM - левый нижний, LEFT_TOP - левый верхний, RIGHT_TOP - правый верхний, RIGHT_BOTTOM - правый нижний
 // направление ленты из угла подключения: DIR_RIGHT - вправо, DIR_UP - вверх, DIR_LEFT - влево, DIR_DOWN - вниз

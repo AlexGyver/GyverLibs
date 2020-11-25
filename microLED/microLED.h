@@ -16,6 +16,7 @@
 	- Встроенная поддержка работы с адресными матрицами
 	- Поддержка чипов: 2811/2812/2813/2815/2818
 	- Частичная совместимость со скетчами FastLED
+	- Совместимость типов данных и инструментов из FastLED
 	
 	by AlexGyver & Egor 'Nich1con' Zaharov
 	
@@ -60,17 +61,28 @@
 	- Поддержка 4х цветных лент: WS6812
 	- Инициализация переделана под шаблон, смотри примеры!
 	- Много изменений в названиях, всё переделано и упрощено, читай документацию!
+	
+	Версия 3.1
+	- Поправлены ошибки компиляции для нестандартных ядер Ардуино и Аттини
+	- Добавлен класс tinyLED.h для вывода потоком с ATtiny и вообще любых AVR (см. пример)
+	- Вырезаны инструменты FastLED (рандом, шум), будем работать напрямую с фастлед
+	- Добавлена поддержка совместной работы с библиотекой FastLED и конвертация из её типов!
+	- Добавлена поддержка ленты APA102 (а также других SPI), программная и аппаратная SPI
 */
 #pragma once
-#include <wiring.c>
-#include "noise.h"
-#include "random8.h"
-
 #ifndef COLOR_DEBTH
 #define COLOR_DEBTH 3	// по умолчанию 24 бита
 #endif
 
 #include "color_utility.h"
+
+#ifdef MLED_USE_SPI
+#include <SPI.h>
+#endif
+
+#ifndef MLED_SPI_CLOCK
+#define MLED_SPI_CLOCK 8000000
+#endif
 
 // чип
 enum M_chip {
@@ -79,7 +91,9 @@ enum M_chip {
 	LED_WS2813,	// GRB
 	LED_WS2815,	// GRB
 	LED_WS2818,	// RGB
-	LED_WS6812,	// RGBW
+	LED_WS6812,	// BGR
+	LED_APA102,	// BGR
+	LED_APA102_SPI,	// BGR
 };
 
 #define CHIP4COLOR (chip == LED_WS6812)
@@ -102,6 +116,7 @@ enum M_ISR {
 };
 
 const byte SAVE_MILLIS = 1;
+const int8_t MLED_NO_CLOCK = -1;
 
 // ========== ПОДКЛЮЧЕНИЕ МАТРИЦЫ ==========
 enum M_type {
@@ -124,10 +139,10 @@ enum M_dir {
 void systemUptimePoll(void);	// дёрнуть миллисы
 
 // ============================================== КЛАСС ==============================================
-// <amount, pin, chip, order, cli, mls> ()
-// <amount, pin, chip, order, cli, mls> (width, height, type, conn, dir)
+// <amount, pin, clock pin, chip, order, cli, mls> ()
+// <amount, pin, clock pin, chip, order, cli, mls> (width, height, type, conn, dir)
 // количество, пин, чип, порядок, прерывания, миллис
-template<int amount, int8_t pin, M_chip chip, M_order order, M_ISR isr = CLI_OFF, uint8_t uptime = 0>
+template<int amount, int8_t pin, int8_t pinCLK, M_chip chip, M_order order, M_ISR isr = CLI_OFF, uint8_t uptime = 0>
 class microLED {
 public:
 	/*
@@ -166,16 +181,6 @@ public:
 		void begin();									// начать вывод потоком
 		void send(mData data);							// отправить один светодиод
 		void end();										// закончить вывод потоком
-		
-		// шум
-		inoise8(x), inoise8(x, y), inoise8(x, y, z)
-		inoise16(x), inoise16(x, y), inoise16(x, y, z)
-		
-		// рандом
-		random8(), random8(max), random8(min, max)		// быстрый рандом 0-255
-		random16(), random16(max), random16(min, max)	// быстрый рандом 0-65535
-		random16_set_seed(x)							// установить сид для рандом8 и 16
-		random16_add_entropy(x)							// прибавить (x) к сиду, увеличит разброс
 	*/
 	
 	int oneLedMax = 46;
@@ -184,10 +189,18 @@ public:
 	byte white[(CHIP4COLOR) ? amount : 0];
 	
 	void init() {
-		_led_mask = digitalPinToBitMask(pin);
-		_led_port = portOutputRegister(digitalPinToPort(pin));
-		_led_ddr = portModeRegister(digitalPinToPort(pin));	
-		*_led_ddr |= _led_mask;
+		if (pin != MLED_NO_CLOCK) {
+			_dat_mask = digitalPinToBitMask(pin);
+			_dat_port = portOutputRegister(digitalPinToPort(pin));
+			_dat_ddr = portModeRegister(digitalPinToPort(pin));	
+			*_dat_ddr |= _dat_mask;
+		}
+		if (pinCLK != MLED_NO_CLOCK) {
+			_clk_mask = digitalPinToBitMask(pinCLK);
+			_clk_port = portOutputRegister(digitalPinToPort(pinCLK));
+			_clk_ddr = portModeRegister(digitalPinToPort(pinCLK));	
+			*_clk_ddr |= _clk_mask;
+		}
 		switch (chip) {
 		case LED_WS2811: oneLedMax = 46; oneLedIdle = 2000; break;
 		case LED_WS2812: oneLedMax = 30; oneLedIdle = 660; break;	// 28/240 для ECO, 32/700 матрица
@@ -197,6 +210,9 @@ public:
 		}
 		// oneLedMax = (ток ленты с одним горящим) - (ток выключенной ленты)
 		// oneLedIdle = (ток выключенной ленты) / (количество ледов)
+#ifdef MLED_USE_SPI
+		SPI.begin();
+#endif
 	}
 	
 	microLED() {
@@ -318,14 +334,20 @@ public:
 	#define _8_NOP _4_NOP _4_NOP
 	// Издержки для бита H - 5 тактов, для бита L - 3 такта
 	
-	void begin() {
-		_mask_h = _led_mask | *_led_port;
-		_mask_l = ~_mask_h & *_led_port;
+	void begin() {		
+		if (pin != MLED_NO_CLOCK) {
+			_mask_h = _dat_mask | *_dat_port;
+			_mask_l = ~_mask_h & *_dat_port;
+		}
 		_showBright = _bright;
 		if (isr == CLI_HIGH) {		// Макс приоритет, отправка всего буфера не может быть прервана
 			sregSave = SREG;
 			cli();
 		}
+#ifdef MLED_USE_SPI
+		SPI.beginTransaction(SPISettings(MLED_SPI_CLOCK, MSBFIRST, SPI_MODE0));		
+#endif
+		if (chip == LED_APA102 || chip == LED_APA102_SPI) for (byte i = 0; i < 4; i++) sendRaw(0);
 	}
 	
 	void show() {
@@ -338,6 +360,7 @@ public:
 	
 	void send(mData color, byte thisWhite = 0) {
 		uint8_t data[3];
+		// компилятор посчитает сдвиги
 		data[(order >> 4) & 0b11] = fade8R(color, _showBright);
 		data[(order >> 2) & 0b11] = fade8G(color, _showBright);
 		data[order & 0b11] = fade8B(color, _showBright);
@@ -347,6 +370,8 @@ public:
 			sregSave = SREG;
 			cli();
 		}
+		
+		if (chip == LED_APA102 || chip == LED_APA102_SPI) sendRaw(255);	// старт байт SPI лент
 		
 		// отправляем RGB и W если есть
 		for (uint8_t i = 0; i < 3; i++) sendRaw(data[i]);
@@ -381,7 +406,7 @@ public:
 			:
 			:[S_REG]"I"(_SFR_IO_ADDR(SREG)),
 			[DATA] "r" (data),
-			"x" (_led_port),
+			"x" (_dat_port),
 			[SET_H] "r" (_mask_h),
 			[SET_L] "r" (_mask_l)
 			:"r17", "r18"
@@ -411,11 +436,25 @@ public:
 			:
 			:[S_REG]"I"(_SFR_IO_ADDR(SREG)),
 			[DATA] "r" (data),
-			"x" (_led_port),
+			"x" (_dat_port),
 			[SET_H] "r" (_mask_h),
 			[SET_L] "r" (_mask_l)
 			:"r17", "r18"
 			);
+			break;
+		case LED_APA102:
+			for (uint8_t i = 0; i < 8; i++)  {
+				if (data & (1 << 7)) *_dat_port |= _dat_mask;
+				else *_dat_port &= ~_dat_mask;
+				*_clk_port |= _clk_mask;
+				*_clk_port &= ~_clk_mask;
+				data <<= 1;
+			}
+			break;
+		case LED_APA102_SPI:
+#ifdef MLED_USE_SPI
+			SPI.transfer(data);
+#endif
 			break;
 		}
 		if (isr == CLI_LOW) SREG = sregSave;	// Низкий приоритет, вернуть прерывания
@@ -423,6 +462,10 @@ public:
 	
 	void end() {
 		if (isr == CLI_HIGH) SREG = sregSave;		// Макс приоритет, вернуть прерывания
+		if (chip == LED_APA102 || chip == LED_APA102_SPI) for (byte i = 0; i < 4; i++) sendRaw(0);
+#ifdef MLED_USE_SPI		
+		SPI.endTransaction();
+#endif
 	}
 	
 private:
@@ -431,17 +474,22 @@ private:
 	uint8_t _matrixW = 0;	
 	int _maxCurrent = 0;
 	
-	volatile uint8_t *_led_port;
-	volatile uint8_t *_led_ddr;
-	uint8_t _led_mask;
-	uint8_t _mask_h;
-	uint8_t _mask_l;
+	volatile uint8_t *_dat_port, *_dat_ddr;
+	volatile uint8_t *_clk_port, *_clk_ddr;
+	uint8_t _dat_mask;
+	uint8_t _clk_mask;
+	uint8_t _mask_h, _mask_l;
 	uint8_t sregSave = SREG;
 	
 };	// класс
 
 // Ручное обслуживание функций времени на период запрета прерываний
+#define MICROSECONDS_PER_TIMER0_OVERFLOW (clockCyclesToMicroseconds(64 * 256))
+#define MILLIS_INC (MICROSECONDS_PER_TIMER0_OVERFLOW / 1000)
+#define FRACT_INC ((MICROSECONDS_PER_TIMER0_OVERFLOW % 1000) >> 3)
+#define FRACT_MAX (1000 >> 3)
 void systemUptimePoll(void) {
+#if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega168__) || defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
 	extern volatile unsigned long timer0_overflow_count;
 	extern volatile unsigned long timer0_millis;
 	extern unsigned char timer0_fract;
@@ -460,4 +508,5 @@ void systemUptimePoll(void) {
 		timer0_millis = m;
 		timer0_overflow_count++;
 	}
+#endif
 }
