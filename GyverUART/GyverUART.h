@@ -17,6 +17,8 @@
 	Отдельное спасибо Egor 'Nich1con' Zaharov за помощь с регистрами
 */
 
+#ifndef GyverUART_h
+#define GyverUART_h
 #define USE_PRINT_H		// закомментируй, чтобы использовать gyver-вывод
 
 #pragma once
@@ -91,3 +93,4 @@ private:
 };
 
 extern GyverUart uart;
+#endif
