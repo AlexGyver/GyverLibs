@@ -7,13 +7,13 @@
 #endif
 
 #if (COLOR_DEBTH == 1)
-#pragma message "Color debth 1 bit"
+#pragma message "Color debth 1 byte"
 typedef uint8_t mData;
 #elif (COLOR_DEBTH == 2)
-#pragma message "Color debth 2 bit"
+#pragma message "Color debth 2 byte"
 typedef uint16_t mData;
 #elif (COLOR_DEBTH == 3)
-#pragma message "Color debth 3 bit"
+#pragma message "Color debth 3 byte"
 struct mData {
 	uint8_t r, g, b;
 	inline mData() MICROLED_INLINE {}
