@@ -7,23 +7,23 @@
 #endif
 
 #if (COLOR_DEBTH == 1)
-#pragma message "Color debth 1 bit"
+//#pragma message "Color debth 1 bit"
 typedef uint8_t mData;
 #elif (COLOR_DEBTH == 2)
-#pragma message "Color debth 2 bit"
+//#pragma message "Color debth 2 bit"
 typedef uint16_t mData;
 #elif (COLOR_DEBTH == 3)
-#pragma message "Color debth 3 bit"
+//#pragma message "Color debth 3 bit"
 struct mData {
 	uint8_t r, g, b;
 	inline mData() MICROLED_INLINE {}
 	inline mData(uint8_t _r, uint8_t _g, uint8_t _b) MICROLED_INLINE :r(_r), g(_g), b(_b) {}
 	inline mData(uint32_t colorcode)  MICROLED_INLINE
-	: r((colorcode >> 16) & 0xFF), g((colorcode >> 8) & 0xFF), b((colorcode >> 0) & 0xFF){}	
+	: r(((uint32_t)colorcode >> 16) & 0xFF), g(((uint32_t)colorcode >> 8) & 0xFF), b(colorcode & 0xFF){}	
 	inline mData& operator= (const uint32_t colorcode) MICROLED_INLINE {
-		r = (colorcode >> 16) & 0xFF;
-		g = (colorcode >>  8) & 0xFF;
-		b = (colorcode >>  0) & 0xFF;
+		r = ((uint32_t)colorcode >> 16) & 0xFF;
+		g = ((uint32_t)colorcode >>  8) & 0xFF;
+		b = colorcode & 0xFF;
 		return *this;
 	}		
 };
@@ -117,7 +117,7 @@ mData mKelvin(int kelvin);							// температура
 #endif
 
 #if defined(CRT_PGM)
-#pragma message "CRT PGM"
+//#pragma message "CRT PGM"
 #define getCRT(x) getCRT_PGM(x)
 static const uint8_t _CRTgammaPGM[256] PROGMEM = {
 	0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -139,21 +139,30 @@ static const uint8_t _CRTgammaPGM[256] PROGMEM = {
 };
 
 #elif defined(CRT_SQUARE)
-#pragma message "CRT SQUARE"
+//#pragma message "CRT SQUARE"
 #define getCRT(x) getCRT_SQUARE(x)
 
 #elif defined(CRT_CUBIC)
-#pragma message "CRT CUBIC"
+//#pragma message "CRT CUBIC"
 #define getCRT(x) getCRT_CUBIC(x)
 
 #elif defined(CRT_OFF)
-#pragma message "CRT OFF"
+//#pragma message "CRT OFF"
 #define getCRT(x) (x)
 
 #endif
 
 
 // ============================================== COLOR MACRO ===============================================
+// склейка/расклейка ргб-инт
+#define RGBto24(r,g,b) ( ((uint32_t)(r) << 16) | ((g) << 8 ) | (b) )
+#define RGBto16(r,g,b) ( (((r) & 0b11111000) << 8) | (((g) & 0b11111100) << 3) | (((b) & 0b11111000) >> 3) )
+#define RGBto8(r,g,b) ( ((r) & 0b11100000) | (((g) & 0b11000000) >> 3) | (((b) & 0b11100000) >> 5) )
+
+#define RGB24toR(x) (((uint32_t)(x) >> 16) & 0xFF)
+#define RGB24toG(x) (((uint32_t)(x) >> 8) & 0xFF)
+#define RGB24toB(x) ((uint32_t)(x) & 0xFF)
+
 // rrrrrrrr gggggggg bbbbbbbb
 // rrrrrggg gggbbbbb
 // rrrggbbb
@@ -203,7 +212,7 @@ mData getFade(mData data, uint8_t val) {
 }
 
 uint32_t getHEX(mData data) {
-	return (((uint32_t)getR(data) << 16) | ((uint32_t)getG(data) << 8 ) | (uint32_t)getB(data));
+	return RGBto24(getR(data), getG(data), getB(data));
 }
 
 mData getBlend(int x, int amount, mData c0, mData c1) {
@@ -268,7 +277,7 @@ mData mHSV(uint8_t h, uint8_t s, uint8_t v) {
 }
 
 mData mHEX(uint32_t color) {
-	return mRGB( (color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF );
+	return mRGB(RGB24toR(color), RGB24toG(color), RGB24toB(color));
 }
 
 mData mWheel(int color, uint8_t bright) {

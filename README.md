@@ -245,7 +245,7 @@ void setLevel(bool level);                  // установить устано
 
 <a id="microLED"></a>
 ![Logo](/logos/microLED.png)
-### microLED v3.0 [СКАЧАТЬ v3](https://github.com/AlexGyver/GyverLibs/releases/download/microLEDv3/microLED.zip), [СКАЧАТЬ СТАРУЮ](https://github.com/AlexGyver/GyverLibs/releases/download/microLED/microLED.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/microled/)
+### microLED v3.2 [СКАЧАТЬ v3](https://github.com/AlexGyver/GyverLibs/releases/download/microLEDv3/microLED.zip), [СКАЧАТЬ СТАРУЮ](https://github.com/AlexGyver/GyverLibs/releases/download/microLED/microLED.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/microled/)
 microLED - ультра-лёгкая библиотека для работы с адресной лентой/матрицей
 - Основная фишка: сжатие цвета, код занимает в разы меньше места в SRAM по сравнению с аналогами (FastLED, NeoPixel и др.)
 	- Использование 8 битного цвета занимает в 3 раза меньше SRAM чем у других библиотек

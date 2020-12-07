@@ -6,14 +6,10 @@
 
 mData CRGBtoData(CRGB col) {
 #if (COLOR_DEBTH == 1)
-	return RGB24to8(((uint32_t)col.r << 16) | (col.g << 8) | col.b);
+	return RGBto8(col.r, col.g, col.b);
 #elif (COLOR_DEBTH == 2)
-	return RGB24to16(((uint32_t)col.r << 16) | (col.g << 8) | col.b);
+	return RGBto16(col.r, col.g, col.b);
 #elif (COLOR_DEBTH == 3)
-	mData buf;
-	buf.r = col.r;
-	buf.g = col.g;
-	buf.b = col.b;
-	return buf;
+	return mData(col.r, col.g, col.b);
 #endif
 }
