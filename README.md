@@ -1518,7 +1518,7 @@ float getTargetDeg();
 
 // Установка максимальной скорости (по модулю) в шагах/секунду и градусах/секунду (для режима FOLLOW_POS)
 // по умолч. 300
-void setMaxSpeed(int speed);
+void setMaxSpeed(float speed);
 void setMaxSpeedDeg(float speed);
 
 // Установка ускорения в шагах и градусах в секунду (для режима FOLLOW_POS).
@@ -1543,11 +1543,11 @@ void brake();
 void reset();
 
 // Установка целевой скорости в шагах/секунду и градусах/секунду (для режима KEEP_SPEED)
-void setSpeed(int speed);
+void setSpeed(float speed);
 void setSpeedDeg(float speed);
 
 // Получение целевой скорости в шагах/секунду и градусах/секунду (для режима KEEP_SPEED)
-int getSpeed();
+float getSpeed();
 float getSpeedDeg();
 
 // Включить мотор (пин EN)
