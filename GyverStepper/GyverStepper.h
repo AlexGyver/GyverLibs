@@ -137,7 +137,7 @@ uint32_t stepTime;
 //#define SMOOTH_ALGORITHM
 
 // мин. скорость для FOLLOW_POS
-#define _MIN_STEPPER_SPEED 20
+#define _MIN_STEPPER_SPEED 10
 
 #ifndef DRIVER_STEP_TIME
 #define DRIVER_STEP_TIME 4
@@ -146,6 +146,9 @@ uint32_t stepTime;
 #ifdef __AVR__
 #include <util/delay.h>
 #endif
+
+#define degPerMinute(x) ((x)/60.0f)
+#define degPerHour(x) ((x)/3600.0f)
 
 enum GS_driverType {
 	STEPPER2WIRE,
@@ -277,18 +280,18 @@ public:
 
 	// установка максимальной скорости в шагах/секунду и градусах/секунду
 	void setMaxSpeed(float speed) {
-		_maxSpeed = speed;
+		_maxSpeed = max(speed, 1.0f/3600);	// 1 шаг в час минимум
 		recalculateSpeed();
 		
 #ifdef SMOOTH_ALGORITHM
-		_cmin = 1000000.0 / speed;
+		_cmin = 1000000.0 / _maxSpeed;
 		if (_n > 0)	{
 			_n = (float)_accelSpeed * _accelSpeed * _accelInv;
 			plannerSmooth();
 		}
 #else
 		// период планировщка в зависимости от макс. скорости
-		_plannerPrd = map((int)speed, 1000, 20000, 15000, 1000);
+		_plannerPrd = map((int)_maxSpeed, 1000, 20000, 15000, 1000);
 		_plannerPrd = constrain(_plannerPrd, 15000, 1000);	
 #endif
 	}
@@ -342,15 +345,15 @@ public:
 
 	// установка и получение целевой скорости в шагах/секунду и градусах/секунду
 	void setSpeed(float speed, bool smooth = false) {
-		_speed = speed;		
+		_speed = max(speed, 1.0f/3600);						// 1 шаг в час минимум
 		if (smooth && abs(speed) > _MIN_STEPPER_SPEED) {	// плавный старт		
-			if (_accelSpeed == _speed) return;	// скорости совпадают? Выходим
+			if (_accelSpeed == _speed) return;				// скорости совпадают? Выходим
 			_smoothStart = true;
 #ifdef __AVR__
-			_smoothPlannerPrd = map(max(abs((int)speed), abs((int)_accelSpeed)), 1000, 20000, 15000, 1000);
+			_smoothPlannerPrd = map(max(abs((int)_speed), abs((int)_accelSpeed)), 1000, 20000, 15000, 1000);
 #else
 			// горячий привет тупому компилятору ESP8266 и индусам, которые его настраивали
-			int speed1 = abs(speed);
+			int speed1 = abs(_speed);
 			int speed2 = abs((int)_accelSpeed);
 			int maxSpeed = max(speed1, speed2);
 			_smoothPlannerPrd = map(maxSpeed, 1000, 20000, 15000, 1000);
@@ -358,10 +361,10 @@ public:
 			
 			_smoothPlannerPrd = constrain(_smoothPlannerPrd, 15000, 1000);	
 		} else {		// резкий старт
-			if (speed == 0) {brake(); return;}	// скорость 0? Отключаемся и выходим
+			if (_speed == 0) {brake(); return;}	// скорость 0? Отключаемся и выходим
 			_accelSpeed = _speed;
-			stepTime = 1000000.0 / abs(speed);
-			_dir = (speed > 0) ? 1 : -1;	
+			stepTime = 1000000.0 / abs(_speed);
+			_dir = (_speed > 0) ? 1 : -1;	
 		}
 		_workState = true;
 		if (!_powerState) enable();

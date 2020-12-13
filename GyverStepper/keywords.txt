@@ -40,6 +40,8 @@ disable	KEYWORD2
 getState	KEYWORD2
 getMinPeriod	KEYWORD2
 stepTime	KEYWORD2
+degPerMinute	KEYWORD2
+degPerHour	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
