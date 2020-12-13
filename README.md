@@ -73,7 +73,7 @@ minimLibs это мини-библиотеки, которые не входят
 
 
 <a id="Gyver433"></a>
-![Logo](/logos/busLogo.png)
+
 ### Gyver433 v1.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/Gyver433/Gyver433.zip)
 Суперлёгкая библиотека для радиомодулей 433 МГц
 - Не использует прерывания и таймеры (кроме нулевого, читает micros())
@@ -84,7 +84,7 @@ minimLibs это мини-библиотеки, которые не входят
 
 <a id="GyverBus"></a>
 ![Logo](/logos/busLogo.png)
-### GyverBus v2.2 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverBus/GyverBus.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverbus/)
+### GyverBus v2.3 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverBus/GyverBus.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverbus/)
 GyverBus - библиотека для общения по протоколу GBUS
 - Очень простой, надёжный, устойчивый к помехам и задержкам, но медленный интерфейс связи на базе UART
 - Двухсторонняя связь по одному проводу
