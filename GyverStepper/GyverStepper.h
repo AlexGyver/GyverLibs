@@ -278,7 +278,6 @@ public:
 	// установка максимальной скорости в шагах/секунду и градусах/секунду
 	void setMaxSpeed(float speed) {
 		_maxSpeed = speed;
-		if (_maxSpeed < _MIN_STEPPER_SPEED) _accel = 0;
 		recalculateSpeed();
 		
 #ifdef SMOOTH_ALGORITHM
@@ -333,7 +332,7 @@ public:
 			_workState = false;
 			if (_autoPower) disable();
 			_accelSpeed = 0;
-			stepTime = _MAX_STEP_PERIOD;
+			//stepTime = _MAX_STEP_PERIOD;
 #ifdef SMOOTH_ALGORITHM
 			_n = 0;
 #endif
@@ -344,7 +343,7 @@ public:
 	// установка и получение целевой скорости в шагах/секунду и градусах/секунду
 	void setSpeed(float speed, bool smooth = false) {
 		_speed = speed;		
-		if (smooth && speed > _MIN_STEPPER_SPEED) {	// плавный старт		
+		if (smooth && abs(speed) > _MIN_STEPPER_SPEED) {	// плавный старт		
 			if (_accelSpeed == _speed) return;	// скорости совпадают? Выходим
 			_smoothStart = true;
 #ifdef __AVR__
@@ -451,7 +450,7 @@ private:
 	}
 
 	void recalculateSpeed() {
-		if (!_curMode && _accel == 0) {
+		if (!_curMode && (_accel == 0 || _maxSpeed < _MIN_STEPPER_SPEED)) {
 			stepTime = 1000000.0 / _maxSpeed;
 			_dir = (_target > _current) ? 1 : -1;
 		}
