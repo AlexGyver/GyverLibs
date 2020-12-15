@@ -1,5 +1,7 @@
 #include <GyverPower.h>
+#if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega168__) || defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
 extern volatile unsigned long timer0_millis;
+#endif
 static volatile bool _wdtFlag = false;
 
 void GyverPower::hardwareEnable(uint16_t data) {
@@ -157,12 +159,16 @@ uint8_t GyverPower::sleepDelay(uint32_t ms) {
 			sleep(i);								// уйти в сон
 			ms -= timeOuts[i];						// отнять время сна
 			if (wakeFlag) {
+#if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega168__) || defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
 				if (correct) timer0_millis += saveMs - ms;
+#endif	
 				return ms;
 			}
 		}
 	}
+#if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega168__) || defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
 	if (correct) timer0_millis += saveMs - ms;
+#endif	
 	return ms; 										// вернуть остаток времени
 }
 
