@@ -25,6 +25,7 @@
 	v1.4 - добавлена задержка для STEP, настроить можно дефайном DRIVER_STEP_TIME
 	v1.5 - пофикшен баг для плат есп
 	v1.6 - Исправлена остановка для STEPPER4WIRE_HALF, скорость можно задавать во float (для медленных скоростей)
+	v1.7 - Исправлен баг в отрицательной скорости (спасибо Евгению Солодову)
 	
 	Алгоритм из AccelStepper: https://www.airspayce.com/mikem/arduino/AccelStepper/
 	AlexGyver, 2020
@@ -345,7 +346,10 @@ public:
 
 	// установка и получение целевой скорости в шагах/секунду и градусах/секунду
 	void setSpeed(float speed, bool smooth = false) {
-		_speed = max(speed, 1.0f/3600);						// 1 шаг в час минимум
+		// 1 шаг в час минимум
+		if (_speed < 0 && _speed > -1.0f/3600) _speed = -1.0f/3600;
+		else if (_speed > 0 && _speed < 1.0f/3600) _speed = 1.0f/3600;
+		
 		if (smooth && abs(speed) > _MIN_STEPPER_SPEED) {	// плавный старт		
 			if (_accelSpeed == _speed) return;				// скорости совпадают? Выходим
 			_smoothStart = true;
