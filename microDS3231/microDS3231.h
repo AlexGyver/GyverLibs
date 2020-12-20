@@ -1,3 +1,4 @@
+#pragma once
 /*
 	Ультра лёгкая библиотека для работы с RTC DS3231
 	Для работы нужна библиотека microWire.h
@@ -6,17 +7,34 @@
 	v1.2 - добавлены ограничения на вводимые в setTime числа. Также нельзя ввести 29 февраля увы =)
 	v1.3 - пофикшено зависание, когда модуль отключен но опрашивается
 	v1.4 - незначительный фикс
+	v2.0 - новые возможности, оптимизация и облегчение
 */
 
-#pragma once
+#include "microWire.h"	// выбор между библиотеками Wire и microWire
+//#include "Wire.h"
+
+#define DS_ADDR 0x68	// адрес чипа
+
 #include <Arduino.h>
-const bool COMPILE_TIME = true;
+#include "buildTime.h"
+
+struct DateTime {
+	uint8_t second; 
+	uint8_t minute;
+	uint8_t hour;
+	uint8_t day;
+	uint8_t date;
+	uint8_t month;
+	uint16_t year;
+};
 
 class MicroDS3231 {
 public:
-	MicroDS3231();	// конструктор
-	void setTime(int8_t seconds , int8_t minutes , int8_t hours , int8_t date, int8_t month, int16_t year);	// установка времени
+	MicroDS3231();					// конструктор
+	void setTime(int8_t seconds, int8_t minutes, int8_t hours, int8_t date, int8_t month, int16_t year);	// установка времени
 	void setTime(uint8_t param);	// установка времени == времени компиляции
+	void setTime(DateTime time);	// установить всё
+	DateTime getTime(void);			// получить всё
 	bool lostPower(void);			// проверка на сброс питания
 	uint8_t getSeconds(void);		// получить секунды
 	uint8_t getMinutes(void);		// получить минуты
@@ -25,6 +43,9 @@ public:
 	uint8_t getDate(void);			// получить число
 	uint16_t getYear(void);			// получить год
 	uint8_t getMonth(void);			// получить месяц
-	uint8_t readRegister(uint8_t addr);
+	
 private:
+	uint8_t readRegister(uint8_t addr);
 };
+
+const bool COMPILE_TIME = true;
