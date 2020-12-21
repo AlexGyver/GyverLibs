@@ -38,9 +38,9 @@ void MicroDS3231::setTime(int8_t seconds, int8_t minutes, int8_t hours, int8_t d
 	else if (hours > 9) Wire.write((0x1 << 4) | (hours % 10));
 	else Wire.write(hours);	
 	Wire.write(day);
-	Wire.write((((date / 10) << 4) | (date % 10)));
-	Wire.write((((month / 10) << 4) | (month % 10)));
-	Wire.write((((year / 10) << 4) | (year % 10)));
+	Wire.write(((date / 10) << 4) | (date % 10));
+	Wire.write(((month / 10) << 4) | (month % 10));
+	Wire.write(((year / 10) << 4) | (year % 10));
 	Wire.endTransmission();
 }
 
@@ -53,15 +53,55 @@ void MicroDS3231::setTime(uint8_t param) {
 }
 
 DateTime MicroDS3231::getTime() {
-	DateTime now = (DateTime) {getSeconds(), getMinutes(), getHours(), getDay(), getDate(), getMonth(), getYear()};
+	DateTime now;
+	Wire.beginTransmission(DS_ADDR);
+	Wire.write(0x0);
+	if (Wire.endTransmission() != 0) return now;
+	Wire.requestFrom(DS_ADDR, 7);
+	now.second = unpackRegister(Wire.read());
+	now.minute = unpackRegister(Wire.read());
+	now.hour = unpackHours(Wire.read());
+	now.day = Wire.read();
+	now.date = unpackRegister(Wire.read());
+	now.month = unpackRegister(Wire.read());
+	now.year = unpackRegister(Wire.read()) + 2000;
 	return now;
 }
 
-bool MicroDS3231::lostPower(void) { // возвращает true если 1 января 2000
+bool MicroDS3231::lostPower(void) { // возвращает true, если 1 января 2000
 	if (MicroDS3231::getYear() == 2000 && MicroDS3231::getMonth() == 1 && MicroDS3231::getDate() == 1) return true;
 	else return false;
 }
 
+uint8_t MicroDS3231::getSeconds(void) {
+	return (unpackRegister(readRegister(0x00)));
+}
+
+uint8_t MicroDS3231::getMinutes(void) {
+	return (unpackRegister(readRegister(0x01)));
+}
+
+uint8_t MicroDS3231::getHours(void) {
+	return (unpackHours(readRegister(0x02)));
+}
+
+uint8_t MicroDS3231::getDay(void) {
+	return readRegister(0x03);
+}
+
+uint8_t MicroDS3231::getDate(void) {
+	return (unpackRegister(readRegister(0x04)));
+}
+
+uint8_t MicroDS3231::getMonth(void) {
+	return (unpackRegister(readRegister(0x05)));
+}
+
+uint16_t MicroDS3231::getYear(void) {
+	return (unpackRegister(readRegister(0x06)) + 2000);
+}
+
+// сервис
 uint8_t MicroDS3231::readRegister(uint8_t addr) {
 	Wire.beginTransmission(DS_ADDR);
 	Wire.write(addr);
@@ -71,38 +111,12 @@ uint8_t MicroDS3231::readRegister(uint8_t addr) {
 	return data;
 }
 
-uint8_t MicroDS3231::getSeconds(void) {
-	uint8_t r_data = MicroDS3231::readRegister(0x00); // читаем регистр
-	return ((r_data >> 4) * 10 + (r_data & 0xF));
+uint8_t MicroDS3231::unpackRegister(uint8_t data) {
+	return ((data >> 4) * 10 + (data & 0xF));
 }
 
-uint8_t MicroDS3231::getMinutes(void) {
-	uint8_t r_data = MicroDS3231::readRegister(0x01);
-	return ((r_data >> 4) * 10 + (r_data & 0xF));
-}
-
-uint8_t MicroDS3231::getHours(void) {
-	uint8_t r_data = MicroDS3231::readRegister(0x02);
-	if (r_data & 0x20) return (uint8_t)((r_data & 0xF) + 20);
-	else if (r_data & 0x10) return (uint8_t)((r_data & 0xF) + 10);
-	else return (uint8_t)(r_data & 0xF);
-}
-
-uint8_t MicroDS3231::getDay(void) {
-	return MicroDS3231::readRegister(0x03);
-}
-
-uint8_t MicroDS3231::getDate(void) {
-	uint8_t r_data = MicroDS3231::readRegister(0x04);
-	return ((r_data >> 4) * 10 + (r_data & 0xF));
-}
-
-uint8_t MicroDS3231::getMonth(void) {
-	uint8_t r_data = MicroDS3231::readRegister(0x05);
-	return ((((r_data >> 4) & 0x1) * 10) + (r_data & 0xF));
-}
-
-uint16_t MicroDS3231::getYear(void) {
-	uint8_t r_data = MicroDS3231::readRegister(0x06);
-	return (2000 + (r_data >> 4) * 10 + (r_data & 0xF));
+uint8_t MicroDS3231::unpackHours(uint8_t data) {
+	if (data & 0x20) return ((data & 0xF) + 20);
+	else if (data & 0x10) return ((data & 0xF) + 10);
+	else return (data & 0xF);
 }

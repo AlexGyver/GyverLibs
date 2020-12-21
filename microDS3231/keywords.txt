@@ -15,6 +15,7 @@ DateTime	KEYWORD1
 # Methods and Functions (KEYWORD2)
 #######################################
 setTime	KEYWORD2
+getTime	KEYWORD2s
 lostPower	KEYWORD2
 getSeconds	KEYWORD2
 getMinutes	KEYWORD2
