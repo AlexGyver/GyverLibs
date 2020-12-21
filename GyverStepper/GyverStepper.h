@@ -26,6 +26,7 @@
 	v1.5 - пофикшен баг для плат есп
 	v1.6 - Исправлена остановка для STEPPER4WIRE_HALF, скорость можно задавать во float (для медленных скоростей)
 	v1.7 - Исправлен баг в отрицательной скорости (спасибо Евгению Солодову)
+	v1.8 - Исправлен режим KEEP_SPEED
 	
 	Алгоритм из AccelStepper: https://www.airspayce.com/mikem/arduino/AccelStepper/
 	AlexGyver, 2020
@@ -137,8 +138,9 @@ uint32_t stepTime;
 // Также дефайн можно прописать в скетче до подключения библиотеки!!! См. пример smoothAlgorithm
 //#define SMOOTH_ALGORITHM
 
-// мин. скорость для FOLLOW_POS
-#define _MIN_STEPPER_SPEED 10
+#define _MIN_STEPPER_SPEED 10			// мин. скорость для FOLLOW_POS
+#define _MAX_STEP_PERIOD (1000000L/_MIN_STEPPER_SPEED)
+#define MIN_STEPPER_SPEED (1.0f/3600)	// 1 шаг в час
 
 #ifndef DRIVER_STEP_TIME
 #define DRIVER_STEP_TIME 4
@@ -148,8 +150,10 @@ uint32_t stepTime;
 #include <util/delay.h>
 #endif
 
+// макросы
 #define degPerMinute(x) ((x)/60.0f)
 #define degPerHour(x) ((x)/3600.0f)
+#define _sign(x) ((x) >= 0 ? 1 : -1)	// знак числа
 
 enum GS_driverType {
 	STEPPER2WIRE,
@@ -172,9 +176,7 @@ enum GS_smoothType {
 	SMOOTH,
 };
 
-// знак числа
-#define _sign(x) ((x) >= 0 ? 1 : -1)
-#define _MAX_STEP_PERIOD (1000000L/_MIN_STEPPER_SPEED)
+
 
 template <GS_driverType _DRV>
 class GStepper {
@@ -281,7 +283,7 @@ public:
 
 	// установка максимальной скорости в шагах/секунду и градусах/секунду
 	void setMaxSpeed(float speed) {
-		_maxSpeed = max(speed, 1.0f/3600);	// 1 шаг в час минимум
+		_maxSpeed = max(speed, MIN_STEPPER_SPEED);	// 1 шаг в час минимум
 		recalculateSpeed();
 		
 #ifdef SMOOTH_ALGORITHM
@@ -347,8 +349,8 @@ public:
 	// установка и получение целевой скорости в шагах/секунду и градусах/секунду
 	void setSpeed(float speed, bool smooth = false) {
 		// 1 шаг в час минимум
-		if (_speed < 0 && _speed > -1.0f/3600) _speed = -1.0f/3600;
-		else if (_speed > 0 && _speed < 1.0f/3600) _speed = 1.0f/3600;
+		_speed = speed;
+		if (abs(_speed) < MIN_STEPPER_SPEED) _speed = MIN_STEPPER_SPEED * _sign(_speed);
 		
 		if (smooth && abs(speed) > _MIN_STEPPER_SPEED) {	// плавный старт		
 			if (_accelSpeed == _speed) return;				// скорости совпадают? Выходим

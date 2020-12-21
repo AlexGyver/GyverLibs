@@ -1449,7 +1449,7 @@ int16_t _duty = 0;
 
 <a id="GyverStepper"></a>
 ![Logo](/logos/stepperLogo.png)
-### GyverStepper v1.7 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverStepper/GyverStepper.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverstepper/)
+### GyverStepper v1.8 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverStepper/GyverStepper.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/gyverstepper/)
 GyverStepper - производительная библиотека для управления шаговыми моторами
 - Поддержка 4х пинового (шаг и полушаг) и STEP-DIR драйверов
 - Автоматическое отключение питания при достижении цели
