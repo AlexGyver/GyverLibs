@@ -1,3 +1,5 @@
+#ifndef bitPack_h
+#define bitPack_h
 template <byte AMOUNT>
 class BitPack {
 public:
@@ -28,3 +30,4 @@ public:
 private:
 	byte pack[(AMOUNT >> 3) + 1];
 };
+#endif

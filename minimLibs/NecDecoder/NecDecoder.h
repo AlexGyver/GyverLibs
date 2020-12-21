@@ -1,4 +1,5 @@
-#pragma once
+#ifndef NecDecoder_h
+#define NecDecoder_h
 #include <Arduino.h>
 /*
 	NecDecoder.h  - легкий класс для декодирования ИК протокола NEC (Японский вариант) + отработка команды повтора
@@ -36,3 +37,4 @@ private:
 	volatile bool _decoded_flag = false;
 	volatile bool _repeat_flag = false;
 };
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GyverBus_h
+#define GyverBus_h
 #include <Arduino.h>
 
 /*
@@ -209,3 +210,4 @@ byte GBUS_crc_bytes(byte *buffer, byte size) {
 	for (byte i = 0; i < size; i++) GBUS_crc_update(crc, buffer[i]);
 	return crc;
 }
+#endif

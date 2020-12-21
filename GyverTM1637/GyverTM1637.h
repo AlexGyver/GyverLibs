@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GyverTM1637_h
+#define GyverTM1637_h
 #include <inttypes.h>
 #include <Arduino.h>
 
@@ -205,4 +206,5 @@ enum TM1637_letters {
 	_8 = 0x7f,
 	_9 = 0x6f,
 };
+#endif
 #endif

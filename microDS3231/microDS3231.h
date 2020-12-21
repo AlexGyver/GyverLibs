@@ -1,4 +1,5 @@
-#pragma once
+#ifndef microDS3231_h
+#define microDS3231_h
 /*
 	Ультра лёгкая библиотека для работы с RTC DS3231
 	Для работы нужна библиотека microWire.h
@@ -51,3 +52,4 @@ private:
 };
 
 const bool COMPILE_TIME = true;
+#endif

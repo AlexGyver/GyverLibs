@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PWMrelay_h
+#define PWMrelay_h
 #include <Arduino.h>
 /*
 	PWMrelay - библиотека для генерации низкочастотного ШИМ сигнала для реле (для ПИД регуляторов и проч.)
@@ -69,3 +70,4 @@ int PWMrelay::getPeriod() {
 void PWMrelay::setLevel(bool level) {
 	_dir = level;
 }
+#endif

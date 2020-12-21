@@ -1,5 +1,6 @@
 // мини-класс таймера, версия 1.0
-
+#ifndef timerMinim_h
+#define timerMinim_h
 class timerMinim
 {
   public:
@@ -34,3 +35,4 @@ boolean timerMinim::isReady() {
 void timerMinim::reset() {
   _timer = millis();
 }
+#endif

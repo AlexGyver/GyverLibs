@@ -6,7 +6,8 @@
 * V2.2 from 26.04.2020													*
 ************************************************************************/
 
-#pragma once
+#ifndef microDS18B20_h
+#define microDS18B20_h
 #include <Arduino.h>
 
 /*
@@ -70,3 +71,4 @@ private:
 	bool _ds_address_defined = false;					// Флаг - определен ли адрес?
 	uint8_t *_ds_address;								// Указатель на адрес термометра 
 };
+#endif

@@ -23,28 +23,6 @@ bool AccelMotor::tick(long pos) {
 					controlSpeed = constrain(controlSpeed, -_maxSpeed, _maxSpeed);
 					controlPos += controlSpeed * _dts;
 				}
-				/*
-				// старый алгоритм
-				if (err != 0) {
-					float accelDt = _accel * _dts;
-					float accel = accelDt;
-					if (abs(err) < _stopzone && abs(_lastSpeed - controlSpeed) < 2) {			// условие завершения движения
-						controlPos = _targetPos;
-						controlSpeed = 0;
-						accel = 0;
-					}
-					if (abs(err) < (float)(controlSpeed * controlSpeed) / (2.0 * accelDt)) {	// если пора тормозить
-						err = -err;																// разворачиваем ускорение
-						accel = (float)(controlSpeed * controlSpeed) / (2.0 * abs(err));		// пересчёт ускорения для плавности
-						if (_sign(controlSpeed) == _sign(err)) err = -err;						// поворачивай обратно
-					}
-					controlSpeed += accel * _sign(err);											// применяем ускорение
-					controlSpeed = constrain(controlSpeed, -_maxSpeed*_dts, _maxSpeed*_dts);	// ограничим
-					controlPos += controlSpeed;													// двигаем позицию
-					_lastSpeed = controlSpeed;	
-					
-				}
-				*/
 				PIDcontrol(controlPos, _currentPos, true);
 			}
 			break;
@@ -71,21 +49,34 @@ bool AccelMotor::tick(long pos) {
 
 void AccelMotor::PIDcontrol(long target, long current, bool cutoff) {
 	// cutoff нужен только для стабилизации позиции, обнуляет integral и учитывает мёртвую зону мотора
-	long err = target - current;
-	_dutyF = err * kp;										// P составляющая	
-	_dutyF += (float)(_prevInput - current) * kd / _dts;	// D составляющая
-	_prevInput = current;
-	integral += (float)err * ki * _dts;
-	_dutyF += integral;										// I составляющая	
-	if (cutoff) {		// отсечка
-		if (abs(err) > _stopzone) _dutyF += _sign(err)*_minDuty;	// учитываем _minDuty - мёртвую зону мотора (метод setMinDuty)
-		else integral = 0;		
-	} else {
+	long err = target - current;				// ошибка регулирования
+	long deltaInput = _prevInput - current;		// изменение входного сигнала
+	_dutyF = 0;
+	if (!cutoff) _dutyF = err * kp;				// P составляющая для режимов скорости	
+	_dutyF += (float)deltaInput * kd / _dts;	// D составляющая
+	_prevInput = current;						// запомнили текущий
+	integral += (float)err * ki * _dts;			// интегральная сумма
+	if (cutoff) integral += deltaInput * kp;	// +P по скорости изменения для режимов позиции
+	integral = constrain(integral, -_maxDuty, _maxDuty);	// ограничили
+	_dutyF += integral;							// I составляющая	
+	if (cutoff) {								// отсечка (для режимов позиции)
+		if (abs(err) < _stopzone) {integral = 0; _dutyF = 0;}
+	} else {									// для скорости
 		if (err == 0 && target == 0) integral = 0;
-		else _dutyF += _sign(err)*_minDuty;
 	}
-	_dutyF = constrain(_dutyF, -_maxDuty, _maxDuty);	// ограничиваем по 8 или 10 бит
-	setSpeed(_dutyF);									// и поехали
+	_dutyF = constrain(_dutyF, -_maxDuty, _maxDuty);	// ограничиваем по разрешению
+	if (cutoff && _min != 0 && _max != 0 && (current <= _min || current >= _max)) {
+		setSpeed(0);	// вырубаем, если вышли за диапазон
+	} else setSpeed(_dutyF);								// и поехали
+}
+
+void AccelMotor::setRange(long min, long max) {
+	_min = min;
+	_max = max;
+}
+void AccelMotor::setRangeDeg(long min, long max) {
+	_min = min * _ratio / 360.0;
+	_max = max * _ratio / 360.0;
 }
 
 bool AccelMotor::isBlocked() {
@@ -113,7 +104,7 @@ long AccelMotor::getCurrent() {
 	return _currentPos;
 }
 long AccelMotor::getCurrentDeg() {
-	return (long)_currentPos * 360 / _ratio;
+	return (long)_currentPos * 360.0 / _ratio;
 }
 
 // ===== current speed =====
@@ -121,7 +112,7 @@ int AccelMotor::getSpeed() {
 	return _curSpeed;
 }
 int AccelMotor::getSpeedDeg() {
-	return (long)_curSpeed * 360 / _ratio;
+	return (long)_curSpeed * 360.0 / _ratio;
 }
 float AccelMotor::getDuty() {
 	return _dutyF;
@@ -133,7 +124,7 @@ void AccelMotor::setTarget(long pos) {
 	_mode = AUTO;
 }
 void AccelMotor::setTargetDeg(long pos) {
-	_targetPos = (long)pos * _ratio / 360;
+	_targetPos = (long)pos * _ratio / 360.0;
 	_mode = AUTO;
 }
 long AccelMotor::getTarget() {

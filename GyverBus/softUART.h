@@ -1,4 +1,5 @@
-#pragma once
+#ifndef softUART_h
+#define softUART_h
 // Однопроводной UART с асинхронным чтением и отправкой (+ не блокирует прерывания)
 // БУФЕРА НА ПРИЁМ НЕТ!!!
 // Для отправки и приёма нужно почащё дёргать за available() или tick(), здесь это синонимы
@@ -220,3 +221,4 @@ private:
     volatile uint8_t _bit_mask;
 #endif
 };
+#endif

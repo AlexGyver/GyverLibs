@@ -1,6 +1,0 @@
-Скачать Java https://www.java.com/ru/download/
-Скачать Processing https://processing.org/download/
-
-Открыть любой .pde файл
-В Processing зайти "Набросок / Импортировать библиотеку... / Добавить библиотеку..."
-В поиске найти и установить библиотеку ControlP5

@@ -19,7 +19,8 @@
 
 #define USE_PRINT_H		// закомментируй, чтобы использовать gyver-вывод
 
-#pragma once
+#ifndef GyverUART_h
+#define GyverUART_h
 #include "Arduino.h"
 #include <avr/io.h>
 
@@ -91,3 +92,4 @@ private:
 };
 
 extern GyverUart uart;
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef Gyver433_h
+#define Gyver433_h
 /*
 	Суперлёгкая библиотека для радиомодулей 433 МГц
 	- Не использует прерывания и таймеры (кроме нулевого, читает micros())
@@ -232,3 +233,4 @@ byte G433_crc(byte *buffer, byte size) {
 	for (byte i = 0; i < size; i++) G433_crc_byte(crc, buffer[i]);
 	return crc;
 }
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ServoSmooth_h
+#define ServoSmooth_h
 #include <Arduino.h>
 #include <Servo.h>
 #include "smoothUtil.h"
@@ -99,3 +100,4 @@ public:
 	Servo _servo;			
 private:
 };
+#endif

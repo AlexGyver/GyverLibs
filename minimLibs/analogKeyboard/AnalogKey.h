@@ -1,4 +1,5 @@
-#pragma once
+#ifndef AnalogKey_h
+#define AnalogKey_h
 /*
 	Мини класс для работы с аналоговой клавиатурой
 	- Встроенный простенький дебаунс
@@ -55,3 +56,4 @@ private:
 	bool _ready = false;
 	uint32_t tmr;
 };
+#endif

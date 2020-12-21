@@ -1,4 +1,5 @@
-#pragma once
+#ifndef smoothUtil_h
+#define smoothUtil_h
 // базовый класс для плавного управления серво
 // в дочернем нужно объявить sendToDriver(int), attach(int) и detach()
 
@@ -67,3 +68,4 @@ protected:
 	byte SS_DEADZONE = 10;
 	byte SS_DEADZONE_SP = 3;
 };
+#endif

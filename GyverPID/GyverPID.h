@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GyverPID_h
+#define GyverPID_h
 
 /*
 	GyverPID - библиотека классического PID регулятора для Arduino
@@ -141,3 +142,4 @@ private:
 	int t = 0;	
 #endif
 };
+#endif

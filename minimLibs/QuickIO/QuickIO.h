@@ -1,3 +1,5 @@
+#ifndef QuickIO_h
+#define QuickIO_h
 class QuickIO {
 public:
 	QuickIO (uint8_t pin);
@@ -58,3 +60,4 @@ void QuickIO::mode(uint8_t mode) {
 		return;
 	}
 }
+#endif

@@ -92,7 +92,8 @@ Timer5	| 16 бит		| 0.24 Гц - 1 МГц	| 4 200 000.. 1 мкс	| CHANNEL_A	| 
 #define MAX_PERIOD_8 (1000000UL * 1024UL / F_CPU * 256UL)		// 16384 (61 Гц) на 16 МГц
 #define MAX_PERIOD_16 (1000000UL * 1024UL / F_CPU * 65536UL)	// 4194304 (0.24 Гц) на 16 МГц
 
-#pragma once
+#ifndef GyverTimers_h
+#define GyverTimers_h
 #include <Arduino.h>
 
 /* ==========  Константы ========== */
@@ -397,4 +398,6 @@ extern Timer_2 Timer2;
 extern Timer_3 Timer3;
 extern Timer_4 Timer4;
 extern Timer_5 Timer5;
+#endif
+
 #endif

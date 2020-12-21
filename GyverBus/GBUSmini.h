@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GBUSmini_h
+#define GBUSmini_h
 
 // ==================== СТАНДАРТНЫЕ НАСТРОЙКИ ======================
 // могут быть изменены здесь, либо прямо в скетче при помощи дефайна ПЕРЕД ПОДКЛЮЧЕНИЕМ БИБЛИОТЕКИ
@@ -231,3 +232,4 @@ void GBUS_send_ack(byte pin, byte to, byte from) {
 #endif
 	GBUS_send_raw(pin, buf, GBUS_OFFSET);
 }
+#endif

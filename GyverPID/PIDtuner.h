@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PIDtuner_h
+#define PIDtuner_h
 /*
 	Автоматический калибровщик коэффициентов ПИД регулятора, метод "реле" http://auto-controls.blogspot.com/2009/10/pid-controllers-auto-tuning-relay.html
 	Данный тюнер лучше настраивает коэффициенты для удержания величины и парирования внешних возмущений
@@ -262,3 +263,4 @@ private:
 	float PI_k[2];
 	float PID_k[3];
 };
+#endif

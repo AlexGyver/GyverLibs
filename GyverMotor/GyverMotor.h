@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GyverMotor_h
+#define GyverMotor_h
 #include <Arduino.h>
 
 /*
@@ -118,3 +119,4 @@ protected:
 	uint32_t _tmr = 0;
 	float _k;
 };
+#endif

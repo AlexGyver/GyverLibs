@@ -1,4 +1,5 @@
-#pragma once
+#ifndef crc8_h
+#define crc8_h
 
 void crc8_update(uint8_t &crc, uint8_t data) {
 #if defined (__AVR__)
@@ -34,3 +35,4 @@ byte crc8_array(byte *buffer, byte size) {
 	for (byte i = 0; i < size; i++) crc8_update(crc, buffer[i]);
 	return crc;
 }
+#endif

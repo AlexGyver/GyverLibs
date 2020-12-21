@@ -34,6 +34,8 @@ getDuty	KEYWORD2
 setRunMode	KEYWORD2
 setStopZone	KEYWORD2
 isBlocked	KEYWORD2
+setRange	KEYWORD2
+setRangeDeg	KEYWORD2
 kp	KEYWORD2
 ki	KEYWORD2
 kd	KEYWORD2

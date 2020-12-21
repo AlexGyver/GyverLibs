@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PIDtuner2_h
+#define PIDtuner2_h
 /*
 	Автоматический калибровщик коэффициентов ПИД регулятора, метод Cohen-Coon https://pages.mtu.edu/~tbco/cm416/cctune.html
 	Данный тюнер лучше настраивает коэффициенты для переходного процесса, например разогрев с одной температуры до другой
@@ -225,3 +226,4 @@ private:
 	float PI_k[2];
 	float PID_k[3];
 };
+#endif

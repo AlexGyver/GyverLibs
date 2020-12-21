@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GBUS_h
+#define GBUS_h
 // Это оболочка протокола GBUS на любой интерфейс связи Stream (Serial, программный Serial)
 // Обеспечивает асинхронный приём данных по Serial (в отличие от readBytes())
 // Полностью совместима на приём-передачу с остальными способами общения по GBUS
@@ -310,3 +311,4 @@ private:
 	GBUSstatus _status = GBUS_IDLE;
 	Stream* port;
 };
+#endif

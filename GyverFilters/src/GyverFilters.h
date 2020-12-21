@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GyverFilters_h
+#define GyverFilters_h
 #include <filters/alfaBeta.h>
 #include <filters/kalman.h>
 #include <filters/linear.h>
@@ -26,3 +27,4 @@
 		- Смотрите примеры! Использование этих фильтров чуть изменилось
 	- 2.1: Исправлен расчёт дельты в линейном фильтре
 */
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef color_utility_h
+#define color_utility_h
 #define MICROLED_INLINE __attribute__((always_inline))
 
 // ============================================== ДАТА ==============================================
@@ -400,3 +401,4 @@ struct mGradient {
 		return getBlend(x-sector*sectorSize, sectorSize, colors[sector], colors[sector+1]);
 	}
 };
+#endif

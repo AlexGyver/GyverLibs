@@ -72,7 +72,9 @@
 	Версия 3.2
 	- Чуть оптимизации и исправлений
 */
-#pragma once
+#ifndef microLED_h
+#define microLED_h
+
 #ifndef COLOR_DEBTH
 #define COLOR_DEBTH 3	// по умолчанию 24 бита
 #endif
@@ -513,3 +515,4 @@ void systemUptimePoll(void) {
 	}
 #endif
 }
+#endif

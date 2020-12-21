@@ -1,7 +1,5 @@
-#pragma once
-#include <Arduino.h>
-
-
+#ifndef GyverStepper_h
+#define GyverStepper_h
 /*
 	GyverStepper - производительная библиотека для управления шаговыми моторами
 	Документация: https://alexgyver.ru/gyverstepper/
@@ -145,6 +143,8 @@ uint32_t stepTime;
 #ifndef DRIVER_STEP_TIME
 #define DRIVER_STEP_TIME 4
 #endif
+
+#include <Arduino.h>
 
 #ifdef __AVR__
 #include <util/delay.h>
@@ -592,3 +592,4 @@ private:
 	uint8_t _pins[_DRV == 0 ? 2 : 4];
 #endif
 };
+#endif

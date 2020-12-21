@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ServoDriverSmooth_h
+#define ServoDriverSmooth_h
 #include <Arduino.h>
 #include "Adafruit_PWMServoDriver.h"
 #include "smoothUtil.h"
@@ -21,3 +22,4 @@ public:
 private:
 	static bool _startFlag;		// общий флаг для всех членов
 };
+#endif

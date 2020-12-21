@@ -1,4 +1,5 @@
-#pragma once
+#ifndef tinyLED_h
+#define tinyLED_h
 // Микро-отправка цвета на ленту потоком
 // begin() - начать отправку (НУЖНО ТОЛЬКО ДЛЯ SPI ЛЕНТ ИЛИ CLI_HIGH)
 // end() - закончить отправку (НУЖНО ТОЛЬКО ДЛЯ SPI ЛЕНТ ИЛИ CLI_HIGH)
@@ -276,3 +277,4 @@ private:
 	uint8_t oledSreg;
 #endif
 };
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef FastLEDsupport_h
+#define FastLEDsupport_h
 // поддержка типа данных FastLED для microLED
 
 #include <FastLED.h>
@@ -13,3 +14,4 @@ mData CRGBtoData(CRGB col) {
 	return mData(col.r, col.g, col.b);
 #endif
 }
+#endif

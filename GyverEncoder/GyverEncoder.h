@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GyverEncoder_h
+#define GyverEncoder_h
 #include <Arduino.h>
 
 /*	
@@ -167,3 +168,4 @@ private:
 	volatile uint8_t _bit_mask_SW;
 #endif
 };
+#endif

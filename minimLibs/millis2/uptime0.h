@@ -1,4 +1,5 @@
-#pragma once
+#ifndef uptime0_h
+#define uptime0_h
 #define MICROSECONDS_PER_TIMER0_OVERFLOW (clockCyclesToMicroseconds(64 * 256))
 #define MILLIS_INC (MICROSECONDS_PER_TIMER0_OVERFLOW / 1000)
 #define FRACT_INC ((MICROSECONDS_PER_TIMER0_OVERFLOW % 1000) >> 3)
@@ -103,3 +104,4 @@ void delayMicroseconds0(unsigned int us) {
     "brne 1b" : "=w" (us) : "0" (us) // 2 cycles
   );
 }
+#endif

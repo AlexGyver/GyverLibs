@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GyverRelay_h
+#define GyverRelay_h
 #include <Arduino.h>
 
 /*
@@ -43,3 +44,4 @@ private:
 	float prevInput = 0.0;
 	boolean _direction = false;
 };
+#endif

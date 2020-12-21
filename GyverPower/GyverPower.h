@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GyverPower_h
+#define GyverPower_h
 #include <Arduino.h>
 #include "powerConstants.h"
 /*
@@ -125,3 +126,4 @@ extern GyverPower power;
 	PWR_USI		- Wire + Spi (ATtinyXX)
 	PWR_LIN		- USART LIN (ATtinyXX)
 */
+#endif

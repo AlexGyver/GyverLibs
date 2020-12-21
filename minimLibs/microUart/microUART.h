@@ -1,4 +1,5 @@
-#pragma once
+#ifndef microUART_h
+#define microUART_h
 class microUART {
 public:
 	void begin(uint32_t baudrate) {
@@ -25,3 +26,4 @@ public:
 	}
 private:
 };
+#endif
