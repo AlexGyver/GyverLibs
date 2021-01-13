@@ -31,6 +31,7 @@
 	- Версия 2.1: вернул getStatus
 	- Версия 2.2: небольшие багфиксы и оптимизация
 	- Версия 2.3: добавлена возможность отправки широковещательного сообщения (всем), отправлять на адрес 255
+	- Версия 2.4: исправлены ошибки, добавлена bool statusChanged() для GBUS
 */
 
 /*
@@ -115,6 +116,7 @@ byte GBUS_crc_bytes(byte *data, byte size);
 #define ACK_ERROR 2
 #define ACK_ONLY 3
 #define ACK_DATA 4
+#define GBUS_BROADCAST 255
 
 // привет разработчикам ядра esp8266. Ничего не потеряли?)
 #if defined(ESP8266)
@@ -124,7 +126,7 @@ byte GBUS_crc_bytes(byte *data, byte size);
 GBUSstatus checkGBUS(uint8_t* buffer, byte bufSize, byte amount, byte addr) {
 	if (buffer[0] > bufSize) return RX_OVERFLOW;									// буфер переполнен
 	if (amount > GBUS_OFFSET && amount > buffer[0]) return RX_OVERFLOW;				// пакет слишком большой
-	if (buffer[1] != addr || buffer[1] != 255) return RX_ADDRESS_ERROR;				// не наш адрес
+	if (buffer[1] != addr && buffer[1] != 255) return RX_ADDRESS_ERROR;				// не наш адрес
 	if (amount < GBUS_OFFSET || (amount > GBUS_OFFSET && amount < buffer[0])) return RX_ABORT;		// передача прервана	
 	if (GBUS_CRC) if (GBUS_crc_bytes(buffer, amount) != 0) return RX_CRC_ERROR;		// данные повреждены			
 	if (buffer[0] == 0) return RX_REQUEST;											// реквест				
