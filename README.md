@@ -218,7 +218,7 @@ byte GBUS_send_request_ack(byte pin, byte to, byte from, byte tries, int timeout
 
 <a id="PWMrelay"></a>
 ![Logo](/logos/pwmrelay.png)
-### PWMrelay v1.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/PWMrelay/PWMrelay.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/pwmrelay/)
+### PWMrelay v1.2 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/PWMrelay/PWMrelay.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/pwmrelay/)
 Библиотека для генерации сверхнизкочастотного ШИМа для релюшек
 - Встроенный таймер на миллис
 - Установка частоты, скважности и уровня реле

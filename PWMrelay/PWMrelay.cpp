@@ -1,6 +1,6 @@
-#include <PWMrelay.h>
+#include "PWMrelay.h"
 
-PWMrelay::PWMrelay(byte pin, bool dir = false, int period = 1000) {
+PWMrelay::PWMrelay(int pin, bool dir, int period) {
 	_pin = pin;
 	_dir = !dir;
 	pinMode(_pin, OUTPUT);
