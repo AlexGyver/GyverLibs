@@ -203,32 +203,32 @@ public:
 		state = 0;
 	}
 
-	void debugText() {
+	void debugText(Stream* port = &Serial) {
 		if (debFlag) {
 			debFlag = false;
 			switch (state) {
-			case 1: Serial.print("stabilize: "); Serial.println(realValue);
+			case 1: port->print("stabilize: "); port->println(realValue);
 				break;
-			case 2: Serial.println("wait pulse");
+			case 2: port->println("wait pulse");
 				break;
-			case 3: Serial.print("analysis: "); Serial.print(accuracy); Serial.print("%\t");
-				Serial.print("PI p: "); Serial.print(PI_k[0]); Serial.print('\t');
-				Serial.print("PI i: "); Serial.print(PI_k[1]); Serial.print('\t');
-				Serial.print("PID p: "); Serial.print(PID_k[0]); Serial.print('\t');
-				Serial.print("PID i: "); Serial.print(PID_k[1]); Serial.print('\t');
-				Serial.print("PID d: "); Serial.print(PID_k[2]); Serial.println();
+			case 3: port->print("analysis: "); port->print(accuracy); port->print("%\t");
+				port->print("PI p: "); port->print(PI_k[0]); port->print('\t');
+				port->print("PI i: "); port->print(PI_k[1]); port->print('\t');
+				port->print("PID p: "); port->print(PID_k[0]); port->print('\t');
+				port->print("PID i: "); port->print(PID_k[1]); port->print('\t');
+				port->print("PID d: "); port->print(PID_k[2]); port->println();
 				break;
 			}
 		}
 	}
-	void debugPlot() {
+	void debugPlot(Stream* port = &Serial) {
 		if (millis() - debTmr > period) {
 			debTmr = millis();
-			Serial.print(output); Serial.print(' ');
-			Serial.print(thisValue); Serial.print(' ');
-			Serial.print(realValue); Serial.print(' ');
-			Serial.print(minVal); Serial.print(' ');
-			Serial.println(maxVal);
+			port->print(output); port->print(' ');
+			port->print(thisValue); port->print(' ');
+			port->print(realValue); port->print(' ');
+			port->print(minVal); port->print(' ');
+			port->println(maxVal);
 		}
 	}
 

@@ -36,10 +36,10 @@
 	
 	3. Отладка и получение значений
 	3.1 Во время работы тюнера можно вызвать tuner.getState() - вернёт номер текущего этапа работы. На 7-ом этапе можно забирать коэффициенты
-	3.2 Для наблюдения за тюнером через Serial есть готовые методы:
+	3.2 Для наблюдения за тюнером через port->есть готовые методы:
 		- tuner.debugText() выводит текстовые данные (смотри скриншот в папке docs библиотеки)
 		- tuner.debugPlot() выводит данные для построения графика через плоттер Arduino IDE (смотри скриншот в папке docs библиотеки)
-	3.3 Чтобы получить коэффициенты внутри программы (без Serial) желательно задать условие 
+	3.3 Чтобы получить коэффициенты внутри программы (без port-> желательно задать условие 
 	if (tuner.getState() == 7) и при наступлении этого условия получить коэффициенты:
 	
 	tuner.getPI_p() - p для ПИ регулятора
@@ -179,36 +179,36 @@ public:
 		state = 0;
 	}
 
-	void debugText() {
+	void debugText(Stream* port = &Serial) {
 		if (debFlag) {
 			debFlag = false;
 			switch (state) {
-			case 1: Serial.print("stabilize down: "); Serial.println(thisValue);
+			case 1: port->print("stabilize down: "); port->println(thisValue);
 				break;
-			case 2: Serial.print("stabilize up: "); Serial.println(thisValue);
+			case 2: port->print("stabilize up: "); port->println(thisValue);
 				break;
-			case 3: Serial.print("stabilize down: "); Serial.println(thisValue);
+			case 3: port->print("stabilize down: "); port->println(thisValue);
 				break;
-			case 4: Serial.println("got t2");
+			case 4: port->println("got t2");
 				break;
-			case 5: Serial.println("got t3");
+			case 5: port->println("got t3");
 				break;
-			case 6: Serial.println("compute");
+			case 6: port->println("compute");
 				break;			
-			case 7: Serial.print("result: ");
-				Serial.print("PI p: "); Serial.print(PI_k[0]); Serial.print('\t');
-				Serial.print("PI i: "); Serial.print(PI_k[1]); Serial.print('\t');
-				Serial.print("PID p: "); Serial.print(PID_k[0]); Serial.print('\t');
-				Serial.print("PID i: "); Serial.print(PID_k[1]); Serial.print('\t');
-				Serial.print("PID d: "); Serial.print(PID_k[2]); Serial.println();
+			case 7: port->print("result: ");
+				port->print("PI p: "); port->print(PI_k[0]); port->print('\t');
+				port->print("PI i: "); port->print(PI_k[1]); port->print('\t');
+				port->print("PID p: "); port->print(PID_k[0]); port->print('\t');
+				port->print("PID i: "); port->print(PID_k[1]); port->print('\t');
+				port->print("PID d: "); port->print(PID_k[2]); port->println();
 				break;
 			}
 		}
 	}
-	void debugPlot() {
+	void debugPlot(Stream* port = &Serial) {
 		if (millis() - debTmr > period) {
 			debTmr = millis();
-			Serial.println(thisValue);			
+			port->println(thisValue);			
 		}
 	}
 
