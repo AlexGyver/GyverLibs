@@ -1,5 +1,4 @@
 #include "GyverButton.h"
-#include <Arduino.h>
 
 // ==================== CONSTRUCTOR ====================
 GButton::GButton(int8_t pin, bool type, bool dir) {
@@ -87,8 +86,8 @@ boolean GButton::state() {
 boolean GButton::isSingle() {
 	if (flags.tickMode) GButton::tick();
 	if (flags.counter_flag && last_counter == 1) {
-//		last_counter = 0;
-//		flags.counter_flag = false;
+		//		last_counter = 0;
+		//		flags.counter_flag = false;
 		flags.counter_reset = true;	
 		return true;
 	} else return false;
@@ -96,8 +95,8 @@ boolean GButton::isSingle() {
 boolean GButton::isDouble() {
 	if (flags.tickMode) GButton::tick();
 	if (flags.counter_flag && last_counter == 2) {
-//		flags.counter_flag = false;
-//		last_counter = 0;
+		//		flags.counter_flag = false;
+		//		last_counter = 0;
 		flags.counter_reset = true;
 		return true;
 	} else return false;
@@ -105,8 +104,8 @@ boolean GButton::isDouble() {
 boolean GButton::isTriple() {
 	if (flags.tickMode) GButton::tick();
 	if (flags.counter_flag && last_counter == 3) {
-//		flags.counter_flag = false;
-//		last_counter = 0;
+		//		flags.counter_flag = false;
+		//		last_counter = 0;
 		flags.counter_reset = true;
 		return true;
 	} else return false;
@@ -114,20 +113,20 @@ boolean GButton::isTriple() {
 boolean GButton::hasClicks() {
 	if (flags.tickMode) GButton::tick();
 	if (flags.counter_flag) {
-//		flags.counter_flag = false;
+		//		flags.counter_flag = false;
 		flags.counter_reset = true;	
 		return true;
 	} else return false;
 }
 uint8_t GButton::getClicks() {
-	byte thisCount = last_counter;
-//		last_counter = 0;
-		flags.counter_reset = true;	
-	return thisCount;	
+	//	byte thisCount = last_counter;			// Исключено	14.01.2021
+	//		last_counter = 0;
+	flags.counter_reset = true;	
+	return last_counter;					//	return thisCount;	(замена)	14.01.2021
 }
 uint8_t GButton::getHoldClicks() {
 	if (flags.tickMode) GButton::tick();
-	return flags.hold_flag ? last_hold_counter : 0;	
+	return last_hold_counter;				//return flags.hold_flag ? last_hold_counter : 0;	(Замена)	 14.01.2021
 }
 boolean GButton::isStep(byte clicks) {
 	if (flags.tickMode) GButton::tick();
@@ -217,7 +216,7 @@ void GButton::tick() {
 	}
 	
 	// сброс накликивания						//Добавлено
-	if(flags.counter_reset) {
+	if (flags.counter_reset) {
 		last_counter = 0;
 		flags.counter_flag = false;
 		flags.counter_reset = false;

@@ -1,5 +1,4 @@
-#ifndef GyverButton_h
-#define GyverButton_h
+#pragma once
 #include <Arduino.h>
 
 /*
@@ -27,6 +26,8 @@
 	- Любой таймаут удержания
 	- Single, Double и Triple теперь не мешают hasClicks и getClicks и работают совместно
 	- isStep() тоже теперь ничего не мешает и он работает более корректно
+	Версия 3.8: исправления от Dryundel:
+	
 */
 
 #if defined(__AVR__)
@@ -64,7 +65,7 @@ typedef struct {
 #define AUTO 1
 
 // Варианты инициализации:
-// GButton btn;							// без привязки к пину (виртуальная кнопка) и без указания типа (по умолч. HIGH_PULL и NORM_OPEN)
+// GButton btn;							// без привязки к пину (виртуальная кнопка) и без указания типа (по умолч. LOW_PULL и NORM_OPEN)
 // GButton btn(пин);					// с привязкой к пину и без указания типа (по умолч. HIGH_PULL и NORM_OPEN)
 // GButton btn(пин, тип подключ.);		// с привязкой к пину и указанием типа подключения (HIGH_PULL / LOW_PULL) и без указания типа кнопки (по умолч. NORM_OPEN)
 // GButton btn(пин, тип подключ., тип кнопки);			// с привязкой к пину и указанием типа подключения (HIGH_PULL / LOW_PULL) и типа кнопки (NORM_OPEN / NORM_CLOSE)
@@ -90,7 +91,7 @@ class GButton {
 														// AUTO - tick() входит во все остальные функции и опрашивается сама
 	
 	void tick();										// опрос кнопки	
-	void tick(boolean state);							// опрос внешнего значения (0 нажато, 1 не нажато) (для матричных, резистивных клавиатур и джойстиков)
+	void tick(boolean state);							// опрос внешнего значения (1 нажато, 0 не нажато) (для матричных, резистивных клавиатур и джойстиков)
 	
 	boolean isPress();		// возвращает true при нажатии на кнопку. Сбрасывается после вызова
 	boolean isRelease();	// возвращает true при отпускании кнопки. Сбрасывается после вызова
@@ -127,4 +128,3 @@ class GButton {
 	volatile uint8_t _bit_mask;
 #endif
 };
-#endif
