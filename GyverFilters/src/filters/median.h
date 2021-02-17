@@ -9,7 +9,7 @@ public:
 		if ((_count < _numRead - 1) && (buffer[_count] > buffer[_count + 1])) {
 			for (int i = _count; i < _numRead - 1; i++) {
 				if (buffer[i] > buffer[i + 1]) {
-					float buff = buffer[i];
+					TYPE buff = buffer[i];
 					buffer[i] = buffer[i + 1];
 					buffer[i + 1] = buff;
 				}
@@ -18,7 +18,7 @@ public:
 			if ((_count > 0) and (buffer[_count - 1] > buffer[_count])) {
 				for (int i = _count; i > 0; i--) {
 					if (buffer[i] < buffer[i - 1]) {
-						float buff = buffer[i];
+						TYPE buff = buffer[i];
 						buffer[i] = buffer[i - 1];
 						buffer[i - 1] = buff;
 					}
