@@ -1,0 +1,84 @@
+#######################################
+# Syntax Coloring Map For GyverTM74HC595
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+Disp595	KEYWORD1
+SevenSegmentsDisp	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+ALIGN_RIGHT	LITERAL1
+ALIGN_LEFT	LITERAL1 
+DISP595_BRIGHTNESS	LITERAL1
+DISP595_BRIGHTNESS_DEPTH	LITERAL1
+DISP595_FAST_PERIOD	LITERAL1
+DISP595_SLOW_PERIOD	LITERAL1
+tick	KEYWORD2
+tickManual	KEYWORD2
+displayIntNulls	KEYWORD2
+displayInt	KEYWORD2
+displayFloatNulls	KEYWORD2
+displayFloat	KEYWORD2
+displayFloatAuto	KEYWORD2
+displayByte	KEYWORD2
+displayBytes	KEYWORD2
+point	KEYWORD2
+clear	KEYWORD2
+runningString	KEYWORD2
+brightness	KEYWORD2
+brightnessDepth	KEYWORD2
+_A	KEYWORD2
+_B	KEYWORD2
+_C	KEYWORD2
+_D	KEYWORD2
+_E	KEYWORD2
+_F	KEYWORD2
+_G	KEYWORD2
+_H	KEYWORD2
+_J	KEYWORD2
+_L	KEYWORD2
+_N	KEYWORD2
+_O	KEYWORD2
+_P	KEYWORD2
+_S	KEYWORD2
+_U	KEYWORD2
+_V	KEYWORD2
+_Y	KEYWORD2
+_a	KEYWORD2
+_b	KEYWORD2
+_c	KEYWORD2
+_d	KEYWORD2
+_e	KEYWORD2
+_f	KEYWORD2
+_h	KEYWORD2
+_i	KEYWORD2
+_j	KEYWORD2
+_l	KEYWORD2
+_n	KEYWORD2
+_o	KEYWORD2
+_q	KEYWORD2
+_r	KEYWORD2
+_t	KEYWORD2
+_u	KEYWORD2
+_v	KEYWORD2
+_y	KEYWORD2
+_dash	KEYWORD2
+_under	KEYWORD2
+_equal	KEYWORD2
+_empty	KEYWORD2
+_degree	KEYWORD2
+_0	KEYWORD2
+_1	KEYWORD2
+_2	KEYWORD2
+_3	KEYWORD2
+_4	KEYWORD2
+_5	KEYWORD2
+_6	KEYWORD2
+_7	KEYWORD2
+_8	KEYWORD2
+_9	KEYWORD2
