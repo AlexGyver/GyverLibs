@@ -9,7 +9,7 @@ void setup() {
 }
 
 void loop() {
-  if (vol.tick());
+  vol.tick();
   clap.tick(vol.getRawMax());
   if (clap.isClap()) Serial.println("clap");
   if (clap.hasClaps(1)) Serial.println("1 clap");
