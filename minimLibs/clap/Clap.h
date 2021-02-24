@@ -18,7 +18,7 @@ class Clap {
 
         uint32_t deb = millis() - _tmr2;
 
-        if (!_ready && front == 1 && _state == 0) {
+        if (front == 1 && _state == 0) {
           _state = 1;
           _startClap = 1;
           _clap = 0;
@@ -50,19 +50,26 @@ class Clap {
         return 1;
       }
       return 0;
-    }
-    bool haveClaps() {
-      if (_ready) {
+    }    
+    bool hasClaps(byte claps) {
+      if (_ready && _claps == claps) {
         _ready = 0;
+        _claps = 0;
         return 1;
       }
       return 0;
     }
-    byte getClaps() {
-      byte buf = _claps;
-      _claps = 0;
-      return buf;
+    bool hasClaps() {
+      return _ready;
     }
+    byte getClaps() {
+      if (_ready) {
+        _ready = 0;
+        byte buf = _claps;
+        _claps = 0;
+        return buf;
+      } return 0;
+    }    
 
   private:
     uint32_t _tmr = 0, _tmr2 = 0;
