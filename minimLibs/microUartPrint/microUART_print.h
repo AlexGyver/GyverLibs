@@ -1,6 +1,6 @@
-#ifndef microUART_h
-#define microUART_h
-class microUART : public Print  {
+#ifndef microUART_print_h
+#define microUART_print_h
+class microUART_print : public Print  {
 public:
 	void begin(uint32_t baudrate) {
 		uint16_t speed = (F_CPU / (8L * baudrate)) - 1;

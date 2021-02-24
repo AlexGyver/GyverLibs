@@ -1,6 +1,6 @@
 // пример работы с юартом
-#include "microUART.h"
-microUART uart;
+#include "microUART_print.h"
+microUART_print uart;
 
 void setup() {
   uart.begin(9600);
