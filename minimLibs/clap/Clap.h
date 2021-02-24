@@ -20,6 +20,10 @@ class Clap {
 
         if (front == 1 && _state == 0) {
           _state = 1;
+          if (!_startClap) {
+            _claps = 0;
+            _ready = 0;
+          }
           _startClap = 1;
           _clap = 0;
           _tmr2 = millis();
@@ -50,7 +54,7 @@ class Clap {
         return 1;
       }
       return 0;
-    }    
+    }
     bool hasClaps(byte claps) {
       if (_ready && _claps == claps) {
         _ready = 0;
@@ -69,7 +73,7 @@ class Clap {
         _claps = 0;
         return buf;
       } return 0;
-    }    
+    }
 
   private:
     uint32_t _tmr = 0, _tmr2 = 0;
