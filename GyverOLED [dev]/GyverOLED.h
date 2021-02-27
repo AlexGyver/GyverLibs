@@ -1,5 +1,6 @@
 ﻿#ifndef GyverOLED_h
 #define GyverOLED_h
+// 27.02.2021 - исправил непечатающуюся нижнюю строку
 /*
 GyverOLED - лёгкая и быстрая библиотека для OLED дисплея
 - Поддержка OLED дисплеев на SSD1306/SSH1106 с разрешением 128х64 и 128х32 с подключением по I2C
@@ -206,7 +207,7 @@ public:
 		if (data == '\n') { _y += _scaleY; newPos = true; data = 0; }			// получен перевод строки
 		if (_println && (_x + 6*_scaleX) >= _maxX) { _x = 0; _y += _scaleY; newPos = true; }	// строка переполненена, перевод и возврат
 		if (newPos) setCursorXY(_x, _y);										// переставляем курсор
-		if (_y + _scaleY > _maxY) data = 0;										// дисплей переполнен
+		if (_y + _scaleY > _maxY + 1) data = 0;									// дисплей переполнен
 		if (_println && data == ' ' && _x == 0) { data = 0; }					// убираем первый пробел в строке
 		
 		// фикс русских букв и некоторых символов
@@ -486,14 +487,14 @@ public:
 	// прямоугольник скруглённый (лев. верхн, прав. нижн)
 	void roundRect(int x0, int y0, int x1, int y1, byte fill = OLED_FILL) {
 		/*
-		    ▅ ▅ ▅ ▅ ▅
-		  ▅ ▅ ▅ ▅ ▅ ▅
+			▅ ▅ ▅ ▅ ▅
+		▅ ▅ ▅ ▅ ▅ ▅
 		▅ ▅ ▅ ▅ ▅ ▅ ▅
 		▅ ▅ ▅ ▅ ▅ ▅ ▅
 		▅ ▅ ▅ ▅ ▅ ▅ ▅
 		▅ ▅ ▅ ▅ ▅ ▅ ▅
-		  ▅ ▅ ▅ ▅ ▅ ▅
-		    ▅ ▅ ▅ ▅ ▅
+		▅ ▅ ▅ ▅ ▅ ▅
+			▅ ▅ ▅ ▅ ▅
 		*/
 		if (fill == OLED_FILL) {
 			fastLineV(x0, y0+2, y1-2);
