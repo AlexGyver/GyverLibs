@@ -11,6 +11,7 @@ void setup() {
   Serial.println(flags.read(0));  // прочитать флаг
   Serial.println(flags.read(1));
   Serial.println(flags.read(2));
+  flags[3] = 0;				// можно писать через []
   Serial.println(flags[3]); // можно читать через []
 }
 
