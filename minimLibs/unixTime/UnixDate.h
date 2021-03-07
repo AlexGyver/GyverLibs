@@ -1,4 +1,7 @@
-// https://www.oryx-embedded.com/doc/date__time_8c_source.html
+#ifndef UnixDate_h
+#define UnixDate_h
+// unix time to date
+// based on https://www.oryx-embedded.com/doc/date__time_8c_source.html
 class UnixDate {
 public:
 	UnixDate (uint32_t t, int8_t gmt) {
@@ -58,3 +61,4 @@ public:
 	uint8_t seconds;
 private:
 };
+#endif
