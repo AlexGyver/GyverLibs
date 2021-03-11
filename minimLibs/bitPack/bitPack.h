@@ -3,6 +3,9 @@
 template <byte AMOUNT>
 class BitPack {
   public:
+	BitPack() {
+	  clearAll();
+	}
     void set(byte num) {
       bitSet(pack[(num) >> 3], (num) & 0b111);
     }
@@ -10,10 +13,10 @@ class BitPack {
       bitClear(pack[(num) >> 3], (num) & 0b111);
     }
     void toggle(byte num) {
-      read(num) ? clear(pack, num) : set(pack, num);
+      read(num) ? clear(num) : set(num);
     }
     void write(byte num, bool state) {
-      state ? set(pack, num) : clear(pack, num);
+      state ? set(num) : clear(num);
     }
     bool read(byte num) {
       return bitRead(pack[(num) >> 3], (num) & 0b111);
@@ -36,7 +39,7 @@ class BitPack {
     }
 
   private:
-    byte pack[(AMOUNT >> 3) + 1];
+    byte pack[(AMOUNT + 8 - 1) >> 3];
     byte buf;
 };
 #endif
