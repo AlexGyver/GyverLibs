@@ -15,8 +15,7 @@ static volatile uint8_t _UART_TX_BUFFER_TAIL;
 class microUART_ISR {
 public:
 	void begin(uint32_t baudrate) {
-		uint16_t speed = (F_CPU / (8L * baudrate)) - 1;
-		UBRR0 = speed;
+		UBRR0 = (F_CPU / (8L * baudrate)) - 1;;
 		UCSR0A = (1 << U2X0);
 		UCSR0A = (1 << U2X0);
 		UCSR0B = ((1 << TXEN0) | (1 << RXEN0) | (1 << RXCIE0));
