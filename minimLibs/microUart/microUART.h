@@ -3,9 +3,7 @@
 class microUART {
 public:
 	void begin(uint32_t baudrate) {
-		uint16_t speed = (F_CPU / (8L * baudrate)) - 1;
-		UBRR0H = highByte(speed);
-		UBRR0L = lowByte(speed);
+		UBRR0 = (F_CPU / (8L * baudrate)) - 1;
 		UCSR0A = (1 << U2X0);
 		UCSR0B = (1 << TXEN0) | (1 << RXEN0);
 		UCSR0C = (1 << UCSZ01) | (1 << UCSZ00);
