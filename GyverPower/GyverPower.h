@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GyverPower_h
+#define GyverPower_h
 #include <Arduino.h>
 #include "powerConstants.h"
 /*
@@ -32,6 +33,7 @@
 	v1.2 - фикс калибровки
 	v1.3 - фикс для 32U4
 	v1.4 - добавлен adjustInternalClock
+	v1.5 - совместимость с аттини
 */
 
 // =============== ФУНКЦИИ ===============
@@ -124,3 +126,4 @@ extern GyverPower power;
 	PWR_USI		- Wire + Spi (ATtinyXX)
 	PWR_LIN		- USART LIN (ATtinyXX)
 */
+#endif

@@ -1,6 +1,6 @@
 // управляем 4 пин вентилятором и измеряем обороты
-#define PWM_PIN 3     // ШИМ пин
-#define TACH_PIN 2    // пин тахометра
+#define PWM_PIN 10    // ШИМ пин (подключать через резик 100-1000 Ом)
+#define TACH_PIN 2    // пин тахометра (желательна внешняя подтяжка 10к к VCC)
 
 #include "Tacho.h"
 Tacho tacho;
@@ -16,7 +16,7 @@ void setup() {
   attachInterrupt(0, isr, FALLING);
 
   // включаем вентиль на скорость 150 (из 255)
-  analogWrite(PWM_PIN, 150);
+  analogWrite(PWM_PIN, 190);
 }
 
 // обработчик прерывания
@@ -27,7 +27,7 @@ void isr() {
 void loop() {
   // выводим два раза в секунду
   static uint32_t tmr;
-  if (millis() - tmr > 500) {
+  if (millis() - tmr > 100) {
     tmr = millis();
     Serial.println(tacho.getRPM());
   }

@@ -1,3 +1,4 @@
+#ifndef FASTLED_VERSION		// запрещаем одновременный инклуд с фастледом
 #pragma once
 #include <Arduino.h>
 #include "math8.h"
@@ -37,3 +38,5 @@ uint8_t inoise8(uint16_t x);
 int8_t inoise8_raw(uint16_t x, uint16_t y, uint16_t z);
 int8_t inoise8_raw(uint16_t x, uint16_t y);
 int8_t inoise8_raw(uint16_t x);
+
+#endif

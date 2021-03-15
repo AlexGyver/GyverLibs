@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GyverEncoder_h
+#define GyverEncoder_h
 #include <Arduino.h>
 
 /*	
@@ -36,6 +37,7 @@
 	- 4.6: BINARY_ALGORITHM пофикшен для TYPE1, добавлена isReleaseHold
 	- 4.7: Исправлен случайный нажатый поворот в BINARY_ALGORITHM
 	- 4.8: увеличена производительность для AVR Arduino
+	- 4.9: быстрый поворот отключен если кнопка удерживается
 */
 // ========= КОНСТАНТЫ ==========
 #define ENC_NO_BUTTON -1	// константа для работы без пина
@@ -167,3 +169,4 @@ private:
 	volatile uint8_t _bit_mask_SW;
 #endif
 };
+#endif

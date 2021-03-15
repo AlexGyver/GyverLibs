@@ -22,7 +22,7 @@ Kd	KEYWORD2
 
 getResult	KEYWORD2
 getResultTimer	KEYWORD2
-
+getResultNow	KEYWORD2
 setDirection	KEYWORD2
 setMode	KEYWORD2
 setLimits	KEYWORD2

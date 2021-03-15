@@ -1,7 +1,5 @@
-#pragma once
-#include <Arduino.h>
-
-
+#ifndef GyverStepper_h
+#define GyverStepper_h
 /*
 	GyverStepper - производительная библиотека для управления шаговыми моторами
 	Документация: https://alexgyver.ru/gyverstepper/
@@ -24,6 +22,9 @@
 	v1.3 - изменена логика работы setTarget(, RELATIVE)
 	v1.4 - добавлена задержка для STEP, настроить можно дефайном DRIVER_STEP_TIME
 	v1.5 - пофикшен баг для плат есп
+	v1.6 - Исправлена остановка для STEPPER4WIRE_HALF, скорость можно задавать во float (для медленных скоростей)
+	v1.7 - Исправлен баг в отрицательной скорости (спасибо Евгению Солодову)
+	v1.8 - Исправлен режим KEEP_SPEED
 	
 	Алгоритм из AccelStepper: https://www.airspayce.com/mikem/arduino/AccelStepper/
 	AlexGyver, 2020
@@ -81,7 +82,7 @@ float getTargetDeg();
 
 // Установка максимальной скорости (по модулю) в шагах/секунду и градусах/секунду (для режима FOLLOW_POS)
 // по умолч. 300
-void setMaxSpeed(int speed);
+void setMaxSpeed(float speed);
 void setMaxSpeedDeg(float speed);
 
 // Установка ускорения в шагах и градусах в секунду (для режима FOLLOW_POS).
@@ -106,11 +107,11 @@ void reset();
 
 // Установка целевой скорости в шагах/секунду и градусах/секунду (для режима KEEP_SPEED)
 // при передаче вторым аргументом (true или SMOOTH) будет выполнен плавный разгон/торможение к нужной скорости
-void setSpeed(int speed, bool smooth);
+void setSpeed(float speed, bool smooth);
 void setSpeedDeg(float speed, bool smooth);
 
 // Получение целевой скорости в шагах/секунду и градусах/секунду (для режима KEEP_SPEED)
-int getSpeed();
+float getSpeed();
 float getSpeedDeg();
 
 // Включить мотор (пин EN)
@@ -124,10 +125,10 @@ bool getState();
 
 // Возвращает минимальный период тика мотора в микросекундах при настроенной setMaxSpeed() скорости.
 // Можно использовать для настройки прерываний таймера, в обработчике которого будет лежать tick() (см. пример timerISR)
-uint16_t getMinPeriod();
+uint32_t getMinPeriod();
 
 // Текущий период "тика" для отладки и всего такого
-uint16_t stepTime;
+uint32_t stepTime;
 
 */
 
@@ -135,16 +136,24 @@ uint16_t stepTime;
 // Также дефайн можно прописать в скетче до подключения библиотеки!!! См. пример smoothAlgorithm
 //#define SMOOTH_ALGORITHM
 
-// мин. скорость для FOLLOW_POS
-#define _MIN_STEPPER_SPEED 20
+#define _MIN_STEPPER_SPEED 10			// мин. скорость для FOLLOW_POS
+#define _MAX_STEP_PERIOD (1000000L/_MIN_STEPPER_SPEED)
+#define MIN_STEPPER_SPEED (1.0f/3600)	// 1 шаг в час
 
 #ifndef DRIVER_STEP_TIME
 #define DRIVER_STEP_TIME 4
 #endif
 
+#include <Arduino.h>
+
 #ifdef __AVR__
 #include <util/delay.h>
 #endif
+
+// макросы
+#define degPerMinute(x) ((x)/60.0f)
+#define degPerHour(x) ((x)/3600.0f)
+#define _sign(x) ((x) >= 0 ? 1 : -1)	// знак числа
 
 enum GS_driverType {
 	STEPPER2WIRE,
@@ -167,9 +176,7 @@ enum GS_smoothType {
 	SMOOTH,
 };
 
-// знак числа
-#define _sign(x) ((x) >= 0 ? 1 : -1)
-#define _MAX_STEP_PERIOD (1000000L/_MIN_STEPPER_SPEED)
+
 
 template <GS_driverType _DRV>
 class GStepper {
@@ -204,7 +211,7 @@ public:
 #ifndef SMOOTH_ALGORITHM
 		// в активном режиме движения к цели с ненулевым ускорением
 		// планировщик скорости быстрый			
-		if (_workState && !_curMode && _accel != 0) planner();	
+		if (_workState && !_curMode && _accel != 0 && _maxSpeed > _MIN_STEPPER_SPEED) planner();	
 #endif
 		// при плавном разгоне в KEEP_SPEED
 		if (_smoothStart && _curMode) smoothSpeedPlanner();
@@ -220,7 +227,7 @@ public:
 			// в активном режиме движения к цели с ненулевым ускорением
 			// планировщик скорости	плавный
 			// выходим если приехал
-			if (!_curMode && _accel != 0) 
+			if (!_curMode && _accel != 0 && _maxSpeed > _MIN_STEPPER_SPEED) 
 				if (!plannerSmooth()) {
 					brake();
 					return false;	
@@ -275,19 +282,19 @@ public:
 	float getTargetDeg() 			{return ((float)_target / _stepsPerDeg);}
 
 	// установка максимальной скорости в шагах/секунду и градусах/секунду
-	void setMaxSpeed(int speed) {
-		_maxSpeed = speed;
+	void setMaxSpeed(float speed) {
+		_maxSpeed = max(speed, MIN_STEPPER_SPEED);	// 1 шаг в час минимум
 		recalculateSpeed();
 		
 #ifdef SMOOTH_ALGORITHM
-		_cmin = 1000000.0 / speed;
+		_cmin = 1000000.0 / _maxSpeed;
 		if (_n > 0)	{
 			_n = (float)_accelSpeed * _accelSpeed * _accelInv;
 			plannerSmooth();
 		}
 #else
 		// период планировщка в зависимости от макс. скорости
-		_plannerPrd = map(speed, 1000, 20000, 15000, 1000);
+		_plannerPrd = map((int)_maxSpeed, 1000, 20000, 15000, 1000);
 		_plannerPrd = constrain(_plannerPrd, 15000, 1000);	
 #endif
 	}
@@ -331,7 +338,7 @@ public:
 			_workState = false;
 			if (_autoPower) disable();
 			_accelSpeed = 0;
-			stepTime = _MAX_STEP_PERIOD;
+			//stepTime = _MAX_STEP_PERIOD;
 #ifdef SMOOTH_ALGORITHM
 			_n = 0;
 #endif
@@ -340,16 +347,19 @@ public:
 	void reset()					{brake(); setCurrent(0);}
 
 	// установка и получение целевой скорости в шагах/секунду и градусах/секунду
-	void setSpeed(int speed, bool smooth = false) {
-		_speed = speed;		
-		if (smooth) {	// плавный старт		
-			if (_accelSpeed == _speed) return;	// скорости совпадают? Выходим
+	void setSpeed(float speed, bool smooth = false) {
+		// 1 шаг в час минимум
+		_speed = speed;
+		if (abs(_speed) < MIN_STEPPER_SPEED) _speed = MIN_STEPPER_SPEED * _sign(_speed);
+		
+		if (smooth && abs(speed) > _MIN_STEPPER_SPEED) {	// плавный старт		
+			if (_accelSpeed == _speed) return;				// скорости совпадают? Выходим
 			_smoothStart = true;
 #ifdef __AVR__
-			_smoothPlannerPrd = map(max(abs(speed), abs((int)_accelSpeed)), 1000, 20000, 15000, 1000);
+			_smoothPlannerPrd = map(max(abs((int)_speed), abs((int)_accelSpeed)), 1000, 20000, 15000, 1000);
 #else
 			// горячий привет тупому компилятору ESP8266 и индусам, которые его настраивали
-			int speed1 = abs(speed);
+			int speed1 = abs(_speed);
 			int speed2 = abs((int)_accelSpeed);
 			int maxSpeed = max(speed1, speed2);
 			_smoothPlannerPrd = map(maxSpeed, 1000, 20000, 15000, 1000);
@@ -357,16 +367,16 @@ public:
 			
 			_smoothPlannerPrd = constrain(_smoothPlannerPrd, 15000, 1000);	
 		} else {		// резкий старт
-			if (speed == 0) {brake(); return;}	// скорость 0? Отключаемся и выходим
+			if (_speed == 0) {brake(); return;}	// скорость 0? Отключаемся и выходим
 			_accelSpeed = _speed;
-			stepTime = 1000000L / abs(speed);
-			_dir = (speed > 0) ? 1 : -1;	
+			stepTime = 1000000.0 / abs(_speed);
+			_dir = (_speed > 0) ? 1 : -1;	
 		}
 		_workState = true;
 		if (!_powerState) enable();
 	}
 	void setSpeedDeg(float speed, bool smooth = false) 	{setSpeed(_stepsPerDeg * speed, smooth);}
-	int getSpeed() 					{return (1000000L / stepTime * _dir);}
+	float getSpeed() 				{return (1000000.0 / stepTime * _dir);}
 	float getSpeedDeg() 			{return ((float)getSpeed() / _stepsPerDeg);}
 
 	// установка режима работы
@@ -380,13 +390,13 @@ public:
 
 	void enable() {
 		_powerState = true;
-		if (_DRV == STEPPER4WIRE) step();	// подадим прошлый сигнал на мотор, чтобы вал зафиксировался
+		if (_DRV == STEPPER4WIRE || _DRV == STEPPER4WIRE_HALF) step();	// подадим прошлый сигнал на мотор, чтобы вал зафиксировался
 		if (_enPin != -1) digitalWrite(_enPin, _enDir);
 	}
 
 	void disable() {
 		_powerState = false;
-		if (_DRV == STEPPER4WIRE) {
+		if (_DRV == STEPPER4WIRE || _DRV == STEPPER4WIRE_HALF) {
 			setPin(0, 0);
 			setPin(1, 0);
 			setPin(2, 0);
@@ -395,9 +405,9 @@ public:
 		if (_enPin != -1) digitalWrite(_enPin, !_enDir);
 	}	
 
-	uint16_t getMinPeriod() {
-		if (_curMode == KEEP_SPEED) return abs(1000000L / _speed);
-		else return 1000000L / _maxSpeed;
+	uint32_t getMinPeriod() {
+		if (_curMode == KEEP_SPEED) return abs(1000000.0 / _speed);
+		else return (1000000.0 / _maxSpeed);
 	}
 
 	uint32_t stepTime = 10000;
@@ -449,8 +459,8 @@ private:
 	}
 
 	void recalculateSpeed() {
-		if (!_curMode && _accel == 0) {
-			stepTime = 1000000L / _maxSpeed;
+		if (!_curMode && (_accel == 0 || _maxSpeed < _MIN_STEPPER_SPEED)) {
+			stepTime = 1000000.0 / _maxSpeed;
 			_dir = (_target > _current) ? 1 : -1;
 		}
 	}
@@ -567,8 +577,8 @@ private:
 	bool _autoPower = false;
 	bool _smoothStart = false;
 
-	int _maxSpeed = 300;
-	int _speed = 0;
+	float _maxSpeed = 300;
+	float _speed = 0;
 	int _accel = 0;	
 	float _accelInv = 0;
 
@@ -582,3 +592,4 @@ private:
 	uint8_t _pins[_DRV == 0 ? 2 : 4];
 #endif
 };
+#endif

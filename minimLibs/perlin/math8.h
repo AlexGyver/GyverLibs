@@ -1,3 +1,5 @@
+#ifndef FASTLED_VERSION		// запрещаем одновременный инклуд с фастледом
+
 #pragma once
 #include <Arduino.h>
 
@@ -183,3 +185,4 @@ LIB8STATIC uint16_t ease16InOutQuad( uint16_t i)
 	}
 	return jj2;
 }
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef powerConstants_h
+#define powerConstants_h
 
 /* --- system prescaler --- */
 enum prescalers_t {
@@ -72,4 +73,6 @@ enum sleepmodes_t {
 /* --->>> directives <<<--- */
 #if defined(__AVR_ATtiny85__) || defined(__AVR_ATtiny167__)
 #define WDTCSR WDTCR
+#endif
+
 #endif

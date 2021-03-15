@@ -1,4 +1,5 @@
-#pragma once
+#ifndef Dallas_CRC8_h
+#define Dallas_CRC8_h
 
 // #define CRC8_USE_TABLE // Uncomment to use CRC8 table
 
@@ -66,3 +67,4 @@ uint8_t _crc_update(uint8_t crc, uint8_t data) {
 	return crc;
 #endif
 }
+#endif

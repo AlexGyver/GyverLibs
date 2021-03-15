@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ServoSmooth_h
+#define ServoSmooth_h
 #include <Arduino.h>
 #include <Servo.h>
 #include "smoothUtil.h"
@@ -46,6 +47,7 @@
 	
 	v3.6 - Исправлены мелкие баги, вырезан дебаг с 3.5
 	v3.7 - Добавлено задание ускорения в градусах/сек/сек
+	v3.8 - Исправлен невозврат тика при autoDetach(false)
 	
 	Документация: https://alexgyver.ru/servosmooth/
 	2020 by AlexGyver
@@ -98,3 +100,4 @@ public:
 	Servo _servo;			
 private:
 };
+#endif

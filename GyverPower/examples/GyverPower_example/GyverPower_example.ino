@@ -20,7 +20,7 @@ void setup() {
   power.setSystemPrescaler(PRESCALER_2); // см константы в GyverPower.h
   
   // настройка параметров сна
-  setSleepMode(STANDBY_SLEEP); // если нужен другой режим сна, см константы в GyverPower.h (по умолчанию POWERDOWN_SLEEP)
+  power.setSleepMode(STANDBY_SLEEP); // если нужен другой режим сна, см константы в GyverPower.h (по умолчанию POWERDOWN_SLEEP)
   power.bodInSleep(false); // рекомендуется выключить bod во сне для сохранения энергии (по умолчанию false - выключен!!)
 
   // пример однократного ухода в сон

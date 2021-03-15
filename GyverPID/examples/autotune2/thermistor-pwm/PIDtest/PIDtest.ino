@@ -6,7 +6,6 @@
 thermistor therm(THERM_PIN, 10000, 3950);
 // пин, сопротивление при 25 градусах (R термистора = R резистора!), бета-коэффициент
 
-#define PID_OPTIMIZED_I
 #include "GyverPID.h"
 // result: PI p: 41.72 PI i: 4.76  PID p: 61.86  PID i: 9.02 PID d: 63.22
 // result: PI p: 17.84 PI i: 0.92  PID p: 26.59  PID i: 1.61 PID d: 66.24

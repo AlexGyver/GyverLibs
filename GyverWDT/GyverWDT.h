@@ -7,7 +7,8 @@
 ***********************************************************************************/ 
 // Документация: https://alexgyver.ru/gyverwdt/
 
-#pragma once
+#ifndef GyverWDT_h
+#define GyverWDT_h
 #include <Arduino.h>
 
 #if defined(__AVR_ATtiny85__) || defined(__AVR_ATtiny167__)
@@ -75,3 +76,4 @@ private:
 };
 
 extern GyverWDT Watchdog;
+#endif

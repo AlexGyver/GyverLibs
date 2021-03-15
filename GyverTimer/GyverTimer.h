@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GyverTimer_h
+#define GyverTimer_h
 #include <Arduino.h>
 
 /*
@@ -108,3 +109,4 @@ class GTimer_us {
 	boolean _mode = true;
 	boolean _state = true;
 };
+#endif

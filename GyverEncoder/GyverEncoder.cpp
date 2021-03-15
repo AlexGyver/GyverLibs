@@ -336,13 +336,13 @@ void Encoder::tick() {
 				
 				if (encState != 0) {
 					flags.isTurn_f = true;
-					if (thisMls - fast_timer < _fast_timeout) {
+					if (!SW_state && thisMls - fast_timer < _fast_timeout) {
 						if (encState == 1) flags.isFastL_f = true;
 						else if (encState == 2) flags.isFastR_f = true;
 						fast_timer = thisMls;
 					} else fast_timer = thisMls;
 #ifdef ENC_WITH_BUTTON
-					if (flags.use_button) if (SW_state) encState += 2;
+					if (flags.use_button && SW_state) encState += 2;
 #endif
 				}		
 				prevState = curState;

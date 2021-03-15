@@ -1,0 +1,25 @@
+#######################################
+# Syntax Coloring Map For Gyver433
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+Gyver433	KEYWORD1
+Gyver433_TX	KEYWORD1
+Gyver433_RX	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+sendData	KEYWORD2
+tick	KEYWORD2
+tickWait	KEYWORD2
+readData	KEYWORD2
+size	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+G433_SPEED	LITERAL1
+G433_BUFSIZE	LITERAL1

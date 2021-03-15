@@ -10,9 +10,9 @@
 #define DT 30
 
 #include "GyverPID.h"
-GyverPID regulator(5, 0, 0, DT);
+GyverPID regulator(0, 0, 0, DT);
 
-float value = 30;
+float value = 15;
 float signal = 0;
 float COEF = 0.1;
 
@@ -52,10 +52,10 @@ void loop() {
     if (regulator.integral < 0) regulator.integral = 0;
     process();
 
-    Serial.print(value); Serial.print(' ');    
+    Serial.print(value); Serial.print(' ');
     Serial.print(signal); Serial.print(' ');
     //Serial.print(regulator.integral); Serial.print(' ');
-    Serial.println(regulator.setpoint);    
+    Serial.println(regulator.setpoint);
   }
 
   // настройка
@@ -84,7 +84,9 @@ void loop() {
 void process() {
   static float valueSpeed;
   static float signalSpeed;
-
+  static bool firstFlag = false;
+  static float delayArray[DELAY_AMOUNT];
+  
   // сигнал == скорость нагрева
   // ограничивает сигнал его же значением и плавно к нему стремится
   signalSpeed += (signal - signalSpeed) * 0.003;
@@ -93,7 +95,11 @@ void process() {
   // скорость охлаждения получаем как разность "температуры" и её нулевого значения
   valueSpeed = signalSpeed * SIGNAL_COEF + (LOW_VALUE - value) * COEF;
 
-  static float delayArray[DELAY_AMOUNT];
+  if (!firstFlag) {
+    firstFlag = true;
+    for (int i = 0; i < DELAY_AMOUNT; i++) delayArray[i] = valueSpeed;
+  }
+
   for (int i = 0; i < DELAY_AMOUNT - 1; i++) delayArray[i] = delayArray[i + 1];
   delayArray[DELAY_AMOUNT - 1] = valueSpeed;
 

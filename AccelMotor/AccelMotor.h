@@ -1,9 +1,11 @@
-#pragma once
+#ifndef AccelMotor_h
+#define AccelMotor_h
 #include <Arduino.h>
 #include <GyverMotor.h>
 
 // v1.1
 // v1.2 - совместимость с есп
+// v1.3 - небольшие улучшения и фиксы
 
 /*
 	Библиотека для расширенного управления и стабилизации мотора с энкодером
@@ -18,6 +20,7 @@
 	- Регулятор учитывает "мёртвую зону" мотора
 	- Все функции работают в градусах и "тиках" энкодера
 */
+
 
 enum AM_runMode {	
 	ACCEL_POS,
@@ -103,12 +106,17 @@ public:
 	// установить зону остановки мотора для режима стабилизации позиции (по умолч. 8)
 	void setStopZone(int zone);
 	
+	// установить пределы шагов/градусов, вне которых мотор будет жёстко отключен для безопасности. Если по нулям, ограничения нет (по умолч.)
+	void setRange(long min, long max);
+	void setRangeDeg(long min, long max);
+	
+	long controlPos = 0;	// для отладки
 private:
 	int filter(int newVal);
 	int _buf[3];
 	byte _count = 0;
 	float _middle_f = 0;
-	
+	long _min = 0, _max = 0;
 	float _lastSpeed = 0;	
 	void PIDcontrol(long target, long current, bool cutoff);
 	float integral = 0;
@@ -120,8 +128,7 @@ private:
 	float _ratio = 1;
 	uint32_t _tmr2 = 0;
 	int _accel = 300;
-	float _dutyF = 0;
-	long controlPos = 0;
+	float _dutyF = 0;	
 	float controlSpeed = 0;
 	int _stopzone = 8;
 	long _prevInput = 0;
@@ -178,3 +185,4 @@ private:
 	// возвращает -1 при вращении BACKWARD, 1 при FORWARD и 0 при остановке и торможении
 	int getState();
 */
+#endif

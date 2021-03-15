@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GBUSmini_h
+#define GBUSmini_h
 
 // ==================== СТАНДАРТНЫЕ НАСТРОЙКИ ======================
 // могут быть изменены здесь, либо прямо в скетче при помощи дефайна ПЕРЕД ПОДКЛЮЧЕНИЕМ БИБЛИОТЕКИ
@@ -146,7 +147,7 @@ byte GBUS_read_raw(byte pin, byte* buf, byte size) {
 byte GBUS_read(byte pin, byte addr, byte* buf, byte size) {
 	byte buf2[size + GBUS_OFFSET];									// буфер на приём
 	byte bytes = GBUS_read_raw(pin, buf2, (size + GBUS_OFFSET));	// принимаем, получаем количество байт посылки
-	if (buf2[0] == bytes && buf2[1] == addr) {						// если совпало количество байт и адрес
+	if (buf2[0] == bytes && (buf2[1] == addr || buf2[1] == 255)) {	// если совпало количество байт и адрес
 #if (GBUS_CRC == 1)
 		if (GBUS_crc_bytes(buf2, bytes) != 0) return 0;
 #endif
@@ -161,7 +162,7 @@ byte GBUS_read(byte pin, byte addr, byte* buf, byte size) {
 byte GBUS_read_request(byte pin, byte addr) {
 	byte buf[GBUS_OFFSET];	
 	if (GBUS_read_raw(pin, buf, GBUS_OFFSET) == GBUS_OFFSET 
-			&& buf[1] == addr
+			&& (buf[1] == addr || buf[1] == 255)
 #if (GBUS_CRC == 1)
 			&& GBUS_crc_bytes(buf, GBUS_OFFSET) == 0
 #endif
@@ -174,7 +175,7 @@ byte GBUS_read_request(byte pin, byte addr) {
 byte GBUS_read_ack(byte pin, byte addr) {
 	byte buf[GBUS_OFFSET];	
 	if (GBUS_read_raw(pin, buf, GBUS_OFFSET) == GBUS_OFFSET 
-			&& buf[1] == addr 
+			&& (buf[1] == addr || buf[1] == 255)
 #if (GBUS_CRC == 1)
 			&& GBUS_crc_bytes(buf, GBUS_OFFSET) == 0
 #endif
@@ -231,3 +232,4 @@ void GBUS_send_ack(byte pin, byte to, byte from) {
 #endif
 	GBUS_send_raw(pin, buf, GBUS_OFFSET);
 }
+#endif

@@ -10,7 +10,11 @@ void setup() {
 
   // ускорим вывод, ВЫЗЫВАТЬ ПОСЛЕ oled.init()!!!
   Wire.setClock(400000L);   // макс. 800'000
-  
+
+  printScale(1);
+  printScale(2);
+  printScale(3);
+  printScale(4);
   overlapTest();
   printTest();
   party();
@@ -20,6 +24,16 @@ void setup() {
 }
 
 void loop() {
+}
+
+void printScale(byte x) {
+  oled.clear();
+  oled.setScale(x);
+  for (byte i = 0; i < 8; i += x) {
+    oled.setCursor(0, i);
+    oled.print("Hello!");
+  }
+  delay(1000);
 }
 
 void party() {

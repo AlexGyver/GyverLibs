@@ -1,4 +1,5 @@
-#pragma once
+#ifndef microOneWire_h
+#define microOneWire_h
 // v1.2 от 26.04.2020. Повышена стабильность
 
 /* ~10722CK ~670.1250 us (16MHZ) */
@@ -64,3 +65,4 @@ uint8_t oneWire_read(byte pin) {
 	}
 	return data;
 }
+#endif
