@@ -153,7 +153,7 @@ public:
 	void resetStates();						// сбрасывает все is-флаги и счётчики
 	
 private:
-	GyverEncoderFlags flags;
+	GyverEncoderFlags flags {};
 	uint8_t _fast_timeout = 50;				// таймаут быстрого поворота
 	uint8_t prevState = 0;
 	uint8_t encState = 0;	// 0 не крутился, 1 лево, 2 право, 3 лево нажат, 4 право нажат

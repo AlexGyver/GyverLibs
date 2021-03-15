@@ -119,14 +119,14 @@ private:
   void write4bits(uint8_t);
   void expanderWrite(uint8_t);
   void pulseEnable(uint8_t);
-  uint8_t _Addr;
-  uint8_t _displayfunction;
-  uint8_t _displaycontrol;
-  uint8_t _displaymode;
-  uint8_t _numlines;
-  uint8_t _cols;
-  uint8_t _rows;
-  uint8_t _backlightval;
+  uint8_t _Addr = 0;
+  uint8_t _displayfunction = 0;
+  uint8_t _displaycontrol = 0;
+  uint8_t _displaymode = 0;
+  uint8_t _numlines = 0;
+  uint8_t _cols = 0;
+  uint8_t _rows = 0;
+  uint8_t _backlightval = 0;
 };
 
 #endif

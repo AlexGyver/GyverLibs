@@ -161,7 +161,7 @@ void GyverBME280::oneMeasurement(void)
 	GyverBME280::writeRegister(0xF4 , ((GyverBME280::readRegister(0xF4) & 0xFC) | 0x02));   // Set the operating mode to FORCED_MODE
 }
 
-GyverBME280::GyverBME280() {}
+GyverBME280::GyverBME280() = default;
 
 
 
