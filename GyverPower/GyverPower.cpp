@@ -77,7 +77,7 @@ void GyverPower::calibrate(uint16_t ms) { 	// пересчет массива т
 	}
 }
 
-void GyverPower::sleep(sleepprds_t period) {
+void GyverPower::sleep(uint8_t period) {
 
 	/* принудительно выкл АЦП и компаратор */
 	if (sleepMode != IDLE_SLEEP && sleepMode != ADC_SLEEP) {
