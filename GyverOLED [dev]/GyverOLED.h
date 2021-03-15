@@ -1,6 +1,7 @@
 ﻿#ifndef GyverOLED_h
 #define GyverOLED_h
 // 27.02.2021 - исправил непечатающуюся нижнюю строку
+// 16.03.2021 - исправлены символы [|]~$
 /*
 GyverOLED - лёгкая и быстрая библиотека для OLED дисплея
 - Поддержка OLED дисплеев на SSD1306/SSH1106 с разрешением 128х64 и 128х32 с подключением по I2C
@@ -834,9 +835,9 @@ public:
 private:
 	// получить "столбик-байт" буквы
 	uint8_t getFont(uint8_t font, uint8_t row) {
-		if (row > 4) return 0;
-		font = font - '0' + 16;   // перевод код символа из таблицы ASCII
-		if (font <= 90) {
+		if (row > 4) return 0;		
+		font = font - '0' + 16;   // перевод код символа из таблицы ASCII	
+		if (font <= 95) {
 			return pgm_read_byte(&(charMap[font][row])); 		// для английских букв и символов
 		} else if (font >= 96 && font <= 111) {					// и пизд*ц для русских
 			return pgm_read_byte(&(charMap[font + 47][row]));
@@ -844,7 +845,7 @@ private:
 			return pgm_read_byte(&(charMap[font - 17][row]));
 		} else {
 			return pgm_read_byte(&(charMap[font - 1][row]));	// для кастомных (ё)
-		}		
+		}
 	}	
 	
 	// ==================== ПЕРЕМЕННЫЕ И КОНСТАНТЫ ====================
