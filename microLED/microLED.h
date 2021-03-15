@@ -71,6 +71,9 @@
 	
 	Версия 3.2
 	- Чуть оптимизации и исправлений
+	
+	Версия 3.3
+	- Исправлен критический баг с влиянием на другие пины
 */
 #ifndef microLED_h
 #define microLED_h
@@ -342,7 +345,7 @@ public:
 	void begin() {		
 		if (pin != MLED_NO_CLOCK) {
 			_mask_h = _dat_mask | *_dat_port;
-			_mask_l = ~_mask_h & *_dat_port;
+			_mask_l = ~_dat_mask & *_dat_port;
 		}
 		_showBright = _bright;
 		if (isr == CLI_HIGH) {		// Макс приоритет, отправка всего буфера не может быть прервана
