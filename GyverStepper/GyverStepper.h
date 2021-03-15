@@ -25,6 +25,7 @@
 	v1.6 - Исправлена остановка для STEPPER4WIRE_HALF, скорость можно задавать во float (для медленных скоростей)
 	v1.7 - Исправлен баг в отрицательной скорости (спасибо Евгению Солодову)
 	v1.8 - Исправлен режим KEEP_SPEED
+	v1.9 - Исправлена ошибка с esp функцией max
 	
 	Алгоритм из AccelStepper: https://www.airspayce.com/mikem/arduino/AccelStepper/
 	AlexGyver, 2020
@@ -154,6 +155,7 @@ uint32_t stepTime;
 #define degPerMinute(x) ((x)/60.0f)
 #define degPerHour(x) ((x)/3600.0f)
 #define _sign(x) ((x) >= 0 ? 1 : -1)	// знак числа
+#define maxMacro(a,b) ((a)>(b)?(a):(b))	// привет esp
 
 enum GS_driverType {
 	STEPPER2WIRE,
@@ -283,7 +285,7 @@ public:
 
 	// установка максимальной скорости в шагах/секунду и градусах/секунду
 	void setMaxSpeed(float speed) {
-		_maxSpeed = max(speed, MIN_STEPPER_SPEED);	// 1 шаг в час минимум
+		_maxSpeed = maxMacro(speed, MIN_STEPPER_SPEED);	// 1 шаг в час минимум
 		recalculateSpeed();
 		
 #ifdef SMOOTH_ALGORITHM
@@ -361,7 +363,7 @@ public:
 			// горячий привет тупому компилятору ESP8266 и индусам, которые его настраивали
 			int speed1 = abs(_speed);
 			int speed2 = abs((int)_accelSpeed);
-			int maxSpeed = max(speed1, speed2);
+			int maxSpeed = maxMacro(speed1, speed2);
 			_smoothPlannerPrd = map(maxSpeed, 1000, 20000, 15000, 1000);
 #endif
 			
