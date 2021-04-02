@@ -27,7 +27,6 @@ class FastBot {
       client->setInsecure();
     }
     void setChatID(String chatID) {
-      chatIDflag = true;
       _chatID = chatID;
     }
 
@@ -64,7 +63,7 @@ class FastBot {
             if (count) {
               int textPos = 0;
               while (1) {
-                if (chatIDflag) {
+                if (_chatID.length() > 0) {
                   textPos = https.getString().indexOf("\"chat\":{\"id\":", textPos);
                   if (textPos < 0) break;
                   int endPos = https.getString().indexOf(",\"", textPos);
@@ -98,7 +97,6 @@ class FastBot {
     int _ovf = 5000, _period = 1000;
     long ID = 0;
     uint32_t tmr = 0;
-    bool chatIDflag = false;
     String _chatID = "";
 };
 #endif
