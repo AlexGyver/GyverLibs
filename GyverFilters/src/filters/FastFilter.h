@@ -9,10 +9,10 @@
 class FastFilter {
   public:
 	FastFilter(byte k = 20, int dt = 0) {
-		setK(k);
+		setCoef(k);
 		setDt(dt);
 	}
-    void setK(byte k) {
+    void setCoef(byte k) {
       _k1 = k;
       _k2 = 32 - k;
     }

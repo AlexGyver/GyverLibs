@@ -1,12 +1,12 @@
-#ifndef Timer_h
-#define Timer_h
+#ifndef TimerMillis_h
+#define TimerMillis_h
 #include <Arduino.h>
 // Удобный класс таймера на millis()
 
-class Timer {
+class TimerMillis {
 public:
 	// период, 0 не запущен / 1 запущен, режим 0 период / 1 таймер
-	Timer(uint32_t prd = 1000, bool state = 0, bool mode = 0) {
+	TimerMillis(uint32_t prd = 1000, bool state = 0, bool mode = 0) {
 		_prd = prd;
 		_state = state;
 		_mode = mode;
@@ -46,7 +46,7 @@ public:
 		if (_state) _buf = millis() - _tmr;
 		if (_state && elapsed()) {
 			if (!_mode) _tmr += _prd;    
-			if (*_handler != NULL) _handler();
+			if (*_handler) _handler();
 			_ready = 1;
 			return true;
 		}
@@ -70,13 +70,13 @@ public:
 	}
 
 	uint32_t timeLeft() {    // остаток времени в мс
-		return tick() ? 0 : max(int32_t(_prd - _buf), 0);
+		return tick() ? 0 : max(long(_prd - _buf), 0L);
 	}
 	uint8_t timeLeft8() {   // остаток времени в 0-255
-		return tick() ? 0 : max(255 - _buf * 255l / _prd, 0);
+		return tick() ? 0 : max(255 - _buf * 255l / _prd, 0ul);
 	}
 	uint16_t timeLeft16() { // остаток времени в 0-65535
-		return tick() ? 0 : max(65535 - _buf * 65535l / _prd, 0);
+		return tick() ? 0 : max(65535 - _buf * 65535l / _prd, 0ul);
 	}
 
 private:

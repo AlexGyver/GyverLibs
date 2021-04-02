@@ -6,6 +6,8 @@
 #include <filters/median.h>
 #include <filters/median3.h>
 #include <filters/runningAverage.h>
+#include <filters/FastFilter.h>
+#include <filters/RingAverage.h>
 
 /*
 	GyverFilters - библиотека с некоторыми удобными фильтрами.
@@ -27,5 +29,6 @@
 		- Смотрите примеры! Использование этих фильтров чуть изменилось
 	- 2.1: Исправлен расчёт дельты в линейном фильтре
 	- 2.2: Исправлена ошибка компиляции
+	- 3.0: Добавлен FastFilter и RingAverage
 */
 #endif

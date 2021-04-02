@@ -13,6 +13,8 @@ GMedian	KEYWORD1
 GABfilter	KEYWORD1
 GKalman	KEYWORD1
 GLinear	KEYWORD1
+RingAverage	KEYWORD1
+FastFilter	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)

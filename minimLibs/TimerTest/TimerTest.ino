@@ -1,6 +1,6 @@
-#include "Timer.h"
+#include "TimerMillis.h"
 
-Timer tmr(2000, 1);
+TimerMillis tmr(2000, 1);
 
 void setup() {
   Serial.begin(9600);
