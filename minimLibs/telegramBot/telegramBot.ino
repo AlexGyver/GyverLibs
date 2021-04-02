@@ -40,6 +40,8 @@ void parseHandler(String& str) {
   Serial.println(str);
 }
 
+// можно вручную дёргать по одному сообщению при помощи tickManual
+// тогда "лимит" при инициализации поставить 1
 void loop() {
   // тикаем в луп
   bot.tick();
