@@ -1,5 +1,5 @@
-#ifndef PASSWORDSSTORAGE_ICONS_7X7_H
-#define PASSWORDSSTORAGE_ICONS_7X7_H
+#ifndef ICONS_7X7_H
+#define ICONS_7X7_H
 
 /**
  * Icons 7x7
@@ -160,4 +160,4 @@ const static uint8_t icons_7x7[][7] PROGMEM = {
 };
 
 
-#endif //PASSWORDSSTORAGE_ICONS_7X7_H
+#endif //ICONS_7X7_H
