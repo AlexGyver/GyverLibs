@@ -1,5 +1,5 @@
-#ifndef PASSWORDSSTORAGE_ICONS_8X8_H
-#define PASSWORDSSTORAGE_ICONS_8X8_H
+#ifndef ICONS_8X8_H
+#define ICONS_8X8_H
 
 /**
  * Icons 8x8
@@ -160,4 +160,4 @@ const static uint8_t icons_8x8[][8] PROGMEM = {
   {0x3c, 0x5a, 0x5a, 0x42, 0x42, 0x42, 0x42, 0x3c}, //144 toggle off
 };
 
-#endif //PASSWORDSSTORAGE_ICONS_8X8_H
+#endif //ICONS_8X8_H
