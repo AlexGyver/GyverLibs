@@ -521,7 +521,7 @@ uint8_t receive_nack(void);
 
 <a id="microDS3231"></a>
 ![Logo](/logos/ds3231logo.png)
-### microDS3231 v2.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microDS3231/microDS3231.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/microlibs/)
+### microDS3231 v2.1 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/microDS3231/microDS3231.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/microlibs/)
 Ультра лёгкая библиотека для работы с RTC DS3231
 - Для работы нужна библиотека **microWire.h**
 - Разработано by Egor 'Nich1con' Zaharov
