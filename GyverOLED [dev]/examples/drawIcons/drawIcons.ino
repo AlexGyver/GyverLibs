@@ -56,6 +56,8 @@ void drawIcon7x7(byte index) {
   }
 
   oled.drawBytes(p, s);
+  
+  delete p;//нужно очищать память, иначе музыка играть будет не долго
 }
 
 void drawIcon8x8(byte index) {
@@ -66,4 +68,6 @@ void drawIcon8x8(byte index) {
   }
 
   oled.drawBytes(p, s);
+  
+  delete p;//нужно очищать память, иначе музыка играть будет не долго
 }
