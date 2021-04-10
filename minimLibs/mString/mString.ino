@@ -1,7 +1,8 @@
 #include "mString.h"
 /*
   Создание
-  mString<размер буфера> str;
+  mString<размер> str - свой буфер
+  mString<0> str(char буфер, размер) - внешний буфер
 
   str.length() - текущий размер
   str.clear() - очистить
@@ -70,6 +71,8 @@ void setup() {
 
   // прочие тесты
   // работа с буфером
+  //char cBuf[50];
+  //mString<0> test(cBuf, 50);
   mString<50> test;
 
   test.add(F("abc")).add("def").add(" loh").add('=');
@@ -118,9 +121,9 @@ void setup() {
   test = "kek";
   Serial.println(test == "kek");    // 1
 
-  mString<50> test2;
+  mString<40> test2;
   test2 = "kek";
-  Serial.println(test == test2);    // 1
+  Serial.println(test == test2.buf);    // 1
 
   // выделение
   test = "abcd,123,-456,3.14";

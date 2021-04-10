@@ -49,14 +49,22 @@ char* mFtoa(double value, int8_t decimals, char *buffer) {
 template <uint16_t SIZE>
 class mString {
   public:
-    char buf[SIZE] = "NULL";
+    char buffer[SIZE] = "NULL";
+    char* buf = buffer;
+    uint16_t size = SIZE;
     uint16_t length() {
       return strlen(buf);
     }
     void clear() {
       buf[0] = NULL;
     }
-        
+    mString(char* extBuffer = NULL, uint16_t newSize = 0) {
+      if (extBuffer) {
+        buf = extBuffer;
+        size = newSize;
+      }
+    }
+
     // constructor
     /*mString(char* buffer, int newSize = -1) {
       buf = buffer;
@@ -106,19 +114,19 @@ class mString {
     // add
     mString& add(const char c) {
       int len = length();
-      if (len + 1 >= SIZE) return *this;
+      if (len + 1 >= size) return *this;
       buf[len++] = c;
       buf[len] = NULL;
       return *this;
     }
     mString& add(const char* data) {
-      if (length() + strlen(data) >= SIZE) return *this;
+      if (length() + strlen(data) >= size) return *this;
       strcpy(buf + length(), data);
       return *this;
     }
     mString& add(const __FlashStringHelper *data) {
       PGM_P p = reinterpret_cast<PGM_P>(data);
-      if (length() + strlen_P(p) >= SIZE) return *this;
+      if (length() + strlen_P(p) >= size) return *this;
       strcpy_P(buf + length(), p);
       return *this;
       /*do {
@@ -353,11 +361,11 @@ class mString {
     const char* c_str() {
       return buf;
     }
-    
+
     bool startsWith(const char *data) {
       return strlen(data) == strspn(buf, data);
     }
-    
+
     void substring(uint16_t from, uint16_t to, char* arr) {
       char backup = buf[++to];
       buf[to] = NULL;
@@ -381,23 +389,23 @@ class mString {
       strncpy(writeTo, buf + index + count, len - index);
       buf[len] = 0;
     }
-    
+
     void toLowerCase() {
       if (!length()) return;
       for (char *p = buf; *p; p++) *p = tolower(*p);
     }
-    
+
     void toUpperCase() {
       if (!length()) return;
       for (char *p = buf; *p; p++) *p = toupper(*p);
     }
-    
+
     int indexOf(char ch, uint16_t fromIndex = 0) {
       if (fromIndex >= length()) return -1;
       const char* temp = strchr(buf + fromIndex, ch);
       return (temp == NULL) ? -1 : (temp - buf);
     }
-    
+
     int indexOf(char* ch, uint16_t fromIndex = 0) {
       if (fromIndex >= length()) return -1;
       const char* temp = strstr(buf + fromIndex, ch);
