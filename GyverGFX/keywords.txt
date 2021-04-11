@@ -1,0 +1,38 @@
+  
+#######################################
+# Syntax Coloring Map For GyverGFX
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+GyverGFX	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+dot	KEYWORD2
+fastLineH	KEYWORD2
+fastLineV	KEYWORD2
+line	KEYWORD2
+rect	KEYWORD2
+roundRect	KEYWORD2
+circle	KEYWORD2
+bezier	KEYWORD2
+bezier16	KEYWORD2
+drawBitmap	KEYWORD2
+setCursor	KEYWORD2
+setScale	KEYWORD2
+invertText	KEYWORD2
+autoPrintln	KEYWORD2
+textDisplayMode	KEYWORD2
+write	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+GFX_CLEAR	LITERAL1
+GFX_FILL	LITERAL1
+GFX_STROKE	LITERAL1
+GFX_ADD	LITERAL1
+GFX_REPLACE	LITERAL1
