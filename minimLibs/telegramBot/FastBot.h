@@ -20,7 +20,7 @@ static HTTPClient https;
 
 class FastBot {
   public:
-    FastBot (String token, int limit = 10, int ovf = 10000, int period = 1000) {
+    FastBot(String token, int limit = 10, int ovf = 10000, int period = 1000) {
       _request = (String)"https://api.telegram.org/bot" + token;
       _ovf = ovf;
       _limit = limit;
@@ -28,6 +28,9 @@ class FastBot {
       client->setInsecure();
     }
     void setChatID(String chatID) {
+      _chatID = chatID;
+    }
+    void setChatID(const char* chatID) {
       _chatID = chatID;
     }
 
@@ -104,17 +107,42 @@ class FastBot {
     }
 
     byte sendMessage(const char* msg) {
-      byte status = 1;
       String request = _request + "/sendMessage?chat_id=" + _chatID + "&text=" + msg;
-      if (https.begin(*client, request)) {
-        if (https.GET() == HTTP_CODE_OK) {
-        } else status = 3;
+      return sendRequest(request);
+    }
+
+    byte sendMessage(String msg) {
+      return sendMessage(msg.c_str());
+    }
+
+    byte showMenu(const char* str) {
+      String request = _request + "/sendMessage?chat_id=" + _chatID + "&text=Show Menu&reply_markup={\"keyboard\":[[\"";
+      for (int i = 0; i < strlen(str); i++) {
+        char c = str[i];
+        if (c == '\t') request += "\",\"";
+        else if (c == '\n') request += "\"],[\"";
+        else request += c;
+      }
+      request += "\"]],\"resize_keyboard\":true}";
+      return sendRequest(request);
+    }
+
+    byte showMenu(String str) {
+      return showMenu(str.c_str());
+    }
+
+    byte closeMenu() {
+      String request = _request + "/sendMessage?chat_id=" + _chatID + "&text=Close Menu&reply_markup={\"remove_keyboard\":true}";
+      return sendRequest(request);
+    }
+
+    byte sendRequest(String& req) {
+      byte status = 1;
+      if (https.begin(*client, req)) {
+        if (https.GET() != HTTP_CODE_OK) status = 3;
         https.end();
       } else status = 4;
       return status;
-    }
-    byte sendMessage(String msg) {
-      return sendMessage(msg.c_str());
     }
 
   private:

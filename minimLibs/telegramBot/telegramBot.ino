@@ -36,7 +36,15 @@ void setup() {
   // подключаем функцию-обработчик
   bot.attach(parseHandler);
 
-  bot.sendMessage("Hello, World!");   // работает, если указан CHAT_ID
+  // отправить сообщение (работает, если указан CHAT_ID)
+  bot.sendMessage("Hello, World!");
+
+  // показать меню (\t - горизонтальное разделение кнопок, \n - вертикальное
+  bot.showMenu("Men u1 \t Menu2 \t Menu3 \n Menu4");
+
+  // скрыть меню
+  //delay(3000);
+  //bot.closeMenu();
 }
 
 // создать свою функцию вида имя(String& строка)
