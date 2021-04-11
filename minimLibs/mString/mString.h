@@ -362,8 +362,8 @@ class mString {
       return buf;
     }
 
-    bool startsWith(const char *data) {
-      return strlen(data) == strspn(buf, data);
+    bool startsWith(const char *data, uint16_t offset = 0) {
+      return strlen(data) == strspn(buf + offset, data);
     }
 
     void substring(uint16_t from, uint16_t to, char* arr) {

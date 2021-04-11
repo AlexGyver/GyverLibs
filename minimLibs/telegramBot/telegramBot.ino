@@ -26,6 +26,7 @@ void setup() {
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
+    if (millis() > 15000) ESP.restart();
   }
   Serial.println("Connected");
 
@@ -39,15 +40,19 @@ void setup() {
   // отправить сообщение (работает, если указан CHAT_ID)
   bot.sendMessage("Hello, World!");
 
-  // показать меню (\t - горизонтальное разделение кнопок, \n - вертикальное
-  bot.showMenu("Men u1 \t Menu2 \t Menu3 \n Menu4");
+  // показать юзер меню (\t - горизонтальное разделение кнопок, \n - вертикальное
+  bot.showMenu("Menu1 \t Menu2 \t Menu3 \n Menu4");
 
-  // скрыть меню
+  // скрыть юзер меню
   //delay(3000);
   //bot.closeMenu();
+
+  // отправить инлайн меню (\t - горизонтальное разделение кнопок, \n - вертикальное
+  // (текст сообщения, кнопки)
+  bot.inlineMenu("Choose wisely", "Answer 1 \t Answer 2 \t Answer 3 \n Answer 4");
 }
 
-// создать свою функцию вида имя(String& строка)
+// создать свою функцию вида имя(String& ник, String& сообщение)
 void parseHandler(String& name, String& msg) {
   // msg - сообщение в чате от name юзера
   Serial.print(name);
