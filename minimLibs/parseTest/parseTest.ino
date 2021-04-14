@@ -27,6 +27,11 @@ void setup() {
   // передав индекс строки
   Serial.println(data.getInt(0));
   Serial.println(data.getFloat(1));
+
+  // можно сравнить со строкой (номер парс строки, строка для сравнения)
+  if (data.equals(2, "hello")) Serial.println("true");
+  else Serial.println("false");
+  
   Serial.println();
   
   // ==================== ПРИМЕР 2 ======================

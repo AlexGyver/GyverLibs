@@ -5,7 +5,7 @@
 
 // указываем обработчик, терминатор (символ конца приёма) и таймаут в мс
 // в <> указан размер буфера!
-AsyncStream<40> serial(&Serial, '\n');
+AsyncStream<100> serial(&Serial, '\n');
 
 void setup() {
   Serial.begin(9600);

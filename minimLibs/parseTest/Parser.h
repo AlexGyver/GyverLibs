@@ -40,6 +40,9 @@ class Parser {
     float getFloat(int num) {
       return atof(str[num]);
     }
+    bool equals(int num, const char* comp) {
+      return !strcmp(str[num], comp);
+    }
     int parseInts(int* data) {
       int count = 0;
       char* offset = buf;
