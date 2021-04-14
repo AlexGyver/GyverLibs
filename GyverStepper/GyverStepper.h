@@ -26,6 +26,8 @@
 	v1.7 - Исправлен баг в отрицательной скорости (спасибо Евгению Солодову)
 	v1.8 - Исправлен режим KEEP_SPEED
 	v1.9 - Исправлена ошибка с esp функцией max
+	v1.10 - повышена точность
+	v1.11 - повышена точность задания скорости
 	
 	Алгоритм из AccelStepper: https://www.airspayce.com/mikem/arduino/AccelStepper/
 	AlexGyver, 2020
@@ -219,7 +221,8 @@ public:
 		if (_smoothStart && _curMode) smoothSpeedPlanner();
 		
 		if (_workState && micros() - _prevTime >= stepTime) {
-			_prevTime = micros();			
+			//_prevTime = micros();			
+			_prevTime += stepTime;
 			// FOLLOW_POS
 			if (!_curMode && _target == _current) {
 				brake();
@@ -242,11 +245,7 @@ public:
 				// ~4 us
 				setPin(1, (_dir > 0 ? _globDir : !_globDir) );
 				setPin(0, 1);	// HIGH
-#ifdef __AVR__
-				_delay_us(DRIVER_STEP_TIME);
-#else
 				delayMicroseconds(DRIVER_STEP_TIME);
-#endif
 				setPin(0, 0);	// LOW
 			} else {
 				// ~5.7 us	
@@ -371,7 +370,7 @@ public:
 		} else {		// резкий старт
 			if (_speed == 0) {brake(); return;}	// скорость 0? Отключаемся и выходим
 			_accelSpeed = _speed;
-			stepTime = 1000000.0 / abs(_speed);
+			stepTime = round(1000000.0 / abs(_speed));
 			_dir = (_speed > 0) ? 1 : -1;	
 		}
 		_workState = true;
@@ -430,7 +429,7 @@ private:
 	void setPin(int num, bool state) {
 #ifdef __AVR__
 		if (state) *_port_reg[num] |= _bit_mask[num];
-		else *_port_reg[num] &= ~ _bit_mask[num];
+		else *_port_reg[num] &= ~_bit_mask[num];
 #else
 		digitalWrite(_pins[num], state);
 #endif				
