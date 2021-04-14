@@ -34,11 +34,6 @@ char* mFtoa(double value, int8_t decimals, char *buffer) {
   uint32_t exp = 1;
   while (decimals--) exp *= 10;
   exp *= (float)value;
-  /*buffer += 9;
-    buffer = mUtoa(exp, buffer);
-    --buffer = '.';
-    buffer -= 11;
-    buffer = mLtoa(mant, buffer, 0);*/
   buffer = ltoa(mant, buffer, DEC);
   byte len = strlen(buffer);
   *(buffer + len++) = '.';
@@ -46,93 +41,35 @@ char* mFtoa(double value, int8_t decimals, char *buffer) {
   return buffer;
 }
 
-template <uint16_t SIZE>
+template < uint16_t SIZE >
 class mString {
   public:
-    char buffer[SIZE] = "NULL";
-    char* buf = buffer;
-    uint16_t size = SIZE;
+    char buf[SIZE] = "";
     uint16_t length() {
       return strlen(buf);
     }
     void clear() {
       buf[0] = NULL;
     }
-    mString(char* extBuffer = NULL, uint16_t newSize = 0) {
-      if (extBuffer) {
-        buf = extBuffer;
-        size = newSize;
-      }
-    }
-
-    // constructor
-    /*mString(char* buffer, int newSize = -1) {
-      buf = buffer;
-      size = newSize;
-      }*/
-    /*mString (const char c) {
-      //init();
-      add(c);
-      }
-      mString (const char* data) {
-      //init();
-      add(data);
-      }
-      mString (const __FlashStringHelper *data) {
-      //init();
-      add(data);
-      }
-      mString (uint32_t value) {
-      //init();
-      add(value);
-      }
-      mString (int32_t value) {
-      //init();
-      add(value);
-      }
-      mString (uint16_t value) {
-      //init();
-      add(value);
-      }
-      mString (int16_t value) {
-      //init();
-      add(value);
-      }
-      mString (uint8_t value) {
-      //init();
-      add(value);
-      }
-      mString (int8_t value) {
-      //init();
-      add(value);
-      }
-      mString (double value, byte dec = 2) {
-      //init();
-      add(value, dec);
-      }*/
 
     // add
     mString& add(const char c) {
       int len = length();
-      if (len + 1 >= size) return *this;
+      if (len + 1 >= SIZE) return *this;
       buf[len++] = c;
       buf[len] = NULL;
       return *this;
     }
     mString& add(const char* data) {
-      if (length() + strlen(data) >= size) return *this;
-      strcpy(buf + length(), data);
+      if (length() + strlen(data) >= SIZE) return *this;
+      strcat(buf, data);
       return *this;
     }
     mString& add(const __FlashStringHelper *data) {
       PGM_P p = reinterpret_cast<PGM_P>(data);
-      if (length() + strlen_P(p) >= size) return *this;
+      if (length() + strlen_P(p) >= SIZE) return *this;
       strcpy_P(buf + length(), p);
       return *this;
-      /*do {
-        buf[len] = (char)pgm_read_byte_near(p++);
-        } while (buf[len++] != 0);
-      */
     }
     mString& add(uint32_t value) {
       char vBuf[11];
@@ -200,7 +137,7 @@ class mString {
       return add(value);
     }
     mString& operator += (mString data) {
-      return add(data);
+      return add(data.buf);
     }
     mString& operator += (String data) {
       return add(data);
@@ -208,40 +145,40 @@ class mString {
 
     // +
     mString operator + (const char c) {
-      return mString(*this) += c;
+      return (*this).add(c);
     }
     mString operator + (const char* data) {
-      return mString(*this) += data;
+      return (*this).add(data);
     }
     mString operator + (const __FlashStringHelper *data) {
-      return mString(*this) += data;
+      return (*this).add(data);
     }
     mString operator + (uint32_t value) {
-      return mString(*this) += value;
+      return (*this).add(value);
     }
     mString operator + (int32_t value) {
-      return mString(*this) += value;
+      return (*this).add(value);
     }
     mString operator + (uint16_t value) {
-      return mString(*this) += value;
+      return (*this).add(value);
     }
     mString operator + (int16_t value) {
-      return mString(*this) += value;
+      return (*this).add(value);
     }
     mString operator + (uint8_t value) {
-      return mString(*this) += value;
+      return (*this).add(value);
     }
     mString operator + (int8_t value) {
-      return mString(*this) += value;
+      return (*this).add(value);
     }
     mString operator + (double value) {
-      return mString(*this) += value;
+      return (*this).add(value);
     }
     mString operator + (mString data) {
-      return mString(*this) += data;
+      return (*this).add(data);
     }
     mString operator + (String data) {
-      return mString(*this) += data;
+      return (*this).add(data);
     }
 
     // assign
@@ -284,10 +221,6 @@ class mString {
     mString& operator = (double value) {
       clear();
       return add(value);
-    }
-    mString& operator = (mString data) {
-      clear();
-      return add(data);
     }
     mString& operator = (String data) {
       clear();
@@ -338,7 +271,7 @@ class mString {
 
     // convert & parse
     char operator [] (uint16_t index) const {
-      return buf[index];//(index < size ? buf[index] : 0);
+      return buf[index];
     }
     char& operator [] (uint16_t index) {
       return buf[index];
@@ -371,6 +304,18 @@ class mString {
       buf[to] = NULL;
       strcpy(arr, buf + from);
       buf[to] = backup;
+    }
+    int split(char** ptrs, char div = ',') {
+      int i = 0, j = 1;
+      ptrs[0] = buf;
+      while (buf[i]) {
+        if (buf[i] == div) {
+          buf[i] = NULL;
+          ptrs[j++] = buf + i + 1;
+        }
+        i++;
+      }
+      return j;
     }
     void truncate(uint16_t amount) {
       uint16_t len = length();

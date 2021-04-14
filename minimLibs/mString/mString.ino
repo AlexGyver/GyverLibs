@@ -1,8 +1,7 @@
 #include "mString.h"
 /*
   Создание
-  mString<размер> str - свой буфер
-  mString<0> str(char буфер, размер) - внешний буфер
+  mString<размер> str
 
   str.length() - текущий размер
   str.clear() - очистить
@@ -37,6 +36,7 @@
   str.toUpperCase() - преобразовать буквы в верхний регистр
   str.indexOf(char, from) - найти символ char, искать начиная с from
   str.indexOf(char*, from) - найти строку char, искать начиная с from
+  str.split(char* str[], div) - разделить на строки по разделителю div
 
   Парсинг пакета, в котором данные разделены разделителем div и оканчиваются символом ter
   str.parseBytes(data, len, div, ter) - распарсить содержимое в массив byte длиной len
@@ -50,48 +50,43 @@
 void setup() {
   Serial.begin(9600);
   /*
-      mString<20> str;
-      str = "kek";
-      str = str + ',' + 12345 + ',' + 3.14 + ',' + "hello";
-      Serial.println(str.buf);
-      str = 1234;
-      Serial.println(str.toInt());
-      // скетч занимает 2652/218 байт
+    mString<50> str;
+    str = "kek";
+    str = str + ',' + 12345 + ',' + 3.14 + ',' + "hello";
+    Serial.println(str.buf);
+    str = 1234;
+    Serial.println(str.toInt());
+    // скетч занимает 2522/198 байт
   */
   /*
-      // сравнение со String
-      String str;
-      str = "kek";
-      str = str + ',' + 12345 + ',' + 3.14 + ',' + "hello";
-      Serial.println(str);
-      str = 1234;
-      Serial.println(str.toInt());
-      // скетч занимает 5370/208 байт
+    // сравнение со String
+    String str;
+    str = "kek";
+    str = str + ',' + 12345 + ',' + 3.14 + ',' + "hello";
+    Serial.println(str);
+    str = 1234;
+    Serial.println(str.toInt());
+    // скетч занимает 5370/208 байт
   */
 
   // прочие тесты
-  // работа с буфером
-  //char cBuf[50];
-  //mString<0> test(cBuf, 50);
   mString<50> test;
 
-  test.add(F("abc")).add("def").add(" loh").add('=');
-  test += "kek";
-  test.add(-1289).add(3.14).add("sis").add(-1289);
-  test[2] = 't';
-  Serial.println(test.buf);   // abtdef loh=kek-12893.14sis-1289
+  test = "puk ";
+  test += "kek ";
+  test = test + "cheburek" + ',' + 123 + ',' + 3.14;
 
-  test = 10;
-  test = test + 123.456 + ' ' + 15 + "abcd";
-  test.add('a').add('b').add('c');
+  Serial.println(test.buf);   // puk kek cheburek,123,3.14
+  test.clear();   // очистить
+  //test = "";    // аналогично
 
   mString<10> some;
-  some = " added ";
+  some = "added ";
   String str = "String";
   test += some.buf;
   test += str;
 
-  Serial.println(test.buf);   // 10123.45 15abcdabc added String
+  Serial.println(test.buf);   // added String
 
   // парсинг
   test = "1234,2345,3456,4567,5,6";
@@ -105,7 +100,7 @@ void setup() {
   Serial.println();
 
   for (int i = 0; i < get; i++) {
-    Serial.println(data[i]);
+    Serial.println(data[i]);   // 1234 2345 3456 4567 5 6
   }
 
   // поиск
@@ -116,30 +111,41 @@ void setup() {
 
   // сравнение
   test = 12;
-  Serial.println(test == 12);   // 1
+  Serial.println(test == 12);     // 1
 
   test = "kek";
-  Serial.println(test == "kek");    // 1
+  Serial.println(test == "kek");  // 1
 
   mString<40> test2;
   test2 = "kek";
-  Serial.println(test == test2.buf);    // 1
+  Serial.println(test == test2.buf);  // 1
 
   // выделение
   test = "abcd,123,-456,3.14";
-  Serial.println(test.toInt(5)); // 123
-  Serial.println(test.toInt(9)); // 123
+  Serial.println(test.toInt(5));    // 123
+  Serial.println(test.toInt(9));    // -456
   Serial.println(test.toFloat(14)); // 3.14
 
   char buf3[10];
   test.substring(0, 5, buf3);
   Serial.println(buf3);   // abcd,1
 
-  test.remove(5, 4);   // откуда, сколько
+  test.remove(5, 4);
+  Serial.println(test.buf);   // abcd,-456,3.14
   test.toUpperCase();
+  Serial.println(test.buf);   // ABCD,-456,3.14
   test.truncate(4);
-  Serial.println(test.c_str());  // abcd,-456,3.14
+  Serial.println(test.buf);   // ABCD,-456,
 
+  // разделение
+  test = "hello,1234,test,5678";
+  char* strings[5];
+  int amount = test.split(strings, ',');
+  // действие испортит строку, добавив в неё NULLы!
+
+  for (int i = 0; i < amount; i++) {
+    Serial.println(strings[i]);
+  }
 }
 
 void loop() {
