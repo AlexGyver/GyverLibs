@@ -18,7 +18,7 @@ class AsyncStream {
         }
         char ch = _port -> read();
         if (ch == _ter) {
-          buf[_count] = NULL;
+          buf[_count] = '\0';
           _parseF = false;
           return true;
         } else if (_count < SIZE - 1) buf[_count++] = ch;

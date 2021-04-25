@@ -27,7 +27,7 @@ class Parser {
       int i = 0, j = 0;             // счётчики
       while (buf[i]) {              // пока не NULL
         if (buf[i] == div) {        // если разделитель
-          buf[i] = NULL;            // меняем на NULL
+          buf[i] = '\0';            // меняем на NULL
           str[++j] = buf + i + 1;   // запоминаем начало строки
         }
         i++;
