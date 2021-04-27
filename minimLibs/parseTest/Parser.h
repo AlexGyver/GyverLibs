@@ -22,7 +22,7 @@ class Parser {
     int split() {
       int am = amount();            // количество данных
       clear();                      // освобождаем буфер
-      str = (char**)malloc(am * 2); // создаём буфер
+      str = (char**)malloc(am * sizeof(char*)); // создаём буфер
       str[0] = buf;                 // строка 0
       int i = 0, j = 0;             // счётчики
       while (buf[i]) {              // пока не NULL
