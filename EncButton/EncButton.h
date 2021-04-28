@@ -64,7 +64,7 @@ enum eb_callback {
 template < bool MODE, uint8_t S1, uint8_t S2 = 255, uint8_t KEY = 255 >
 class EncButton {
 public:	
-	void pullup() {
+	void pullUp() {
 		if (S2 == 255) {         // обычная кнопка
 			pinMode(S1, INPUT_PULLUP);
 		} else if (KEY == 255) { // энк без кнопки
