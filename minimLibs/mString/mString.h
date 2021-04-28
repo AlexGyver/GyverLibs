@@ -280,7 +280,7 @@ class mString {
       return buf[index];
     }
     void setCharAt(uint16_t index, char c) {
-      buf[index = c];
+      buf[index] = c;
     }
     int32_t toInt(uint16_t from = 0) {
       return atol(buf + from);
