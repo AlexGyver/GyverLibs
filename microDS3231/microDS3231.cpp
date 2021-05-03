@@ -11,8 +11,7 @@ static uint16_t getWeekDay(uint16_t y, uint8_t m, uint8_t d) {
 	days += pgm_read_byte(daysInMonth + i - 1);
 	if (m > 2 && y % 4 == 0)
 	++days;
-	//return days + 365 * y + (y + 3) / 4 - 1;
-	return (days + 365 * y + (y + 3) / 4 - 1 + 6) % 7;
+	return (days + 365 * y + (y + 3) / 4 + 4) % 7 + 1;
 }
 
 // поiхали
