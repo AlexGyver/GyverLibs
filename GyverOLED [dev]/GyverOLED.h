@@ -1,7 +1,11 @@
 ﻿#ifndef GyverOLED_h
 #define GyverOLED_h
+// чёто не работает с буфером текст в принтТест
+
 // 27.02.2021 - исправил непечатающуюся нижнюю строку
 // 16.03.2021 - исправлены символы [|]~$
+// 26.03.2021 - добавил кривую Безье
+// 10.04.2021 - совместимость с есп
 /*
 GyverOLED - лёгкая и быстрая библиотека для OLED дисплея
 - Поддержка OLED дисплеев на SSD1306/SSH1106 с разрешением 128х64 и 128х32 с подключением по I2C
@@ -497,13 +501,7 @@ public:
 		▅ ▅ ▅ ▅ ▅ ▅
 			▅ ▅ ▅ ▅ ▅
 		*/
-		if (fill == OLED_FILL) {
-			fastLineV(x0, y0+2, y1-2);
-			fastLineV(x0+1, y0+1, y1-1);
-			fastLineV(x1-1, y0+1, y1-1);
-			fastLineV(x1, y0+2, y1-2);
-			rect(x0+2, y0, x1-2, y1, OLED_FILL);			 
-		} else {
+		if (fill == OLED_STROKE) {
 			fastLineV(x0, y0+2, y1-2);
 			fastLineV(x1, y0+2, y1-2);
 			fastLineH(y0, x0+2, x1-2);
@@ -511,7 +509,13 @@ public:
 			dot(x0+1, y0+1);
 			dot(x1-1, y0+1);
 			dot(x1-1, y1-1);
-			dot(x0+1, y1-1);
+			dot(x0+1, y1-1);			 
+		} else {			
+			fastLineV(x0, y0+2, y1-2, fill);
+			fastLineV(x0+1, y0+1, y1-1, fill);
+			fastLineV(x1-1, y0+1, y1-1, fill);
+			fastLineV(x1, y0+2, y1-2, fill);
+			rect(x0+2, y0, x1-2, y1, fill);
 		}
 	}
 	
@@ -551,10 +555,10 @@ public:
 				dot(x - y1, y - x1);
 			} else {	// FILL / CLEAR
 				
-				fastLineV(x + x1, y - y1, y + y1-1, fillLine);
-				fastLineV(x - x1, y - y1, y + y1-1, fillLine);
-				fastLineV(x + y1, y - x1, y + x1-1, fillLine);
-				fastLineV(x - y1, y - x1, y + x1-1, fillLine);	
+				fastLineV(x + x1, y - y1, y + y1, fillLine);
+				fastLineV(x - x1, y - y1, y + y1, fillLine);
+				fastLineV(x + y1, y - x1, y + x1, fillLine);
+				fastLineV(x - y1, y - x1, y + x1, fillLine);	
 				/*
 				fastLineH(y + y1, x - x1, x + x1-1, fillLine);
 				fastLineH(y - y1, x - x1, x + x1-1, fillLine);
@@ -564,7 +568,17 @@ public:
 			}
 		}
 		//if (!_BUFF) sendBuffer();
-	}   		
+	}   	
+	void bezier(int* arr, uint8_t size, uint8_t dense, uint8_t fill = 1) {
+		int a[size * 2];
+		for (int i = 0; i < (1 << dense); i++) {
+			for (int j = 0; j < size * 2; j++) a[j] = arr[j];
+			for (int j = (size - 1) * 2 - 1; j > 0; j -= 2)
+			for (int k = 0; k <= j; k++)
+			a[k] = a[k] + (((a[k + 2] - a[k]) * i) >> dense);
+			dot(a[0], a[1], fill);
+		}
+	}
 	
 	// вывести битмап
 	void drawBitmap(int x, int y, const uint8_t *frame, int width, int height, uint8_t invert = 0, byte mode = 0) {
@@ -794,7 +808,7 @@ public:
 			_bufsizeY = ((y1 - y0) >> 3) + 1;		
 			
 			int bufSize = _bufsizeX * _bufsizeY;
-			_buf_ptr = malloc(bufSize);
+			_buf_ptr = (byte*)malloc(bufSize);
 			if (_buf_ptr != NULL) {
 				_buf_flag = true;
 				memset(_buf_ptr, fill, bufSize);
