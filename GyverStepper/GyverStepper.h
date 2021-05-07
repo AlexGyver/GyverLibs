@@ -28,6 +28,7 @@
 	v1.9 - Исправлена ошибка с esp функцией max
 	v1.10 - повышена точность
 	v1.11 - повышена точность задания скорости
+	v1.12 - пофикшена плавная работа в KEEP_SPEED. Добавлена поддержка "внешних" драйверов. Убран аргумент SMOOTH из setSpeed
 	
 	Алгоритм из AccelStepper: https://www.airspayce.com/mikem/arduino/AccelStepper/
 	AlexGyver, 2020
@@ -46,6 +47,9 @@ GStepper<STEPPER4WIRE> stepper(steps, pin1, pin2, pin3, pin4);			// драйве
 GStepper<STEPPER4WIRE> stepper(steps, pin1, pin2, pin3, pin4, en);		// драйвер 4 пин + enable
 GStepper<STEPPER4WIRE_HALF> stepper(steps, pin1, pin2, pin3, pin4);		// драйвер 4 пин полушаг
 GStepper<STEPPER4WIRE_HALF> stepper(steps, pin1, pin2, pin3, pin4, en);	// драйвер 4 пин полушаг + enable
+
+GStepper<STEPPER2WIRE, STEPPER_VIRTUAL> stepper(steps);					// виртуальный драйвер step-dir
+GStepper<STEPPER4WIRE, STEPPER_VIRTUAL> stepper(steps);					// виртуальный драйвер 4 пин
 
 // Здесь происходит движение мотора, вызывать как можно чаще!
 // Имеет встроенный таймер
@@ -109,9 +113,9 @@ void brake();
 void reset();
 
 // Установка целевой скорости в шагах/секунду и градусах/секунду (для режима KEEP_SPEED)
-// при передаче вторым аргументом (true или SMOOTH) будет выполнен плавный разгон/торможение к нужной скорости
-void setSpeed(float speed, bool smooth);
-void setSpeedDeg(float speed, bool smooth);
+// при ненулевом setAcceleration будет выполнен плавный разгон/торможение к нужной скорости
+void setSpeed(float speed);
+void setSpeedDeg(float speed);
 
 // Получение целевой скорости в шагах/секунду и градусах/секунду (для режима KEEP_SPEED)
 float getSpeed();
@@ -158,11 +162,14 @@ uint32_t stepTime;
 #define degPerHour(x) ((x)/3600.0f)
 #define _sign(x) ((x) >= 0 ? 1 : -1)	// знак числа
 #define maxMacro(a,b) ((a)>(b)?(a):(b))	// привет esp
+#define _PINS_AMOUNT ( (_TYPE == STEPPER_PINS) ? (_DRV == 0 ? 2 : 4) : (0) )
 
 enum GS_driverType {
 	STEPPER2WIRE,
 	STEPPER4WIRE,
 	STEPPER4WIRE_HALF,
+	STEPPER_PINS,
+	STEPPER_VIRTUAL,
 };
 
 enum GS_runMode {
@@ -181,28 +188,29 @@ enum GS_smoothType {
 };
 
 
-
-template <GS_driverType _DRV>
+template <GS_driverType _DRV, GS_driverType _TYPE = STEPPER_PINS>
 class GStepper {
 public:	
 	// конструктор
-	GStepper(int stepsPerRev, int8_t pin1, int8_t pin2, int8_t pin3 = -1, int8_t pin4 = -1, int8_t pin5 = -1) : 
+	GStepper(int stepsPerRev, int8_t pin1 = -1, int8_t pin2 = -1, int8_t pin3 = -1, int8_t pin4 = -1, int8_t pin5 = -1) : 
 	_stepsPerDeg(stepsPerRev / 360.0) {
-		if (_DRV == STEPPER2WIRE) {
-			configurePin(0, pin1);
-			configurePin(1, pin2);
-			if (pin3 != -1) {
-				_enPin = pin3;
-				pinMode(_enPin, OUTPUT);
-			}
-		} else {
-			configurePin(0, pin1);
-			configurePin(1, pin2);
-			configurePin(2, pin3);
-			configurePin(3, pin4);
-			if (pin5 != -1) {
-				_enPin = pin5;
-				pinMode(_enPin, OUTPUT);
+		if (_TYPE == STEPPER_PINS) {
+			if (_DRV == STEPPER2WIRE) {
+				configurePin(0, pin1);
+				configurePin(1, pin2);
+				if (pin3 != -1) {
+					_enPin = pin3;
+					pinMode(_enPin, OUTPUT);
+				}
+			} else {
+				configurePin(0, pin1);
+				configurePin(1, pin2);
+				configurePin(2, pin3);
+				configurePin(3, pin4);
+				if (pin5 != -1) {
+					_enPin = pin5;
+					pinMode(_enPin, OUTPUT);
+				}
 			}
 		}
 		// умолчания
@@ -212,46 +220,38 @@ public:
 	
 	// возвращает true, если мотор всё ещё движется к цели
 	bool tick() {
-#ifndef SMOOTH_ALGORITHM
+		#ifndef SMOOTH_ALGORITHM
 		// в активном режиме движения к цели с ненулевым ускорением
 		// планировщик скорости быстрый			
 		if (_workState && !_curMode && _accel != 0 && _maxSpeed > _MIN_STEPPER_SPEED) planner();	
-#endif
+		#endif
 		// при плавном разгоне в KEEP_SPEED
 		if (_smoothStart && _curMode) smoothSpeedPlanner();
 		
 		if (_workState && micros() - _prevTime >= stepTime) {
-			//_prevTime = micros();			
+			//_prevTime = micros();
 			_prevTime += stepTime;
 			// FOLLOW_POS
 			if (!_curMode && _target == _current) {
 				brake();
 				return false;					
 			}
-#ifdef SMOOTH_ALGORITHM
+			#ifdef SMOOTH_ALGORITHM
 			// в активном режиме движения к цели с ненулевым ускорением
 			// планировщик скорости	плавный
 			// выходим если приехал
 			if (!_curMode && _accel != 0 && _maxSpeed > _MIN_STEPPER_SPEED) 
-				if (!plannerSmooth()) {
-					brake();
-					return false;	
-				}
-#endif
+			if (!plannerSmooth()) {
+				brake();
+				return false;	
+			}
+			#endif
 			
 			// двигаем мотор
 			_current += _dir;
-			if (_DRV == STEPPER2WIRE) {
-				// ~4 us
-				setPin(1, (_dir > 0 ? _globDir : !_globDir) );
-				setPin(0, 1);	// HIGH
-				delayMicroseconds(DRIVER_STEP_TIME);
-				setPin(0, 0);	// LOW
-			} else {
-				// ~5.7 us	
-				thisStep += (_globDir ? _dir : -_dir);			
-				step();
-			}			
+			
+			if (_DRV == STEPPER2WIRE) stepDir();
+			else step();
 		}		
 		return _workState;
 	}
@@ -278,6 +278,7 @@ public:
 			if (!_powerState) enable();
 		}
 	}
+	
 	void setTargetDeg(float pos, GS_posType type = ABSOLUTE) {setTarget((float)pos * _stepsPerDeg, type);}
 	long getTarget() 				{return _target;}
 	float getTargetDeg() 			{return ((float)_target / _stepsPerDeg);}
@@ -287,31 +288,31 @@ public:
 		_maxSpeed = maxMacro(speed, MIN_STEPPER_SPEED);	// 1 шаг в час минимум
 		recalculateSpeed();
 		
-#ifdef SMOOTH_ALGORITHM
+		#ifdef SMOOTH_ALGORITHM
 		_cmin = 1000000.0 / _maxSpeed;
 		if (_n > 0)	{
 			_n = (float)_accelSpeed * _accelSpeed * _accelInv;
 			plannerSmooth();
 		}
-#else
+		#else
 		// период планировщка в зависимости от макс. скорости
 		_plannerPrd = map((int)_maxSpeed, 1000, 20000, 15000, 1000);
 		_plannerPrd = constrain(_plannerPrd, 15000, 1000);	
-#endif
+		#endif
 	}
 	
 	void setMaxSpeedDeg(float speed){setMaxSpeed((float)speed * _stepsPerDeg);}
 
 	// установка ускорения шагах и градусах в секунду
 	void setAcceleration(int accel) 		{
-		_accel = accel; 
+		_accel = abs(accel);
 		_accelInv = 0.5f / accel;
 		_accelTime = accel / 1000000.0f;
-#ifdef SMOOTH_ALGORITHM
+		#ifdef SMOOTH_ALGORITHM
 		_n = _n * (_accel / accel);
 		_c0 = 0.676 * sqrt(2.0 / _accel) * 1000000.0; // Equation 15
 		plannerSmooth();
-#endif
+		#endif
 	}
 	void setAccelerationDeg(float accel) 	{setAcceleration(accel * _stepsPerDeg);}
 
@@ -324,9 +325,9 @@ public:
 				_accelSpeed = 1000000.0f / stepTime * _dir;
 				setTarget(_current + (float)_accelSpeed * _accelSpeed * _accelInv * _dir);
 				setMaxSpeed(abs(_accelSpeed));
-#ifdef SMOOTH_ALGORITHM
+				#ifdef SMOOTH_ALGORITHM
 				_n = (float)_accelSpeed * _accelSpeed * _accelInv;
-#endif
+				#endif
 			} else {
 				setSpeed(0, true);
 			}
@@ -334,41 +335,41 @@ public:
 	}
 
 	// жёсткая остановка
-	void brake() 					{
+	void brake() 					{		
 		if (_workState) {
 			_workState = false;
 			if (_autoPower) disable();
 			_accelSpeed = 0;
 			//stepTime = _MAX_STEP_PERIOD;
-#ifdef SMOOTH_ALGORITHM
+			#ifdef SMOOTH_ALGORITHM
 			_n = 0;
-#endif
+			#endif
 		}
 	}
+	
 	void reset()					{brake(); setCurrent(0);}
 
 	// установка и получение целевой скорости в шагах/секунду и градусах/секунду
-	void setSpeed(float speed, bool smooth = false) {
+	void setSpeed(float speed, bool smooth = false) {	// smooth убран!
 		// 1 шаг в час минимум
 		_speed = speed;
 		if (abs(_speed) < MIN_STEPPER_SPEED) _speed = MIN_STEPPER_SPEED * _sign(_speed);
-		
-		if (smooth && abs(speed) > _MIN_STEPPER_SPEED) {	// плавный старт		
-			if (_accelSpeed == _speed) return;				// скорости совпадают? Выходим
+
+		if (_accel != 0) {							// плавный старт		
+			if (_accelSpeed == _speed) return;		// скорости совпадают? Выходим
 			_smoothStart = true;
-#ifdef __AVR__
+			#ifdef __AVR__
 			_smoothPlannerPrd = map(max(abs((int)_speed), abs((int)_accelSpeed)), 1000, 20000, 15000, 1000);
-#else
+			#else
 			// горячий привет тупому компилятору ESP8266 и индусам, которые его настраивали
 			int speed1 = abs(_speed);
 			int speed2 = abs((int)_accelSpeed);
 			int maxSpeed = maxMacro(speed1, speed2);
 			_smoothPlannerPrd = map(maxSpeed, 1000, 20000, 15000, 1000);
-#endif
-			
+			#endif			
 			_smoothPlannerPrd = constrain(_smoothPlannerPrd, 15000, 1000);	
 		} else {		// резкий старт
-			if (_speed == 0) {brake(); return;}	// скорость 0? Отключаемся и выходим
+			if (speed == 0) {brake(); return;}	// скорость 0? Отключаемся и выходим
 			_accelSpeed = _speed;
 			stepTime = round(1000000.0 / abs(_speed));
 			_dir = (_speed > 0) ? 1 : -1;	
@@ -376,6 +377,7 @@ public:
 		_workState = true;
 		if (!_powerState) enable();
 	}
+	
 	void setSpeedDeg(float speed, bool smooth = false) 	{setSpeed(_stepsPerDeg * speed, smooth);}
 	float getSpeed() 				{return (1000000.0 / stepTime * _dir);}
 	float getSpeedDeg() 			{return ((float)getSpeed() / _stepsPerDeg);}
@@ -391,19 +393,24 @@ public:
 
 	void enable() {
 		_powerState = true;
-		if (_DRV == STEPPER4WIRE || _DRV == STEPPER4WIRE_HALF) step();	// подадим прошлый сигнал на мотор, чтобы вал зафиксировался
-		if (_enPin != -1) digitalWrite(_enPin, _enDir);
+		if (_TYPE == STEPPER_PINS) {
+			// подадим прошлый сигнал на мотор, чтобы вал зафиксировался
+			if (_DRV == STEPPER4WIRE || _DRV == STEPPER4WIRE_HALF) step();	
+			if (_enPin != -1) digitalWrite(_enPin, _enDir);
+		} else if (*_power) _power(1);
 	}
 
 	void disable() {
 		_powerState = false;
-		if (_DRV == STEPPER4WIRE || _DRV == STEPPER4WIRE_HALF) {
-			setPin(0, 0);
-			setPin(1, 0);
-			setPin(2, 0);
-			setPin(3, 0);
-		}
-		if (_enPin != -1) digitalWrite(_enPin, !_enDir);
+		if (_TYPE == STEPPER_PINS) {
+			if (_DRV == STEPPER4WIRE || _DRV == STEPPER4WIRE_HALF) {
+				setPin(0, 0);
+				setPin(1, 0);
+				setPin(2, 0);
+				setPin(3, 0);
+			}
+			if (_enPin != -1) digitalWrite(_enPin, !_enDir);
+		} else if (*_power) _power(0);
 	}	
 
 	uint32_t getMinPeriod() {
@@ -412,50 +419,93 @@ public:
 	}
 
 	uint32_t stepTime = 10000;
+	
+	void attachStep(void (*handler)(uint8_t)) {_step = handler;}
+	void attachPower(void (*handler)(bool)) {_power = handler;}
 
 private:
+	// настройка пина
 	void configurePin(int num, int8_t pin) {
-#ifdef __AVR__
+		#ifdef __AVR__
 		_port_reg[num] = portOutputRegister(digitalPinToPort(pin));
 		_ddr_reg[num] = portModeRegister(digitalPinToPort(pin));
 		_bit_mask[num] = digitalPinToBitMask(pin);
 		*_ddr_reg[num] |= _bit_mask[num];	// OUTPUT
-#else
+		#else
 		_pins[num] = pin;
 		pinMode(_pins[num], OUTPUT);
-#endif
+		#endif
 	}
 
+	// быстрая установка пина
 	void setPin(int num, bool state) {
-#ifdef __AVR__
+		#ifdef __AVR__
 		if (state) *_port_reg[num] |= _bit_mask[num];
 		else *_port_reg[num] &= ~_bit_mask[num];
-#else
+		#else
 		digitalWrite(_pins[num], state);
-#endif				
+		#endif				
 	}
 
+	// сделать шаг на базе thisStep
 	void step() {
-		if (_DRV == STEPPER4WIRE) {	
-			// 0b11 берёт два бита, т.е. формирует 0 1 2 3 0 1..
-			switch (thisStep & 0b11) {			
-			case 0: setPin(0, 1); setPin(1, 0); setPin(2, 1); setPin(3, 0); break;	// 1010
-			case 1: setPin(0, 0); setPin(1, 1); setPin(2, 1); setPin(3, 0); break;	// 0110
-			case 2: setPin(0, 0); setPin(1, 1); setPin(2, 0); setPin(3, 1); break;	// 0101
-			case 3: setPin(0, 1); setPin(1, 0); setPin(2, 0); setPin(3, 1); break;	// 1001
-			}			
-		} else if (_DRV == STEPPER4WIRE_HALF) {
-			// 0b111 берёт три бита, т.е. формирует 0 1 2 4 5 6 7 0 1 2..
-			switch (thisStep & 0b111) {
-			case 0: setPin(0, 1); setPin(1, 0); setPin(2, 0); setPin(3, 0); break;	// 1000
-			case 1: setPin(0, 1); setPin(1, 0); setPin(2, 1); setPin(3, 0); break;	// 1010
-			case 2: setPin(0, 0); setPin(1, 0); setPin(2, 1); setPin(3, 0); break;	// 0010
-			case 3: setPin(0, 0); setPin(1, 1); setPin(2, 1); setPin(3, 0); break;	// 0110
-			case 4: setPin(0, 0); setPin(1, 1); setPin(2, 0); setPin(3, 0); break;	// 0100
-			case 5: setPin(0, 0); setPin(1, 1); setPin(2, 0); setPin(3, 1); break;	// 0101
-			case 6: setPin(0, 0); setPin(1, 0); setPin(2, 0); setPin(3, 1); break;	// 0001
-			case 7: setPin(0, 1); setPin(1, 0); setPin(2, 0); setPin(3, 1); break;	// 1001
+		// ~7 us	
+		thisStep += (_globDir ? _dir : -_dir);
+		if (_TYPE == STEPPER_PINS) {
+			if (_DRV == STEPPER4WIRE) {	
+				// 0b11 берёт два бита, т.е. формирует 0 1 2 3 0 1..
+				switch (thisStep & 0b11) {			
+				case 0: setPin(0, 1); setPin(1, 0); setPin(2, 1); setPin(3, 0); break;	// 1010
+				case 1: setPin(0, 0); setPin(1, 1); setPin(2, 1); setPin(3, 0); break;	// 0110
+				case 2: setPin(0, 0); setPin(1, 1); setPin(2, 0); setPin(3, 1); break;	// 0101
+				case 3: setPin(0, 1); setPin(1, 0); setPin(2, 0); setPin(3, 1); break;	// 1001
+				}			
+			} else if (_DRV == STEPPER4WIRE_HALF) {
+				// 0b111 берёт три бита, т.е. формирует 0 1 2 4 5 6 7 0 1 2..
+				switch (thisStep & 0b111) {
+				case 0: setPin(0, 1); setPin(1, 0); setPin(2, 0); setPin(3, 0); break;	// 1000
+				case 1: setPin(0, 1); setPin(1, 0); setPin(2, 1); setPin(3, 0); break;	// 1010
+				case 2: setPin(0, 0); setPin(1, 0); setPin(2, 1); setPin(3, 0); break;	// 0010
+				case 3: setPin(0, 0); setPin(1, 1); setPin(2, 1); setPin(3, 0); break;	// 0110
+				case 4: setPin(0, 0); setPin(1, 1); setPin(2, 0); setPin(3, 0); break;	// 0100
+				case 5: setPin(0, 0); setPin(1, 1); setPin(2, 0); setPin(3, 1); break;	// 0101
+				case 6: setPin(0, 0); setPin(1, 0); setPin(2, 0); setPin(3, 1); break;	// 0001
+				case 7: setPin(0, 1); setPin(1, 0); setPin(2, 0); setPin(3, 1); break;	// 1001
+				}
 			}
+		} else if (*_step) {
+			if (_DRV == STEPPER4WIRE) {	
+				switch (thisStep & 0b11) {			
+				case 0: _step(0b1010); break;	// 1010
+				case 1: _step(0b0110); break;	// 0110
+				case 2: _step(0b0101); break;	// 0101
+				case 3: _step(0b1001); break;	// 1001
+				}			
+			} else if (_DRV == STEPPER4WIRE_HALF) {
+				switch (thisStep & 0b111) {
+				case 0: _step(0b1000); break;	// 1000
+				case 1: _step(0b1010); break;	// 1010
+				case 2: _step(0b0010); break;	// 0010
+				case 3: _step(0b0110); break;	// 0110
+				case 4: _step(0b0100); break;	// 0100
+				case 5: _step(0b0101); break;	// 0101
+				case 6: _step(0b0001); break;	// 0001
+				case 7: _step(0b1001); break;	// 1001
+				}
+			}
+		}
+	}
+	
+	// шажочек степдир
+	void stepDir() {
+		// ~5 us
+		if (_TYPE == STEPPER_PINS) {
+			setPin(1, (_dir > 0 ? _globDir : !_globDir) );	// DIR
+			setPin(0, 1);	// step HIGH
+			if (DRIVER_STEP_TIME > 0) delayMicroseconds(DRIVER_STEP_TIME);
+			setPin(0, 0);	// step LOW
+		} else if (*_step) {
+			_step(_dir > 0 ? _globDir : !_globDir);
 		}
 	}
 
@@ -551,7 +601,7 @@ private:
 			if ((dir == 1 && _accelSpeed >= _speed) || (dir == -1 && _accelSpeed <= _speed)) {
 				_accelSpeed = _speed;
 				_smoothStart = false;
-				if (_speed == 0) {		// если нужно остановиться
+				if (abs(_speed) <= MIN_STEPPER_SPEED) {		// если нужно остановиться
 					brake();
 					return;				// выходим
 				}
@@ -584,13 +634,16 @@ private:
 	float _accelInv = 0;
 
 	GS_runMode _curMode = FOLLOW_POS;
+	
+	void (*_step)(uint8_t a) = NULL;
+	void (*_power)(bool a) = NULL;
 
 #ifdef __AVR__
-	volatile uint8_t *_port_reg[_DRV == 0 ? 2 : 4];
-	volatile uint8_t *_ddr_reg[_DRV == 0 ? 2 : 4];
-	volatile uint8_t _bit_mask[_DRV == 0 ? 2 : 4];
+	volatile uint8_t *_port_reg[_PINS_AMOUNT];
+	volatile uint8_t *_ddr_reg[_PINS_AMOUNT];
+	volatile uint8_t _bit_mask[_PINS_AMOUNT];
 #else
-	uint8_t _pins[_DRV == 0 ? 2 : 4];
+	uint8_t _pins[_PINS_AMOUNT];
 #endif
 };
 #endif

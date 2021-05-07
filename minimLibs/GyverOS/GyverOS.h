@@ -21,7 +21,7 @@ public:
 		bool flag = 0;    
 		for (int i = 0; i < SIZE; i++) {
 			if (callback[i] && states[i]) {   
-				if (millis() - tmrs[i] >= prds[i]) {
+				if (prds[i] == 0 || millis() - tmrs[i] >= prds[i]) {
 					tmrs[i] += prds[i];
 					#ifdef OS_BENCH
 					if (loopTimeNum == i) loopTime = micros();
@@ -39,32 +39,40 @@ public:
 		#endif
 	}
 
-	void attach(int num, void (*handler)(), uint32_t prd) {
+	void attach(int num, void (*handler)(), uint32_t prd = 0) {
+		if (num >= SIZE) return;
 		callback[num] = *handler;    
 		prds[num] = prd;
 		start(num);
 	}
 	void detach(int num) {
+		if (num >= SIZE) return;
 		callback[num] = NULL;
 	}
 	void setPeriod(int num, uint32_t prd) {
+		if (num >= SIZE) return;
 		prds[num] = prd;
 	}
 	void start(int num) {
+		if (num >= SIZE) return;
 		states[num] = 1;
 		tmrs[num] = millis();
 	}
 	void stop(int num) {
+		if (num >= SIZE) return;
 		states[num] = 0;
 	}
 	void exec(int num) {
+		if (num >= SIZE) return;
 		callback[num]();
 	}
 	uint32_t getLeft() {
-		nearPrd = UINT32_MAX;
+		uint32_t nearPrd = UINT32_MAX;
+		uint32_t tm;
 		for (int i = 0; i < SIZE; i++) {
-			if (callback[i] && states[i]) {                 
-				nearPrd = min(nearPrd, prds[i] + tmrs[i] - millis());     
+			if (callback[i] && states[i]) {
+				uint32_t tm = prds[i] + tmrs[i] - millis();
+				nearPrd = min(nearPrd, tm);     
 			}
 		}
 		return nearPrd;
@@ -109,7 +117,7 @@ public:
 
 private:
 	void (*callback[SIZE])() = {};
-	uint32_t tmrs[SIZE], prds[SIZE], nearPrd, loopTime = 0;
+	uint32_t tmrs[SIZE], prds[SIZE], loopTime = 0;
 	bool states[SIZE];
 #ifdef OS_BENCH
 	uint32_t loadP = 0, us = 0, loadTmr = 0, loadSum = 0;
