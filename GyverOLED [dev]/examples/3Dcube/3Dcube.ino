@@ -1,9 +1,18 @@
 // Пример GyverOLED. Смотри документацию на http://alexgyver.ru/gyveroled/
 // классический пример с 3D кубом
-#define OLED_SOFT_BUFFER_64 // использовать буфер на стороне микроконтроллера
+#define RES 8
+#define DC 7
+#define CS 6
 
+#define OLED_SPI_SPEED 8000000ul
 #include <GyverOLED.h>
-GyverOLED oled;
+//GyverOLED<SSD1306_128x32, OLED_BUFFER> oled;
+//GyverOLED<SSD1306_128x32, OLED_NO_BUFFER> oled;
+//GyverOLED<SSD1306_128x64, OLED_BUFFER> oled;
+//GyverOLED<SSD1306_128x64, OLED_NO_BUFFER> oled;
+//GyverOLED<SSD1306_128x64, OLED_BUFFER, OLED_SPI, CS, DC, RES> oled;
+GyverOLED<SSH1106_128x64> oled;
+
 
 double vectors[8][3] = {{20, 20, 20}, { -20, 20, 20}, { -20, -20, 20}, {20, -20, 20}, {20, 20, -20}, { -20, 20, -20}, { -20, -20, -20}, {20, -20, -20}};
 double perspective = 100.0f;
@@ -11,18 +20,18 @@ int deltaX, deltaY, deltaZ, iter = 0;
 uint32_t timer;
 
 void setup() {
-  // при инициализации можно установить частоту (скорость) шины
-  // максимум 800 кГц, самый быстрый вывод!
-  oled.init(OLED128x64, 800);
+  oled.init();
+  Wire.setClock(800000L);
 }
 
 void loop() {
-  timer = millis();
   oled.clear();
+  oled.home();
+  oled.print(1000 / timer);
+
+  timer = millis();
   drawVectors();
-  oled.update();
-  if (iter == 0)
-  {
+  if (iter == 0) {
     deltaX = random(7) - 3;
     deltaY = random(7) - 3;
     deltaZ = random(7) - 3;
@@ -32,31 +41,24 @@ void loop() {
   rotateY(deltaY);
   rotateZ(deltaZ);
   iter--;
-  timer = millis() - timer;
-  oled.home();
-  oled.print(1000/timer);
   oled.update();
+  timer = millis() - timer;
 }
 
-int translateX(double x, double z)
-{
+int translateX(double x, double z) {
   return (int)((x + 64) + (z * (x / perspective)));
 }
 
-int translateY(double y, double z)
-{
+int translateY(double y, double z) {
   return (int)((y + 32) + (z * (y / perspective)));
 }
 
-void rotateX(int angle)
-{
+void rotateX(int angle) {
   double rad, cosa, sina, Yn, Zn;
-
   rad = angle * PI / 180;
   cosa = cos(rad);
   sina = sin(rad);
-  for (int i = 0; i < 8; i++)
-  {
+  for (int i = 0; i < 8; i++) {
     Yn = (vectors[i][1] * cosa) - (vectors[i][2] * sina);
     Zn = (vectors[i][1] * sina) + (vectors[i][2] * cosa);
     vectors[i][1] = Yn;
@@ -64,10 +66,8 @@ void rotateX(int angle)
   }
 }
 
-void rotateY(int angle)
-{
+void rotateY(int angle) {
   double rad, cosa, sina, Xn, Zn;
-
   rad = angle * PI / 180;
   cosa = cos(rad);
   sina = sin(rad);
@@ -80,15 +80,12 @@ void rotateY(int angle)
   }
 }
 
-void rotateZ(int angle)
-{
+void rotateZ(int angle) {
   double rad, cosa, sina, Xn, Yn;
-
   rad = angle * PI / 180;
   cosa = cos(rad);
   sina = sin(rad);
-  for (int i = 0; i < 8; i++)
-  {
+  for (int i = 0; i < 8; i++) {
     Xn = (vectors[i][0] * cosa) - (vectors[i][1] * sina);
     Yn = (vectors[i][0] * sina) + (vectors[i][1] * cosa);
     vectors[i][0] = Xn;
@@ -96,8 +93,7 @@ void rotateZ(int angle)
   }
 }
 
-void drawVectors()
-{
+void drawVectors() {
   oled.line(translateX(vectors[0][0], vectors[0][2]), translateY(vectors[0][1], vectors[0][2]), translateX(vectors[1][0], vectors[1][2]), translateY(vectors[1][1], vectors[1][2]));
   oled.line(translateX(vectors[1][0], vectors[1][2]), translateY(vectors[1][1], vectors[1][2]), translateX(vectors[2][0], vectors[2][2]), translateY(vectors[2][1], vectors[2][2]));
   oled.line(translateX(vectors[2][0], vectors[2][2]), translateY(vectors[2][1], vectors[2][2]), translateX(vectors[3][0], vectors[3][2]), translateY(vectors[3][1], vectors[3][2]));

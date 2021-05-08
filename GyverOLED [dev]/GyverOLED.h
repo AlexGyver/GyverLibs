@@ -1,11 +1,14 @@
 ﻿#ifndef GyverOLED_h
 #define GyverOLED_h
-// чёто не работает с буфером текст в принтТест
 
 // 27.02.2021 - исправил непечатающуюся нижнюю строку
 // 16.03.2021 - исправлены символы [|]~$
 // 26.03.2021 - добавил кривую Безье
 // 10.04.2021 - совместимость с есп
+// 09.05.2021 - добавлена поддержка SPI и SSH1106 (только буфер)!
+
+// gnd-vcc-sck-data-rst-dc-cs
+
 /*
 GyverOLED - лёгкая и быстрая библиотека для OLED дисплея
 - Поддержка OLED дисплеев на SSD1306/SSH1106 с разрешением 128х64 и 128х32 с подключением по I2C
@@ -14,7 +17,7 @@ GyverOLED - лёгкая и быстрая библиотека для OLED ди
 	- Буфер на стороне МК (тратит кучу оперативки, но удобнее в работе)
 	- Обновление буфера в выбранном месте (для быстрой отрисовки)
 	- Динамический буфер выбранного размера (вся геометрия, текст, байты)
-	- Буфер на стороне дисплея (только для SSH1106!!!)
+	- TODO: Буфер на стороне дисплея (только для SSH1106!!!)
 - Вывод текста
 	- Самый быстрый вывод текста среди OLED библиотек
 	- Поддержка русского языка и буквы ё (!)
@@ -35,28 +38,21 @@ GyverOLED - лёгкая и быстрая библиотека для OLED ди
 	- Прямоугольники
 	- Прямоугольники со скруглёнными углами
 	- Окружности
+	- Кривые Безье
 - Изображения (битмап)
 	- Вывод битмапа в любую точку дисплея
 	- Вывод "за дисплей"
 	- Программа для конвертации изображений есть в библиотеке
 - Поддержка библиотеки microWire для ATmega328 (очень лёгкий и быстрый вывод)
-
-Разработано by AlexGyver, https://alexgyver.ru/
-Отдельное спасибо Петру Соболеву за программу BITmaper (не используется) и Хакеру Шило за дополнительные шрифты (не используется)
-Зачем либа сделана в одном файле и расписана в классе? Потому что template и лень
-"Ядро" библиотеки сделано по мотивам статьи с сайта http://www.technoblogy.com/
-*/
-
-/*
-GyverOLED<type, buff> экземпляр
-type:	SSD1306_128x32 / SSD1306_128x64 / SSH1106_128x64
-buff:	OLED_BUFFER / OLED_NO_BUFFER
 */
 
 // ===== константы =====
 #define SSD1306_128x32	0
 #define SSD1306_128x64 	1
 #define SSH1106_128x64 	2
+
+#define OLED_I2C 0
+#define OLED_SPI 1
 
 #define OLED_NO_BUFFER	0
 #define OLED_BUFFER	1
@@ -80,13 +76,16 @@ buff:	OLED_BUFFER / OLED_NO_BUFFER
 #include <Wire.h>   	// обычная Wire
 #endif
 
+#include <SPI.h>
 #include <Arduino.h>
 #include <Print.h>
 #include "charMap.h"
+#include "FastIO.h"
 
 
 // ============================ БЭКЭНД КОНСТАНТЫ ==============================
 // внутренние константы
+#define OLED_WIDTH      		128
 #define OLED_HEIGHT_32      	0x02
 #define OLED_HEIGHT_64      	0x12
 #define OLED_64             	0x3F
@@ -110,12 +109,25 @@ buff:	OLED_BUFFER / OLED_NO_BUFFER
 #define OLED_FLIP_H				0xA0
 
 #define OLED_CONTRAST   		0x81
+#define OLED_SETCOMPINS   		0xDA
+#define OLED_SETVCOMDETECT		0xDB
+#define OLED_CLOCKDIV 			0xD5
+#define OLED_SETMULTIPLEX		0xA8
+#define OLED_COLUMNADDR			0x21
+#define OLED_PAGEADDR			0x22
+#define OLED_CHARGEPUMP			0x8D
 
 #define OLED_NORMALDISPLAY		0xA6
 #define OLED_INVERTDISPLAY		0xA7
 
 #define BUFSIZE_128x64 (128*64/8)
 #define BUFSIZE_128x32 (128*32/8)
+
+#ifndef OLED_SPI_SPEED
+#define OLED_SPI_SPEED 1000000ul
+#endif
+
+static SPISettings OLED_SPI_SETT(OLED_SPI_SPEED, MSBFIRST, SPI_MODE0);
 
 // индекс в буфере
 #define _bufIndex(x, y) (((y) >> 3) + ((x) << (_TYPE ? 3 : 2)))		// _y / 8 + _x * (4 или 8)
@@ -125,9 +137,9 @@ buff:	OLED_BUFFER / OLED_NO_BUFFER
 // список инициализации
 static const uint8_t _oled_init[] PROGMEM = {
 	OLED_DISPLAY_OFF,
-	0xD5, 	// CLOCK_DIV_RATIO
+	OLED_CLOCKDIV,
 	0x80,	// value
-	0x8D, 	// Charge pump
+	OLED_CHARGEPUMP,
 	0x14,	// value
 	OLED_ADDRESSING_MODE,
 	OLED_VERTICAL,
@@ -135,31 +147,49 @@ static const uint8_t _oled_init[] PROGMEM = {
 	OLED_NORMAL_V,
 	OLED_CONTRAST,
 	0x7F,	// value
-	0xDB, 	// Set vcom detect
+	OLED_SETVCOMDETECT,
 	0x40, 	// value
 	OLED_NORMALDISPLAY,
 	OLED_DISPLAY_ON,
 };
 
 // ========================== КЛАСС КЛАСС КЛАСС ============================= 
-template <int _TYPE, int _BUFF = OLED_BUFFER>
+template <int _TYPE, int _BUFF = OLED_BUFFER, int _CONN = OLED_I2C, int8_t _CS = -1, int8_t _DC = -1, int8_t _RST = -1 >
 class GyverOLED : public Print {
 public:
 	// ========================== КОНСТРУКТОР ============================= 
-	GyverOLED(uint8_t address = 0x3C) : _address(address) {};
+	GyverOLED(uint8_t address = 0x3C) : _address(address) {}
 
 	// ============================= СЕРВИС =============================== 
 	// инициализация
-	void init() {  							
-		Wire.begin();
-		Wire.beginTransmission(_address);
-		Wire.write(OLED_COMMAND_MODE);
-		for (uint8_t i = 0; i < 15; i++) Wire.write(pgm_read_byte(&_oled_init[i]));
-		Wire.write(0xDA);
-		Wire.write(_TYPE ? OLED_HEIGHT_64 : OLED_HEIGHT_32);
-		Wire.write(0xA8);
-		Wire.write(_TYPE ? OLED_64 : OLED_32);
-		Wire.endTransmission();
+	void init() {
+		if (_CONN) {			
+			SPI.begin();
+			pinMode(_CS, OUTPUT);
+			fastWrite(_CS, 1);
+			pinMode(_DC, OUTPUT);			
+			if (_RST > 0) {
+				pinMode(_RST, OUTPUT);			
+				fastWrite(_RST, 1);
+				delay(1);
+				fastWrite(_RST, 0);
+				delay(10);
+				fastWrite(_RST, 1);
+			}
+		} else {
+			Wire.begin();
+		}
+		
+		beginCommand();
+		for (uint8_t i = 0; i < 15; i++) sendByte(pgm_read_byte(&_oled_init[i]));
+		endTransm();
+		beginCommand();
+		sendByte(OLED_SETCOMPINS);
+		sendByte(_TYPE ? OLED_HEIGHT_64 : OLED_HEIGHT_32);
+		sendByte(OLED_SETMULTIPLEX);
+		sendByte(_TYPE ? OLED_64 : OLED_32);
+		endTransm();
+		
 		setCursorXY(0, 0);
 		if (_BUFF) setWindow(0, 0, _maxX, _maxRow);		// для буфера включаем всю область
 	}
@@ -183,7 +213,7 @@ public:
 			for (int x = x0; x < x1; x++)
 			for (int y = y0; y < y1+1; y++)
 			writeData(0, y, x, 2);
-			if (!_BUFF) endData();			
+			if (!_BUFF) endTransm();			
 		} else {
 			// для SSH1108
 		}
@@ -193,16 +223,16 @@ public:
 	void setContrast(uint8_t value) { sendCommand(OLED_CONTRAST, value); }
 	
 	// вкл/выкл
-	void setPower(bool mode) { sendCommand(mode ? OLED_DISPLAY_ON : OLED_DISPLAY_OFF); }
+	void setPower(bool mode) 		{ sendCommand(mode ? OLED_DISPLAY_ON : OLED_DISPLAY_OFF); }
 	
 	// отразить по горизонтали
-	void flipH(bool mode) { sendCommand(mode ? OLED_FLIP_H : OLED_NORMAL_H); }
+	void flipH(bool mode) 			{ sendCommand(mode ? OLED_FLIP_H : OLED_NORMAL_H); }
 	
 	// инвертировать дисплей
-	void invertDisplay(bool mode) { sendCommand(mode ? OLED_INVERTDISPLAY : OLED_NORMALDISPLAY); }
+	void invertDisplay(bool mode) 	{ sendCommand(mode ? OLED_INVERTDISPLAY : OLED_NORMALDISPLAY); }
 	
 	// отразить по вертикали
-	void flipV(bool mode) { sendCommand(mode ? OLED_FLIP_V : OLED_NORMAL_V); }
+	void flipV(bool mode) 			{ sendCommand(mode ? OLED_FLIP_V : OLED_NORMAL_V); }
 
 	// ============================= ПЕЧАТЬ ================================== 
 	virtual size_t write(uint8_t data) {
@@ -229,27 +259,21 @@ public:
 		if (data == 0) return 1;	
 		// если тут не вылетели - печатаем символ		
 		
-		if (_TYPE < 2) {					// для SSD1306
+		if (_TYPE < 2 || 1) {						// для SSD1306
 			int newX = _x + _scaleX * 6;
-			if (newX < 0 || _x > _maxX) {	// пропускаем вывод "за экраном"
-				_x = newX;
-			} else {				
+			if (newX < 0 || _x > _maxX) _x = newX;	// пропускаем вывод "за экраном"
+			else {				
 				if (!_BUFF) beginData();
 				for (uint8_t col = 0; col < 6; col++) {					// 6 стобиков буквы
-					uint8_t bits = getFont(data, col);					// получаем байт
-					byte inv = 0;
-					if (_invState) {
-						bits = ~bits;									// инверсия
-						inv = 2;
-					}
-					
+					uint8_t bits = getFont(data, col);					// получаем байт					
+					if (_invState) bits = ~bits;						// инверсия					
 					if (_scaleX == 1) {									// если масштаб 1						
 						if (_x >= 0 && _x <= _maxX) {					// внутри дисплея
 							if (_shift == 0) {							// если вывод без сдвига на строку
-								writeData(bits, 0, 0, inv);				// выводим
+								writeData(bits, 0, 0, _mode);			// выводим
 							} else {									// со сдвигом
-								writeData(bits << _shift, 0, 0, inv);	// верхняя часть
-								writeData(bits >> (8 - _shift), 1, 0, inv);	// нижняя часть
+								writeData(bits << _shift, 0, 0, _mode);	// верхняя часть
+								writeData(bits >> (8 - _shift), 1, 0, _mode);	// нижняя часть
 							}	
 						}									
 					} else {											// масштаб 2, 3 или 4 - растягиваем шрифт						
@@ -264,22 +288,22 @@ public:
 							for (uint8_t j = 0; j < _scaleX; j++) {		// выводим. По Y
 								byte data = newData >> (j * 8);			// получаем кусок буфера
 								if (_shift == 0) {						// если вывод без сдвига на строку
-									writeData(data, j, i, inv);	// выводим							
+									writeData(data, j, i, _mode);			// выводим							
 								} else {								// со сдвигом
-									writeData((prevData >> (8 - _shift)) | (data << _shift), j, i, inv);	// склеиваем и выводим
+									writeData((prevData >> (8 - _shift)) | (data << _shift), j, i, _mode);	// склеиваем и выводим
 									prevData = data;					// запоминаем предыдущий
 								}
 							}
-							if (_shift != 0) writeData(prevData >> (8 - _shift), _scaleX, i, inv);			// выводим нижний кусочек, если со сдвигом
+							if (_shift != 0) writeData(prevData >> (8 - _shift), _scaleX, i, _mode);			// выводим нижний кусочек, если со сдвигом
 						}
 					}
 					_x += _scaleX;										// двигаемся на ширину пикселя (1-4)
 				}
-				if (!_BUFF) endData();
+				if (!_BUFF) endTransm();
 			}
 		} else {						
 			// для SSH1106
-		}		
+		}	
 		return 1;
 	}
 	
@@ -308,10 +332,12 @@ public:
 	}
 	
 	// инвертировать текст (0-1)
-	void invertText(bool inv) { _invState = inv; }
+	void invertText(bool inv) 	{ _invState = inv; }
+	
+	void textMode(byte mode) 	{ _mode = mode; }
 	
 	// возвращает true, если дисплей "кончился" - при побуквенном выводе
-	bool isEnd() { return (_y > _maxRow); }
+	bool isEnd() 				{ return (_y > _maxRow); }
 
 	// ================================== ГРАФИКА ================================== 
 	// точка (заливка 1/0)
@@ -320,13 +346,13 @@ public:
 		_x = 0;
 		_y = 0;
 		if (_BUFF) {			
-			bitWrite(_oled_buffer[_bufIndex(x, y)], y & 0b111, fill);			
+			bitWrite(_oled_buffer[_bufIndex(x, y)], y & 0b111, fill);
 		} else {
 			if (!_buf_flag) {
 				setWindow(x, y>>3, _maxX, _maxRow);
 				beginData();			
-				Wire.write(1 << (y & 0b111));	// задвигаем 1 на высоту y
-				endData();
+				sendByte(1 << (y & 0b111));	// задвигаем 1 на высоту y
+				endTransm();
 			} else {				
 				x -= _bufX;
 				y -= _bufY;
@@ -383,7 +409,7 @@ public:
 			setWindow(x0, y, x1, y);
 			beginData();
 			for (int x = x0; x < x1; x++) writeData(data, y, x);
-			endData();
+			endTransm();
 		}			
 	}
 	
@@ -423,7 +449,7 @@ public:
 				for (byte i = 0; i < numBytes - 1; i++, y0++) if (_inRange(y0, 0, _maxRow)) writeData(fill, y0, x);	// столбик
 				if (_inRange(y0, 0, _maxRow)) writeData(fill >> shift2, y0, x);										// нижний кусок			
 			}
-			endData();
+			endTransm();
 
 		}
 	}
@@ -485,21 +511,21 @@ public:
 					if (_inRange(y, 0, _maxRow)) writeData(255 >> shift2, y, x, thisFill);										// нижний кусок			
 				}
 			}			
-			if (!_BUFF) endData();			
+			if (!_BUFF) endTransm();			
 		}		
 	}
 	
 	// прямоугольник скруглённый (лев. верхн, прав. нижн)
 	void roundRect(int x0, int y0, int x1, int y1, byte fill = OLED_FILL) {
 		/*
-			▅ ▅ ▅ ▅ ▅
-		▅ ▅ ▅ ▅ ▅ ▅
+		    ▅ ▅ ▅ ▅ ▅
+		  ▅ ▅ ▅ ▅ ▅ ▅
 		▅ ▅ ▅ ▅ ▅ ▅ ▅
 		▅ ▅ ▅ ▅ ▅ ▅ ▅
 		▅ ▅ ▅ ▅ ▅ ▅ ▅
 		▅ ▅ ▅ ▅ ▅ ▅ ▅
-		▅ ▅ ▅ ▅ ▅ ▅
-			▅ ▅ ▅ ▅ ▅
+		  ▅ ▅ ▅ ▅ ▅ ▅
+		    ▅ ▅ ▅ ▅ ▅
 		*/
 		if (fill == OLED_STROKE) {
 			fastLineV(x0, y0+2, y1-2);
@@ -520,7 +546,7 @@ public:
 	}
 	
 	// окружность (центр х, центр у, радиус, заливка)
-	void circle(int x, int y, int radius, byte fill = 0) {
+	void circle(int x, int y, int radius, byte fill = OLED_FILL) {
 		//if (!_BUFF) createBuffer(x - radius, y - radius, x + radius + 1, y + radius);
 		int f = 1 - radius;
 		int ddF_x = 1;
@@ -607,29 +633,28 @@ public:
 				if (bottom) writeData(prevData >> (8 - _shift), shiftY, X, mode);		// нижний байт
 			}
 		}
-		if (!_BUFF) endData();
+		if (!_BUFF) endTransm();
 	}
 	
 	// залить весь дисплей указанным байтом
 	void fill(uint8_t data) {
-		if (_TYPE < 2) {	// для SSD1306
-			if (_BUFF) {
-				memset(_oled_buffer, data, _bufSize);
-			} else {			
-				setWindow(0, 0, _maxX, _maxRow);
-				beginData();
-				for (int i = 0; i < (_TYPE ? 1024 : 512); i++) writeOptimised(data);				
-				endData();
+		if (_BUFF) memset(_oled_buffer, data, _bufSize);
+		else {
+			if (_TYPE < 2 || 1) {	// для SSD1306						
+			setWindow(0, 0, _maxX, _maxRow);
+			beginData();
+			for (int i = 0; i < (_TYPE ? 1024 : 512); i++) sendByte(data);				
+			endTransm();			
+			} else {			// для SSH1108			
+				
 			}
-		} else {
-			// для SSH1108
-		}
+		}		
 	}
 	
 	// шлёт байт в "столбик" setCursor() и setCursorXY()
 	void drawByte(uint8_t data) {
 		if (++_x > _maxX) return;
-		if (_TYPE < 2) {								// для SSD1306
+		if (_TYPE < 2 || 1) {							// для SSD1306
 			if (!_BUFF) beginData();
 			if (_shift == 0) {							// если вывод без сдвига на строку
 				writeData(data);						// выводим
@@ -637,7 +662,7 @@ public:
 				writeData(data << _shift);				// верхняя часть
 				writeData(data >> (8 - _shift), 1);		// нижняя часть со сдвигом на 1
 			}
-			if (!_BUFF) endData();		
+			if (!_BUFF) endTransm();		
 		} else {
 			// для SSH1106
 			/*			
@@ -682,21 +707,42 @@ public:
 			if (_shift == 0) {							// если вывод без сдвига на строку
 				writeData(data[i]);						// выводим
 			} else {									// со сдвигом
-				writeData(data[i] << _shift);				// верхняя часть
-				writeData(data[i] >> (8 - _shift), 1);		// нижняя часть со сдвигом на 1
+				writeData(data[i] << _shift);			// верхняя часть
+				writeData(data[i] >> (8 - _shift), 1);	// нижняя часть со сдвигом на 1
 			}			
 		}
-		if (!_BUFF) endData();
+		if (!_BUFF) endTransm();
 	}
 
 	// ================================== СИСТЕМНОЕ ===================================
 	// полностью обновить дисплей из буфера
 	void update() {
 		if (_BUFF) {
-			setWindow(0, 0, _maxX, _maxRow);
-			beginData();
-			for (int i = 0; i < (_TYPE ? 1024 : 512); i++) writeOptimised(_oled_buffer[i]);
-			endData();
+			if (_TYPE < 2) {	// для 1306			
+				setWindow(0, 0, _maxX, _maxRow);
+				beginData();
+				if (_CONN) SPI.transfer(_oled_buffer, _TYPE ? 1024 : 512);
+				else for (int i = 0; i < (_TYPE ? 1024 : 512); i++) sendByte(_oled_buffer[i]);
+				endTransm();			
+			} else {			// для 1106
+				sendCommand(0x00); 
+				sendCommand(0x10);
+				sendCommand(0x40); 	  
+				uint16_t ptr = 0;				
+				for (uint8_t i = 0; i < (64 >> 3); i++) {
+					sendCommand(0xB0 + i + 0);	//set page address
+					sendCommand(2 & 0xf);		//set lower column address
+					sendCommand(0x10);			//set higher column address
+					for (uint8_t a = 0; a < 8; a++) {
+						beginData();
+						for (uint8_t b = 0; b < (OLED_WIDTH >> 3); b++) {
+							sendByteRaw(_oled_buffer[((ptr&0x7F)<<3)+(ptr>>7)]);
+							ptr++;
+						}
+						endTransm();
+					}
+				}
+			}
 		}
 	}
 	
@@ -704,14 +750,14 @@ public:
 	void update(int x0, int y0, int x1, int y1) {
 		if (_BUFF) {
 			y0 >>= 3;
-			y1 >>= 3;			
+			y1 >>= 3;
 			setWindow(x0, y0, x1, y1);
 			beginData();
 			for (int x = x0; x < x1; x++)
 			for (int y = y0; y < y1+1; y++)
 			if (x >= 0 && x <= _maxX && y >= 0 && y <= _maxRow) 
-			writeOptimised(_oled_buffer[y + x * (_TYPE ? 8 : 4)]);				
-			endData();
+			sendByte(_oled_buffer[y + x * (_TYPE ? 8 : 4)]);				
+			endTransm();
 		}
 	}
 	
@@ -740,57 +786,10 @@ public:
 					break;
 				}				
 			} else {
-				writeOptimised(data);
+				sendByte(data);
 			}
 		}
-	}
-	
-	// супер-костыль для либы Wire. Привет индусам!
-	void writeOptimised(byte data) {
-		Wire.write(data);
-#if !defined(microWire_h)
-		_writes++;
-		if (_writes >= 16) {			
-			endData();
-			beginData();
-		}
-#endif
-	}
-	
-	void continueCmd(uint8_t cmd) {
-		Wire.write(OLED_ONE_COMMAND_MODE);
-		Wire.write(cmd);
-	}
-	
-	// отправить команду
-	void sendCommand(uint8_t cmd1) {       		
-		Wire.beginTransmission(_address);
-		Wire.write(OLED_ONE_COMMAND_MODE);
-		Wire.write(cmd1);		
-		Wire.endTransmission();
-	}
-	
-	// отправить код команды и команду
-	void sendCommand(uint8_t cmd1, uint8_t cmd2) {       		
-		Wire.beginTransmission(_address);
-		Wire.write(OLED_COMMAND_MODE);
-		Wire.write(cmd1);
-		Wire.write(cmd2);
-		Wire.endTransmission();
 	}	
-	
-	// выбрать "окно" дисплея
-	void setWindow(int x0, int y0, int x1, int y1) {		
-		Wire.beginTransmission(_address);
-		Wire.write(OLED_COMMAND_MODE);
-		Wire.write(0x21);
-		Wire.write(constrain(x0, 0, _maxX));
-		Wire.write(constrain(x1, 0, _maxX));
-		Wire.write(0x22);
-		Wire.write(constrain(y0, 0, _maxRow));
-		Wire.write(constrain(y1, 0, _maxRow));
-		Wire.endTransmission();
-	}
 	
 	// окно со сдвигом. x 0-127, y 0-63 (31), ширина в пикселях, высота в пикселях
 	void setWindowShift(int x0, int y0, int sizeX, int sizeY) {
@@ -827,26 +826,99 @@ public:
 				setWindow(_bufX, _bufY>>3, _bufX + _bufsizeX, (_bufY>>3) + _bufsizeY - 1);
 				beginData();
 				for (int i = 0; i < _bufsizeX * _bufsizeY; i++) {
-					writeOptimised(_buf_ptr[i]);
+					sendByte(_buf_ptr[i]);
 				}
-				endData();
+				endTransm();
 				_buf_flag = false;
 				free(_buf_ptr);
 			}
 		}
 	}
 	
-	void beginData() {
-		Wire.beginTransmission(_address);
-		Wire.write(OLED_DATA_MODE);
-	}
+	// ========= ЛОУ-ЛЕВЕЛ ОТПРАВКА =========
 	
-	void endData() {		
-		Wire.endTransmission();
-		_writes = 0;		
+	// супер-костыль для либы Wire. Привет индусам!
+	void sendByte(uint8_t data) {
+		sendByteRaw(data);
+#if !defined(microWire_h)
+		if (!_CONN) {
+			_writes++;
+			if (_writes >= 16) {			
+				endTransm();
+				beginData();
+			}
+		}
+#endif
+	}
+	void sendByteRaw(uint8_t data) {
+		if (_CONN) SPI.transfer(data);
+		else Wire.write(data);
 	}
 
-private:
+	
+	// отправить команду
+	void sendCommand(uint8_t cmd1) {       		
+		beginOneCommand();
+		sendByteRaw(cmd1);		
+		endTransm();
+	}
+	
+	// отправить код команды и команду
+	void sendCommand(uint8_t cmd1, uint8_t cmd2) {       		
+		beginCommand();
+		sendByteRaw(cmd1);
+		sendByteRaw(cmd2);
+		endTransm();
+	}	
+	
+	// выбрать "окно" дисплея
+	void setWindow(int x0, int y0, int x1, int y1) {		
+		beginCommand();
+		sendByteRaw(OLED_COLUMNADDR);
+		sendByteRaw(constrain(x0, 0, _maxX));
+		sendByteRaw(constrain(x1, 0, _maxX));
+		sendByteRaw(OLED_PAGEADDR);
+		sendByteRaw(constrain(y0, 0, _maxRow));
+		sendByteRaw(constrain(y1, 0, _maxRow));
+		endTransm();
+	}
+	
+	void beginData() {
+		startTransm();
+		if (_CONN) fastWrite(_DC, 1);
+		else sendByteRaw(OLED_DATA_MODE);	
+	}
+	
+	void beginCommand() {
+		startTransm();
+		if (_CONN) fastWrite(_DC, 0);
+		else sendByteRaw(OLED_COMMAND_MODE);		
+	}
+	
+	void beginOneCommand() {
+		startTransm();
+		if (_CONN) fastWrite(_DC, 0);
+		else sendByteRaw(OLED_ONE_COMMAND_MODE);		
+	}
+	
+	void endTransm() {		
+		if (_CONN) {
+			fastWrite(_CS, 1);
+			SPI.endTransaction();
+		} else {
+			Wire.endTransmission();
+			_writes = 0;
+		}
+	}
+
+	void startTransm() {
+		if (_CONN) {
+			SPI.beginTransaction(OLED_SPI_SETT);
+			fastWrite(_CS, 0);
+		} else Wire.beginTransmission(_address);
+	}
+
+
 	// получить "столбик-байт" буквы
 	uint8_t getFont(uint8_t font, uint8_t row) {
 		if (row > 4) return 0;		
@@ -866,20 +938,21 @@ private:
 	const uint8_t _address = 0x3C;
 	const uint8_t _maxRow = (_TYPE ? 8 : 4) - 1;
 	const uint8_t _maxY = (_TYPE ? 64 : 32) - 1;
-	const uint8_t _maxX = (128) - 1;	// на случай добавления мелких дисплеев	
+	const uint8_t _maxX = OLED_WIDTH - 1;	// на случай добавления мелких дисплеев	
 	
 	// софт. буфер
 	const int _bufSize = ((_BUFF == 1) ? (_TYPE ? BUFSIZE_128x64 : BUFSIZE_128x32) : 0);
 	uint8_t _oled_buffer[((_BUFF == 1) ? (_TYPE ? BUFSIZE_128x64 : BUFSIZE_128x32) : 0)];
-	
+private:
 	// всякое
 	bool _invState = 0;
 	bool _println = true;
 	uint8_t _scaleX = 1, _scaleY = 8;
 	int _x = 0, _y = 0;
-	byte _shift = 0;
+	uint8_t _shift = 0;
 	uint8_t _lastChar;
-	byte _writes = 0;
+	uint8_t _writes = 0;
+	uint8_t _mode = 2;
 	
 	// дин. буфер
 	int _bufsizeX, _bufsizeY;

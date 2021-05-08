@@ -1,6 +1,7 @@
 #ifndef GyverMAX7219_h
 #define GyverMAX7219_h
 // самая резкая библиотека для матриц MAX7219 на диком западе
+// v1.1 - оптимизирован SPI
 
 #include <Arduino.h>
 #include <SPI.h>
@@ -11,23 +12,18 @@
 #define MAX_SPI_SPEED 1000000
 #endif
 
+static SPISettings MAX_SPI_SETT(MAX_SPI_SPEED, MSBFIRST, SPI_MODE0);
+
 template < byte width, byte height, byte CSpin, byte DATpin = 0, byte CLKpin = 0 >
 class MAX7219 : public GyverGFX {
 public:
 	MAX7219() : GyverGFX(width * 8, height * 8) {
 		begin();
 	}
-	~MAX7219() {
-		if (DATpin == CLKpin) {
-			SPI.end();
-			SPI.endTransaction();
-		}
-	}
 	void begin() {
 		pinMode(CSpin, OUTPUT);
 		if (DATpin == CLKpin) {
-			SPI.begin();
-			SPI.beginTransaction(SPISettings(MAX_SPI_SPEED, MSBFIRST, SPI_MODE0));
+			SPI.begin();			
 		} else {			
 			pinMode(DATpin, OUTPUT);
 			pinMode(CLKpin, OUTPUT);
@@ -91,10 +87,12 @@ public:
 
 private:
 	void beginData() {
-		fastWrite(CSpin, 0);
+		SPI.beginTransaction(MAX_SPI_SETT);
+		fastWrite(CSpin, 0);		
 	}
-	void endData() {
+	void endData() {		
 		fastWrite(CSpin, 1);
+		SPI.endTransaction();
 	}
 	void sendCMD(uint8_t address, uint8_t value) {
 		beginData();
