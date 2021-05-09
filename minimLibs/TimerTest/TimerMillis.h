@@ -7,8 +7,8 @@ class TimerMillis {
 public:
 	// (период, мс), (0 не запущен / 1 запущен), (режим: 0 период / 1 таймер)
 	TimerMillis(uint32_t prd = 1000, bool state = 0, bool mode = 0) {
-		_prd = prd;
-		_state = state;
+		setTime(prd);
+		if (state) start();
 		_mode = mode;
 	}
 	uint32_t uptime() {					// на случай использования в других фреймворках
@@ -21,7 +21,7 @@ public:
 		_mode = 0;
 	}
 	void setTime(uint32_t prd) {  		// установить время работы
-		_prd = prd;
+		_prd = (prd == 0) ? 1 : prd;
 	}
 	void attach(void (*handler)()) {	// подключить коллбэк
 		_handler = *handler;
@@ -50,8 +50,8 @@ public:
 	// в режиме таймера будет возвращать true при срабатывании
 	bool tick() {
 		if (_state) _buf = uptime() - _tmr;
-		if (_state && elapsed()) {
-			if (!_mode) _tmr += _prd;
+		if (_state && _buf >= _prd) {
+			if (!_mode) _tmr += _prd * (_buf / _prd);
 			else stop();
 			if (*_handler) _handler();
 			_ready = 1;
