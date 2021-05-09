@@ -1,6 +1,6 @@
 # GyverLibs by AlexGyver
 ## Написанные с нуля/модифицированные библиотеки для Arduino
-[![AlexGyver YouTube](http://alexgyver.ru/git_banner.jpg)](https://www.youtube.com/channel/UCgtAOyEQdAyjvm9ATCi_Aig?sub_confirmation=1)
+[![AlexGyver YouTube](https://alexgyver.ru/git_banner.jpg)](https://www.youtube.com/channel/UCgtAOyEQdAyjvm9ATCi_Aig?sub_confirmation=1)
 > Внимание! Библиотеки написаны ютубером-ардуинщиком, возможна высокая концентрация костылей и стандартных подходов. Но всё работает замечательно!
 
 ![Logo](/logos/libs.png)
@@ -1927,8 +1927,8 @@ int16_t sampleTime = 1000;          // время итерации, мс (по �
 
 ### TM74HC595_Gyver v1.1 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/TM74HC595_Gyver/TM74HC595_Gyver.zip)
 Библиотека для дисплея на сдвиговике TM74HC595 с Arduino
-- Подробное описание здесь http://alexgyver.ru/tm74hc595_display/
+- Подробное описание здесь https://alexgyver.ru/tm74hc595_display/
 
 ### TM1637_Gyver v1.1
 Библиотека для дисплея на сдвиговике TM1637 с Arduino
-- Подробное описание здесь http://alexgyver.ru/tm1637_display/
+- Подробное описание здесь https://alexgyver.ru/tm1637_display/
