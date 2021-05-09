@@ -39,7 +39,7 @@
 * [GyverPower](#GyverPower) - библиотека для управления энергопотреблением МК
 
 ### Лёгкие библиотеки
-* [GyverBME280](#GyverBME280) - лёгкая библиотека для датчика BME280
+* [GyverBME280](#microBME280) - лёгкая библиотека для датчика BME280
 * [microLED](#microLED) - ультра-лёгкая библиотека для адресных диодов
 * [microWire](#microWire) - микро библиотека для работы с i2c
 * [microDS3231](#microDS3231) - лёгкая библиотека для RTC DS3231
@@ -73,7 +73,6 @@ minimLibs это мини-библиотеки, которые не входят
 
 
 <a id="Gyver433"></a>
-
 ### Gyver433 v1.0 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/Gyver433/Gyver433.zip)
 Суперлёгкая библиотека для радиомодулей 433 МГц
 - Не использует прерывания и таймеры (кроме нулевого, читает micros())
@@ -659,7 +658,7 @@ void resetStates();     // сбрасывает все is-флаги и счёт
 
 ---
 
-<a id="GyverEncoder "></a>
+<a id="GyverEncoder"></a>
 ![Logo](/logos/encLogo.png)
 ### GyverEncoder v4.9 [СКАЧАТЬ](https://github.com/AlexGyver/GyverLibs/releases/download/GyverEncoder/GyverEncoder.zip), [ДОКУМЕНТАЦИЯ](https://alexgyver.ru/encoder/)
 Библиотека для отработки энкодера с Arduino. Возможности:
