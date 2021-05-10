@@ -49,25 +49,15 @@ void loop() {
 
 
 void drawIcon7x7(byte index) {
-  size_t s = sizeof icons_7x7[index];//можно так, а можно просто 7
-  uint8_t* p = new uint8_t [s];
+  size_t s = sizeof icons_7x7[index];//можно так, а можно просто 7 
   for(unsigned int i = 0; i < s; i++) {
-    p[i] = pgm_read_byte(&(icons_7x7[index][i]));
+    oled.drawByte(pgm_read_byte(&(icons_7x7[index][i])));
   }
-
-  oled.drawBytes(p, s);
-  
-  delete p;//нужно очищать память, иначе музыка играть будет не долго
 }
 
 void drawIcon8x8(byte index) {
-  size_t s = sizeof icons_8x8[index];//можна так, а можна просто 8
-  uint8_t* p = new uint8_t [s];
+  size_t s = sizeof icons_8x8[index];//можна так, а можна просто 8 
   for(unsigned int i = 0; i < s; i++) {
-    p[i] = pgm_read_byte(&(icons_8x8[index][i]));
+    oled.drawByte(pgm_read_byte(&(icons_8x8[index][i])));
   }
-
-  oled.drawBytes(p, s);
-  
-  delete p;//нужно очищать память, иначе музыка играть будет не долго
 }
