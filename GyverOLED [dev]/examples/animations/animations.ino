@@ -4,10 +4,10 @@
 
 //GyverOLED<SSD1306_128x32, OLED_BUFFER> oled;
 //GyverOLED<SSD1306_128x32, OLED_NO_BUFFER> oled;
-//GyverOLED<SSD1306_128x64, OLED_BUFFER> oled;
+GyverOLED<SSD1306_128x64, OLED_BUFFER> oled;
 //GyverOLED<SSD1306_128x64, OLED_NO_BUFFER> oled;
 //GyverOLED<SSD1306_128x64, OLED_BUFFER, OLED_SPI, 8, 7, 6> oled;
-GyverOLED<SSH1106_128x64> oled;
+//GyverOLED<SSH1106_128x64> oled;
 // можно передать адрес: GyverOLED oled(0x3C);
 
 void setup() {
@@ -20,18 +20,6 @@ void loop() {
   uint32_t tmr;
 
   tmr = millis();
-  while (millis() - tmr < 5000) ball();
-
-  tmr = millis();
-  while (millis() - tmr < 5000) bezier();
-
-  tmr = millis();
-  while (millis() - tmr < 5000) bezier2();
-
-  tmr = millis();
-  while (millis() - tmr < 5000) circleModes();
-
-  tmr = millis();
   while (millis() - tmr < 5000) net();
 
   tmr = millis();
@@ -39,6 +27,18 @@ void loop() {
 
   tmr = millis();
   while (millis() - tmr < 5000) lines();
+
+  tmr = millis();
+  while (millis() - tmr < 5000) circleModes();
+
+  tmr = millis();
+  while (millis() - tmr < 5000) ball();
+
+  tmr = millis();
+  while (millis() - tmr < 5000) bezier();
+
+  tmr = millis();
+  while (millis() - tmr < 5000) bezier2();
 }
 
 void bezier2() {
