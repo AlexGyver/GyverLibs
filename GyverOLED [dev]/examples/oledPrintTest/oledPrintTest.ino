@@ -1,16 +1,18 @@
 #include <GyverOLED.h>
-// попробуй с буфером и без
-GyverOLED<SSD1306_128x64, OLED_NO_BUFFER> oled;
-// можно передать адрес: GyverOLED oled(0x3C);
+//GyverOLED<SSD1306_128x32, OLED_BUFFER> oled;
+//GyverOLED<SSD1306_128x32, OLED_NO_BUFFER> oled;
+//GyverOLED<SSD1306_128x64, OLED_BUFFER> oled;
+//GyverOLED<SSD1306_128x64, OLED_NO_BUFFER> oled;
+//GyverOLED<SSD1306_128x64, OLED_BUFFER, OLED_SPI, 8, 7, 6> oled;
+GyverOLED<SSH1106_128x64> oled;
 
 char Lorem_ipsum[] = "Lorem ipsum dolor sit amet, лорем ипсум долор сит амет привет народ ё, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip...";
 void setup() {
   Serial.begin(9600);
   oled.init();              // инициализация
+}
 
-  // ускорим вывод, ВЫЗЫВАТЬ ПОСЛЕ oled.init()!!!
-  Wire.setClock(400000L);   // макс. 800'000
-
+void loop() {
   printScale(1);
   printScale(2);
   printScale(3);
@@ -23,9 +25,6 @@ void setup() {
   scaleText();
 }
 
-void loop() {
-}
-
 void printScale(byte x) {
   oled.clear();
   oled.setScale(x);
@@ -33,6 +32,7 @@ void printScale(byte x) {
     oled.setCursor(0, i);
     oled.print("Hello!");
   }
+  oled.update();
   delay(1000);
 }
 
@@ -130,7 +130,7 @@ void scrollText() {
   oled.autoPrintln(false);
   int val = 128;
   for (;;) {
-    //oled.clear();   // ЗАКОММЕНТИРУЙ, ЕСЛИ ВКЛЮЧЕН БУФЕР
+    oled.clear();   // ЗАКОММЕНТИРУЙ, ЕСЛИ ВКЛЮЧЕН БУФЕР
     oled.setScale(1);
     oled.setCursor(val, 0);
     oled.print(Lorem_ipsum);
@@ -148,12 +148,12 @@ void scrollText() {
   }
 }
 
-void scaleText() {
-  oled.clear();
+void scaleText() {  
   uint32_t tmr = millis();
   byte scale = 1;
   oled.autoPrintln(true);
   for (;;) {
+    oled.clear();
     oled.setScale(scale);
     oled.home();
     oled.print("Привет!");

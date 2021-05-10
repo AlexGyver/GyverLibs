@@ -24,6 +24,12 @@ getDay	KEYWORD2
 getDate	KEYWORD2
 getYear	KEYWORD2
 getMonth	KEYWORD2
+getTemperatureFloat	KEYWORD2
+getTemperature	KEYWORD2
+getTimeString	KEYWORD2
+getDateString	KEYWORD2
+getTimeChar	KEYWORD2
+getDateChar	KEYWORD2
 
 second	KEYWORD2
 minute	KEYWORD2

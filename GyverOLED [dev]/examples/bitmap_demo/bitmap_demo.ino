@@ -21,7 +21,12 @@ const uint8_t bitmap_32x32[] PROGMEM = {
 };
 
 #include <GyverOLED.h>
-GyverOLED<SSD1306_128x64, OLED_NO_BUFFER> oled;
+//GyverOLED<SSD1306_128x32, OLED_BUFFER> oled;
+//GyverOLED<SSD1306_128x32, OLED_NO_BUFFER> oled;
+//GyverOLED<SSD1306_128x64, OLED_BUFFER> oled;
+//GyverOLED<SSD1306_128x64, OLED_NO_BUFFER> oled;
+//GyverOLED<SSD1306_128x64, OLED_BUFFER, OLED_SPI, 8, 7, 6> oled;
+GyverOLED<SSH1106_128x64> oled;
 // можно передать адрес: GyverOLED oled(0x3C);
 
 void setup() {
@@ -31,6 +36,7 @@ void setup() {
   // вывод битмапа: (x, y, имя, размерХ, размерУ, инверсия INVERT или не указана)
   oled.drawBitmap(0, 0, bitmap_128x64, 128, 64);
   oled.drawBitmap(25, 16, bitmap_32x32, 32, 32);
+  oled.update();
 }
 
 void loop() {

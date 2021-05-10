@@ -37,6 +37,7 @@ attach	KEYWORD2
 detach	KEYWORD2
 attachClicks	KEYWORD2
 detachClicks	KEYWORD2
+pullUp	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

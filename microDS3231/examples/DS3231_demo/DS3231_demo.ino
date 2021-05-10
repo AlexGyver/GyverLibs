@@ -31,4 +31,20 @@ void printTime() {
   Serial.print(rtc.getMonth());
   Serial.print("/");
   Serial.println(rtc.getYear());
+  
+  Serial.println(rtc.getTemperatureFloat());  
+  //Serial.println(rtc.getTemperature());
+  Serial.println(rtc.getTimeString());
+  Serial.println(rtc.getDateString());
+
+  // работа с char
+  char time[8];
+  rtc.getTimeChar(time);  // записать в массив time
+  Serial.println(time);
+  
+  char date[10];
+  rtc.getDateChar(date);
+  Serial.println(date);
+  
+  Serial.println();
 }

@@ -1,0 +1,28 @@
+  
+#######################################
+# Syntax Coloring Map For GyverMAX7219
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+MAX7219	KEYWORD1
+
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+begin	KEYWORD2
+setBright	KEYWORD2
+setPower	KEYWORD2
+clear	KEYWORD2
+fill	KEYWORD2
+fillByte	KEYWORD2
+dot	KEYWORD2
+get	KEYWORD2
+update	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+MAX_SPI_SPEED	LITERAL1

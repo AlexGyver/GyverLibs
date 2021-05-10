@@ -18,8 +18,12 @@
 	size - количество принятых байтов
 */
 
+#ifndef G433_SPEED
 #define G433_SPEED 2000		// скорость бит/сек (минимальная)
+#endif
+#ifndef G433_BUFSIZE
 #define G433_BUFSIZE 64		// размер буфера приёма и отправки
+#endif
 
 // тайминги интерфейса (компилятор посчитает)
 #define HIGH_PULSE (1000000ul/G433_SPEED)

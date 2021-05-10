@@ -12,6 +12,7 @@ EncButton<EB_CALLBACK, 2, 3, 4> enc;   // энкодер с кнопкой <A, B
 
 void setup() {
   Serial.begin(9600);
+  // enc.pullUp();	// подтянуть все пины внутренней подтяжкой
   enc.counter = 100;      // изменение счётчика
   enc.attach(TURN_HANDLER, myTurn);
   enc.attach(RIGHT_HANDLER, myRight);

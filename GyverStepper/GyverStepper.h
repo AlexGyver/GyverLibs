@@ -26,6 +26,10 @@
 	v1.7 - Исправлен баг в отрицательной скорости (спасибо Евгению Солодову)
 	v1.8 - Исправлен режим KEEP_SPEED
 	v1.9 - Исправлена ошибка с esp функцией max
+	v1.10 - повышена точность
+	v1.11 - повышена точность задания скорости
+	v1.12 - пофикшена плавная работа в KEEP_SPEED. Добавлена поддержка "внешних" драйверов. Убран аргумент SMOOTH из setSpeed
+	v1.13 - исправлены мелкие баги, оптимизация
 	
 	Алгоритм из AccelStepper: https://www.airspayce.com/mikem/arduino/AccelStepper/
 	AlexGyver, 2020
@@ -44,6 +48,9 @@ GStepper<STEPPER4WIRE> stepper(steps, pin1, pin2, pin3, pin4);			// драйве
 GStepper<STEPPER4WIRE> stepper(steps, pin1, pin2, pin3, pin4, en);		// драйвер 4 пин + enable
 GStepper<STEPPER4WIRE_HALF> stepper(steps, pin1, pin2, pin3, pin4);		// драйвер 4 пин полушаг
 GStepper<STEPPER4WIRE_HALF> stepper(steps, pin1, pin2, pin3, pin4, en);	// драйвер 4 пин полушаг + enable
+
+GStepper<STEPPER2WIRE, STEPPER_VIRTUAL> stepper(steps);					// виртуальный драйвер step-dir
+GStepper<STEPPER4WIRE, STEPPER_VIRTUAL> stepper(steps);					// виртуальный драйвер 4 пин
 
 // Здесь происходит движение мотора, вызывать как можно чаще!
 // Имеет встроенный таймер
@@ -83,6 +90,7 @@ float getTargetDeg();
 
 // Установка максимальной скорости (по модулю) в шагах/секунду и градусах/секунду (для режима FOLLOW_POS)
 // по умолч. 300
+// минимум - 1 шаг в час
 void setMaxSpeed(float speed);
 void setMaxSpeedDeg(float speed);
 
@@ -107,9 +115,10 @@ void brake();
 void reset();
 
 // Установка целевой скорости в шагах/секунду и градусах/секунду (для режима KEEP_SPEED)
-// при передаче вторым аргументом (true или SMOOTH) будет выполнен плавный разгон/торможение к нужной скорости
-void setSpeed(float speed, bool smooth);
-void setSpeedDeg(float speed, bool smooth);
+// при ненулевом setAcceleration будет выполнен плавный разгон/торможение к нужной скорости
+// минимальная скорость - 1 шаг в час
+void setSpeed(float speed);
+void setSpeedDeg(float speed);
 
 // Получение целевой скорости в шагах/секунду и градусах/секунду (для режима KEEP_SPEED)
 float getSpeed();
@@ -131,36 +140,40 @@ uint32_t getMinPeriod();
 // Текущий период "тика" для отладки и всего такого
 uint32_t stepTime;
 
+// подключить внешний обработчик для шага и переключения питания
+void attachStep(handler)
+void attachPower(handler)
+
 */
 
 // Раскомментируй для использования более плавного, но медленного алгоритма
 // Также дефайн можно прописать в скетче до подключения библиотеки!!! См. пример smoothAlgorithm
 //#define SMOOTH_ALGORITHM
 
-#define _MIN_STEPPER_SPEED 10			// мин. скорость для FOLLOW_POS
-#define _MAX_STEP_PERIOD (1000000L/_MIN_STEPPER_SPEED)
-#define MIN_STEPPER_SPEED (1.0f/3600)	// 1 шаг в час
-
-#ifndef DRIVER_STEP_TIME
-#define DRIVER_STEP_TIME 4
-#endif
-
 #include <Arduino.h>
 
-#ifdef __AVR__
-#include <util/delay.h>
-#endif
-
-// макросы
+// =========== МАКРОСЫ ===========
 #define degPerMinute(x) ((x)/60.0f)
 #define degPerHour(x) ((x)/3600.0f)
 #define _sign(x) ((x) >= 0 ? 1 : -1)	// знак числа
 #define maxMacro(a,b) ((a)>(b)?(a):(b))	// привет esp
+#define _PINS_AMOUNT ( (_TYPE == STEPPER_PINS) ? (_DRV == 0 ? 2 : 4) : (0) )
+
+// =========== КОНСТАНТЫ ===========
+#ifndef DRIVER_STEP_TIME
+#define DRIVER_STEP_TIME 4
+#endif
+
+#define _MIN_SPEED_FP 5		// мин. скорость для движения в FOLLOW_POS с ускорением
+#define _MAX_PERIOD_FP (1000000L/_MIN_SPEED_FP)
+#define _MIN_STEP_SPEED (1.0f/3600)	// мин. скорость 1 шаг в час
 
 enum GS_driverType {
 	STEPPER2WIRE,
 	STEPPER4WIRE,
 	STEPPER4WIRE_HALF,
+	STEPPER_PINS,
+	STEPPER_VIRTUAL,
 };
 
 enum GS_runMode {
@@ -178,29 +191,30 @@ enum GS_smoothType {
 	SMOOTH,
 };
 
-
-
-template <GS_driverType _DRV>
+// =========== КЛАСС ===========
+template <GS_driverType _DRV, GS_driverType _TYPE = STEPPER_PINS>
 class GStepper {
 public:	
 	// конструктор
-	GStepper(int stepsPerRev, int8_t pin1, int8_t pin2, int8_t pin3 = -1, int8_t pin4 = -1, int8_t pin5 = -1) : 
+	GStepper(int stepsPerRev, int8_t pin1 = -1, int8_t pin2 = -1, int8_t pin3 = -1, int8_t pin4 = -1, int8_t pin5 = -1) : 
 	_stepsPerDeg(stepsPerRev / 360.0) {
-		if (_DRV == STEPPER2WIRE) {
-			configurePin(0, pin1);
-			configurePin(1, pin2);
-			if (pin3 != -1) {
-				_enPin = pin3;
-				pinMode(_enPin, OUTPUT);
-			}
-		} else {
-			configurePin(0, pin1);
-			configurePin(1, pin2);
-			configurePin(2, pin3);
-			configurePin(3, pin4);
-			if (pin5 != -1) {
-				_enPin = pin5;
-				pinMode(_enPin, OUTPUT);
+		if (_TYPE == STEPPER_PINS) {
+			if (_DRV == STEPPER2WIRE) {
+				configurePin(0, pin1);
+				configurePin(1, pin2);
+				if (pin3 != -1) {
+					_enPin = pin3;
+					pinMode(_enPin, OUTPUT);
+				}
+			} else {
+				configurePin(0, pin1);
+				configurePin(1, pin2);
+				configurePin(2, pin3);
+				configurePin(3, pin4);
+				if (pin5 != -1) {
+					_enPin = pin5;
+					pinMode(_enPin, OUTPUT);
+				}
 			}
 		}
 		// умолчания
@@ -210,201 +224,213 @@ public:
 	
 	// возвращает true, если мотор всё ещё движется к цели
 	bool tick() {
-#ifndef SMOOTH_ALGORITHM
-		// в активном режиме движения к цели с ненулевым ускорением
-		// планировщик скорости быстрый			
-		if (_workState && !_curMode && _accel != 0 && _maxSpeed > _MIN_STEPPER_SPEED) planner();	
-#endif
-		// при плавном разгоне в KEEP_SPEED
-		if (_smoothStart && _curMode) smoothSpeedPlanner();
-		
-		if (_workState && micros() - _prevTime >= stepTime) {
-			_prevTime = micros();			
-			// FOLLOW_POS
-			if (!_curMode && _target == _current) {
-				brake();
-				return false;					
-			}
-#ifdef SMOOTH_ALGORITHM
-			// в активном режиме движения к цели с ненулевым ускорением
-			// планировщик скорости	плавный
-			// выходим если приехал
-			if (!_curMode && _accel != 0 && _maxSpeed > _MIN_STEPPER_SPEED) 
-				if (!plannerSmooth()) {
-					brake();
-					return false;	
-				}
-#endif
+		if (_workState) {
+			#ifndef SMOOTH_ALGORITHM				
+			if (!_curMode && _accel != 0 && _maxSpeed >= _MIN_SPEED_FP) planner();	// планировщик скорости FOLLOW_POS быстрый		
+			#endif
 			
-			// двигаем мотор
-			_current += _dir;
-			if (_DRV == STEPPER2WIRE) {
-				// ~4 us
-				setPin(1, (_dir > 0 ? _globDir : !_globDir) );
-				setPin(0, 1);	// HIGH
-#ifdef __AVR__
-				_delay_us(DRIVER_STEP_TIME);
-#else
-				delayMicroseconds(DRIVER_STEP_TIME);
-#endif
-				setPin(0, 0);	// LOW
-			} else {
-				// ~5.7 us	
-				thisStep += (_globDir ? _dir : -_dir);			
-				step();
-			}			
-		}		
+			if (_smoothStart && _curMode) smoothSpeedPlanner();		// планировщик скорости KEEP_SPEED
+			
+			if (micros() - _prevTime >= stepTime) {					// основной таймер степпера
+				_prevTime += stepTime;				
+				
+				#ifdef SMOOTH_ALGORITHM
+				// плавный планировщик вызывается каждый шаг. Проверка остановки
+				if (!_curMode && _accel != 0 && _maxSpeed >= _MIN_SPEED_FP && !plannerSmooth()) {
+					brake();
+					return false;
+				}
+				#endif
+				
+				// проверка остановки для быстрого планировщика, а также работы без ускорения
+				if (!_curMode && _target == _current) {
+					brake();
+					return false;
+				}
+				
+				// смещаем координату
+				_current += _dir;
+				
+				// двигаем мотор
+				if (_DRV == STEPPER2WIRE) stepDir();
+				else {
+					thisStep += (_globDir ? _dir : -_dir);
+					step();
+				}
+			}
+		}
 		return _workState;
 	}
 	
 	
 	// инвертировать направление мотора
-	void reverse(bool dir) 			{_globDir = dir;}
+	void reverse(bool dir) 			{ _globDir = dir; }
 
 	// инвертировать поведение EN пина
-	void invertEn(bool dir) 		{_enDir = dir;}
+	void invertEn(bool dir) 		{ _enDir = dir; }
 
 	// установка и чтение текущей позиции в шагах и градусах
-	void setCurrent(long pos) 		{_current = pos; _accelSpeed = 0;}
-	void setCurrentDeg(float pos) 	{setCurrent((float)pos * _stepsPerDeg);}
-	long getCurrent() 				{return _current;}
-	float getCurrentDeg() 			{return ((float)_current / _stepsPerDeg);}
+	void setCurrent(long pos) 		{ _current = pos; _accelSpeed = 0; }
+	void setCurrentDeg(float pos) 	{ setCurrent((float)pos * _stepsPerDeg); }
+	long getCurrent() 				{ return _current; }
+	float getCurrentDeg() 			{ return ((float)_current / _stepsPerDeg); }
 
 	// установка и получение целевой позиции в шагах и градусах
 	void setTarget(long pos, GS_posType type = ABSOLUTE) {
 		_target = type ? (_current + pos) : pos;		
 		if (_target != _current) {
-			recalculateSpeed(); 
-			_workState = true; 
-			if (!_powerState) enable();
+			if (_accel == 0 || _maxSpeed < _MIN_SPEED_FP) {
+				stepTime = 1000000.0 / _maxSpeed;
+				_dir = (_target > _current) ? 1 : -1;
+			}
+			enable();
 		}
 	}
-	void setTargetDeg(float pos, GS_posType type = ABSOLUTE) {setTarget((float)pos * _stepsPerDeg, type);}
-	long getTarget() 				{return _target;}
-	float getTargetDeg() 			{return ((float)_target / _stepsPerDeg);}
+		
+	void setTargetDeg(float pos, GS_posType type = ABSOLUTE) 	{ setTarget((float)pos * _stepsPerDeg, type); }
+	long getTarget() 				{ return _target; }
+	float getTargetDeg() 			{ return ((float)_target / _stepsPerDeg); }
 
 	// установка максимальной скорости в шагах/секунду и градусах/секунду
 	void setMaxSpeed(float speed) {
-		_maxSpeed = maxMacro(speed, MIN_STEPPER_SPEED);	// 1 шаг в час минимум
-		recalculateSpeed();
+		speed = abs(speed);
+		_maxSpeed = maxMacro(speed, _MIN_STEP_SPEED);	// 1 шаг в час минимум
+		// считаем stepTime для низких скоростей или отключенного ускорения
+		if (_accel == 0 || _maxSpeed < _MIN_SPEED_FP) stepTime = 1000000.0 / _maxSpeed;
 		
-#ifdef SMOOTH_ALGORITHM
+		#ifdef SMOOTH_ALGORITHM
 		_cmin = 1000000.0 / _maxSpeed;
 		if (_n > 0)	{
 			_n = (float)_accelSpeed * _accelSpeed * _accelInv;
 			plannerSmooth();
 		}
-#else
+		#else
 		// период планировщка в зависимости от макс. скорости
 		_plannerPrd = map((int)_maxSpeed, 1000, 20000, 15000, 1000);
 		_plannerPrd = constrain(_plannerPrd, 15000, 1000);	
-#endif
+		#endif
 	}
 	
-	void setMaxSpeedDeg(float speed){setMaxSpeed((float)speed * _stepsPerDeg);}
+	void setMaxSpeedDeg(float speed)		{ setMaxSpeed((float)speed * _stepsPerDeg); }
 
 	// установка ускорения шагах и градусах в секунду
-	void setAcceleration(int accel) 		{
-		_accel = accel; 
+	void setAcceleration(int accel)	{
+		_accel = abs(accel);
 		_accelInv = 0.5f / accel;
 		_accelTime = accel / 1000000.0f;
-#ifdef SMOOTH_ALGORITHM
+		#ifdef SMOOTH_ALGORITHM
 		_n = _n * (_accel / accel);
-		_c0 = 0.676 * sqrt(2.0 / _accel) * 1000000.0; // Equation 15
+		_c0 = 0.676 * sqrt(2.0 / _accel) * 1000000.0;
 		plannerSmooth();
-#endif
+		#endif
 	}
-	void setAccelerationDeg(float accel) 	{setAcceleration(accel * _stepsPerDeg);}
+	void setAccelerationDeg(float accel) 	{ setAcceleration(accel * _stepsPerDeg); }
 
-	void autoPower(bool mode) 		{_autoPower = mode;}
+	void autoPower(bool mode) 				{ _autoPower = mode; }
 
-	// плавная остановка с ускорением
 	void stop() {
 		if (_workState) {
 			if (_curMode == FOLLOW_POS) {
 				_accelSpeed = 1000000.0f / stepTime * _dir;
 				setTarget(_current + (float)_accelSpeed * _accelSpeed * _accelInv * _dir);
 				setMaxSpeed(abs(_accelSpeed));
-#ifdef SMOOTH_ALGORITHM
+				#ifdef SMOOTH_ALGORITHM
 				_n = (float)_accelSpeed * _accelSpeed * _accelInv;
-#endif
+				#endif
 			} else {
-				setSpeed(0, true);
+				setSpeed(0);
 			}
 		}
 	}
 
-	// жёсткая остановка
-	void brake() 					{
-		if (_workState) {
-			_workState = false;
-			if (_autoPower) disable();
-			_accelSpeed = 0;
-			//stepTime = _MAX_STEP_PERIOD;
-#ifdef SMOOTH_ALGORITHM
-			_n = 0;
-#endif
-		}
+	void brake() {		
+		disable();
+		_accelSpeed = 0;
+		#ifdef SMOOTH_ALGORITHM
+		_n = 0;
+		#endif		
 	}
-	void reset()					{brake(); setCurrent(0);}
+	
+	void reset() {
+		brake();
+		setCurrent(0);
+	}
 
 	// установка и получение целевой скорости в шагах/секунду и градусах/секунду
-	void setSpeed(float speed, bool smooth = false) {
+	void setSpeed(float speed, bool smooth = false) {	// smooth убран!
 		// 1 шаг в час минимум
 		_speed = speed;
-		if (abs(_speed) < MIN_STEPPER_SPEED) _speed = MIN_STEPPER_SPEED * _sign(_speed);
-		
-		if (smooth && abs(speed) > _MIN_STEPPER_SPEED) {	// плавный старт		
-			if (_accelSpeed == _speed) return;				// скорости совпадают? Выходим
-			_smoothStart = true;
-#ifdef __AVR__
-			_smoothPlannerPrd = map(max(abs((int)_speed), abs((int)_accelSpeed)), 1000, 20000, 15000, 1000);
-#else
-			// горячий привет тупому компилятору ESP8266 и индусам, которые его настраивали
-			int speed1 = abs(_speed);
-			int speed2 = abs((int)_accelSpeed);
-			int maxSpeed = maxMacro(speed1, speed2);
-			_smoothPlannerPrd = map(maxSpeed, 1000, 20000, 15000, 1000);
-#endif
-			
-			_smoothPlannerPrd = constrain(_smoothPlannerPrd, 15000, 1000);	
-		} else {		// резкий старт
-			if (_speed == 0) {brake(); return;}	// скорость 0? Отключаемся и выходим
+		if (abs(_speed) < _MIN_STEP_SPEED) _speed = _MIN_STEP_SPEED * _sign(_speed);
+
+		if (_accel != 0) {							// плавный старт		
+			if (_accelSpeed != _speed) {
+				_smoothStart = true;
+				#ifdef __AVR__
+				_smoothPlannerPrd = map(max(abs((int)_speed), abs((int)_accelSpeed)), 1000, 20000, 15000, 1000);
+				#else
+				// горячий привет тупому компилятору ESP8266 и индусам, которые его настраивали
+				int speed1 = abs(_speed);
+				int speed2 = abs((int)_accelSpeed);
+				int maxSpeed = maxMacro(speed1, speed2);
+				_smoothPlannerPrd = map(maxSpeed, 1000, 20000, 15000, 1000);
+				#endif			
+				_smoothPlannerPrd = constrain(_smoothPlannerPrd, 15000, 1000);
+			}
+		} else {				// резкий старт
+			if (speed == 0) { 	// скорость 0? Отключаемся и выходим
+				brake();
+				return;
+			}	
 			_accelSpeed = _speed;
-			stepTime = 1000000.0 / abs(_speed);
+			stepTime = round(1000000.0 / abs(_speed));
 			_dir = (_speed > 0) ? 1 : -1;	
-		}
-		_workState = true;
-		if (!_powerState) enable();
+		}		
+		enable();
 	}
-	void setSpeedDeg(float speed, bool smooth = false) 	{setSpeed(_stepsPerDeg * speed, smooth);}
-	float getSpeed() 				{return (1000000.0 / stepTime * _dir);}
-	float getSpeedDeg() 			{return ((float)getSpeed() / _stepsPerDeg);}
+	
+	void setSpeedDeg(float speed, bool smooth = false) 	{setSpeed(_stepsPerDeg * speed); }
+	float getSpeed() 				{ return (1000000.0 / stepTime * _dir); }
+	float getSpeedDeg() 			{ return ((float)getSpeed() / _stepsPerDeg); }
 
 	// установка режима работы
 	void setRunMode(GS_runMode mode){
 		_curMode = mode; 
-		if (mode == KEEP_SPEED) recalculateSpeed();
-		else _smoothStart = false;
+		if (mode == FOLLOW_POS) _smoothStart = false;
 	}
 
-	bool getState()					{return _workState;}
+	bool getState()					{ return _workState; }
 
 	void enable() {
-		_powerState = true;
-		if (_DRV == STEPPER4WIRE || _DRV == STEPPER4WIRE_HALF) step();	// подадим прошлый сигнал на мотор, чтобы вал зафиксировался
-		if (_enPin != -1) digitalWrite(_enPin, _enDir);
+		_workState = true; 
+		if (!_powerState) {
+			_powerState = true;
+			_smoothPlannerTime = _plannerTime = _prevTime = micros();	// сбросить все таймеры
+			if (_autoPower) {
+				if (_TYPE == STEPPER_PINS) {
+					// подадим прошлый сигнал на мотор, чтобы вал зафиксировался
+					if (_DRV == STEPPER4WIRE || _DRV == STEPPER4WIRE_HALF) step();	
+					if (_enPin != -1) digitalWrite(_enPin, _enDir);
+				} else if (*_power) _power(1);
+			}
+		}
 	}
 
 	void disable() {
-		_powerState = false;
-		if (_DRV == STEPPER4WIRE || _DRV == STEPPER4WIRE_HALF) {
-			setPin(0, 0);
-			setPin(1, 0);
-			setPin(2, 0);
-			setPin(3, 0);
+		_workState = false;
+		if (_powerState) {
+			_powerState = false;
+			if (_autoPower) {
+				if (_TYPE == STEPPER_PINS) {
+					if (_DRV == STEPPER4WIRE || _DRV == STEPPER4WIRE_HALF) {
+						setPin(0, 0);
+						setPin(1, 0);
+						setPin(2, 0);
+						setPin(3, 0);
+					}
+					if (_enPin != -1) digitalWrite(_enPin, !_enDir);
+				} else if (*_power) _power(0);
+			}
 		}
-		if (_enPin != -1) digitalWrite(_enPin, !_enDir);
 	}	
 
 	uint32_t getMinPeriod() {
@@ -413,57 +439,92 @@ public:
 	}
 
 	uint32_t stepTime = 10000;
+	
+	void attachStep(void (*handler)(uint8_t)) 	{ _step = handler; }
+	void attachPower(void (*handler)(bool)) 	{ _power = handler; }
 
 private:
+	// настройка пина
 	void configurePin(int num, int8_t pin) {
-#ifdef __AVR__
+		#ifdef __AVR__
 		_port_reg[num] = portOutputRegister(digitalPinToPort(pin));
 		_ddr_reg[num] = portModeRegister(digitalPinToPort(pin));
 		_bit_mask[num] = digitalPinToBitMask(pin);
 		*_ddr_reg[num] |= _bit_mask[num];	// OUTPUT
-#else
+		#else
 		_pins[num] = pin;
 		pinMode(_pins[num], OUTPUT);
-#endif
+		#endif
 	}
 
+	// быстрая установка пина
 	void setPin(int num, bool state) {
-#ifdef __AVR__
+		#ifdef __AVR__
 		if (state) *_port_reg[num] |= _bit_mask[num];
-		else *_port_reg[num] &= ~ _bit_mask[num];
-#else
+		else *_port_reg[num] &= ~_bit_mask[num];
+		#else
 		digitalWrite(_pins[num], state);
-#endif				
+		#endif				
 	}
 
+	// сделать шаг на базе thisStep
 	void step() {
-		if (_DRV == STEPPER4WIRE) {	
-			// 0b11 берёт два бита, т.е. формирует 0 1 2 3 0 1..
-			switch (thisStep & 0b11) {			
-			case 0: setPin(0, 1); setPin(1, 0); setPin(2, 1); setPin(3, 0); break;	// 1010
-			case 1: setPin(0, 0); setPin(1, 1); setPin(2, 1); setPin(3, 0); break;	// 0110
-			case 2: setPin(0, 0); setPin(1, 1); setPin(2, 0); setPin(3, 1); break;	// 0101
-			case 3: setPin(0, 1); setPin(1, 0); setPin(2, 0); setPin(3, 1); break;	// 1001
-			}			
-		} else if (_DRV == STEPPER4WIRE_HALF) {
-			// 0b111 берёт три бита, т.е. формирует 0 1 2 4 5 6 7 0 1 2..
-			switch (thisStep & 0b111) {
-			case 0: setPin(0, 1); setPin(1, 0); setPin(2, 0); setPin(3, 0); break;	// 1000
-			case 1: setPin(0, 1); setPin(1, 0); setPin(2, 1); setPin(3, 0); break;	// 1010
-			case 2: setPin(0, 0); setPin(1, 0); setPin(2, 1); setPin(3, 0); break;	// 0010
-			case 3: setPin(0, 0); setPin(1, 1); setPin(2, 1); setPin(3, 0); break;	// 0110
-			case 4: setPin(0, 0); setPin(1, 1); setPin(2, 0); setPin(3, 0); break;	// 0100
-			case 5: setPin(0, 0); setPin(1, 1); setPin(2, 0); setPin(3, 1); break;	// 0101
-			case 6: setPin(0, 0); setPin(1, 0); setPin(2, 0); setPin(3, 1); break;	// 0001
-			case 7: setPin(0, 1); setPin(1, 0); setPin(2, 0); setPin(3, 1); break;	// 1001
+		// ~7 us			
+		if (_TYPE == STEPPER_PINS) {
+			if (_DRV == STEPPER4WIRE) {	
+				// 0b11 берёт два бита, т.е. формирует 0 1 2 3 0 1..
+				switch (thisStep & 0b11) {			
+				case 0: setPin(0, 1); setPin(1, 0); setPin(2, 1); setPin(3, 0); break;	// 1010
+				case 1: setPin(0, 0); setPin(1, 1); setPin(2, 1); setPin(3, 0); break;	// 0110
+				case 2: setPin(0, 0); setPin(1, 1); setPin(2, 0); setPin(3, 1); break;	// 0101
+				case 3: setPin(0, 1); setPin(1, 0); setPin(2, 0); setPin(3, 1); break;	// 1001
+				}			
+			} else if (_DRV == STEPPER4WIRE_HALF) {
+				// 0b111 берёт три бита, т.е. формирует 0 1 2 4 5 6 7 0 1 2..
+				switch (thisStep & 0b111) {
+				case 0: setPin(0, 1); setPin(1, 0); setPin(2, 0); setPin(3, 0); break;	// 1000
+				case 1: setPin(0, 1); setPin(1, 0); setPin(2, 1); setPin(3, 0); break;	// 1010
+				case 2: setPin(0, 0); setPin(1, 0); setPin(2, 1); setPin(3, 0); break;	// 0010
+				case 3: setPin(0, 0); setPin(1, 1); setPin(2, 1); setPin(3, 0); break;	// 0110
+				case 4: setPin(0, 0); setPin(1, 1); setPin(2, 0); setPin(3, 0); break;	// 0100
+				case 5: setPin(0, 0); setPin(1, 1); setPin(2, 0); setPin(3, 1); break;	// 0101
+				case 6: setPin(0, 0); setPin(1, 0); setPin(2, 0); setPin(3, 1); break;	// 0001
+				case 7: setPin(0, 1); setPin(1, 0); setPin(2, 0); setPin(3, 1); break;	// 1001
+				}
+			}
+		} else if (*_step) {
+			if (_DRV == STEPPER4WIRE) {	
+				switch (thisStep & 0b11) {			
+				case 0: _step(0b1010); break;	// 1010
+				case 1: _step(0b0110); break;	// 0110
+				case 2: _step(0b0101); break;	// 0101
+				case 3: _step(0b1001); break;	// 1001
+				}			
+			} else if (_DRV == STEPPER4WIRE_HALF) {
+				switch (thisStep & 0b111) {
+				case 0: _step(0b1000); break;	// 1000
+				case 1: _step(0b1010); break;	// 1010
+				case 2: _step(0b0010); break;	// 0010
+				case 3: _step(0b0110); break;	// 0110
+				case 4: _step(0b0100); break;	// 0100
+				case 5: _step(0b0101); break;	// 0101
+				case 6: _step(0b0001); break;	// 0001
+				case 7: _step(0b1001); break;	// 1001
+				}
 			}
 		}
 	}
-
-	void recalculateSpeed() {
-		if (!_curMode && (_accel == 0 || _maxSpeed < _MIN_STEPPER_SPEED)) {
-			stepTime = 1000000.0 / _maxSpeed;
-			_dir = (_target > _current) ? 1 : -1;
+	
+	// шажочек степдир
+	void stepDir() {
+		// ~5 us
+		if (_TYPE == STEPPER_PINS) {
+			setPin(1, (_dir > 0 ? _globDir : !_globDir) );	// DIR
+			setPin(0, 1);	// step HIGH
+			if (DRIVER_STEP_TIME > 0) delayMicroseconds(DRIVER_STEP_TIME);
+			setPin(0, 0);	// step LOW
+		} else if (*_step) {
+			_step(_dir > 0 ? _globDir : !_globDir);
 		}
 	}
 
@@ -473,10 +534,7 @@ private:
 		long err = _target - _current;
 		long stepsToStop = (float)_accelSpeed * _accelSpeed * _accelInv;
 		
-		if (err == 0 && stepsToStop <= 1) {
-			brake();
-			return false;
-		}
+		if (err == 0 && stepsToStop <= 1) return false;
 
 		if (err > 0) {
 			if (_n > 0) {
@@ -519,47 +577,45 @@ private:
 	// планировщик скорости мой
 	void planner() {
 		if (micros() - _plannerTime >= _plannerPrd) {
-			_plannerTime = micros();
+			_plannerTime += _plannerPrd;
 			// ~110 us				
 			long err = _target - _current;											// "ошибка"
 			bool thisDir = ( _accelSpeed * _accelSpeed * _accelInv >= abs(err) );	// пора тормозить
 			_accelSpeed += ( _accelTime * _plannerPrd * (thisDir ? -_sign(_accelSpeed) : _sign(err)) );	// разгон/торможение
 			_accelSpeed = constrain(_accelSpeed, -_maxSpeed, _maxSpeed);			// ограничение
 
-			if (abs(_accelSpeed) > _MIN_STEPPER_SPEED) stepTime = abs(1000000.0 / _accelSpeed);		// ограничение на мин. скорость
-			else stepTime = _MAX_STEP_PERIOD;
+			if (abs(_accelSpeed) > _MIN_SPEED_FP) stepTime = abs(1000000.0 / _accelSpeed);		// ограничение на мин. скорость
+			else stepTime = _MAX_PERIOD_FP;
 			_dir = _sign(_accelSpeed);												// направление для шагов
 		}
 	}
 
-	uint32_t _plannerTime = 0;		
 	int _plannerPrd = 15000;
 #endif
 
 	float _accelTime = 0;	
 	int _smoothPlannerPrd = 15000;
 	uint32_t _smoothPlannerTime = 0;
+	uint32_t _plannerTime = 0;	
 	
 	// планировщик разгона для KEEP_SPEED
 	void smoothSpeedPlanner() {
 		if (micros() - _smoothPlannerTime >= _smoothPlannerPrd) {
-			_smoothPlannerTime = micros();
+			_smoothPlannerTime += _smoothPlannerPrd;
 			int8_t dir = _sign(_speed - _accelSpeed);	// 1 - разгон, -1 - торможение
-			_accelSpeed += ( _accelTime * _smoothPlannerPrd * dir);			
+			_accelSpeed += (_accelTime * _smoothPlannerPrd * dir);			
 			_dir = _sign(_accelSpeed);
 			
 			// прекращение работы планировщика
 			if ((dir == 1 && _accelSpeed >= _speed) || (dir == -1 && _accelSpeed <= _speed)) {
 				_accelSpeed = _speed;
 				_smoothStart = false;
-				if (_speed == 0) {		// если нужно остановиться
+				if (abs(_speed) <= _MIN_STEP_SPEED) {		// если нужно остановиться
 					brake();
-					return;				// выходим
+					return;		// выходим
 				}
 			}
-
-			if (abs(_accelSpeed) > _MIN_STEPPER_SPEED) stepTime = abs(1000000.0 / _accelSpeed);		// ограничение на мин. скорость
-			else stepTime = _MAX_STEP_PERIOD;
+			stepTime = abs(1000000.0 / _accelSpeed);
 		}
 	}	
 
@@ -585,13 +641,16 @@ private:
 	float _accelInv = 0;
 
 	GS_runMode _curMode = FOLLOW_POS;
+	
+	void (*_step)(uint8_t a) = NULL;
+	void (*_power)(bool a) = NULL;
 
 #ifdef __AVR__
-	volatile uint8_t *_port_reg[_DRV == 0 ? 2 : 4];
-	volatile uint8_t *_ddr_reg[_DRV == 0 ? 2 : 4];
-	volatile uint8_t _bit_mask[_DRV == 0 ? 2 : 4];
+	volatile uint8_t *_port_reg[_PINS_AMOUNT];
+	volatile uint8_t *_ddr_reg[_PINS_AMOUNT];
+	volatile uint8_t _bit_mask[_PINS_AMOUNT];
 #else
-	uint8_t _pins[_DRV == 0 ? 2 : 4];
+	uint8_t _pins[_PINS_AMOUNT];
 #endif
 };
 #endif
