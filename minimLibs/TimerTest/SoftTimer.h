@@ -1,12 +1,12 @@
-#ifndef TimerMillis_h
-#define TimerMillis_h
+#ifndef SoftTimer_h
+#define SoftTimer_h
 #include <Arduino.h>
 // Удобный класс таймера на millis()
 
-class TimerMillis {
+class SoftTimer {
 public:
 	// (период, мс), (0 не запущен / 1 запущен), (режим: 0 период / 1 таймер)
-	TimerMillis(uint32_t prd = 1000, bool state = 0, bool mode = 0) {
+	SoftTimer(uint32_t prd = 1000, bool state = 0, bool mode = 0) {
 		setTime(prd);
 		if (state) start();
 		_mode = mode;

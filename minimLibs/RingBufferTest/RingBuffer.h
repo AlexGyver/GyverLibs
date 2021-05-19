@@ -3,13 +3,19 @@
 template < typename TYPE, int SIZE >
 class RingBuffer {
 public:
-	// запись в буфер
-	void write(TYPE newVal) {
+	// запись в буфер. Вернёт true при успешной записи
+	bool write(TYPE newVal) {
 		uint8_t i = (head + 1) % SIZE;  // положение нового значения в буфере
-		if (i != tail) {         // если есть местечко
-			buffer[head] = newVal; // пишем в буфер
-			head = i;              // двигаем голову
-		}
+		if (i != tail) {         		// если есть местечко
+			buffer[head] = newVal; 		// пишем в буфер
+			head = i;              		// двигаем голову
+			return true;
+		} else return false;
+	}
+	
+	bool availableForWrite() {
+		if ((head + 1) % SIZE != tail) return true;
+		else return false;
 	}
 
 	// чтение из буфера

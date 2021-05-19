@@ -1,6 +1,6 @@
-#include "TimerMillis.h"
+#include "SoftTimer.h"
 // (период, мс), (0 не запущен / 1 запущен), (режим: 0 период / 1 таймер)
-TimerMillis tmr(2000, 1, 1);
+SoftTimer tmr(2000, 1, 1);
 
 void setup() {
   Serial.begin(9600);

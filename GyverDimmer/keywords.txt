@@ -1,0 +1,28 @@
+#######################################
+# Syntax Coloring Map For GyverDimmer
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+GyverDimmer	KEYWORD1
+DimmerBres	KEYWORD1
+DimmerBresMulti	KEYWORD1
+Dimmer	KEYWORD1
+DimmerMulti	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+attach	KEYWORD2
+write	KEYWORD2
+tickZero	KEYWORD2
+tickTimer	KEYWORD2
+tick	KEYWORD2
+getPeriod	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
