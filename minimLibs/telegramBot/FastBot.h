@@ -20,6 +20,7 @@ static HTTPClient https;
 
 class FastBot {
   public:
+	// инициализация (токен, макс кол-во сообщений на запрос, макс символов, период)
     FastBot(String token, int limit = 10, int ovf = 10000, int period = 1000) {
       _request = (String)"https://api.telegram.org/bot" + token;
       _ovf = ovf;
@@ -27,17 +28,21 @@ class FastBot {
       _period = period;
       client->setInsecure();
     }
+	
+	// установка ID чата для парсинга сообщений
     void setChatID(String chatID) {
       _chatID = chatID;
     }
     void setChatID(const char* chatID) {
       _chatID = chatID;
     }
-
+	
+	// подключение обработчика сообщений
     void attach(void (*handler)(String&, String&)) {
       _callback = handler;
     }
-
+	
+	// ручная проверка обновлений
     byte tickManual() {
       byte status = 1;
       if (https.begin(*client, _request + "/getUpdates?limit=" + _limit + "&offset=" + ID)) {
@@ -47,7 +52,8 @@ class FastBot {
       } else status = 4;
       return status;
     }
-
+	
+	// проверка обновлений по таймеру
     byte tick() {
       if (millis() - tmr >= _period) {
         tmr = millis();
@@ -56,15 +62,16 @@ class FastBot {
       return 0;
     }
 
+	// отправить сообщение в чат
     byte sendMessage(const char* msg) {
       String request = _request + "/sendMessage?chat_id=" + _chatID + "&text=" + msg;
       return sendRequest(request);
     }
-
     byte sendMessage(String msg) {
       return sendMessage(msg.c_str());
     }
 
+	// показать меню
     byte showMenu(const char* str) {
       String request = _request + "/sendMessage?chat_id=" + _chatID + "&text=Show Menu&reply_markup={\"keyboard\":[[\"";
       for (int i = 0; i < strlen(str); i++) {
@@ -76,16 +83,17 @@ class FastBot {
       request += "\"]],\"resize_keyboard\":true}";
       return sendRequest(request);
     }
-
     byte showMenu(String str) {
       return showMenu(str.c_str());
     }
-
+	
+	// скрыть меню
     byte closeMenu() {
       String request = _request + "/sendMessage?chat_id=" + _chatID + "&text=Close Menu&reply_markup={\"remove_keyboard\":true}";
       return sendRequest(request);
     }
-
+	
+	// показать инлайн меню
     byte inlineMenu(const char* msg, const char* str) {
       String request = _request + "/sendMessage?chat_id=" + _chatID + "&text=" + msg + "&reply_markup={\"inline_keyboard\":[[{";
       String buf = "";
@@ -111,7 +119,8 @@ class FastBot {
     byte inlineMenu(String msg, String str) {
       return inlineMenu(msg.c_str(), str.c_str());
     }
-
+	
+	// отправить запрос
     byte sendRequest(String& req) {
       byte status = 1;
       if (https.begin(*client, req)) {
@@ -120,6 +129,16 @@ class FastBot {
       } else status = 4;
       return status;
     }
+	
+	// авто инкремент сообщений (по умолч включен)
+	void autoIncrement(boolean incr) {
+		_incr = incr;
+	}
+	
+	// вручную инкрементировать ID
+	void incrementID(byte val) {
+		if (_incr) ID += val;
+	}
 
   private:
     void addInlineButton(String& str, String& msg) {
@@ -185,7 +204,7 @@ class FastBot {
 
         } else break;   // IDpos > 0
       }
-      ID += counter;
+      if (_incr) ID += counter;
       return 1;
     }
 
@@ -195,5 +214,6 @@ class FastBot {
     long ID = 0;
     uint32_t tmr = 0;
     String _chatID = "";
+	boolean _incr = true;
 };
 #endif
