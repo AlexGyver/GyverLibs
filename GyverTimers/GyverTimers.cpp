@@ -599,6 +599,7 @@ uint32_t Timer_1::setPeriod(uint32_t _timer1_period)  {
 #else
 	TCCR1A = (TCCR1A & 0xF0);
 #endif
+	TCCR1A |= 1 << WGM11;	// CTC - mode
 	TCCR1B = ((1 << WGM13) | (1 << WGM12) | _timer1_prescaler);   // CTC mode + set prescaler
 	ICR1 = _timer1_top - 1;             // Set timer top
 	_timer1_clock = (TCCR1B & 0x07);    // Save timer clock settings
