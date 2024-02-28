@@ -351,7 +351,7 @@ class mString {
       return (temp == NULL) ? -1 : (temp - buf);
     }
 
-    int indexOf(char* ch, uint16_t fromIndex = 0) {
+    int indexOf(const char* ch, uint16_t fromIndex = 0) {
       if (fromIndex >= length()) return -1;
       const char* temp = strstr(buf + fromIndex, ch);
       return (temp == NULL) ? -1 : (temp - buf);
